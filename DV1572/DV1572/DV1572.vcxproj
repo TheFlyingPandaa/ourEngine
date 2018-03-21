@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
     <ClInclude Include="ourEngine\interface\shape\Mesh.h" />
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />

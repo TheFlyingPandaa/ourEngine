@@ -8,15 +8,16 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
-namespace DX //Maybe subject to change
+namespace ShaderCreator //Maybe subject to change
 {
 	
-	inline void CreateVertexShader(ID3D11Device* device, ID3D11VertexShader*& vertexShader, const LPCWSTR fileName, const LPCSTR entryPoint = "main")
+	inline void CreateVertexShader(ID3D11Device* device, ID3D11VertexShader*& vertexShader, const LPCWSTR fileName, const LPCSTR entryPoint, D3D11_INPUT_ELEMENT_DESC inputDesc[], int arraySize, ID3D11InputLayout*& inputLayout)
 	{
 		HRESULT hr;
 		ID3DBlob* pVS = nullptr;
+		//ID3DBlob* error = nullptr;
 		//ID3DBlob* errorBlob = nullptr;
-		D3DCompileFromFile(
+		hr = D3DCompileFromFile(
 			fileName,		// filename
 			nullptr,		// optional macros
 			nullptr,		// optional include files
@@ -32,7 +33,7 @@ namespace DX //Maybe subject to change
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Vertex Shader:");
 
 			if (pVS)
@@ -46,6 +47,11 @@ namespace DX //Maybe subject to change
 		//So this is to shorten DebugTime
 		device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
 		
+		if (FAILED(device->CreateInputLayout(inputDesc, arraySize, pVS->GetBufferPointer(), pVS->GetBufferSize(), &inputLayout)))
+		{
+			pVS->Release();
+		}
+
 		pVS->Release();
 	}
 
@@ -53,6 +59,7 @@ namespace DX //Maybe subject to change
 	{
 		HRESULT hr;
 		ID3DBlob* pDS = nullptr;
+		ID3DBlob* error = nullptr;
 		//ID3DBlob* errorBlob = nullptr;
 		D3DCompileFromFile(
 			fileName,		// filename
@@ -63,13 +70,13 @@ namespace DX //Maybe subject to change
 			0,				// shader compile options
 			0,				// effect compile options
 			&pDS,			// double pointer to ID3DBlob		
-			nullptr		// pointer for Error Blob messages.
+			&error		// pointer for Error Blob messages.
 		);
 
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Domain Shader:");
 
 			if (pDS)
@@ -88,8 +95,8 @@ namespace DX //Maybe subject to change
 	{
 		HRESULT hr;
 		ID3DBlob* pHS = nullptr;
-		//ID3DBlob* errorBlob = nullptr;
-		D3DCompileFromFile(
+		//ID3DBlob* error = nullptr;
+		hr = D3DCompileFromFile(
 			fileName,		// filename
 			nullptr,		// optional macros
 			nullptr,		// optional include files
@@ -104,7 +111,7 @@ namespace DX //Maybe subject to change
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Hull Shader:");
 
 			if (pHS)
@@ -123,8 +130,8 @@ namespace DX //Maybe subject to change
 	{
 		HRESULT hr;
 		ID3DBlob* pGS = nullptr;
-		//ID3DBlob* errorBlob = nullptr;
-		D3DCompileFromFile(
+		//ID3DBlob* error = nullptr;
+		hr = D3DCompileFromFile(
 			fileName,		// filename
 			nullptr,		// optional macros
 			nullptr,		// optional include files
@@ -139,7 +146,7 @@ namespace DX //Maybe subject to change
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Geometry Shader:");
 
 			if (pGS)
@@ -158,8 +165,8 @@ namespace DX //Maybe subject to change
 	{
 		HRESULT hr;
 		ID3DBlob* pPS = nullptr;
-		//ID3DBlob* errorBlob = nullptr;
-		D3DCompileFromFile(
+		//ID3DBlob* error = nullptr;
+		hr = D3DCompileFromFile(
 			fileName,		// filename
 			nullptr,		// optional macros
 			nullptr,		// optional include files
@@ -174,7 +181,7 @@ namespace DX //Maybe subject to change
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Pixel Shader:");
 
 			if (pPS)
@@ -192,6 +199,7 @@ namespace DX //Maybe subject to change
 	{
 		HRESULT hr;
 		ID3DBlob* pCS = nullptr;
+		//ID3DBlob* error = nullptr;
 		hr = D3DCompileFromFile(
 			fileName,		// filename
 			nullptr,		// optional macros
@@ -207,7 +215,7 @@ namespace DX //Maybe subject to change
 		if (FAILED(hr))
 		{
 			_com_error err(hr);
-			OutputDebugStringW(err.ErrorMessage());
+			OutputDebugString(err.ErrorMessage());
 			OutputDebugStringA((char*)" :Compute Shader:");
 
 			if (pCS)

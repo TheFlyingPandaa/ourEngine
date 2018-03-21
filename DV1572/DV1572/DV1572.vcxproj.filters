@@ -47,6 +47,9 @@
     <ClInclude Include="ourEngine\core\Dx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ourEngine\core\ShaderCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ourEngine\shaders\testPixel.hlsl" />

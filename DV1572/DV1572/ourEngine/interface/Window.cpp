@@ -1,4 +1,4 @@
-#include "Window.h"
+﻿#include "Window.h"
 #include "../core/Dx.h"
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -122,80 +122,18 @@ void Window::_setViewport()
 bool Window::_compileShaders()
 {
 	// Vertex Shader
-	ID3DBlob* pVS = nullptr;
-	ID3DBlob* error = nullptr;
-	HRESULT hr = D3DCompileFromFile(
-		L"ourEngine/shaders/testVertex.hlsl", // filename
-		nullptr,		// optional macros
-		nullptr,		// optional include files
-		"main",			// entry point
-		"vs_5_0",		// shader model (target)
-		0,				// shader compile options			// here DEBUGGING OPTIONS
-		0,				// effect compile options
-		&pVS,			// double pointer to ID3DBlob		
-		&error			// pointer for Error Blob messages.
-						// how to use the Error blob, see here
-						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
-	);
-	if (FAILED(hr))
-	{
-		pVS->Release();
-		OutputDebugString((char*)error->GetBufferPointer());
-		return false;
-	}
-	if (FAILED(DX::g_device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &DX::g_vertexShader)))
-	{
-		pVS->Release();
-		return false;
-	}
-
-	//create input layout (verified using vertex shader)
-	//ID3D11_APPEND_ALIGNED_ELEMENT
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
+	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_vertexShader,
+		L"ourEngine/shaders/testVertex.hlsl", "main",
+		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
 
-	if (FAILED(DX::g_device->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &DX::g_inputLayout)))
-	{
-		pVS->Release();
-		return false;
-	}
-
-	pVS->Release();
-	
-
-	//PIXEL SHADER
-	//create pixel shader
-	ID3DBlob* pPS = nullptr;
-	error = nullptr;
-	hr = D3DCompileFromFile(
-		L"ourEngine/shaders/testPixel.hlsl", // filename
-		nullptr,			// optional macros
-		nullptr,			// optional include files
-		"main",				// entry point
-		"ps_5_0",			// shader model (target)
-		0,					// shader compile options
-		0,					// effect compile options
-		&pPS,				// double pointer to ID3DBlob		
-		&error				// pointer for Error Blob messages.
-							// how to use the Error blob, see here
-							// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
-	);
-	if (FAILED(hr))
-	{
-		OutputDebugString((char*)error->GetBufferPointer());
-		pPS->Release();
-		return false;
-	}
-	if (FAILED(DX::g_device->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &DX::g_pixelShader)))
-	{
-		pPS->Release();
-		return false;
-	}
-	pPS->Release();
+	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_pixelShader,
+		L"ourEngine/shaders/testPixel.hlsl", "main");
 
 	return true;
 }
@@ -217,10 +155,17 @@ Window::Window(HINSTANCE h)
 
 Window::~Window()
 {
-	DX::CleanUp();
 
 	m_swapChain->Release();
 	m_backBufferRTV->Release();
+	
+	DX::CleanUp();
+	
+	//This is for leaking, I have no idea
+	ID3D11Debug* DebugDevice = nullptr;
+	HRESULT Result = DX::g_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&DebugDevice);
+	Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	DX::g_device->Release();
 }
 
 bool Window::Init(int width, int height, LPCSTR title)

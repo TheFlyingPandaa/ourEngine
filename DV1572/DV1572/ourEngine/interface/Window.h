@@ -26,7 +26,7 @@ private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
 	void	_setViewport();
-	bool _compileShaders();
+	bool	_compileShaders();
 
 public:
 	Window(HINSTANCE h);
