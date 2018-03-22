@@ -12,12 +12,13 @@ class Mesh
 {
 private:
 	ID3D11Buffer* m_vertexBuffer;
-	ID3D11VertexShader* m_vs;
-	ID3D11GeometryShader* m_gs;
-	ID3D11PixelShader* m_ps;
+	int m_nrOfVertices;
 
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
+	void LoadModel(const std::vector<VERTEX> &v);
+	void setTexture(const std::string &path);
 	ID3D11Buffer* getVertices() const;
+	int getNumberOfVertices() const;
 };

@@ -37,6 +37,4 @@ public:
 	bool isOpen();
 	void Clear();
 	void Present();
-
-	void draw(const Shape &s);
 };
