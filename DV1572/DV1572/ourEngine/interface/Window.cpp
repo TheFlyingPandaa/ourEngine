@@ -24,6 +24,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_SIZE:
+		int width = LOWORD(lParam);
+		int height = HIWORD(lParam);
+		break;
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -79,7 +83,7 @@ HRESULT Window::_initDirect3DContext()
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
 	scd.OutputWindow = m_hwnd;                           // the window to be used
-	scd.SampleDesc.Count = 1;                               // how many multisamples
+	scd.SampleDesc.Count = m_sampleCount;                               // how many multisamples
 	scd.Windowed = !m_fullscreen;							// windowed/full-screen mode
 
 						   // create a device, device context and swap chain using the information in the scd struct
@@ -103,8 +107,8 @@ HRESULT Window::_initDirect3DContext()
 		m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 		// use the back buffer address to create the render target
 		DX::g_device->CreateRenderTargetView(pBackBuffer, NULL, &m_backBufferRTV);
-
-		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, NULL);
+		_createDepthBuffer();
+		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 		pBackBuffer->Release();
 	}
 	return hr;
@@ -154,6 +158,27 @@ void Window::_createConstantBuffers()
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_meshConstantBuffer); 
 }
 
+void Window::_createDepthBuffer()
+{
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+
+	depthStencilDesc.Width = m_width;
+	depthStencilDesc.Height = m_height;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = m_sampleCount;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	//Create the Depth/Stencil View
+	HRESULT hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTex);
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTex, NULL, &m_depthStencilView);
+}
+
 Window::Window(HINSTANCE h)
 {
 	m_hInstance = h;
@@ -161,12 +186,14 @@ Window::Window(HINSTANCE h)
 	m_width	= 0;
 	m_height = 0;
 	m_title	= "";
-						
+	m_sampleCount = 1;
 	m_fullscreen = FALSE;
 	DX::g_device = nullptr;
 	DX::g_deviceContext	 = nullptr;
 	m_swapChain	 = nullptr;
 	m_backBufferRTV	 = nullptr;
+	m_depthStencilView = nullptr;
+	m_depthBufferTex = nullptr;
 }
 
 Window::~Window()
@@ -184,11 +211,12 @@ Window::~Window()
 	DX::g_device->Release();
 }
 
-bool Window::Init(int width, int height, LPCSTR title)
+bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 {
 	m_width = width;
 	m_height = height;
 	m_title = title;
+	m_fullscreen = fullscreen;
 	_initWindow();
 	HRESULT hr = _initDirect3DContext();
 	_setViewport();
@@ -219,12 +247,12 @@ void Window::Clear()
 	float c[4] = { 1.0f,0.1f,0.9f,1.0f };
 	DX::g_renderQueue.clear(); 
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
+	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void Window::Flush(const Camera & c)
 {
 	DirectX::XMMATRIX view = c.getViewMatrix();
-	
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix; 
 
 	MESH_BUFFER meshBuffer; 

@@ -14,7 +14,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 	
 	Window wnd(hInstance);
-	wnd.Init(1280, 720, "sourEngine");
+	wnd.Init(1280, 720, "Banan");
 	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
@@ -31,12 +31,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Shape triangle;
 	triangle.setMesh(&m);
 	RectangleShape r;
-	r.setPos(0, -0.5, 0);
-	r.setRotation(90, 0, 0);
-
+	r.setRotation(0, 45, 0);
 	RectangleShape r2;
-	r2.setRotation(90, 0, 0);
-	r2.setPos(0, 0.5, 0);
+	r2.setRotation(0, -45, 0);
+
+	RectangleShape r3;
+	r3.setRotation(0, -90, 0);
+
+	RectangleShape r4;
+	r4.setRotation(0, 0, 0);
+
+	RectangleShape r5;
+	r5.setRotation(180, 45, 0);
+	RectangleShape r6;
+	r6.setRotation(180, -45, 0);
+
+	RectangleShape r7;
+	r7.setRotation(180, -90, 0);
+
+	RectangleShape r8;
+	r8.setRotation(180, 0, 0);
 
 	while (wnd.isOpen())
 	{
@@ -53,8 +67,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			r.Rotate(-1, 1, 0.3);
-			r2.Rotate(1, -1, -0.3);
+			r.Rotate(0, -1, 0);
+			r2.Rotate(0, -1, 0);
+			r3.Rotate(0, -1, 0);
+			r4.Rotate(0, -1, 0);
+			r5.Rotate(0, -1, 0);
+			r6.Rotate(0, -1, 0);
+			r7.Rotate(0, -1, 0);
+			r8.Rotate(0, -1, 0);
+
 		}
 
 		fpsCounter++;
@@ -62,18 +83,27 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//Draw geometry
 		r.Draw();
 		r2.Draw();
+		r3.Draw();
+		r4.Draw();
+		r5.Draw();
+		r6.Draw();
+		r7.Draw();
+		r8.Draw();
+
 		wnd.Flush(cam); 
 		
 		wnd.Present();
+
+		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
+		{
+			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			updates = 0;
+			fpsCounter = 0;
+			timer += milliseconds(1000);
+		}
 	}
 
-	if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
-	{
-		printf("\rFPS: %d TICK: %d", fpsCounter, updates);
-		updates = 0;
-		fpsCounter = 0;
-		timer += milliseconds(1000);
-	}
+	
 
 	return 0;
 }

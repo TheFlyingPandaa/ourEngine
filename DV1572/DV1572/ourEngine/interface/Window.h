@@ -21,6 +21,9 @@ private:
 	BOOL					m_fullscreen;
 	IDXGISwapChain*			m_swapChain;
 	ID3D11RenderTargetView*	m_backBufferRTV;
+	
+	ID3D11DepthStencilView* m_depthStencilView;
+	ID3D11Texture2D*		m_depthBufferTex;
 
 	DirectX::XMMATRIX		m_projectionMatrix; 
 
@@ -28,6 +31,7 @@ private:
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_CameraConstantBuffer;
 
+	INT						m_sampleCount;
 
 private:
 	bool	_initWindow();
@@ -35,12 +39,13 @@ private:
 	void	_setViewport();
 	bool	_compileShaders();
 	void	_createConstantBuffers();
+	void	_createDepthBuffer();
 
 public:
 	Window(HINSTANCE h);
 	~Window();
 
-	bool Init(int width, int height, LPCSTR title);
+	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0);
 	void PollEvents();
 	bool isOpen();
 	void Clear();
