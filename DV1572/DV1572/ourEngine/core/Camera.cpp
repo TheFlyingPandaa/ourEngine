@@ -3,7 +3,8 @@
 using namespace DirectX;
 Camera::Camera()
 {
-	Camera(XMFLOAT3{ 0.0f, 0.0f, -2.0f }, XMFLOAT3{ 0.0f, 0.0f, 0.0f });
+	m_pos = XMFLOAT3{ 0,1,-2 };
+	m_lookAt = XMFLOAT3{ 0,0,0 };
 }
 
 Camera::Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 lookAt)

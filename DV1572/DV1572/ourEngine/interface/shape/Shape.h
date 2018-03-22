@@ -17,6 +17,7 @@ private:
 
 private: 
 	void _buildMatrix();
+	DirectX::XMFLOAT3 _convertToRad(DirectX::XMFLOAT3 deg);
 
 protected:
 	void setVertexShader(ID3D11VertexShader* s);
@@ -34,6 +35,12 @@ public:
 	void setPos(DirectX::XMFLOAT3 pos);
 	void Move(float x, float y, float z);
 	void Move(DirectX::XMFLOAT3 move);
+	void setRotation(float x, float y, float z);
+	void setRotation(DirectX::XMFLOAT3 rotation);
+	void Rotate(float x, float y, float z);
+	void Rotate(DirectX::XMFLOAT3 rotation);
+
+
 	const DirectX::XMMATRIX& getWorld() const; 
 
 	void Draw();

@@ -24,7 +24,7 @@ OUTPUT main(INPUT input)
 {
 	OUTPUT o;
 	o.pos = mul(float4(input.pos, 1),wvp);
-	o.color = float4(input.pos + 0.5f, 1);
+	o.color = mul(float4(input.pos, 1), world);
 
 	return o;
 }

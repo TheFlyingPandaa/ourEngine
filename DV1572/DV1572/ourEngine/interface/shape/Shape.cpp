@@ -10,6 +10,16 @@ void Shape::_buildMatrix()
 
 	m_worldMatrix = rot * scale * trans; 
 }
+
+DirectX::XMFLOAT3 Shape::_convertToRad(DirectX::XMFLOAT3 deg)
+{
+	return DirectX::XMFLOAT3{
+		DirectX::XMConvertToRadians(deg.x),
+		DirectX::XMConvertToRadians(deg.y),
+		DirectX::XMConvertToRadians(deg.z)
+	};
+}
+
 void Shape::setVertexShader(ID3D11VertexShader * s)
 {
 	m_vs = s;
@@ -39,6 +49,9 @@ Shape::Shape()
 	m_gs	= nullptr;
 	m_ps	= nullptr;
 	m_worldMatrix = XMMatrixIdentity();
+
+	m_scl = XMFLOAT3{ 1,1,1 };
+	_buildMatrix();
 }
 
 void Shape::setMesh(Mesh * m)
@@ -77,6 +90,29 @@ void Shape::Move(DirectX::XMFLOAT3 move)
 	XMVECTOR newPos = XMLoadFloat3(&m_pos) + XMLoadFloat3(&move); 
 	XMStoreFloat3(&m_pos, newPos); 
 	_buildMatrix(); 
+}
+
+void Shape::setRotation(float x, float y, float z)
+{
+	setRotation(XMFLOAT3{ x, y, z });
+}
+
+void Shape::setRotation(DirectX::XMFLOAT3 rotation)
+{
+	m_rot = _convertToRad(rotation);
+	_buildMatrix();
+}
+
+void Shape::Rotate(float x, float y, float z)
+{
+	Rotate(DirectX::XMFLOAT3{ x, y, z });
+}
+
+void Shape::Rotate(DirectX::XMFLOAT3 rotation)
+{
+	XMVECTOR newRot = XMLoadFloat3(&m_rot) + XMLoadFloat3(&_convertToRad(rotation));
+	XMStoreFloat3(&m_rot, newRot);
+	_buildMatrix();
 }
 
 const DirectX::XMMATRIX & Shape::getWorld() const

@@ -14,7 +14,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 	
 	Window wnd(hInstance);
-	wnd.Init(800, 600, "banan");
+	wnd.Init(1280, 720, "sourEngine");
 	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
@@ -31,6 +31,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Shape triangle;
 	triangle.setMesh(&m);
 	RectangleShape r;
+	r.setPos(0, -0.5, 0);
+	r.setRotation(90, 0, 0);
+
+	RectangleShape r2;
+	r2.setRotation(90, 0, 0);
+	r2.setPos(0, 0.5, 0);
 
 	while (wnd.isOpen())
 	{
@@ -47,13 +53,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			//Update();
+			r.Rotate(-1, 1, 0.3);
+			r2.Rotate(1, -1, -0.3);
 		}
 
 		fpsCounter++;
 
 		//Draw geometry
 		r.Draw();
+		r2.Draw();
 		wnd.Flush(cam); 
 		
 		wnd.Present();
