@@ -19,8 +19,8 @@ private:
 	MSG						m_msg = { 0 };
 	
 	BOOL					m_fullscreen;
-	IDXGISwapChain*			m_swapChain;
 	ID3D11RenderTargetView*	m_backBufferRTV;
+	IDXGISwapChain*			m_swapChain;
 	
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11Texture2D*		m_depthBufferTex;
@@ -51,4 +51,6 @@ public:
 	void Clear();
 	void Flush(const Camera& c); 
 	void Present();
+	LRESULT WndProc(UINT, WPARAM, LPARAM);
+	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);
 };

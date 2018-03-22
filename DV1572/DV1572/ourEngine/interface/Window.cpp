@@ -17,28 +17,14 @@ void DX::CleanUp()
 	DX::g_pixelShader->Release();
 	DX::g_inputLayout->Release();
 }
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	case WM_SIZE:
-		int width = LOWORD(lParam);
-		int height = HIWORD(lParam);
-		break;
-	}
 
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
 
 bool Window::_initWindow()
 {
 	WNDCLASSEX wcex = { 0 };
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WndProc;
+	wcex.lpfnWndProc = StaticWndProc;
 	wcex.hInstance = m_hInstance;
 	wcex.lpszClassName = "ourEngine";
 	if (!RegisterClassEx(&wcex))
@@ -61,7 +47,7 @@ bool Window::_initWindow()
 		nullptr,
 		nullptr,
 		m_hInstance,
-		nullptr);
+		this);
 
 	m_hwnd = handle;
 	return true;
@@ -190,7 +176,7 @@ Window::Window(HINSTANCE h)
 	m_fullscreen = FALSE;
 	DX::g_device = nullptr;
 	DX::g_deviceContext	 = nullptr;
-	m_swapChain	 = nullptr;
+	m_swapChain = nullptr;
 	m_backBufferRTV	 = nullptr;
 	m_depthStencilView = nullptr;
 	m_depthBufferTex = nullptr;
@@ -290,4 +276,77 @@ void Window::Flush(const Camera & c)
 void Window::Present()
 {
 	m_swapChain->Present(0, 0);
+}
+
+LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	case WM_SIZE:
+		m_width = LOWORD(lParam);
+		m_height = HIWORD(lParam);
+		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
+		if (m_swapChain)
+		{
+			DX::g_deviceContext->OMSetRenderTargets(0, 0, 0);
+
+			// Release all outstanding references to the swap chain's buffers.
+			m_backBufferRTV->Release();
+
+			HRESULT hr;
+			// Preserve the existing buffer count and format.
+			// Automatically choose the width and height to match the client rect for HWNDs.
+			hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+
+			// Perform error handling here!
+
+			// Get buffer and create a render-target-view.
+			ID3D11Texture2D* pBuffer;
+			hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+				(void**)&pBuffer);
+			// Perform error handling here!
+
+			hr = DX::g_device->CreateRenderTargetView(pBuffer, NULL,
+				&m_backBufferRTV);
+			// Perform error handling here!
+			pBuffer->Release();
+			
+			_createDepthBuffer();
+			DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+
+			// Set up the viewport.
+			_setViewport();
+
+			
+			
+		}
+		break;
+	case WM_KEYDOWN:
+		// --------------------------------Subject for change!--------------------------------
+		if (wParam == VK_ESCAPE)
+			exit(0);
+	}
+
+	return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
+}
+
+LRESULT Window::StaticWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	Window* pParent;
+	if (uMsg == WM_CREATE)
+	{
+		pParent = (Window*)((LPCREATESTRUCT)lParam)->lpCreateParams;
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pParent);
+	}
+	else
+	{
+		pParent = (Window*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+		if (!pParent) return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+
+	pParent->m_hwnd = hWnd;
+	return pParent->WndProc(uMsg, wParam, lParam);
 }
