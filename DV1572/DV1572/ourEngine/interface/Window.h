@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-#include "shape\Shape.h"
+#include "../core/Camera.h"
 
 
 class Window
@@ -36,5 +36,6 @@ public:
 	void PollEvents();
 	bool isOpen();
 	void Clear();
+	void Flush(const Camera& c); 
 	void Present();
 };

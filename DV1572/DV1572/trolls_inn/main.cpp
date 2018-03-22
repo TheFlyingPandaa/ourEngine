@@ -25,6 +25,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float unprocessed = 0;
 
 	Mesh m;
+	Camera cam; 
 	m.LoadModel("");
 
 	Shape triangle;
@@ -53,6 +54,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		//Draw geometry
 		r.Draw();
+		wnd.Flush(cam); 
 		
 		wnd.Present();
 	}

@@ -201,8 +201,30 @@ bool Window::isOpen()
 void Window::Clear()
 {
 	float c[4] = { 1.0f,0.1f,0.9f,1.0f };
-
+	DX::g_renderQueue.clear(); 
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
+}
+
+void Window::Flush(const Camera & c)
+{
+	for (size_t i = 0; i  < DX::g_renderQueue.size(); i++)
+	{
+		DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+
+		DX::g_deviceContext->VSSetShader(DX::g_vertexShader, nullptr, 0);
+		DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->PSSetShader(DX::g_pixelShader, nullptr, 0);
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+
+		ID3D11Buffer* v = DX::g_renderQueue[i]->getVertices();
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->Draw(DX::g_renderQueue[i]->getMesh()->getNumberOfVertices(), 0);
+	}
 }
 
 void Window::Present()
