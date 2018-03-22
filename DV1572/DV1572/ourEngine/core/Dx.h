@@ -19,6 +19,11 @@ namespace DX
 	extern ID3D11Device* g_device;
 	extern ID3D11DeviceContext* g_deviceContext;
 
+	extern std::vector<Shape*> g_renderQueue; 
+	extern std::vector<Shape*> g_shadowQueue;
+	extern std::vector<Shape*> g_transQueue;
+
+
 	extern ID3D11VertexShader* g_vertexShader;
 	extern ID3D11PixelShader* g_pixelShader;
 	extern ID3D11InputLayout* g_inputLayout;

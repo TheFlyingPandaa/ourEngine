@@ -5,6 +5,9 @@ ID3D11DeviceContext* DX::g_deviceContext;
 ID3D11VertexShader* DX::g_vertexShader;
 ID3D11PixelShader* DX::g_pixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
+std::vector<Shape*> DX::g_renderQueue;
+std::vector<Shape*> DX::g_shadowQueue;
+std::vector<Shape*> DX::g_transQueue;
 
 void DX::CleanUp()
 {
