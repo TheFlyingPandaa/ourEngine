@@ -114,16 +114,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ourEngine\core\Camera.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
     <ClCompile Include="trolls_inn\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ourEngine\core\Camera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
+    <ClInclude Include="ourEngine\interface\shape\3DObject.h" />
     <ClInclude Include="ourEngine\interface\shape\Mesh.h" />
+    <ClInclude Include="ourEngine\interface\shape\Rectangle.h" />
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />
     <ClInclude Include="ourEngine\interface\Window.h" />
     <ClInclude Include="ourEngine\Structs.h" />

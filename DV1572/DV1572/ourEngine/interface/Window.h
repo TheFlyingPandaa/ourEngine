@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-#include "shape\Shape.h"
+#include "../core/Camera.h"
 
 
 class Window
@@ -22,11 +22,19 @@ private:
 	IDXGISwapChain*			m_swapChain;
 	ID3D11RenderTargetView*	m_backBufferRTV;
 
+	DirectX::XMMATRIX		m_projectionMatrix; 
+
+	ID3D11Buffer*			m_meshConstantBuffer;
+	ID3D11Buffer*			m_pointLightsConstantBuffer;
+	ID3D11Buffer*			m_CameraConstantBuffer;
+
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
 	void	_setViewport();
 	bool	_compileShaders();
+	void	_createConstantBuffers();
 
 public:
 	Window(HINSTANCE h);
@@ -36,7 +44,6 @@ public:
 	void PollEvents();
 	bool isOpen();
 	void Clear();
+	void Flush(const Camera& c); 
 	void Present();
-
-	void draw(const Shape &s);
 };

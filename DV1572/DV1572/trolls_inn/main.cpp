@@ -1,6 +1,7 @@
 #include "../ourEngine/interface/Interface.h"
 #include <iostream>
 #include <chrono>
+
 const float REFRESH_RATE = 60.0f;
 
 
@@ -24,11 +25,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float unprocessed = 0;
 
 	Mesh m;
+	Camera cam; 
 	m.LoadModel("");
 
 	Shape triangle;
 	triangle.setMesh(&m);
-	
+	RectangleShape r;
+
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -49,7 +52,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 
-		wnd.draw(triangle);
+		//Draw geometry
+		r.Draw();
+		wnd.Flush(cam); 
+		
 		wnd.Present();
 	}
 
