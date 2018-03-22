@@ -13,6 +13,11 @@ private:
 	ID3D11GeometryShader*	m_gs;
 	ID3D11PixelShader*		m_ps;
 
+	DirectX::XMMATRIX m_worldMatrix; 
+
+private: 
+	void _buildMatrix();
+
 protected:
 	void setVertexShader(ID3D11VertexShader* s);
 	void setHullShader(ID3D11HullShader* s);
@@ -29,6 +34,7 @@ public:
 	void setPos(DirectX::XMFLOAT3 pos);
 	void Move(float x, float y, float z);
 	void Move(DirectX::XMFLOAT3 move);
+	const DirectX::XMMATRIX& getWorld() const; 
 
 	void Draw();
 };

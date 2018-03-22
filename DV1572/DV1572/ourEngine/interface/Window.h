@@ -22,11 +22,19 @@ private:
 	IDXGISwapChain*			m_swapChain;
 	ID3D11RenderTargetView*	m_backBufferRTV;
 
+	DirectX::XMMATRIX		m_projectionMatrix; 
+
+	ID3D11Buffer*			m_meshConstantBuffer;
+	ID3D11Buffer*			m_pointLightsConstantBuffer;
+	ID3D11Buffer*			m_CameraConstantBuffer;
+
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
 	void	_setViewport();
 	bool	_compileShaders();
+	void	_createConstantBuffers();
 
 public:
 	Window(HINSTANCE h);

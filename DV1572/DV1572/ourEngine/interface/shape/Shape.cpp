@@ -1,5 +1,15 @@
 #include "Shape.h"
 #include "../../core/Dx.h"
+using namespace DirectX; 
+
+void Shape::_buildMatrix()
+{
+	XMMATRIX trans = XMMatrixTranslation(m_pos.x, m_pos.y, m_pos.z); 
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(m_rot.x, m_rot.y, m_rot.z); 
+	XMMATRIX scale = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z); 
+
+	m_worldMatrix = rot * scale * trans; 
+}
 void Shape::setVertexShader(ID3D11VertexShader * s)
 {
 	m_vs = s;
@@ -28,6 +38,7 @@ Shape::Shape()
 	m_ds	= nullptr;
 	m_gs	= nullptr;
 	m_ps	= nullptr;
+	m_worldMatrix = XMMatrixIdentity();
 }
 
 void Shape::setMesh(Mesh * m)
@@ -43,6 +54,34 @@ Mesh * Shape::getMesh() const
 ID3D11Buffer * Shape::getVertices() const
 {
 	return m_mesh->getVertices();
+}
+
+void Shape::setPos(float x, float y, float z)
+{
+	setPos(XMFLOAT3(x, y, z)); 
+}
+
+void Shape::setPos(DirectX::XMFLOAT3 pos)
+{
+	m_pos = pos; 
+	_buildMatrix(); 
+}
+
+void Shape::Move(float x, float y, float z)
+{
+	Move(XMFLOAT3(x, y, z)); 
+}
+
+void Shape::Move(DirectX::XMFLOAT3 move)
+{
+	XMVECTOR newPos = XMLoadFloat3(&m_pos) + XMLoadFloat3(&move); 
+	XMStoreFloat3(&m_pos, newPos); 
+	_buildMatrix(); 
+}
+
+const DirectX::XMMATRIX & Shape::getWorld() const
+{
+	return m_worldMatrix; 
 }
 
 void Shape::Draw()

@@ -141,6 +141,19 @@ bool Window::_compileShaders()
 	return true;
 }
 
+void Window::_createConstantBuffers()
+{
+	D3D11_BUFFER_DESC bDesc; 
+	bDesc.Usage = D3D11_USAGE_DYNAMIC; 
+	bDesc.ByteWidth = sizeof(MESH_BUFFER); 
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER; 
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; 
+	bDesc.MiscFlags = 0; 
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_meshConstantBuffer); 
+}
+
 Window::Window(HINSTANCE h)
 {
 	m_hInstance = h;
@@ -180,6 +193,9 @@ bool Window::Init(int width, int height, LPCSTR title)
 	HRESULT hr = _initDirect3DContext();
 	_setViewport();
 	_compileShaders();
+	_createConstantBuffers(); 
+
+	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
 	ShowWindow(m_hwnd, 10);
 	return true;
 }
@@ -207,8 +223,24 @@ void Window::Clear()
 
 void Window::Flush(const Camera & c)
 {
+	DirectX::XMMATRIX view = c.getViewMatrix();
+	
+	DirectX::XMMATRIX viewProj = view * m_projectionMatrix; 
+
+	MESH_BUFFER meshBuffer; 
 	for (size_t i = 0; i  < DX::g_renderQueue.size(); i++)
 	{
+		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld(); 
+		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world)); 
+		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj); 
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr; 
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr); 
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER)); 
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0); 
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer); 
+
 		DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 

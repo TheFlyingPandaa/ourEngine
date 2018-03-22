@@ -1,3 +1,9 @@
+cbuffer MESH_BUFFER : register(b0)
+{
+	float4x4 wvp; 
+	float4x4 world; 
+}
+
 
 struct INPUT
 {
@@ -17,7 +23,7 @@ struct OUTPUT
 OUTPUT main(INPUT input)
 {
 	OUTPUT o;
-	o.pos = float4(input.pos, 1);
+	o.pos = mul(float4(input.pos, 1),wvp);
 	o.color = float4(input.pos + 0.5f, 1);
 
 	return o;
