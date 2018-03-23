@@ -3,9 +3,7 @@
 
 class Object3D : public Shape
 {
-private:
-
 public:
+	Object3D();
 
-
-}
+};

@@ -41,6 +41,11 @@ void Mesh::LoadModel(const std::vector<VERTEX>& v)
 	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDesc, &vData, &m_vertexBuffer);
 }
 
+Material* Mesh::getMaterial()
+{
+	return &m_material;
+}
+
 ID3D11Buffer * Mesh::getVertices() const
 {
 	return m_vertexBuffer;

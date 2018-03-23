@@ -116,6 +116,15 @@ void Shape::Rotate(DirectX::XMFLOAT3 rotation)
 	_buildMatrix();
 }
 
+void Shape::ApplyShaders()
+{
+	DX::g_deviceContext->VSSetShader(m_vs, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(m_hs, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(m_ds, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(m_gs, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_ps, nullptr, 0);
+}
+
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 

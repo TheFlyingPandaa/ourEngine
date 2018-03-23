@@ -1,4 +1,6 @@
 #include "Rectangle.h"
+#include "../../core/Dx.h"
+
 RectangleShape::RectangleShape(float w, float h)
 {
 	m = new Mesh;
@@ -58,6 +60,10 @@ RectangleShape::RectangleShape(float w, float h)
 	vertices.push_back(v);
 	m->LoadModel(vertices);
 	setMesh(m);
+
+
+	setVertexShader(DX::g_3DVertexShader);
+	setPixelShader(DX::g_3DPixelShader);
 }
 
 RectangleShape::~RectangleShape()

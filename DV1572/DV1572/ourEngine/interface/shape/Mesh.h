@@ -7,18 +7,21 @@
 #include <string>
 #include <vector>
 #include "../../Structs.h"
+#include "Material.h"
 
 class Mesh
 {
 private:
-	ID3D11Buffer* m_vertexBuffer;
-	int m_nrOfVertices;
+	ID3D11Buffer*	m_vertexBuffer;
+	Material		m_material;
+	int				m_nrOfVertices;
 
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(const std::vector<VERTEX> &v);
-	void setTexture(const std::string &path);
+	void setDiffuseTexture(const std::string &path);
+	Material* getMaterial();
 	ID3D11Buffer* getVertices() const;
 	int getNumberOfVertices() const;
 };

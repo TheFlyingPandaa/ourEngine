@@ -235,11 +235,7 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		DX::g_deviceContext->VSSetShader(DX::g_3DVertexShader, nullptr, 0);
-		DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->PSSetShader(DX::g_3DPixelShader, nullptr, 0);
+		DX::g_renderQueue[i]->ApplyShaders();
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;

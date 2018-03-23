@@ -13,7 +13,7 @@ private:
 	ID3D11GeometryShader*	m_gs;
 	ID3D11PixelShader*		m_ps;
 
-	DirectX::XMMATRIX m_worldMatrix; 
+	DirectX::XMMATRIX		m_worldMatrix; 
 
 private: 
 	void _buildMatrix();
@@ -39,7 +39,7 @@ public:
 	void setRotation(DirectX::XMFLOAT3 rotation);
 	void Rotate(float x, float y, float z);
 	void Rotate(DirectX::XMFLOAT3 rotation);
-
+	void ApplyShaders();
 
 	const DirectX::XMMATRIX& getWorld() const; 
 

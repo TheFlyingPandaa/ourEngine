@@ -115,6 +115,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
@@ -128,6 +130,7 @@
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
     <ClInclude Include="ourEngine\interface\shape\3DObject.h" />
+    <ClInclude Include="ourEngine\interface\shape\Material.h" />
     <ClInclude Include="ourEngine\interface\shape\Mesh.h" />
     <ClInclude Include="ourEngine\interface\shape\Rectangle.h" />
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />

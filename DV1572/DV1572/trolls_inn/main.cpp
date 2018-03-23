@@ -4,7 +4,6 @@
 
 const float REFRESH_RATE = 60.0f;
 
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -30,7 +29,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh a;
 	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 	m.LoadModel("trolls_inn/Resources/cube.txt");
-	Shape shapes[9];
+	Object3D shapes[9];
 	int counterx = 0;
 	int counterz = 0;
 	for (int i = 0; i < 9; i++)
@@ -38,11 +37,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		shapes[i].setMesh(&a);
 		shapes[i].setPos(counterx++, 0, counterz--);
 	}
-	Shape box;
+	Object3D box;
 	box.setMesh(&a);
 	box.setPos(0, -2, 0);
 
-	Shape box2;
+	Object3D box2;
 	box2.setMesh(&a);
 	box2.setPos(1, 0, 0);
 
