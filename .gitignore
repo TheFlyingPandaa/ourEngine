@@ -6,6 +6,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.vcxproj
+*.vcxproj.filters
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -50,7 +52,8 @@ artifacts/
 *_i.h
 *.ilk
 *.meta
-#*.obj
+*.obj
+!DV1572/DV1572/trolls_inn/Resources/**/*
 *.pch
 *.pdb
 *.pgc
