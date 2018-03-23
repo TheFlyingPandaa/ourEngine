@@ -123,6 +123,14 @@ void Shape::ApplyShaders()
 	DX::g_deviceContext->DSSetShader(m_ds, nullptr, 0);
 	DX::g_deviceContext->GSSetShader(m_gs, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_ps, nullptr, 0);
+
+	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
+	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
+	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
+	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
+	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
+
 }
 
 const DirectX::XMMATRIX & Shape::getWorld() const

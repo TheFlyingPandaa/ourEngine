@@ -15,14 +15,18 @@ Material::Material()
 
 Material::~Material()
 {
-	m_diffuseTexture->Release();
-	m_diffuseResource->Release();
-
-	m_normalTexture->Release();
-	m_normalResource->Release();
-
-	m_highlightTexture->Release();
-	m_highlightResource->Release();
+	if (m_diffuseTexture)
+		m_diffuseTexture->Release();
+	if (m_diffuseResource)
+		m_diffuseResource->Release();
+	if (m_normalTexture)
+		m_normalTexture->Release();
+	if (m_normalResource)
+		m_normalResource->Release();
+	if (m_highlightTexture)
+		m_highlightTexture->Release();
+	if (m_highlightResource)
+		m_highlightResource->Release();
 }
 
 void Material::setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)

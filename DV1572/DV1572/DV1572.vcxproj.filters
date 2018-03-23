@@ -88,4 +88,9 @@
     <Text Include="trolls_inn\Resources\cube.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="trolls_inn\Resources\Untitled.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

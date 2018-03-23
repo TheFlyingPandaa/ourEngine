@@ -136,6 +136,26 @@ bool Window::_compileShaders()
 	return true;
 }
 
+void Window::_setSamplerState()
+{
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	DX::g_device->CreateSamplerState(&samplerDesc, &m_samplerState);
+	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+}
+
 void Window::_createConstantBuffers()
 {
 	D3D11_BUFFER_DESC bDesc; 
@@ -288,6 +308,7 @@ Window::Window(HINSTANCE h)
 	m_backBufferRTV	 = nullptr;
 	m_depthStencilView = nullptr;
 	m_depthBufferTex = nullptr;
+	m_samplerState = nullptr;
 }
 
 Window::~Window()
@@ -316,6 +337,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_compileShaders();
 	_createConstantBuffers(); 
 	_initGBuffer();
+	_setSamplerState();
 
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
 	ShowWindow(m_hwnd, 10);
@@ -348,6 +370,8 @@ void Window::Clear()
 		DX::g_deviceContext->ClearRenderTargetView(m_gbuffer[i].RTV, c);
 	}
 
+	ID3D11ShaderResourceView* renderTargets[GBUFFER_COUNT] = { nullptr };
+	DX::g_deviceContext->PSSetShaderResources(0, GBUFFER_COUNT, renderTargets);
 }
 
 void Window::Flush(const Camera & c)

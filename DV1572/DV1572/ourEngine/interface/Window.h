@@ -36,6 +36,8 @@ private:
 
 	DirectX::XMMATRIX		m_projectionMatrix; 
 
+	ID3D11SamplerState*		m_samplerState;
+
 	ID3D11Buffer*			m_meshConstantBuffer;
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_CameraConstantBuffer;
@@ -53,6 +55,7 @@ private:
 	HRESULT _initDirect3DContext();
 	void	_setViewport();
 	bool	_compileShaders();
+	void	_setSamplerState();
 	void	_createConstantBuffers();
 	void	_createDepthBuffer();
 	

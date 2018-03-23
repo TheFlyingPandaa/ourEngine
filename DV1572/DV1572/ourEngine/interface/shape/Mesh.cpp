@@ -41,6 +41,12 @@ void Mesh::LoadModel(const std::vector<VERTEX>& v)
 	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDesc, &vData, &m_vertexBuffer);
 }
 
+void Mesh::setDiffuseTexture(const std::string& path)
+{
+
+
+}
+
 Material* Mesh::getMaterial()
 {
 	return &m_material;

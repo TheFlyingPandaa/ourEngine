@@ -5,6 +5,8 @@
 #include "../Structs.h"
 #include <vector>
 #include <sstream>
+#include "gdiplus.h"
+#pragma comment (lib, "gdiplus.lib")
 
 namespace DX
 {
@@ -18,7 +20,6 @@ namespace DX
 		}
 		else
 		{
-			
 			std::vector<V> ver;
 			std::vector<VN> nor;
 			std::vector<VT> uv;

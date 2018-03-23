@@ -1,3 +1,9 @@
+SamplerState sampAni;
+
+Texture2D tDiffuse : register(t0);
+Texture2D tNormal : register(t1);
+Texture2D tHighlight : register(t2);
+
 struct INPUT
 {
 	float4 pos : SV_POSITION;
@@ -17,8 +23,8 @@ OUTPUT main(INPUT input) : SV_TARGET
 {
 	OUTPUT output = (OUTPUT)0;
 	
-	//output.diffuse = tDiffuse.Sample(sampAni, input.tex);
-	output.diffuse = float4(input.normal, 1);
+	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
+	//output.diffuse = float4(input.normal, 1);
 	output.normal = float4(input.normal, 1);
 	output.pos = input.worldPos;
 	
