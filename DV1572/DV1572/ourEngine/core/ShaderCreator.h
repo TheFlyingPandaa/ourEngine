@@ -55,6 +55,45 @@ namespace ShaderCreator //Maybe subject to change
 		pVS->Release();
 	}
 
+	inline void CreateVertexShader(ID3D11Device* device, ID3D11VertexShader*& vertexShader, const LPCWSTR fileName, const LPCSTR entryPoint)
+	{
+		HRESULT hr;
+		ID3DBlob* pVS = nullptr;
+		//ID3DBlob* error = nullptr;
+		//ID3DBlob* errorBlob = nullptr;
+		hr = D3DCompileFromFile(
+			fileName,		// filename
+			nullptr,		// optional macros
+			nullptr,		// optional include files
+			entryPoint,		// entry point
+			"vs_5_0",		// shader model (target)
+			0,				// shader compile options
+			0,				// effect compile options
+			&pVS,			// double pointer to ID3DBlob		
+			nullptr		// pointer for Error Blob messages.
+		);
+
+		//This is for debugging, if we miss a file or whatever the hr will tell us that
+		if (FAILED(hr))
+		{
+			_com_error err(hr);
+			OutputDebugString(err.ErrorMessage());
+			OutputDebugStringA((char*)" :Vertex Shader:");
+
+			if (pVS)
+			{
+				pVS->Release();
+			}
+
+		}
+		//Yes the program will crash if we hit the debugging
+		//But there is no reasen to keep the program going, it will only mess with the shaders
+		//So this is to shorten DebugTime
+		device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
+
+		pVS->Release();
+	}
+
 	inline void CreateDomainShader(ID3D11Device* device, ID3D11DomainShader*& domainShader, const LPCWSTR fileName, const LPCSTR entryPoint = "main")
 	{
 		HRESULT hr;

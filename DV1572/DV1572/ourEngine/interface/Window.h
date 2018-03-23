@@ -7,9 +7,18 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera.h"
 
+const UINT GBUFFER_COUNT = 3;
 
 class Window
 {
+private:
+	struct GBUFFER
+	{
+		ID3D11Texture2D*			TextureMap;
+		ID3D11RenderTargetView*		RTV;
+		ID3D11ShaderResourceView*	SRV;
+	};
+
 private:
 	HINSTANCE				m_hInstance;
 	HWND					m_hwnd;
@@ -33,6 +42,12 @@ private:
 
 	INT						m_sampleCount;
 
+	//Deferred Rendering
+	GBUFFER					m_gbuffer[GBUFFER_COUNT];
+	ID3D11VertexShader*		m_deferredVertexShader;
+	ID3D11PixelShader*		m_deferredPixelShader;
+
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
@@ -40,6 +55,13 @@ private:
 	bool	_compileShaders();
 	void	_createConstantBuffers();
 	void	_createDepthBuffer();
+	
+	// Deferred Rendering
+	void	_initGBuffer();
+	void	_prepareGeometryPass();
+	void	_geometryPass(const Camera & cam);
+	void	_clearTargets();
+	void	_lightPass();
 
 public:
 	Window(HINSTANCE h);

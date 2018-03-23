@@ -2,8 +2,8 @@
 #include "../core/Dx.h"
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
-ID3D11VertexShader* DX::g_vertexShader;
-ID3D11PixelShader* DX::g_pixelShader;
+ID3D11VertexShader* DX::g_3DVertexShader;
+ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
 std::vector<Shape*> DX::g_renderQueue;
 std::vector<Shape*> DX::g_shadowQueue;
@@ -13,8 +13,8 @@ void DX::CleanUp()
 {
 	DX::g_device->Release();
 	DX::g_deviceContext->Release();
-	DX::g_vertexShader->Release();
-	DX::g_pixelShader->Release();
+	DX::g_3DVertexShader->Release();
+	DX::g_3DPixelShader->Release();
 	DX::g_inputLayout->Release();
 }
 
@@ -121,12 +121,17 @@ bool Window::_compileShaders()
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_vertexShader,
-		L"ourEngine/shaders/testVertex.hlsl", "main",
+	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
+		L"ourEngine/shaders/3DVertex.hlsl", "main",
 		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
+	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_3DPixelShader,
+		L"ourEngine/shaders/3DPixel.hlsl", "main");
 
-	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_pixelShader,
-		L"ourEngine/shaders/testPixel.hlsl", "main");
+	ShaderCreator::CreateVertexShader(DX::g_device, m_deferredVertexShader,
+		L"ourEngine/Shaders/deferredVertexShader.hlsl", "main");
+	ShaderCreator::CreatePixelShader(DX::g_device, m_deferredPixelShader,
+		L"ourEngine/shaders/deferredPixelShader.hlsl", "main");
+
 
 	return true;
 }
@@ -165,6 +170,113 @@ void Window::_createDepthBuffer()
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTex, NULL, &m_depthStencilView);
 }
 
+void Window::_initGBuffer()
+{
+	D3D11_TEXTURE2D_DESC tDesc{};
+	tDesc.Width = m_width;
+	tDesc.Height = m_height;
+	tDesc.MipLevels = 1;
+	tDesc.ArraySize = 1;
+	tDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	tDesc.SampleDesc.Count = m_sampleCount;
+	tDesc.Usage = D3D11_USAGE_DEFAULT;
+	tDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+	D3D11_RENDER_TARGET_VIEW_DESC rDesc{};
+	rDesc.Format = tDesc.Format;
+	rDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC sDesc{};
+	sDesc.Format = tDesc.Format;
+	sDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	sDesc.Texture2D.MipLevels = 1;
+
+	for (auto &g : m_gbuffer)
+	{
+		DX::g_device->CreateTexture2D(&tDesc, nullptr, &g.TextureMap);
+		DX::g_device->CreateRenderTargetView(g.TextureMap, &rDesc, &g.RTV);
+		DX::g_device->CreateShaderResourceView(g.TextureMap, &sDesc, &g.SRV);
+	}
+
+}
+
+void Window::_prepareGeometryPass()
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+
+	float color[4]{ 1.0f, 0.0f, 1.0f, 1.0f };
+
+	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
+
+	for (int i = 0; i < GBUFFER_COUNT; i++)
+	{
+		renderTargets[i] = m_gbuffer[i].RTV;
+	}
+	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, m_depthStencilView);
+}
+
+void Window::_geometryPass(const Camera &cam)
+{
+	DirectX::XMMATRIX view = cam.getViewMatrix();
+	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
+
+	MESH_BUFFER meshBuffer;
+	for (size_t i = 0; i < DX::g_renderQueue.size(); i++)
+	{
+		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld();
+		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
+		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+		DX::g_deviceContext->VSSetShader(DX::g_3DVertexShader, nullptr, 0);
+		DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+		DX::g_deviceContext->PSSetShader(DX::g_3DPixelShader, nullptr, 0);
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+
+		ID3D11Buffer* v = DX::g_renderQueue[i]->getVertices();
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->Draw(DX::g_renderQueue[i]->getMesh()->getNumberOfVertices(), 0);
+	}
+}
+
+void Window::_clearTargets()
+{
+	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT] = { nullptr };
+	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
+}
+
+void Window::_lightPass()
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	DX::g_deviceContext->VSSetShader(m_deferredVertexShader, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_deferredPixelShader, nullptr, 0);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, nullptr);
+
+	int adress = 0;
+	for (auto &srv : m_gbuffer)
+	{
+		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
+	}
+
+	DX::g_deviceContext->IASetInputLayout(nullptr);
+
+	DX::g_deviceContext->Draw(4, 0);
+}
+
 Window::Window(HINSTANCE h)
 {
 	m_hInstance = h;
@@ -184,7 +296,6 @@ Window::Window(HINSTANCE h)
 
 Window::~Window()
 {
-
 	m_swapChain->Release();
 	m_backBufferRTV->Release();
 	
@@ -208,6 +319,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_setViewport();
 	_compileShaders();
 	_createConstantBuffers(); 
+	_initGBuffer();
 
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
 	ShowWindow(m_hwnd, 10);
@@ -234,43 +346,20 @@ void Window::Clear()
 	DX::g_renderQueue.clear(); 
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	for (int i = 0; i < GBUFFER_COUNT; i++)
+	{
+		DX::g_deviceContext->ClearRenderTargetView(m_gbuffer[i].RTV, c);
+	}
+
 }
 
 void Window::Flush(const Camera & c)
 {
-	DirectX::XMMATRIX view = c.getViewMatrix();
-	DirectX::XMMATRIX viewProj = view * m_projectionMatrix; 
-
-	MESH_BUFFER meshBuffer; 
-	for (size_t i = 0; i  < DX::g_renderQueue.size(); i++)
-	{
-		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld(); 
-		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world)); 
-		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj); 
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
-
-		D3D11_MAPPED_SUBRESOURCE dataPtr; 
-		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr); 
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER)); 
-		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0); 
-		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer); 
-
-		DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
-
-		DX::g_deviceContext->VSSetShader(DX::g_vertexShader, nullptr, 0);
-		DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->PSSetShader(DX::g_pixelShader, nullptr, 0);
-
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
-
-		ID3D11Buffer* v = DX::g_renderQueue[i]->getVertices();
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(DX::g_renderQueue[i]->getMesh()->getNumberOfVertices(), 0);
-	}
+	_prepareGeometryPass();
+	_geometryPass(c);
+	_clearTargets();
+	_lightPass();
 }
 
 void Window::Present()

@@ -24,8 +24,8 @@ namespace DX
 	extern std::vector<Shape*> g_transQueue;
 
 
-	extern ID3D11VertexShader* g_vertexShader;
-	extern ID3D11PixelShader* g_pixelShader;
+	extern ID3D11VertexShader* g_3DVertexShader;
+	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
 
 	extern void CleanUp();
