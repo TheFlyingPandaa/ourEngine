@@ -24,33 +24,28 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
+	Camera cam;
+	cam.setPosition(0, 100, 100);
 	Mesh m;
-	Camera cam; 
-	m.LoadModel("");
+	Mesh a;
+	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+	m.LoadModel("trolls_inn/Resources/cube.txt");
+	Shape shapes[9];
+	int counterx = 0;
+	int counterz = 0;
+	for (int i = 0; i < 9; i++)
+	{
+		shapes[i].setMesh(&a);
+		shapes[i].setPos(counterx++, 0, counterz--);
+	}
+	Shape box;
+	box.setMesh(&a);
+	box.setPos(0, -2, 0);
 
-	Shape triangle;
-	triangle.setMesh(&m);
-	RectangleShape r;
-	r.setRotation(0, 45, 0);
-	RectangleShape r2;
-	r2.setRotation(0, -45, 0);
+	Shape box2;
+	box2.setMesh(&a);
+	box2.setPos(1, 0, 0);
 
-	RectangleShape r3;
-	r3.setRotation(0, -90, 0);
-
-	RectangleShape r4;
-	r4.setRotation(0, 0, 0);
-
-	RectangleShape r5;
-	r5.setRotation(180, 45, 0);
-	RectangleShape r6;
-	r6.setRotation(180, -45, 0);
-
-	RectangleShape r7;
-	r7.setRotation(180, -90, 0);
-
-	RectangleShape r8;
-	r8.setRotation(180, 0, 0);
 
 	while (wnd.isOpen())
 	{
@@ -67,29 +62,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			r.Rotate(0, -1, 0);
-			r2.Rotate(0, -1, 0);
-			r3.Rotate(0, -1, 0);
-			r4.Rotate(0, -1, 0);
-			r5.Rotate(0, -1, 0);
-			r6.Rotate(0, -1, 0);
-			r7.Rotate(0, -1, 0);
-			r8.Rotate(0, -1, 0);
-
+			for (int i = 0; i < 9; i++)
+			{
+				shapes[i].Rotate(0, 1, 0);
+			}
+			box.Rotate(0, 1, 0);
+			box2.Rotate(0, -1, 0);
 		}
 
 		fpsCounter++;
 
 		//Draw geometry
-		r.Draw();
-		r2.Draw();
-		r3.Draw();
-		r4.Draw();
-		r5.Draw();
-		r6.Draw();
-		r7.Draw();
-		r8.Draw();
-
+		for (int i = 0; i < 9; i++)
+		{
+			shapes[i].Draw();
+		}
 		wnd.Flush(cam); 
 		
 		wnd.Present();

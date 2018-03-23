@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "../../core/Dx.h"
+#include "../../core/ObjLoader.h"
 
 Mesh::Mesh()
 {
@@ -10,34 +11,7 @@ Mesh::Mesh()
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<VERTEX> vertices;
-
-	VERTEX v = {
-
-		0.0f, 0.5f, 0.0f,
-		0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
-
-	v = {
-
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
-	
-	v = {
-		-0.5f, -0.5f, 0.0f,
-		0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
-	m_nrOfVertices = 3;
-	
+	DX::loadOBJ(path, vertices);
 
 	// Vertex Buffer
 	D3D11_BUFFER_DESC vBufferDesc;
@@ -45,6 +19,7 @@ void Mesh::LoadModel(const std::string & path)
 	vBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vBufferDesc.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(vertices.size());
+	m_nrOfVertices = vertices.size();
 
 	D3D11_SUBRESOURCE_DATA vData;
 	vData.pSysMem = vertices.data();

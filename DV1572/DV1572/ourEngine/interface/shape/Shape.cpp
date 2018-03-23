@@ -49,7 +49,8 @@ Shape::Shape()
 	m_gs	= nullptr;
 	m_ps	= nullptr;
 	m_worldMatrix = XMMatrixIdentity();
-
+	m_pos = { 0, 0, 0 };
+	m_rot = { 0,0,0 };
 	m_scl = XMFLOAT3{ 1,1,1 };
 	_buildMatrix();
 }

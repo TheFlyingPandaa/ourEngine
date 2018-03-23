@@ -65,9 +65,16 @@
     <ClInclude Include="ourEngine\core\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ourEngine\core\ObjLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ourEngine\shaders\testPixel.hlsl" />
     <FxCompile Include="ourEngine\shaders\testVertex.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\Aaakali.txt" />
   </ItemGroup>
 </Project>

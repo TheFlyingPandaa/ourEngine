@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
     <ClInclude Include="ourEngine\interface\shape\3DObject.h" />
@@ -149,6 +150,10 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="trolls_inn\Resources\Aaakali.txt" />
+    <Text Include="trolls_inn\Resources\cube.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
