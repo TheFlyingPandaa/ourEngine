@@ -1,16 +1,14 @@
 #include "Rectangle.h"
 #include "../../core/Dx.h"
 
-RectangleShape::RectangleShape(float w, float h)
+void RectangleShape::_buildRectangle()
 {
 	m = new Mesh;
 	std::vector<VERTEX> vertices;
-	m_height = h;
-	m_width = w;
 
 	VERTEX v = {
 
-		-0.5f, -0.5f, 0.0f,
+		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f
@@ -19,7 +17,7 @@ RectangleShape::RectangleShape(float w, float h)
 
 	v = {
 
-		-0.5f, 0.5f, 0.0f,
+		0.0f, 0.5f, 0.0f,
 		0.0f, 1.0f,
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f
@@ -43,7 +41,7 @@ RectangleShape::RectangleShape(float w, float h)
 	vertices.push_back(v);
 
 	v = {
-		0.5f, -0.5f, 0.0f,
+		0.5f, 0.0f, 0.0f,
 		1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f
@@ -52,7 +50,7 @@ RectangleShape::RectangleShape(float w, float h)
 
 	v = {
 
-		-0.5f, -0.5f, 0.0f,
+		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f
@@ -60,7 +58,14 @@ RectangleShape::RectangleShape(float w, float h)
 	vertices.push_back(v);
 	m->LoadModel(vertices);
 	setMesh(m);
+}
 
+RectangleShape::RectangleShape(float w, float h)
+{
+	m_height = h;
+	m_width = w;
+	
+	_buildRectangle();
 
 	setVertexShader(DX::g_3DVertexShader);
 	setPixelShader(DX::g_3DPixelShader);
@@ -69,4 +74,9 @@ RectangleShape::RectangleShape(float w, float h)
 RectangleShape::~RectangleShape()
 {
 	delete m;
+}
+
+void RectangleShape::setDiffuseTexture(const std::string & path)
+{
+	getMesh()->setDiffuseTexture(path);
 }

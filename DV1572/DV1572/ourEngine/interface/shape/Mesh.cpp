@@ -43,8 +43,26 @@ void Mesh::LoadModel(const std::vector<VERTEX>& v)
 
 void Mesh::setDiffuseTexture(const std::string& path)
 {
+	ID3D11Resource* texture;
+	ID3D11ShaderResourceView* textureView;
+	DX::loadTexture(path, texture, textureView);
+	m_material.setDiffuseMap(textureView, texture);
+}
 
+void Mesh::setNormalTexture(const std::string & path)
+{
+	ID3D11Resource* texture;
+	ID3D11ShaderResourceView* textureView;
+	DX::loadTexture(path, texture, textureView);
+	m_material.setNormalMap(textureView, texture);
+}
 
+void Mesh::setHighlightTexture(const std::string & path)
+{
+	ID3D11Resource* texture;
+	ID3D11ShaderResourceView* textureView;
+	DX::loadTexture(path, texture, textureView);
+	m_material.setHighlightMap(textureView, texture);
 }
 
 Material* Mesh::getMaterial()

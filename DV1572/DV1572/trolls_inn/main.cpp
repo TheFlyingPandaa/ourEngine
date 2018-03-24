@@ -24,14 +24,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float unprocessed = 0;
 
 	Camera cam;
-	cam.setPosition(0, 100, 100);
+	//cam.setPosition(0, 100, 100);
 	Mesh m;
 	Mesh a;
+	
 	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 	m.LoadModel("trolls_inn/Resources/cube.txt");
 	Object3D shapes[9];
 	int counterx = 0;
 	int counterz = 0;
+	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	for (int i = 0; i < 9; i++)
 	{
 		shapes[i].setMesh(&a);
@@ -45,6 +47,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	box2.setMesh(&a);
 	box2.setPos(1, 0, 0);
 
+	RectangleShape r;
+	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 
 	while (wnd.isOpen())
 	{
@@ -74,8 +78,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//Draw geometry
 		for (int i = 0; i < 9; i++)
 		{
-			shapes[i].Draw();
+			//shapes[i].Draw();
 		}
+		r.Draw();
 		wnd.Flush(cam); 
 		
 		wnd.Present();
