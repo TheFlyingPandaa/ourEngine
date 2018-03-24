@@ -225,7 +225,7 @@ void Window::_prepareGeometryPass()
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 
-	float color[4]{ 1.0f, 0.0f, 1.0f, 1.0f };
+	float color[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
 
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
 
@@ -360,7 +360,7 @@ bool Window::isOpen()
 
 void Window::Clear()
 {
-	float c[4] = { 1.0f,0.1f,0.9f,1.0f };
+	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_renderQueue.clear(); 
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -374,10 +374,10 @@ void Window::Clear()
 	DX::g_deviceContext->PSSetShaderResources(0, GBUFFER_COUNT, renderTargets);
 }
 
-void Window::Flush(const Camera & c)
+void Window::Flush(Camera* c)
 {
 	_prepareGeometryPass();
-	_geometryPass(c);
+	_geometryPass(*c);
 	_clearTargets();
 	_lightPass();
 }
@@ -397,6 +397,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
+		if(m_windowSizeCallbackFunc != nullptr)m_windowSizeCallbackFunc(m_width, m_height);
 		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
 		if (m_swapChain)
 		{
@@ -422,7 +423,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				&m_backBufferRTV);
 			// Perform error handling here!
 			pBuffer->Release();
-			
+			_initGBuffer();
 			_createDepthBuffer();
 			DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
@@ -436,7 +437,14 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
-			exit(0);
+			PostQuitMessage(0);
+		break;
+	case WM_MOUSEMOVE:
+		m_mousePos.x = LOWORD(lParam);
+		m_mousePos.y = HIWORD(lParam);
+		if(m_cameraFuncCaller!=nullptr)
+			(m_cameraFuncCaller->*m_mousePositionFunc)(Vec2(m_mousePos));
+		break;
 	}
 
 	return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
@@ -458,4 +466,33 @@ LRESULT Window::StaticWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 	pParent->m_hwnd = hWnd;
 	return pParent->WndProc(uMsg, wParam, lParam);
+}
+
+void Window::setMouseMiddleScreen()
+{
+	POINT pt = { (LONG)m_width / 2, (LONG)m_height / 2 };
+	ClientToScreen(m_hwnd, &pt);
+	SetCursorPos(pt.x, pt.y);
+}
+
+void Window::setWindowSizeCallback(void (*func)(int, int))
+{
+	this->m_windowSizeCallbackFunc = func;
+}
+
+void Window::setMousePositionCallback(Camera* object, void(Camera::*func)(Vec2))
+{
+	m_cameraFuncCaller = object;
+	m_mousePositionFunc = func;
+}
+
+Vec2 Window::getSize() const
+{
+	
+	return Vec2((float)m_width / 2,(float)m_height / 2);
+}
+
+Vec2 Window::getMousePos()
+{
+	return m_mousePos;
 }
