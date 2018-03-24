@@ -7,6 +7,10 @@ Camera::Camera()
 	m_lookAt = XMFLOAT3{ 0,0,0 };
 }
 
+Camera::~Camera()
+{
+}
+
 Camera::Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 lookAt)
 {
 	m_pos = pos;
@@ -56,11 +60,31 @@ const DirectX::XMFLOAT3& Camera::getLookAt() const
 	return m_lookAt;
 }
 
-DirectX::XMMATRIX Camera::getViewMatrix() const
+void Camera::setViewMatrix()
 {
-	return XMMatrixLookAtLH(
+	m_viewMatrix = XMMatrixLookAtLH(
 		XMLoadFloat3(&m_pos),
 		XMLoadFloat3(&m_lookAt),
-		m_up
-	);
+		m_up);
+}
+
+void Camera::setViewMatrix(const OurMath::Mat4 & view)
+{
+	DirectX::XMFLOAT4X4 matrix;
+	for(int i = 0; i < 4; i++)
+		for(int j = 0; j < 4; j++)
+			matrix.m[i][j] = view.elements[i + j * 4];
+	m_viewMatrix = DirectX::XMLoadFloat4x4(&matrix);
+}
+
+DirectX::XMMATRIX Camera::getViewMatrix() const
+{
+
+	return m_viewMatrix;
+	
+}
+
+void Camera::setMousePos(OurMath::Vec2 mousePos)
+{
+	m_mousePos = mousePos;
 }
