@@ -21,6 +21,8 @@ public:
 	void LoadModel(const std::string &path);
 	void LoadModel(const std::vector<VERTEX> &v);
 	void setDiffuseTexture(const std::string &path);
+	void setNormalTexture(const std::string &path);
+	void setHighlightTexture(const std::string &path);
 	Material* getMaterial();
 	ID3D11Buffer* getVertices() const;
 	int getNumberOfVertices() const;

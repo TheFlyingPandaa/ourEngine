@@ -5,5 +5,4 @@ class Object3D : public Shape
 {
 public:
 	Object3D();
-
 };

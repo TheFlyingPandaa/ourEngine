@@ -5,8 +5,9 @@
 #include "../Structs.h"
 #include <vector>
 #include <sstream>
-#include "gdiplus.h"
-#pragma comment (lib, "gdiplus.lib")
+#include "WICTextureLoader\WICTextureLoader.h"
+
+
 
 namespace DX
 {
@@ -84,5 +85,13 @@ namespace DX
 				model.push_back(vertex);
 			}
 		}
+	}
+
+	static void loadTexture(const std::string & path, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
+	{
+		std::wstring widestr = std::wstring(path.begin(), path.end());
+		const wchar_t* widecstr = widestr.c_str();
+
+		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device, widecstr, &texture, &textureView);
 	}
 };
