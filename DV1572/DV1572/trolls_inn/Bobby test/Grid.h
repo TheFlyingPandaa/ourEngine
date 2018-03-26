@@ -19,7 +19,7 @@ public:
 
 	void drawString();
 
-	void addRoom(Room* room);
+	void addRoom(Room* room, bool force = false);
 
 	Tile** getGrid() const;
 };

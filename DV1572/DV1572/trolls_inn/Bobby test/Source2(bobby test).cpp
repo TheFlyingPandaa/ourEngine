@@ -7,8 +7,8 @@ int main()
 {
 	Grid grid;
 
-	grid.addRoom(new Kitchen(2, 2, 4, 4));
-	grid.addRoom(new Bedroom(4, 4, 4, 4));
+	grid.addRoom(new Kitchen(2, 2, 4, 4), true);
+	grid.addRoom(new Bedroom(6, 6, 4, 4));
 	while (true) 
 	{		
 		grid.drawString();
