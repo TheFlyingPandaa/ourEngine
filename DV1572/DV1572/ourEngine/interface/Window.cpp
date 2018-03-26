@@ -552,7 +552,7 @@ Shape * Window::getPicked(Camera* c)
 
 	DirectX::XMFLOAT4A pixel = *((DirectX::XMFLOAT4A*)mappedResource.pData);
 
-	int index = pixel.x + (pixel.y * 255) + (pixel.z * 255 * 255);
+	int index = static_cast<int>(pixel.x + (pixel.y * 255) + (pixel.z * 255 * 255) + 0.5f);
 	DX::g_deviceContext->Unmap(m_pickingReadBuffer, 0);
 
 	if (index == 0)
