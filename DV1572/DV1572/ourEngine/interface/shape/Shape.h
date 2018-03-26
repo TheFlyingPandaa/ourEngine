@@ -40,7 +40,7 @@ public:
 	void Rotate(float x, float y, float z);
 	void Rotate(DirectX::XMFLOAT3 rotation);
 	void ApplyShaders();
-
+	void checkPick();
 	const DirectX::XMMATRIX& getWorld() const; 
 
 	void Draw();

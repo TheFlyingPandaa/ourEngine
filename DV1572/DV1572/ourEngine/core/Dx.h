@@ -22,6 +22,7 @@ namespace DX
 	extern std::vector<Shape*> g_renderQueue; 
 	extern std::vector<Shape*> g_shadowQueue;
 	extern std::vector<Shape*> g_transQueue;
+	extern std::vector<Shape*> g_pickingQueue;
 
 
 	extern ID3D11VertexShader* g_3DVertexShader;

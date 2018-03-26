@@ -39,7 +39,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	for (int i = 0; i < 9; i++)
 	{
 		shapes[i].setMesh(&a);
-		shapes[i].setPos(counterx++, 0, counterz--);
+		shapes[i].setPos((float)counterx++, 0, (float)counterz--);
 	}
 	Object3D box;
 	box.setMesh(&a);
@@ -51,6 +51,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	RectangleShape r;
 	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	r.setPos(-1.5, 1.4, 0);
+
+	RectangleShape r2;
+	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	r2.setPos(0, 0, 0);
 
 	while (wnd.isOpen())
 	{
@@ -84,6 +89,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			shapes[i].Draw();
 		}
 		r.Draw();
+		r.checkPick();
+		r2.Draw();
+		r2.checkPick();
+
+		Shape* picked = nullptr;
+		if (GetAsyncKeyState(VK_LBUTTON))
+		{
+			picked = wnd.getPicked(cam);
+		}
+		if (picked)
+		{
+			picked->Move(0.01f, 0.0f, 0.0f);
+		}
+
+
 		wnd.Flush(cam); 
 		
 		wnd.Present();
@@ -98,6 +118,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 
 	
-
+	delete cam;
 	return 0;
 }

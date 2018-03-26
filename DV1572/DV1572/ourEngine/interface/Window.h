@@ -7,6 +7,8 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
 #include "OurMath.h"
+#include "shape\Shape.h"
+
 using namespace OurMath;
 
 const UINT GBUFFER_COUNT = 3;
@@ -43,6 +45,7 @@ private:
 	ID3D11Buffer*			m_meshConstantBuffer;
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_CameraConstantBuffer;
+	
 
 	INT						m_sampleCount;
 
@@ -51,8 +54,16 @@ private:
 	ID3D11VertexShader*		m_deferredVertexShader;
 	ID3D11PixelShader*		m_deferredPixelShader;
 
+	//Picking
+	GBUFFER					m_pickingTexture;
+	ID3D11VertexShader*		m_pickingVertexShader;
+	ID3D11PixelShader*		m_pickingPixelShader;
+	ID3D11Buffer*			m_pickingBuffer;
+	ID3D11Texture2D*		m_pickingReadBuffer;
+
+
 	// Input
-	Vec2 m_mousePos;
+	Vec2					m_mousePos;
 	
 	// Function callback pointers
 	void(*m_windowSizeCallbackFunc)(int, int);
@@ -67,6 +78,10 @@ private:
 	bool	_compileShaders();
 	void	_setSamplerState();
 	void	_createConstantBuffers();
+	void	_createMeshConstantBuffer();
+	void	_createPickConstantBuffer();
+
+
 	void	_createDepthBuffer();
 	
 	// Deferred Rendering
@@ -76,6 +91,10 @@ private:
 	void	_clearTargets();
 	void	_lightPass();
 
+
+	//	Picking
+	void	_initPickingTexture();
+	void	_initPickingShaders();
 	
 
 public:
@@ -87,6 +106,11 @@ public:
 	bool isOpen();
 	void Clear();
 	void Flush(Camera* c);
+
+	//Do this once per loop and if pressed
+	Shape* getPicked(Camera* c);
+
+
 	void Present();
 	LRESULT WndProc(UINT, WPARAM, LPARAM);
 	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);

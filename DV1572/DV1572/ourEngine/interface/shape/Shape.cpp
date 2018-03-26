@@ -133,6 +133,11 @@ void Shape::ApplyShaders()
 
 }
 
+void Shape::checkPick()
+{
+	DX::g_pickingQueue.push_back(this);
+}
+
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 
