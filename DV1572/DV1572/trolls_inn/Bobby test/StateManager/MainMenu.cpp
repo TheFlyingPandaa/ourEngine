@@ -11,7 +11,7 @@ MainMenu::~MainMenu()
 	std::cout << "Exit MainMenu\n";
 }
 
-void MainMenu::update(double deltaTime)
+void MainMenu::Update(double deltaTime)
 {
 	int counter = 0;
 	while (counter > 100000)
@@ -21,7 +21,7 @@ void MainMenu::update(double deltaTime)
 	this->m_exitState = true;
 }
 
-void MainMenu::draw()
+void MainMenu::Draw()
 {
 	std::cout << "MainMenu draw\n";
 }

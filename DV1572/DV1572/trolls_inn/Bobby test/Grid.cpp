@@ -21,17 +21,17 @@ Grid::~Grid()
 {
 }
 
-void Grid::drawString()
+void Grid::DrawString()
 {
 	for (int y = 0; y < 25; y++)
 	{
 		for (int x = 0; x < 25; x++)
 		{
 			bool room = false;
-			for (int i = 0; i < rooms.size() && !room; i++)
+			for (int i = 0; i < m_rooms.size() && !room; i++)
 			{
-				if (rooms[i]->inside(x, y)) {
-					std::cout << rooms[i]->toString() << " ";
+				if (m_rooms[i]->Inside(x, y)) {
+					std::cout << m_rooms[i]->toString() << " ";
 					room = true;
 				}
 			}
@@ -42,9 +42,9 @@ void Grid::drawString()
 	}
 }
 
-void Grid::addRoom(Room * room)
+void Grid::AddRoom(Room * room)
 {
-	rooms.push_back(room);
+	m_rooms.push_back(room);
 }
 
 Tile ** Grid::getGrid() const

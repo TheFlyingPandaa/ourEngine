@@ -12,10 +12,10 @@ public:
 	State() : m_exitState(false), m_newState(nullptr) {}
 	virtual ~State() {}
 
-	virtual void update(double deltaTime) = 0;
-	virtual void draw() = 0;
+	virtual void Update(double deltaTime) = 0;
+	virtual void Draw() = 0;
 
-	virtual State * newState() { return this->m_newState; }
-	virtual bool exit() { return this->m_exitState; }
+	virtual State * NewState() { return this->m_newState; }
+	virtual bool Exit() { return this->m_exitState; }
 };
 

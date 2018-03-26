@@ -11,15 +11,15 @@ class Grid
 private:
 	Tile**	m_tiles;
 
-	std::vector<Room*> rooms;
+	std::vector<Room*> m_rooms;
 
 public:
 	Grid();
 	~Grid();
 
-	void drawString();
+	void DrawString();
+	void AddRoom(Room* room);
 
-	void addRoom(Room* room);
 
 	Tile** getGrid() const;
 };
