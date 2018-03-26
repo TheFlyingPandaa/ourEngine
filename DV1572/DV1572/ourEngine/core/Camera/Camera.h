@@ -5,11 +5,12 @@
 class Camera
 {
 private:
-	DirectX::XMFLOAT3 m_pos, m_lookAt;
+
 	const DirectX::XMVECTOR m_up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	DirectX::XMMATRIX m_viewMatrix;
 
 protected:
+	DirectX::XMFLOAT3 m_pos, m_lookAt;
 	OurMath::Vec2 m_mousePos;
 	OurMath::Vec3 m_rotation;
 	OurMath::Vec3 m_position;

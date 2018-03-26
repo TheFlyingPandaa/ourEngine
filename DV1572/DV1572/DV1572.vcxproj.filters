@@ -51,6 +51,9 @@
     <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\interface\Window.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ourEngine\core\Camera\MayaCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

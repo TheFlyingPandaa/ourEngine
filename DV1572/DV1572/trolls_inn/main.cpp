@@ -1,7 +1,7 @@
 #include "../ourEngine/interface/Interface.h"
 #include <iostream>
 #include <chrono>
-
+#include <glm\glm.hpp>
 const float REFRESH_RATE = 60.0f;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
@@ -23,32 +23,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new FPSCamera();
+	Camera* cam = new OrbitCamera(glm::vec3(0,0,-5));
 	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 
 	//cam.setPosition(0, 100, 100);
 	Mesh m;
-	Mesh a;
-	
-	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+
 	m.LoadModel("trolls_inn/Resources/cube.txt");
 	Object3D shapes[9];
 	int counterx = 0;
 	int counterz = 0;
-	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	m.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+
 	for (int i = 0; i < 9; i++)
 	{
-		shapes[i].setMesh(&a);
-		shapes[i].setPos(counterx++, 0, counterz--);
+		shapes[i].setMesh(&m);
+		shapes[i].setPos(counterx--, 0, counterz--);
 	}
-	Object3D box;
-	box.setMesh(&a);
-	box.setPos(0, -2, 0);
-
-	Object3D box2;
-	box2.setMesh(&a);
-	box2.setPos(1, 0, 0);
-
+	
 	RectangleShape r;
 	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 
@@ -71,8 +63,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				shapes[i].Rotate(0, 1, 0);
 			}
-			box.Rotate(0, 1, 0);
-			box2.Rotate(0, -1, 0);
+		
 			cam->update();
 		}
 
