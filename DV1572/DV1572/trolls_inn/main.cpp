@@ -89,9 +89,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			shapes[i].Draw();
 		}
 		r.Draw();
-		r.checkPick();
+		r.CheckPick();
 		r2.Draw();
-		r2.checkPick();
+		r2.CheckPick();
 
 		Shape* picked = nullptr;
 		if (GetAsyncKeyState(VK_LBUTTON))

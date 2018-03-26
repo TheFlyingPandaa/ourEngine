@@ -133,7 +133,7 @@ void Shape::ApplyShaders()
 
 }
 
-void Shape::checkPick()
+void Shape::CheckPick()
 {
 	DX::g_pickingQueue.push_back(this);
 }
