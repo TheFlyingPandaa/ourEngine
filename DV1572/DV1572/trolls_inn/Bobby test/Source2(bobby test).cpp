@@ -11,9 +11,9 @@ int main()
 {
 	Grid grid;
 
-	grid.AddRoom(new Kitchen(2, 2, 4, 4));
-	grid.AddRoom(new Bedroom(6, 2, 4, 4));
-	while (!false != !true) 
+	grid.addRoom(new Kitchen(2, 2, 4, 4), true);
+	grid.addRoom(new Bedroom(6, 6, 4, 4));
+	while (true) 
 	{		
 		grid.DrawString();
 		std::string s;
