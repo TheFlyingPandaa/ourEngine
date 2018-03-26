@@ -11,7 +11,7 @@ GameState::~GameState()
 	std::cout << "Exit GameState\n";
 }
 
-void GameState::update(double deltaTime)
+void GameState::Update(double deltaTime)
 {
 	int counter = 0;
 	while (counter < 100000)
@@ -23,7 +23,7 @@ void GameState::update(double deltaTime)
 	
 }
 
-void GameState::draw()
+void GameState::Draw()
 {
 	std::cout << "GameState draw\n";
 }

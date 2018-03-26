@@ -9,6 +9,6 @@ public:
 	~GameState();
 
 	// Inherited via State
-	virtual void update(double deltaTime) override;
-	virtual void draw() override;
+	virtual void Update(double deltaTime) override;
+	virtual void Draw() override;
 };

@@ -53,7 +53,7 @@ public:
 	virtual int			getSizeX() const { return m_sizeX; }
 	virtual int			getSizeY() const { return m_sizeY; }
 
-	virtual bool		inside(int x, int y) {
+	virtual bool		Inside(int x, int y) {
 		return x >= m_posX && x < m_posX + m_sizeX && 
 				y >= m_posY && y < m_posY + m_sizeY;
 	}
