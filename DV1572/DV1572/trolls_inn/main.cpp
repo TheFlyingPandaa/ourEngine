@@ -23,7 +23,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera cam;
+	Camera* cam = new FPSCamera();
+	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
+
 	//cam.setPosition(0, 100, 100);
 	Mesh m;
 	Mesh a;
@@ -71,6 +73,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			box.Rotate(0, 1, 0);
 			box2.Rotate(0, -1, 0);
+			cam->update();
 		}
 
 		fpsCounter++;
@@ -78,7 +81,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//Draw geometry
 		for (int i = 0; i < 9; i++)
 		{
-			//shapes[i].Draw();
+			shapes[i].Draw();
 		}
 		r.Draw();
 		wnd.Flush(cam); 

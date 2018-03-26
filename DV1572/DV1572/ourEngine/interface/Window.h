@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
-#include "../core/Camera.h"
+#include "../core/Camera/Camera.h"
 #include "OurMath.h"
 using namespace OurMath;
 

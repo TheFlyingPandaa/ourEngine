@@ -19,7 +19,8 @@ MayaCamera::MayaCamera()
 
 void MayaCamera::update()
 {
-	
+	using namespace OurMath;
+
 	OurMath::Vec2 mouse = m_mousePos;
 	OurMath::Vec2 delta = mouse - m_lastMouse;
 	m_lastMouse = mouse;
@@ -41,6 +42,7 @@ void MayaCamera::update()
 	m_position = CalculatePosition();
 	OurMath::Quaternion orientation = GetOrientation();
 	m_rotation = orientation.ToEulerAngles().toDegrees();
+
 
 	OurMath::Mat4 viewMatrix = OurMath::Mat4::Translate(OurMath::Vec3(0, 0, 1)) * OurMath::Mat4::Rotate(orientation.Conjugate()) * OurMath::Mat4::Translate(m_position.Negative());
 

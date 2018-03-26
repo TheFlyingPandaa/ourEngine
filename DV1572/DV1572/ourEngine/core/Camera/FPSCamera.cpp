@@ -61,6 +61,7 @@ void FPSCamera::update()
 	OurMath::Mat4 translation = OurMath::Mat4::Translate(pos.Negative());
 	OurMath::Mat4 viewMatrix = rotation.Multiply(translation);
 
+
 	setViewMatrix(viewMatrix);
 }
 

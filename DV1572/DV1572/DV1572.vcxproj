@@ -118,8 +118,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ourEngine\core\Camera.cpp" />
+    <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
+    <ClCompile Include="ourEngine\core\Camera\FPSCamera.cpp" />
+    <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
+    <ClCompile Include="ourEngine\interface\OurMath.cpp" />
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
@@ -129,12 +132,15 @@
     <ClCompile Include="trolls_inn\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ourEngine\core\Camera.h" />
+    <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\Camera\FPSCamera.h" />
+    <ClInclude Include="ourEngine\core\Camera\MayaCamera.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
+    <ClInclude Include="ourEngine\interface\OurMath.h" />
     <ClInclude Include="ourEngine\interface\shape\3DObject.h" />
     <ClInclude Include="ourEngine\interface\shape\Material.h" />
     <ClInclude Include="ourEngine\interface\shape\Mesh.h" />

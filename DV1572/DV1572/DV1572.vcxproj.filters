@@ -30,9 +30,6 @@
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ourEngine\core\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,6 +37,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ourEngine\interface\OurMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ourEngine\core\Camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ourEngine\core\Camera\FPSCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,9 +80,6 @@
     <ClInclude Include="ourEngine\interface\shape\3DObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ourEngine\core\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ourEngine\core\ObjLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +87,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourEngine\interface\OurMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourEngine\core\Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourEngine\core\Camera\FPSCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ourEngine\core\Camera\MayaCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
