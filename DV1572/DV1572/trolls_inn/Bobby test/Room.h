@@ -10,12 +10,14 @@ struct Tile {
 		m_posY = y;
 		m_sizeX = sizeX;
 		m_sizeY = sizeY;
+		m_door = false;
 		m_room = room;
 	}
 	int		m_posY;
 	int		m_posX;
 	int		m_sizeX;
 	int		m_sizeY;
+	bool	m_door;
 	Room*	m_room;
 };
 
@@ -54,9 +56,14 @@ public:
 	virtual int			getSizeY() const { return m_sizeY; }
 
 	virtual bool		Inside(int x, int y) {
-		return x >= m_posX && x < m_posX + m_sizeX && 
+		return	x >= m_posX && x < m_posX + m_sizeX && 
 				y >= m_posY && y < m_posY + m_sizeY;
 	}
+	virtual bool		Inside(Tile * t) {
+		return	t->m_posX >= m_posX && t->m_posY < m_posX + m_sizeX &&
+				t->m_sizeY >= m_posY && t->m_posY < m_posY + m_sizeY;
+	}
+
 	virtual std::string	toString() const = 0;
 
 };
