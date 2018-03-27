@@ -14,7 +14,7 @@ struct INPUT
 
 struct OUTPUT
 {
-	float4 pos : SV_POSITION;
+	//float4 pos : SV_POSITION;
 	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
@@ -24,9 +24,12 @@ struct OUTPUT
 OUTPUT main(INPUT input)
 {
 	OUTPUT o;
-	o.pos = mul(float4(input.pos, 1),wvp);
-	o.worldPos = mul(float4(input.pos, 1), world);
+	//o.pos = mul(float4(input.pos, 1),wvp);
+	//o.worldPos = mul(float4(input.pos, 1), world);
+	o.worldPos = float4(input.pos,1);
 	o.tex = input.tex;
-	o.normal = mul(float4(input.normal, 1), world).xyz;
+	o.normal = input.normal;
+	//o.normal = mul(float4(input.normal, 1), world).xyz;
+
 	return o;
 }

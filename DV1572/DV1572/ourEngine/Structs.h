@@ -28,6 +28,13 @@ struct MESH_BUFFER
 	DirectX::XMFLOAT4X4A MVP, world;
 };
 
+struct PICK_BUFFER
+{
+	DirectX::XMFLOAT4A index;
+	DirectX::XMFLOAT4X4A MVP;
+};
+
+
 struct V
 {
 	float x, y, z;
