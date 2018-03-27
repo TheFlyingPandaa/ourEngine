@@ -1,14 +1,23 @@
 ﻿#include "Window.h"
 #include "../core/Dx.h"
+//Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
+
+//Standard Shaders and Input
 ID3D11VertexShader* DX::g_3DVertexShader;
 ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
+
+//Rendering Queues
 std::vector<Shape*> DX::g_renderQueue;
 std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
 std::vector<Shape*> DX::g_pickingQueue;
+
+//Standard Tessellation
+ID3D11HullShader* DX::g_standardHullShader;
+ID3D11DomainShader* DX::g_standardDomainShader;
 
 void DX::CleanUp()
 {
@@ -133,7 +142,9 @@ bool Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, m_deferredPixelShader,
 		L"ourEngine/shaders/deferredPixelShader.hlsl", "main");
 
+
 	_initPickingShaders();
+	_initTessellationShaders();
 
 	return true;
 }
@@ -146,6 +157,16 @@ void Window::_initPickingShaders()
 
 	ShaderCreator::CreatePixelShader(DX::g_device, m_pickingPixelShader,
 		L"ourEngine/shaders/pickingPixelShader.hlsl", "main");
+}
+
+void Window::_initTessellationShaders()
+{
+
+	ShaderCreator::CreateHullShader(DX::g_device, DX::g_standardHullShader,
+		L"ourEngine/Shaders/standardHullShader.hlsl", "main");
+
+	ShaderCreator::CreateDomainShader(DX::g_device, DX::g_standardDomainShader,
+		L"ourEngine/shaders/standardDomainShader.hlsl", "main");
 }
 
 void Window::_setSamplerState()
@@ -257,7 +278,7 @@ void Window::_prepareGeometryPass()
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);*/
 
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
@@ -287,6 +308,7 @@ void Window::_geometryPass(const Camera &cam)
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
 		DX::g_renderQueue[i]->ApplyShaders();
 

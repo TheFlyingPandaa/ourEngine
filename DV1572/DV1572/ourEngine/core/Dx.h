@@ -29,5 +29,9 @@ namespace DX
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
 
+	//Tesselltion
+	extern ID3D11HullShader* g_standardHullShader;
+	extern ID3D11DomainShader* g_standardDomainShader;
+
 	extern void CleanUp();
 }

@@ -109,6 +109,8 @@
     <FxCompile Include="ourEngine\shaders\3DPixel.hlsl" />
     <FxCompile Include="ourEngine\shaders\pickingVertexShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\pickingPixelShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\standardHullShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\standardDomainShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="trolls_inn\Resources\cube.txt" />
