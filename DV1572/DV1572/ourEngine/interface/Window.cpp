@@ -1,5 +1,6 @@
 ﻿#include "Window.h"
 #include "../core/Dx.h"
+#include <thread>
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -122,7 +123,7 @@ void Window::_setViewport()
 	DX::g_deviceContext->RSSetViewports(1, &vp);
 }
 
-bool Window::_compileShaders()
+void Window::_compileShaders()
 {
 	// Vertex Shader
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
@@ -146,7 +147,7 @@ bool Window::_compileShaders()
 	_initPickingShaders();
 	_initTessellationShaders();
 
-	return true;
+
 }
 
 void Window::_initPickingShaders()
@@ -307,7 +308,6 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
-		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
 		DX::g_renderQueue[i]->ApplyShaders();
@@ -445,13 +445,15 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_initWindow();
 	HRESULT hr = _initDirect3DContext();
 	_setViewport();
-	_compileShaders();
+	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
+	std::thread t2(&Window::_initGBuffer, this);	//_initGBuffer();
 	_createConstantBuffers(); 
-	_initGBuffer();
 	_initPickingTexture();
 	_setSamplerState();
-
+	
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
+	t1.join();
+	t2.join();
 	ShowWindow(m_hwnd, 10);
 	return true;
 }

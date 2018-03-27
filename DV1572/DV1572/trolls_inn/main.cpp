@@ -1,11 +1,18 @@
 #include "../ourEngine/interface/Interface.h"
 #include <iostream>
 #include <chrono>
-
+#include <thread>
 const float REFRESH_RATE = 60.0f;
+
+inline void _loadModelThread(Mesh * a, const std::string path)
+{
+	a->LoadModel(path);
+}
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	auto start = std::chrono::system_clock::now();
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
 	AllocConsole();
@@ -29,12 +36,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//cam.setPosition(0, 100, 100);
 	Mesh m;
 	Mesh a;
-	
-	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+	std::thread modelThread(_loadModelThread,&a, "trolls_inn/Resources/Aaakali.txt");
 	m.LoadModel("trolls_inn/Resources/cube.txt");
 	Object3D shapes[9];
 	int counterx = 0;
 	int counterz = 0;
+	
 	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	for (int i = 0; i < 9; i++)
 	{
@@ -57,6 +65,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	r2.setPos(0, 0, 0);
 
+	modelThread.join();
+	auto end = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	std::cout << elapsed_seconds.count() << std::endl;
+	
 	while (wnd.isOpen())
 	{
 		wnd.Clear();

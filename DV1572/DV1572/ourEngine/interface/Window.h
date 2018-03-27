@@ -79,7 +79,7 @@ private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
 	void	_setViewport();
-	bool	_compileShaders();
+	void	_compileShaders();
 	void	_setSamplerState();
 	void	_createConstantBuffers();
 	void	_createMeshConstantBuffer();
