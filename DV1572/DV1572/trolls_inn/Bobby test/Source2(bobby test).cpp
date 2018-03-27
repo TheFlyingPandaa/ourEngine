@@ -9,10 +9,10 @@
 
 int main() 
 {
-	Grid grid;
+	Grid grid(0,0,25,25);
 
-	grid.AddRoom(new Kitchen(2, 2, 4, 4), true);
-	grid.AddRoom(new Bedroom(6, 6, 4, 4));
+	grid.AddRoom(new Kitchen(6, 2, 4, 4), true);
+	grid.AddRoom(new Bedroom(10, 6, 4, 4));
 	while (true) 
 	{		
 		grid.DrawString();

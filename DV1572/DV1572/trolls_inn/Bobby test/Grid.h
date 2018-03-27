@@ -15,11 +15,13 @@ private:
 	Tile**				m_tiles;
 	std::vector<Room*>	m_rooms;
 
-	bool	_intersect(Room * room) const;
-	int		_within(Tile * tiles, Room * a, Room * b);
+	int m_posX, m_posY;
+	int m_sizeX, m_sizeY;
+
+	bool	_intersect(Room * room, bool close = false, Room ** otherRef = nullptr, bool getRef = false);
 	
 public:
-	Grid();
+	Grid(int posX = 0, int posY = 0, int sizeX = 32, int sizeY = 32);
 	~Grid();
 
 	void	DrawString();

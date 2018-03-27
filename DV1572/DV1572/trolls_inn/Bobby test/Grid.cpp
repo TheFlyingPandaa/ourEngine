@@ -2,31 +2,41 @@
 #include <math.h>
 
 
-bool Grid::_intersect(Room * room) const
+bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
 {
 	bool intersec = false;
 	for (int i = 0; i < m_rooms.size() && !intersec; i++)
 	{
-		intersec = (std::abs(room->getX() - m_rooms[i]->getX()) * 2) < (room->getSizeX() + m_rooms[i]->getSizeX()) &&
-			(std::abs(room->getY() - m_rooms[i]->getY()) * 2) < (room->getSizeY() + m_rooms[i]->getSizeY());
+		if (!close) {
+			intersec =	(std::abs(room->getX() - m_rooms[i]->getX()) * 2) < (room->getSizeX() + m_rooms[i]->getSizeX()) &&
+						(std::abs(room->getY() - m_rooms[i]->getY()) * 2) < (room->getSizeY() + m_rooms[i]->getSizeY());
+
+			if (intersec && getRef)
+				*otherRef = m_rooms[i];
+		}
+		else {
+			intersec =	(std::abs(room->getX() - m_rooms[i]->getX()) * 2) <= (room->getSizeX() + m_rooms[i]->getSizeX()) &&
+						(std::abs(room->getY() - m_rooms[i]->getY()) * 2) <= (room->getSizeY() + m_rooms[i]->getSizeY());
+
+			if (intersec && getRef)
+				*otherRef = m_rooms[i];
+		}
 	}
 	return intersec;
 }
 
-int Grid::_within(Tile * tiles, Room * a, Room * b)
+Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 {
-	std::vector<Tile> f_tiles;
-	
-	return 0;
-}
+	this->m_posX = posX;
+	this->m_posY = posY;
+	this->m_sizeX = sizeX;
+	this->m_sizeY = sizeY;
 
-Grid::Grid()
-{
-	this->m_tiles = new Tile*[25];
-	for (int i = 0; i < 25; i++)
+	this->m_tiles = new Tile*[sizeX];
+	for (int i = posX; i < posX + sizeX; i++)
 	{
-		this->m_tiles[i] = new Tile[25];
-		for (int j = 0; j < 25; j++)
+		this->m_tiles[i] = new Tile[sizeY];
+		for (int j = posY; j < posY + sizeY; j++)
 		{
 			this->m_tiles[i][j].m_posX = i;
 			this->m_tiles[i][j].m_posY = j;
@@ -41,9 +51,9 @@ Grid::~Grid()
 
 void Grid::DrawString()
 {
-	for (int y = 0; y < 25; y++)
+	for (int y = 0; y < m_sizeY; y++)
 	{
-		for (int x = 0; x < 25; x++)
+		for (int x = 0; x < m_sizeX; x++)
 		{
 			bool room = false;
 			for (int i = 0; i < m_rooms.size() && !room; i++)
@@ -62,18 +72,20 @@ void Grid::DrawString()
 
 void Grid::AddRoom(Room * room, bool force)
 {
-	bool intersec = this->_intersect(room);
-	
+	Room * f_ref = nullptr;
+	if (!this->_intersect(room) && this->_intersect(room, true, &f_ref, true) || force) {
+		if (force)
+			m_rooms.push_back(room);
+		else {
 
-	bool closeTo = false;
-	for (int i = 0; i < m_rooms.size() && !intersec; i++)
-	{
-		closeTo =	(std::abs(room->getX() - m_rooms[i]->getX()) * 2) <= (room->getSizeX() + m_rooms[i]->getSizeX()) &&
-					(std::abs(room->getY() - m_rooms[i]->getY()) * 2) <= (room->getSizeY() + m_rooms[i]->getSizeY());
+			if (room->getX() >= f_ref->getX() && room->getX() <= f_ref->getX() + f_ref->getSizeX()) {
+				m_rooms.push_back(room);
+			}
+			else if (room->getX() + room->getSizeX() > f_ref->getX() && room->getX() + room->getSizeX() < f_ref->getX() + f_ref->getSizeX()) {
+				m_rooms.push_back(room);
+			}
+		}
 	}
-
-	if (!intersec && closeTo || force)
-		m_rooms.push_back(room);
 }
 
 Tile ** Grid::getGrid() const
