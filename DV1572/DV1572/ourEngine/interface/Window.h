@@ -61,6 +61,10 @@ private:
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
 
+	//Tessellation
+	ID3D11HullShader*		m_standardHullShader;
+	ID3D11DomainShader*		m_standardDomainShader;
+
 
 	// Input
 	Vec2					m_mousePos;
@@ -96,6 +100,8 @@ private:
 	void	_initPickingTexture();
 	void	_initPickingShaders();
 	
+	//Tessellation
+	void	_initTessellationShaders();
 
 public:
 	Window(HINSTANCE h);

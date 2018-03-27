@@ -96,7 +96,7 @@ namespace ShaderCreator //Maybe subject to change
 
 	inline void CreateDomainShader(ID3D11Device* device, ID3D11DomainShader*& domainShader, const LPCWSTR fileName, const LPCSTR entryPoint = "main")
 	{
-		HRESULT hr;
+		HRESULT hr = 0;
 		ID3DBlob* pDS = nullptr;
 		ID3DBlob* error = nullptr;
 		//ID3DBlob* errorBlob = nullptr;
