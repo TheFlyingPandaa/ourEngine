@@ -1,7 +1,6 @@
 #include "Grid.h"
 #include <math.h>
 
-
 bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
 {
 	bool intersec = false;
@@ -25,6 +24,7 @@ bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
 	return intersec;
 }
 
+
 Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 {
 	this->m_posX = posX;
@@ -45,8 +45,6 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 		}
 	}
 }
-
-
 Grid::~Grid()
 {
 	for (int i = 0; i < m_sizeX; i++)
@@ -62,6 +60,45 @@ Grid::~Grid()
 	m_rooms.clear();
 }
 
+
+Tile ** Grid::getGrid() const
+{
+	return m_tiles;
+}
+void Grid::AddRoom(Room * room, bool force)
+{
+	/*Room * f_ref = nullptr;
+	if (!this->_intersect(room) && this->_intersect(room, true, &f_ref, true) || force) {
+		if (force)
+			m_rooms.push_back(room);
+		else {
+
+			if (room->getX() >= f_ref->getX() && room->getX() <= f_ref->getX() + f_ref->getSizeX()) {
+				m_rooms.push_back(room);
+			}
+			else if (room->getX() + room->getSizeX() > f_ref->getX() && room->getX() + room->getSizeX() < f_ref->getX() + f_ref->getSizeX()) {
+				m_rooms.push_back(room);
+			}
+		}
+	}*/
+
+	room->move(this->m_posX, this->m_posY);
+	m_rooms.push_back(room);
+}
+void Grid::Draw()
+{
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		for (int j = 0; j < m_sizeY; j++)
+		{
+			m_tiles[i][j].quad.Draw();
+		}
+	}
+	for (size_t i = 0; i < m_rooms.size(); i++)
+	{
+		m_rooms[i]->Draw();
+	}
+}
 void Grid::DrawString()
 {
 	for (int y = 0; y < m_sizeY; y++)
@@ -80,45 +117,6 @@ void Grid::DrawString()
 				 std::cout << "0" << " ";
 		}
 		std::cout << std::endl;
-	}
-}
-
-void Grid::AddRoom(Room * room, bool force)
-{
-	/*Room * f_ref = nullptr;
-	if (!this->_intersect(room) && this->_intersect(room, true, &f_ref, true) || force) {
-		if (force)
-			m_rooms.push_back(room);
-		else {
-
-			if (room->getX() >= f_ref->getX() && room->getX() <= f_ref->getX() + f_ref->getSizeX()) {
-				m_rooms.push_back(room);
-			}
-			else if (room->getX() + room->getSizeX() > f_ref->getX() && room->getX() + room->getSizeX() < f_ref->getX() + f_ref->getSizeX()) {
-				m_rooms.push_back(room);
-			}
-		}
-	}*/
-	m_rooms.push_back(room);
-}
-
-Tile ** Grid::getGrid() const
-{
-	return m_tiles;
-}
-
-void Grid::Draw()
-{
-	for (int i = 0; i < m_sizeX; i++)
-	{
-		for (int j = 0; j < m_sizeY; j++)
-		{
-			m_tiles[i][j].quad.Draw();
-		}
-	}
-	for (size_t i = 0; i < m_rooms.size(); i++)
-	{
-		m_rooms[i]->Draw();
 	}
 }
 

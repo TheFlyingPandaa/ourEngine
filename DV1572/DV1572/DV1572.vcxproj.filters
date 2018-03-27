@@ -63,6 +63,9 @@
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\Room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\interface\Window.h">

@@ -5,15 +5,11 @@ Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, Mesh * m) : Room(posX
 {
 
 }
-
 Kitchen::~Kitchen()
 {
-	for (int i = 0; i < m_sizeX; i++)
-	{
-		//delete[] m_tiles[i];
-	}
-	//delete[] m_tiles;
+
 }
+
 
 void Kitchen::Draw()
 {
@@ -29,7 +25,6 @@ void Kitchen::Draw()
 		right[y]->Draw();
 	}
 }
-
 std::string Kitchen::toString() const
 {
 	return "K";
