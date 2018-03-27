@@ -1,29 +1,34 @@
 #include "GameState.h"
 #include <iostream>
 
-GameState::GameState() : State()
+
+GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	std::cout << "Enterd GameState\n";
+	this->m_cam = cam;
+	this->_init();
 }
 
 GameState::~GameState()
 {
-	std::cout << "Exit GameState\n";
+	
 }
 
 void GameState::Update(double deltaTime)
 {
-	int counter = 0;
-	while (counter < 100000)
-	{
-		counter++;
-	}
-	std::cout << "GameState is complete\n";
-	this->m_exitState = true;
-	
+	this->obj.CheckPick();
 }
 
 void GameState::Draw()
 {
-	std::cout << "GameState draw\n";
+	this->obj.Draw();
+}
+
+void GameState::_init()
+{
+	this->m.LoadModel("trolls_inn/Resources/wall.obj");
+	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	this->obj.setMesh(&m);
+	
+	this->obj.setPos(-1.1f, -1.0f, 0);
+	
 }

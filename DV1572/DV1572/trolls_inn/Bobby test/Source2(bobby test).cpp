@@ -7,50 +7,106 @@
 #include "StateManager\GameState.h"
 #include "StateManager\MainMenu.h"
 
-int main() 
+#include <iostream>
+#include <chrono>
+
+const float REFRESH_RATE = 60.0f;
+
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	Grid grid(0,0,25,25);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//	Activation of Console
+	AllocConsole();
+	FILE* fp;
+	freopen_s(&fp, "CONOUT$", "w", stdout);
 
-	grid.AddRoom(new Kitchen(6, 2, 4, 4), true);
-	grid.AddRoom(new Bedroom(10, 6, 4, 4));
-	while (true) 
-	{		
-		grid.DrawString();
-		std::string s;
-		std::cin >> s;
-	}
+	Window wnd(hInstance);
+	wnd.Init(1280, 720, "Banan");
+
+	using namespace std::chrono;
+	auto time = steady_clock::now();
+	auto timer = steady_clock::now();
+	int updates = 0;
+	int fpsCounter = 0;
+	float freq = 1000000000.0f / REFRESH_RATE;
+	float unprocessed = 0;
+
+	Camera* cam = new FPSCamera();
+	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
-	std::stack<State*> gameStates;
+	std::stack<State *> gameStates;
+	std::stack<Shape *> pickingEvents;
+	std::stack<int>		keyEvent;
 
+
+	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
+	while (wnd.isOpen())
+	{
+		
+		wnd.Clear();
+		auto currentTime = steady_clock::now();
+		wnd.PollEvents();
+		auto dt = duration_cast<nanoseconds>(currentTime - time).count();
+		time = steady_clock::now();
 
-	gameStates.push(new MainMenu());
-	gameStates.push(new GameState());
+		unprocessed += dt / freq;
+
+
+		while (unprocessed > 1)
+		{
+			updates++;
+			unprocessed -= 1;
+
+			if (!gameStates.empty())
+			{
+				gameStates.top()->Update(1.0f / REFRESH_RATE);
+
+				if (gameStates.top()->Exit()) {
+					delete gameStates.top();
+					gameStates.pop();
+				}
+				else
+				{
+					State * ref = gameStates.top()->NewState();
+					if (ref)
+						gameStates.push(ref);
+
+				}
+			}
+
+		}
+
+		fpsCounter++;
+		if (!gameStates.empty())
+			gameStates.top()->Draw();
+
+		Shape* picked = nullptr;
+		if (GetAsyncKeyState(VK_LBUTTON))		
+			picked = wnd.getPicked(cam);
+
+		if (picked)
+			pickingEvents.push(picked);
+	
+		
+		wnd.Flush(cam);
+
+		wnd.Present();
+
+		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
+		{
+			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			updates = 0;
+			fpsCounter = 0;
+			timer += milliseconds(1000);
+		}
+	}	
 
 	while (!gameStates.empty())
 	{
-
-		gameStates.top()->Update(0.0f);
-		
-		if (gameStates.top()->Exit())
-		{
-			delete gameStates.top();
-			gameStates.pop();
-		}
-		else
-		{
-			State * newState = gameStates.top()->NewState();
-			if (newState != nullptr)
-				gameStates.push(newState);
-			else
-				gameStates.top()->Draw();
-		}
-
-		int i;
-		std::cin >> i;
+		delete gameStates.top();
+		gameStates.pop();
 	}
-
-	std::cout << "opsi fuckity dooo we out of states\n";
-
+	delete cam;
 	return 0;
 }

@@ -72,7 +72,7 @@ void Grid::DrawString()
 
 void Grid::AddRoom(Room * room, bool force)
 {
-	Room * f_ref = nullptr;
+	/*Room * f_ref = nullptr;
 	if (!this->_intersect(room) && this->_intersect(room, true, &f_ref, true) || force) {
 		if (force)
 			m_rooms.push_back(room);
@@ -85,10 +85,16 @@ void Grid::AddRoom(Room * room, bool force)
 				m_rooms.push_back(room);
 			}
 		}
-	}
+	}*/
+	m_rooms.push_back(room);
 }
 
 Tile ** Grid::getGrid() const
 {
 	return m_tiles;
+}
+
+bool Grid::isWall(WallDirection dir) const
+{
+	return m_walls[dir];
 }
