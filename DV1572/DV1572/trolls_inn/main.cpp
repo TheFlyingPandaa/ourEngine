@@ -38,6 +38,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh a;
 	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 	std::thread modelThread(_loadModelThread,&a, "trolls_inn/Resources/Aaakali.txt");
+	Mesh wall;
+	wall.LoadModel("trolls_inn/Resources/wall.obj");
+	Object3D aWall;
+	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	aWall.setMesh(&wall);
+	
+
+	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 	m.LoadModel("trolls_inn/Resources/cube.txt");
 	Object3D shapes[9];
 	int counterx = 0;
@@ -85,10 +93,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			for (int i = 0; i < 9; i++)
+			/*for (int i = 0; i < 9; i++)
 			{
 				shapes[i].Rotate(0, 1, 0);
-			}
+			}*/
 			box.Rotate(0, 1, 0);
 			box2.Rotate(0, -1, 0);
 			cam->update();
@@ -97,14 +105,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		fpsCounter++;
 
 		//Draw geometry
-		for (int i = 0; i < 9; i++)
+		/*for (int i = 0; i < 9; i++)
 		{
 			shapes[i].Draw();
-		}
+		}*/
 		r.Draw();
 		r.CheckPick();
 		r2.Draw();
 		r2.CheckPick();
+		aWall.Draw();
+		aWall.CheckPick();
 
 		Shape* picked = nullptr;
 		if (GetAsyncKeyState(VK_LBUTTON))
@@ -113,7 +123,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		if (picked)
 		{
-			picked->Move(0.01f, 0.0f, 0.0f);
+			picked->Move(-0.01f, 0.0f, 0.0f);
 		}
 
 
