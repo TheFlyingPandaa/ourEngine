@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="trolls_inn\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ourEngine\interface\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,6 +46,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\Kitchen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,6 +111,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ourEngine\core\Camera\MayaCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\Kitchen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trolls_inn\Bobby test\Room.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

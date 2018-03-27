@@ -1,4 +1,5 @@
 #pragma once
+#include "../Grid.h"
 #include "State.h"
 #include "MainMenu.h"
 
@@ -8,6 +9,8 @@ private:
 	
 	Object3D obj;
 	Mesh m;
+
+	Grid* grid;
 
 	virtual void _init() override;
 public:

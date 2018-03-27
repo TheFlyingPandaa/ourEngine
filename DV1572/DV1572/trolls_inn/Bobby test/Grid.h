@@ -12,12 +12,7 @@
 class Grid
 {
 public:
-	enum WallDirection {
-		up,
-		down,
-		left,
-		right
-	};
+
 
 private:
 	Tile**				m_tiles;
@@ -33,13 +28,14 @@ private:
 	bool	_intersect(Room * room, bool close = false, Room ** otherRef = nullptr, bool getRef = false);
 	
 public:
-	Grid(int posX = 0, int posY = 0, int sizeX = 32, int sizeY = 32);
+	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8);
 	~Grid();
 
 	void	DrawString();
 	void	AddRoom(Room* room, bool force = false);
 	Tile**	getGrid() const;
-	bool	isWall(WallDirection dir) const;
+	
+	void	Draw();
 
 };
 

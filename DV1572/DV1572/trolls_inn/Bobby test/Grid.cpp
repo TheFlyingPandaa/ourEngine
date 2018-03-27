@@ -33,13 +33,15 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 	this->m_sizeY = sizeY;
 
 	this->m_tiles = new Tile*[sizeX];
-	for (int i = posX; i < posX + sizeX; i++)
+	for (int i = 0; i < sizeX; i++)
 	{
 		this->m_tiles[i] = new Tile[sizeY];
-		for (int j = posY; j < posY + sizeY; j++)
+		for (int j = 0; j < sizeY; j++)
 		{
-			this->m_tiles[i][j].m_posX = i;
-			this->m_tiles[i][j].m_posY = j;
+			this->m_tiles[i][j].m_posX = i + posX;
+			this->m_tiles[i][j].m_posY = j + posY;
+			this->m_tiles[i][j].quad.setScale(2.0f, 2.0f, 2.0f);
+			this->m_tiles[i][j].quad.setPos(i + posX, 0, j + posY);
 		}
 	}
 }
@@ -47,6 +49,17 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 
 Grid::~Grid()
 {
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		delete[] m_tiles[i];
+	}
+	delete[] m_tiles;
+
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		delete m_rooms[i];
+	}
+	m_rooms.clear();
 }
 
 void Grid::DrawString()
@@ -94,7 +107,18 @@ Tile ** Grid::getGrid() const
 	return m_tiles;
 }
 
-bool Grid::isWall(WallDirection dir) const
+void Grid::Draw()
 {
-	return m_walls[dir];
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		for (int j = 0; j < m_sizeY; j++)
+		{
+			m_tiles[i][j].quad.Draw();
+		}
+	}
+	for (size_t i = 0; i < m_rooms.size(); i++)
+	{
+		m_rooms[i]->Draw();
+	}
 }
+
