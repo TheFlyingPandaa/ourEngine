@@ -20,6 +20,7 @@ void Kitchen::Draw()
 	for (size_t x = 0; x < down.size(); x++)
 	{
 		down[x]->Draw();
+		down[x]->CheckPick();
 		up[x]->Draw();
 	}
 	for (size_t y = 0; y < left.size(); y++)

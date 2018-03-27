@@ -33,7 +33,7 @@ void GameState::Update(double deltaTime)
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
-		obj->Move(0.1f, 0, 0);
+		obj->setPos(0, -100, 0);
 	}
 }
 
@@ -46,7 +46,7 @@ void GameState::Draw()
 void GameState::_init()
 {
 	this->m.LoadModel("trolls_inn/Resources/wall.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	this->m.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	this->obj.setMesh(&m);
 	
 	this->obj.setPos(0.5f, 0.0f, 0);
