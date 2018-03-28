@@ -8,6 +8,7 @@
 #include "../core/Camera/Camera.h"
 #include "OurMath.h"
 #include "shape\Shape.h"
+#include "light\Light.h"
 
 using namespace OurMath;
 
@@ -44,7 +45,8 @@ private:
 
 	ID3D11Buffer*			m_meshConstantBuffer;
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
-	ID3D11Buffer*			m_CameraConstantBuffer;
+	ID3D11Buffer*			m_cameraPosConstantBuffer;
+	ID3D11Buffer*			m_lightBuffer; 
 	
 
 	INT						m_sampleCount;
@@ -84,6 +86,7 @@ private:
 	void	_createConstantBuffers();
 	void	_createMeshConstantBuffer();
 	void	_createPickConstantBuffer();
+	void	_createCameraPosConstantBuffer(); 
 
 
 	void	_createDepthBuffer();
@@ -93,7 +96,7 @@ private:
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);
 	void	_clearTargets();
-	void	_lightPass();
+	void	_lightPass(Light& light, Camera& cam);
 
 
 	//	Picking
@@ -111,7 +114,7 @@ public:
 	void PollEvents();
 	bool isOpen();
 	void Clear();
-	void Flush(Camera* c);
+	void Flush(Camera* c, Light& light);
 
 	//Do this once per loop and if pressed
 	Shape* getPicked(Camera* c);

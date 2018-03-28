@@ -39,7 +39,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 	std::thread modelThread(_loadModelThread,&a, "trolls_inn/Resources/Aaakali.txt");
 	Mesh wall;
-	wall.LoadModel("trolls_inn/Resources/wall.obj");
+	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
@@ -73,6 +73,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	r2.setPos(0, 0, 0);
 
+	Light light; 
+	light.Init(XMFLOAT4A{ 10,30,20,0 }, XMFLOAT4A{ 0,0,0,0 }, XMFLOAT4A{ 1,1,1,1 }, 50, 50); 
+
+
 	modelThread.join();
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;
@@ -99,6 +103,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}*/
 			box.Rotate(0, 1, 0);
 			box2.Rotate(0, -1, 0);
+			r2.Rotate(0, 1, 0); 
+			r.Rotate(1, 1, 0); 
 			cam->update();
 		}
 
@@ -127,7 +133,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 
 
-		wnd.Flush(cam); 
+		wnd.Flush(cam,light); 
 		
 		wnd.Present();
 
