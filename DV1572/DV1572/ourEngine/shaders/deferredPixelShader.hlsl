@@ -33,7 +33,7 @@ float4 main(Input input) : SV_Target
 	float3 ambient = diffuseSample * 0.2f;
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	float3 lightToObject = normalize(lightPos.xyz - wordPos); 
+	float3 lightToObject = normalize(-dir); 
 	float3 diffuse = diffuseSample * max(dot(normal, lightToObject), 0.0f); 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,15 +41,17 @@ float4 main(Input input) : SV_Target
 	float specLevel = 0.5f; 
 	float3 viewer = normalize(camPos.xyz - wordPos); 
 
-	/*WWWHOOOOOOOOO WE'RE...*/ float3 halfWayDir = normalize(lightToObject + viewer); 
+	float3 halfWayDir; 
+	/*WWWHOOOOOOOOO WE'RE...*/ halfWayDir = normalize(lightToObject + viewer); 
 
 	//spec lowest value is 32.
 	float spec = pow(max(dot(normal, halfWayDir), 0.0f), 32.0); 
 
 	float3 finalSpec = spec * specLevel; 
 	///////////////////////////////////////////////////////////////////////////////////////////
-	
-	float3 finalColor = ambient + (finalSpec + diffuse); 
+
+
+	float3 finalColor = ambient + (finalSpec + diffuse) * color; 
 
 	return float4(finalColor, 1);
 }

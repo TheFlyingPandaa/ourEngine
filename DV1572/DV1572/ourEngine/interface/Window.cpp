@@ -397,10 +397,11 @@ void Window::_lightPass(Light& light, Camera& cam)
  
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
-	DX::g_deviceContext->Map(light.m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
+	DX::g_deviceContext->Map(light.getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
 	memcpy(lightData.pData, &light.getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
-	DX::g_deviceContext->Unmap(light.m_pLightBuffer, 0);
-	DX::g_deviceContext->PSSetConstantBuffers(0, 1, &light.m_pLightBuffer);
+	DX::g_deviceContext->Unmap(light.getBufferPointer(), 0);
+	ID3D11Buffer* lightBufferPointer = light.getBufferPointer(); 
+	DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
 
 	//Throw in camera values into buffer
 	CAMERA_POS_BUFFER cameraBuffer;
