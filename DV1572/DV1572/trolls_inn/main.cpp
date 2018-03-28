@@ -54,6 +54,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
+	//aWall.setPos(1, 1, 0);
 
 
 	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
@@ -69,7 +70,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	r2.setPos(0, 0, 0);
 
 	Light light; 
-	light.Init(XMFLOAT4A{ 10,30,20,0 }, XMFLOAT4A{ 0,0,0,0 }, XMFLOAT4A{ 1,1,1,1 }, 50, 50); 
+	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000); 
+
+
 
 
 	modelThread.join();
@@ -79,6 +82,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	bool keyPressed = false;
 	bool pressedInFrame = false;
+	float angle = 0.0f; 
+
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -89,7 +94,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		unprocessed += dt / freq;
 		
-
 		while (unprocessed > 1)
 		{
 			updates++;

@@ -109,15 +109,18 @@ XMFLOAT4A Light::getColor() const
 void Light::setPos(XMFLOAT4A pos)
 {
 	m_lightBuffer.pos = pos; 
+	m_pos = pos; 
 }
 
 void Light::setDir(XMFLOAT4A dir)
 {
+	m_lightBuffer.dir = dir;
 	m_dir = dir; 
 }
 
 void Light::setColor(XMFLOAT4A color)
 {
+	m_lightBuffer.color = color;
 	m_color = color; 
 }
 
