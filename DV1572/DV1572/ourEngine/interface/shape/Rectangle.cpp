@@ -82,3 +82,8 @@ void RectangleShape::setDiffuseTexture(const std::string & path)
 {
 	getMesh()->setDiffuseTexture(path);
 }
+
+void RectangleShape::DrawAsHud()
+{
+	DX::g_HUDQueue.push_back(this);
+}

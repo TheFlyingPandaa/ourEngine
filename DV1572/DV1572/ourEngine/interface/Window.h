@@ -54,16 +54,17 @@ private:
 	ID3D11VertexShader*		m_deferredVertexShader;
 	ID3D11PixelShader*		m_deferredPixelShader;
 
+	//Transpar
+	ID3D11VertexShader*		m_transVertexShader;
+	ID3D11PixelShader*		m_transPixelShader;
+	ID3D11BlendState*		m_transBlendState;
+
 	//Picking
 	GBUFFER					m_pickingTexture;
 	ID3D11VertexShader*		m_pickingVertexShader;
 	ID3D11PixelShader*		m_pickingPixelShader;
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
-
-	//Tessellation
-	ID3D11HullShader*		m_standardHullShader;
-	ID3D11DomainShader*		m_standardDomainShader;
 
 
 	// Input
@@ -74,6 +75,7 @@ private:
 	
 	void(Camera::*m_mousePositionFunc)(Vec2);
 	Camera* m_cameraFuncCaller;
+	DirectX::XMMATRIX m_HUDview;
 
 private:
 	bool	_initWindow();
@@ -94,14 +96,20 @@ private:
 	void	_geometryPass(const Camera & cam);
 	void	_clearTargets();
 	void	_lightPass();
-
+	//Transparency
+	void	_transparencyPass(const Camera & cam);
+	void	_initTransparency();
 
 	//	Picking
 	void	_initPickingTexture();
 	void	_initPickingShaders();
 	
-	//Tessellation
+	// Tessellation
 	void	_initTessellationShaders();
+
+	// HUD
+	void	_drawHUD();
+
 
 public:
 	Window(HINSTANCE h);

@@ -15,6 +15,7 @@ std::vector<Shape*> DX::g_renderQueue;
 std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
 std::vector<Shape*> DX::g_pickingQueue;
+std::vector<Shape*> DX::g_HUDQueue;
 
 //Standard Tessellation
 ID3D11HullShader* DX::g_standardHullShader;
@@ -143,6 +144,11 @@ void Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, m_deferredPixelShader,
 		L"ourEngine/shaders/deferredPixelShader.hlsl", "main");
 
+	ShaderCreator::CreateVertexShader(DX::g_device, m_transVertexShader,
+		L"ourEngine/shaders/transVertexShader.hlsl", "main");
+	ShaderCreator::CreatePixelShader(DX::g_device, m_transPixelShader,
+		L"ourEngine/shaders/transPixelShader.hlsl", "main");
+
 
 	_initPickingShaders();
 	_initTessellationShaders();
@@ -168,6 +174,35 @@ void Window::_initTessellationShaders()
 
 	ShaderCreator::CreateDomainShader(DX::g_device, DX::g_standardDomainShader,
 		L"ourEngine/shaders/standardDomainShader.hlsl", "main");
+}
+
+void Window::_drawHUD()
+{
+	DirectX::XMMATRIX viewProj = m_HUDview;
+
+	MESH_BUFFER meshBuffer;
+	for (size_t i = 0; i < DX::g_HUDQueue.size(); i++)
+	{
+		DirectX::XMMATRIX world = DX::g_HUDQueue[i]->getWorld();
+		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
+		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+		DX::g_HUDQueue[i]->ApplyShaders();
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+
+		ID3D11Buffer* v = DX::g_HUDQueue[i]->getVertices();
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->Draw(DX::g_HUDQueue[i]->getMesh()->getNumberOfVertices(), 0);
+	}
 }
 
 void Window::_setSamplerState()
@@ -282,6 +317,8 @@ void Window::_prepareGeometryPass()
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 
+	
+
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
 
 	for (int i = 0; i < GBUFFER_COUNT; i++)
@@ -347,6 +384,67 @@ void Window::_lightPass()
 
 	DX::g_deviceContext->Draw(4, 0);
 }
+
+void Window::_transparencyPass(const Camera & cam)
+{
+
+	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
+
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+
+	DX::g_deviceContext->VSSetShader(m_transVertexShader, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_transPixelShader, nullptr, 0);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, nullptr);
+
+	DirectX::XMMATRIX view = cam.getViewMatrix();
+	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
+
+	MESH_BUFFER meshBuffer;
+	for (size_t i = 0; i < DX::g_transQueue.size(); i++)
+	{
+		DirectX::XMMATRIX world = DX::g_transQueue[i]->getWorld();
+		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
+		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+
+		ID3D11Buffer* v = DX::g_transQueue[i]->getVertices();
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->Draw(DX::g_transQueue[i]->getMesh()->getNumberOfVertices(), 0);
+	}
+}
+
+void Window::_initTransparency()
+{
+	D3D11_BLEND_DESC omDesc;
+	ZeroMemory(&omDesc,
+
+		sizeof(D3D11_BLEND_DESC));
+	omDesc.RenderTarget[0].BlendEnable = true;
+	omDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	omDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	omDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	omDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	omDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+
+	DX::g_device->CreateBlendState(&omDesc, &m_transBlendState);
+}
+
 
 void Window::_initPickingTexture()
 {
@@ -450,8 +548,15 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_createConstantBuffers(); 
 	_initPickingTexture();
 	_setSamplerState();
+	m_HUDview = DirectX::XMMatrixLookToLH(
+		DirectX::XMVectorSet(0, 0, -0.1, 1),
+		DirectX::XMVectorSet(0, 0, 1, 0),
+		DirectX::XMVectorSet(0, 1, 0, 0)
+	);
+	_initTransparency();
 	
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
+	m_HUDview = m_HUDview * m_projectionMatrix;
 	t1.join();
 	t2.join();
 	ShowWindow(m_hwnd, 10);
@@ -477,9 +582,11 @@ void Window::Clear()
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_renderQueue.clear(); 
 	DX::g_pickingQueue.clear();
+	DX::g_HUDQueue.clear();
+	DX::g_transQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-
+	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
 	for (int i = 0; i < GBUFFER_COUNT; i++)
 	{
 		DX::g_deviceContext->ClearRenderTargetView(m_gbuffer[i].RTV, c);
@@ -492,9 +599,12 @@ void Window::Clear()
 void Window::Flush(Camera* c)
 {
 	_prepareGeometryPass();
+	_drawHUD();
 	_geometryPass(*c);
 	_clearTargets();
 	_lightPass();
+
+	_transparencyPass(*c);
 }
 
 Shape * Window::getPicked(Camera* c)

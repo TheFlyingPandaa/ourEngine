@@ -116,6 +116,48 @@ void Shape::Rotate(DirectX::XMFLOAT3 rotation)
 	_buildMatrix();
 }
 
+void Shape::setScale(float scl)
+{
+	setScale(XMFLOAT3(scl, scl, scl));
+}
+
+void Shape::setScale(float x, float y, float z)
+{
+	setScale(XMFLOAT3(x, y, z));
+}
+
+void Shape::setScale(DirectX::XMFLOAT3 scl)
+{
+	m_scl = scl;
+	_buildMatrix();
+}
+
+void Shape::Scale(float scl)
+{
+	Scale(XMFLOAT3(scl, scl, scl));
+}
+
+void Shape::Scale(float x, float y, float z)
+{
+	Scale(XMFLOAT3(x, y, z));
+}
+
+void Shape::Scale(DirectX::XMFLOAT3 scl)
+{
+	XMVECTOR newScl = XMLoadFloat3(&m_scl) + XMLoadFloat3(&scl);
+	XMStoreFloat3(&m_scl, newScl);
+	_buildMatrix();
+}
+
+std::string Shape::toString() const
+{
+	std::string outputString = "";
+
+	outputString += std::to_string(m_pos.x) + ":" + std::to_string(m_pos.y);
+
+	return outputString;
+}
+
 void Shape::ApplyShaders()
 {
 	DX::g_deviceContext->VSSetShader(m_vs, nullptr, 0);
@@ -145,5 +187,17 @@ const DirectX::XMMATRIX & Shape::getWorld() const
 
 void Shape::Draw()
 {
-	DX::g_renderQueue.push_back(this); 
+	if (m_mesh->getMaterial()->isTransparent())
+	{
+		DX::g_transQueue.push_back(this);
+	}
+	else 
+	{
+		DX::g_renderQueue.push_back(this);
+	}
+}
+
+void Shape::TEMPTRANS()
+{
+	DX::g_transQueue.push_back(this);
 }
