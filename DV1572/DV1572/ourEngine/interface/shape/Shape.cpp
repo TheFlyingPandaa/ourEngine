@@ -180,6 +180,19 @@ void Shape::CheckPick()
 	DX::g_pickingQueue.push_back(this);
 }
 
+void Shape::setScale(float x, float y, float z)
+{
+	m_scl.x = x;
+	m_scl.y = y;
+	m_scl.z = z;
+	_buildMatrix();
+}
+
+void Shape::setScale(float s)
+{
+	this->setScale(s, s, s);
+}
+
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 

@@ -1,29 +1,49 @@
 #include "GameState.h"
 #include <iostream>
 
-GameState::GameState() : State()
+
+GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	std::cout << "Enterd GameState\n";
+	this->m_cam = cam;
+	this->_init();
+	grid = new Grid(0, 0, 8, 8);	
+	grid->AddRoom(new Kitchen(0, 0, 8, 3));
+
+
+	grid->CreateWalls(&m);
 }
 
 GameState::~GameState()
 {
-	std::cout << "Exit GameState\n";
+	delete grid;
 }
 
 void GameState::Update(double deltaTime)
 {
-	int counter = 0;
-	while (counter < 100000)
+	this->m_cam->update();
+
+	while (!p_keyEvents->empty())
 	{
-		counter++;
+		//Do keypress events here
 	}
-	std::cout << "GameState is complete\n";
-	this->m_exitState = true;
-	
+	while (!p_pickingEvent->empty())
+	{
+		Shape * obj = this->p_pickingEvent->top();
+		this->p_pickingEvent->pop();
+
+		//do Picking events here
+	}
 }
 
 void GameState::Draw()
 {
-	std::cout << "GameState draw\n";
+	
+	this->grid->Draw();
+	//this->grid2->Draw();
+}
+
+void GameState::_init()
+{
+	this->m.LoadModel("trolls_inn/Resources/Wall.obj");
+	this->m.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 }

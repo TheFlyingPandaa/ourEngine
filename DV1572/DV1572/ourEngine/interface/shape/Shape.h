@@ -50,6 +50,8 @@ public:
 
 	void ApplyShaders();
 	void CheckPick();
+	void setScale(float x, float y, float z);
+	void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const; 
 
 	void Draw();
