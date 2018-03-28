@@ -6,11 +6,9 @@
 
 class GameState : public State {
 private:
-	
-	Object3D obj;
 	Mesh m;
-
 	Grid* grid;
+	Grid* grid2;
 
 	virtual void _init() override;
 public:

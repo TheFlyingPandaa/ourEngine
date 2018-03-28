@@ -120,3 +120,11 @@ void Grid::DrawString()
 	}
 }
 
+void Grid::CreateWalls(Mesh * mesh)
+{
+	for (size_t i = 0; i < m_rooms.size(); i++)
+	{
+		m_rooms[i]->CreateWalls(mesh);
+	}
+}
+

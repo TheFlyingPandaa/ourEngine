@@ -26,5 +26,7 @@ public:
 	void	AddRoom(Room* room, bool force = false);
 	void	Draw();
 	void	DrawString();
+
+	void	CreateWalls(Mesh * mesh);
 };
 

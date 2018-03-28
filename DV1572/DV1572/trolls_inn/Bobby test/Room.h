@@ -37,6 +37,7 @@ protected:
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
 	Tile**	m_tiles;
+	bool	m_hasWalls;
 
 	Mesh*	m_wall;
 
@@ -56,6 +57,8 @@ public:
 	virtual int			getSizeY() const; 
 
 	virtual void		move(int x, int y);
+	virtual bool		getHasWalls() const;
+	virtual void		CreateWalls(Mesh * mesh);
 
 	virtual bool		Inside(int x, int y); 
 	virtual bool		Inside(Tile * t); 
