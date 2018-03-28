@@ -229,6 +229,7 @@ void Window::_createConstantBuffers()
 {
 	_createMeshConstantBuffer();
 	_createPickConstantBuffer();
+	_createCameraPosConstantBuffer(); 
 }
 
 void Window::_createMeshConstantBuffer()
@@ -255,6 +256,19 @@ void Window::_createPickConstantBuffer()
 	bDesc.StructureByteStride = 0;
 
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_pickingBuffer);
+}
+
+void Window::_createCameraPosConstantBuffer()
+{
+	D3D11_BUFFER_DESC bDesc; 
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(CAMERA_POS_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_cameraPosConstantBuffer); 
 }
 
 void Window::_createDepthBuffer()
@@ -334,6 +348,7 @@ void Window::_geometryPass(const Camera &cam)
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
 
 	MESH_BUFFER meshBuffer;
+	DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
 	for (size_t i = 0; i < DX::g_renderQueue.size(); i++)
 	{
 		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld();
@@ -364,7 +379,7 @@ void Window::_clearTargets()
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
 }
 
-void Window::_lightPass()
+void Window::_lightPass(Light& light, Camera& cam)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DX::g_deviceContext->VSSetShader(m_deferredVertexShader, nullptr, 0);
@@ -379,6 +394,26 @@ void Window::_lightPass()
 	{
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
+ 
+
+	D3D11_MAPPED_SUBRESOURCE lightData;
+	DX::g_deviceContext->Map(light.m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
+	memcpy(lightData.pData, &light.getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+	DX::g_deviceContext->Unmap(light.m_pLightBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(0, 1, &light.m_pLightBuffer);
+
+	//Throw in camera values into buffer
+	CAMERA_POS_BUFFER cameraBuffer;
+	cameraBuffer.pos.x = cam.getPosition().x;
+	cameraBuffer.pos.y = cam.getPosition().y;
+	cameraBuffer.pos.z = cam.getPosition().z;
+
+	//Update camera buffer values in the GPU
+	D3D11_MAPPED_SUBRESOURCE camData;
+	DX::g_deviceContext->Map(m_cameraPosConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camData);
+	memcpy(camData.pData, &cameraBuffer, sizeof(CAMERA_POS_BUFFER));
+	DX::g_deviceContext->Unmap(m_cameraPosConstantBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(1, 1, &m_cameraPosConstantBuffer); 
 
 	DX::g_deviceContext->IASetInputLayout(nullptr);
 
@@ -596,15 +631,14 @@ void Window::Clear()
 	DX::g_deviceContext->PSSetShaderResources(0, GBUFFER_COUNT, renderTargets);
 }
 
-void Window::Flush(Camera* c)
+void Window::Flush(Camera* c, Light& light)
 {
 	_prepareGeometryPass();
 	_drawHUD();
 	_geometryPass(*c);
 	_clearTargets();
-	_lightPass();
-
 	_transparencyPass(*c);
+	_lightPass(light,*c);
 }
 
 Shape * Window::getPicked(Camera* c)
