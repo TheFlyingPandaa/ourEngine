@@ -398,7 +398,7 @@ void Window::_transparencyPass(const Camera & cam)
 	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_transPixelShader, nullptr, 0);
-	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, nullptr);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	DirectX::XMMATRIX view = cam.getViewMatrix();
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;

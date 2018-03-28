@@ -50,6 +50,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Akali.setScale(0.2, 0.2, 0.2);
 
 
+	Mesh wall;
+	wall.LoadModel("trolls_inn/Resources/wall.obj");
+	Object3D aWall;
+	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	aWall.setMesh(&wall);
+
+
+	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+
+	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+
+	RectangleShape r;
+	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	r.setPos(-1.5, 1.4, 0);
+
+	RectangleShape r2;
+	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	r2.setPos(0, 0, 0);
+
+
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;
 	std::cout << elapsed_seconds.count() << std::endl;
@@ -85,7 +105,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			shapes[i].Draw();
 		}*/
-		r.Draw();
+		//r.Draw();
 		r.TEMPTRANS();
 		r.CheckPick();
 		r2.Draw();
