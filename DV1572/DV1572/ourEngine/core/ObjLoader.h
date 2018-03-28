@@ -94,4 +94,43 @@ namespace DX
 
 		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device, widecstr, &texture, &textureView);
 	}
+
+	static void CalculateTangents(std::vector<VERTEX> &model)
+	{
+		for (size_t i = 0; i < model.size(); i += 3)
+		{
+			int j = i + 1;
+			int k = i + 2;
+
+			DirectX::XMVECTOR v1 = DirectX::XMVectorSet(model[j].x, model[j].y, model[j].z, NULL);
+			DirectX::XMVECTOR v2 = DirectX::XMVectorSet(model[k].x, model[k].y, model[k].z, NULL);
+			DirectX::XMVECTOR v0 = DirectX::XMVectorSet(model[i].x, model[i].y, model[i].z, NULL);
+
+			DirectX::XMVECTOR edge1 = DirectX::XMVectorSubtract(v1, v0);
+			DirectX::XMVECTOR edge2 = DirectX::XMVectorSubtract(v2, v0);
+			
+			float deltaU1 = model[j].u - model[i].u;
+			float deltaV1 = model[j].v - model[i].v;
+			float deltaU2 = model[k].u - model[i].u;
+			float deltaV2 = model[k].v - model[i].v;
+
+			DirectX::XMFLOAT3 tangent;
+
+			tangent.x = deltaV2 * DirectX::XMVectorGetX(edge1) - deltaV1 * DirectX::XMVectorGetX(edge2);
+			tangent.y = deltaV2 * DirectX::XMVectorGetY(edge1) - deltaV1 * DirectX::XMVectorGetY(edge2);
+			tangent.z = deltaV2 * DirectX::XMVectorGetZ(edge1) - deltaV1 * DirectX::XMVectorGetZ(edge2);
+
+			DirectX::XMVECTOR vTangent;
+
+			vTangent = DirectX::XMVector3Normalize(XMLoadFloat3(&tangent));
+
+			for (int counter = 0; counter < 3; counter++)
+			{
+				int index = i + counter;
+				model[index].tx = DirectX::XMVectorGetX(vTangent);
+				model[index].ty = DirectX::XMVectorGetY(vTangent);
+				model[index].tz = DirectX::XMVectorGetZ(vTangent);
+			}
+		}
+	}
 };

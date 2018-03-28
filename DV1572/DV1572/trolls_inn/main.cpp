@@ -52,6 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/wall.obj");
+	wall.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
@@ -93,13 +94,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			unprocessed -= 1;
 			cam->update();
 			Akali.Rotate(0, 0.1, 0);
+			aWall.Rotate(0.1, 0, 0);
 		}
 
 		fpsCounter++;
 
 		//HUD.Draw();
 		HUD.DrawAsHud();
-		Akali.Draw();
+		//Akali.Draw();
 		//Draw geometry
 		/*for (int i = 0; i < 9; i++)
 		{

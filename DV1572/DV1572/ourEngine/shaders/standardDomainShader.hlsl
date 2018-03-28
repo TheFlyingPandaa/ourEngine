@@ -10,6 +10,7 @@ struct DS_OUTPUT
 	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
+	float3x3 TBN : TBN;
 	// TODO: change/add other stuff
 };
 
@@ -19,6 +20,7 @@ struct HS_CONTROL_POINT_OUTPUT
 	float4 Pos : WORLDPOS;
 	float2 Tex : TEXELS;
 	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
 };
 
 // Output patch constant data.
@@ -43,8 +45,12 @@ DS_OUTPUT main(
 	Output.worldPos = mul(positions, world);
 	Output.pos = mul(positions, wvp);
 	Output.tex = patch[0].Tex * domain.x + patch[1].Tex * domain.y + patch[2].Tex * domain.z;
-	Output.normal = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
-	Output.normal = mul(Output.normal, world);
-
+	float3 n = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
+	Output.normal = normalize(mul(n, world));
+	float3 t = patch[0].tangent * domain.x + patch[1].tangent * domain.y + patch[2].tangent * domain.z;
+	Output.TBN[0] = normalize(mul(float4(t, 0), world).xyz);
+	float3 bt = normalize(cross(n, t)); //Might be other way around... lol
+	Output.TBN[1] = normalize(mul(float4(bt, 0), world).xyz);
+	Output.TBN[2] = Output.normal;
 	return Output;
 }
