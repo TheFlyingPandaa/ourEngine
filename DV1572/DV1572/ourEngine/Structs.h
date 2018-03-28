@@ -1,4 +1,5 @@
 #pragma once
+#include <DirectXMath.h>
 struct VERTEX
 {
 	float x, y, z;		//Position
@@ -13,6 +14,11 @@ struct CAMERA_BUFFER
 	DirectX::XMFLOAT4X4A viewMatrix;
 };
 
+struct CAMERA_POS_BUFFER
+{
+	DirectX::XMFLOAT4A pos; 
+};
+
 struct POINT_LIGHT_BUFFER
 {
 	DirectX::XMFLOAT4A pos, color;
@@ -21,6 +27,7 @@ struct POINT_LIGHT_BUFFER
 struct DIRECTIONAL_LIGHT_BUFFER
 {
 	DirectX::XMFLOAT4A pos, dir, color;
+	DirectX::XMFLOAT4X4A viewProjection; 
 };
 
 struct MESH_BUFFER
