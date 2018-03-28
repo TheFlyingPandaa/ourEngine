@@ -94,14 +94,14 @@ void Room::CreateWalls(Mesh * mesh)
 		obj->setMesh(m_wall);
 
 		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		down.push_back(obj);
 
 		obj = new Object3D();
 		obj->setMesh(m_wall);
 
 		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY + m_sizeY);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		up.push_back(obj);
 	}
 
@@ -112,7 +112,7 @@ void Room::CreateWalls(Mesh * mesh)
 
 		obj->setRotation(0, 90, 0);
 		obj->setPos(this->m_posX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		left.push_back(obj);
 
 		obj = new Object3D();
@@ -121,7 +121,7 @@ void Room::CreateWalls(Mesh * mesh)
 
 		obj->setRotation(0, 90, 0);
 		obj->setPos(this->m_posX + this->m_sizeX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		right.push_back(obj);
 	}
 }

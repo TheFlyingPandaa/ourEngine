@@ -39,8 +39,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	std::stack<int>		keyEvent;
 
 	Light light;
-	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(0, -1, 0, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
+	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
+
+	
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
