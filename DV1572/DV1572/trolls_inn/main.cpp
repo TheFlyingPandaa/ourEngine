@@ -42,8 +42,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	HUD.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	HUD.setPos(-0.073500, -0.041000, 0);
 	HUD.setScale(0.04f);
-
-	modelThread.join();
 	Object3D Akali;
 	a.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	Akali.setMesh(&a);
@@ -100,8 +98,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				shapes[i].Rotate(0, 1, 0);
 			}*/
-			box.Rotate(0, 1, 0);
-			box2.Rotate(0, -1, 0);
 			r2.Rotate(0, 1, 0); 
 			r.Rotate(1, 1, 0); 
 			cam->update();

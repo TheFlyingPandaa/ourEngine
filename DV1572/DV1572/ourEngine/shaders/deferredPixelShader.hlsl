@@ -30,10 +30,11 @@ float4 main(Input input) : SV_Target
 	float3 wordPos = tPosition.Sample(sampAni, input.tex).rgb;
 	float3 normal = tNormal.Sample(sampAni, input.tex).rgb;
 	float3 diffuseSample = tDiffuse.Sample(sampAni, input.tex).rgb;
+	float3 ambient = diffuseSample * 0.2f;
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
 	float3 lightToObject = normalize(lightPos.xyz - wordPos); 
-	float3 diffuse = diffuseSample * max(dot(normal, lightToObject), 0.1f); 
+	float3 diffuse = diffuseSample * max(dot(normal, lightToObject), 0.0f); 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
 	//Specular calculation//////////////////////////////////////////////////////////////////////
@@ -48,7 +49,7 @@ float4 main(Input input) : SV_Target
 	float3 finalSpec = spec * specLevel; 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	
-	float3 finalColor = (finalSpec + diffuse); 
+	float3 finalColor = ambient + (finalSpec + diffuse); 
 
 	return float4(finalColor, 1);
 }

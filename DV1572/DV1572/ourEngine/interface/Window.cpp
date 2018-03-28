@@ -637,8 +637,8 @@ void Window::Flush(Camera* c, Light& light)
 	_drawHUD();
 	_geometryPass(*c);
 	_clearTargets();
-	_transparencyPass(*c);
 	_lightPass(light,*c);
+	_transparencyPass(*c);
 }
 
 Shape * Window::getPicked(Camera* c)
