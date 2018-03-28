@@ -44,7 +44,7 @@ DS_OUTPUT main(
 	Output.pos = mul(positions, wvp);
 	Output.tex = patch[0].Tex * domain.x + patch[1].Tex * domain.y + patch[2].Tex * domain.z;
 	Output.normal = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
-	Output.normal = mul(Output.normal, world);
+	Output.normal = normalize(mul(Output.normal, world));
 
 	return Output;
 }

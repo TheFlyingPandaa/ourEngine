@@ -43,7 +43,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	HUD.setPos(-0.073500, -0.041000, 0);
 	HUD.setScale(0.04f);
 
-	modelThread.join();
+	//modelThread.join();
 	Object3D Akali;
 	a.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	Akali.setMesh(&a);
@@ -55,6 +55,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
+	//aWall.setPos(1, 1, 0);
 
 
 	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
@@ -70,7 +71,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	r2.setPos(0, 0, 0);
 
 	Light light; 
-	light.Init(XMFLOAT4A{ 10,30,20,0 }, XMFLOAT4A{ 0,0,0,0 }, XMFLOAT4A{ 1,1,1,1 }, 50, 50); 
+	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f,-1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,1.0f }, 1000, 1000); 
+
+
 
 
 	modelThread.join();
@@ -80,6 +83,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	bool keyPressed = false;
 	bool pressedInFrame = false;
+	float angle = 0.0f; 
+
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -90,7 +95,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		unprocessed += dt / freq;
 		
-
 		while (unprocessed > 1)
 		{
 			updates++;
@@ -99,12 +103,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				shapes[i].Rotate(0, 1, 0);
 			}*/
-			box.Rotate(0, 1, 0);
-			box2.Rotate(0, -1, 0);
+			//box.Rotate(0, 1, 0);
+			//box2.Rotate(0, -1, 0);
+			DirectX::XMVECTOR dir = DirectX::XMVectorSet(0, -1, 0, 0);
 			r2.Rotate(0, 1, 0); 
 			r.Rotate(1, 1, 0); 
 			cam->update();
 			Akali.Rotate(0, 0.1, 0);
+			DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(0, 0, DirectX::XMConvertToRadians(angle)); 
+			angle += 1.0; 
+			dir = DirectX::XMVector3TransformNormal(dir, rot); 
+			DirectX::XMVECTOR color =DirectX::XMVectorAbs(dir * DirectX::XMVectorSet(1, 1, 1, 1)); 
+			DirectX::XMFLOAT4A lightColor;
+			DirectX::XMStoreFloat4A(&lightColor, color);
+			DirectX::XMFLOAT4A lightDir; 
+			DirectX::XMStoreFloat4A(&lightDir, dir); 
+			light.setDir(lightDir); 
+			light.setColor(lightColor); 
 		}
 
 		fpsCounter++;
