@@ -13,7 +13,6 @@ private:
 	XMFLOAT4A m_dir; 
 	XMFLOAT4A m_color;
 
-	//DirectX::XMFLOAT3 m_pos;
 	DirectX::XMFLOAT3 pos, lookAt;
 	const DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -24,13 +23,13 @@ private:
 	ID3D11DepthStencilView* m_pDepthStencilView; 
 	ID3D11ShaderResourceView* m_pShaderResourceView; 
 
+	ID3D11Buffer* m_pLightBuffer;
+
 	void _createResources(); 
 
 public:
 	Light(); 
 	~Light(); 
-
-	ID3D11Buffer* m_pLightBuffer;
 
 	XMFLOAT4A getPos() const; 
 	XMFLOAT4A getDir() const;
