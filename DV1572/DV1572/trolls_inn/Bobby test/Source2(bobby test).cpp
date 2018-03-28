@@ -38,6 +38,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	std::stack<Shape *> pickingEvents;
 	std::stack<int>		keyEvent;
 
+	Light light;
+	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(0, -1, 0, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
+	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
@@ -89,7 +92,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 	
 		
-		wnd.Flush(cam);
+		wnd.Flush(cam, light);
 
 		wnd.Present();
 

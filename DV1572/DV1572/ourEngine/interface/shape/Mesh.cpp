@@ -26,8 +26,9 @@ void Mesh::LoadModel(const std::string & path)
 	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDesc, &vData, &m_vertexBuffer);
 }
 
-void Mesh::LoadModel(const std::vector<VERTEX>& v)
+void Mesh::LoadModel(std::vector<VERTEX>& v)
 {
+	DX::CalculateTangents(v);
 	// Vertex Buffer
 	D3D11_BUFFER_DESC vBufferDesc;
 	memset(&vBufferDesc, 0, sizeof(vBufferDesc));

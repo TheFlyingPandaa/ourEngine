@@ -10,7 +10,7 @@ void RectangleShape::_buildRectangle()
 
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -19,7 +19,7 @@ void RectangleShape::_buildRectangle()
 
 		0.0f, 0.5f, 0.0f,
 		0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -27,7 +27,7 @@ void RectangleShape::_buildRectangle()
 	v = {
 		0.5f, 0.5f, 0.0f,
 		1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -35,7 +35,7 @@ void RectangleShape::_buildRectangle()
 	v = {
 		0.5f, 0.5f, 0.0f,
 		1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -43,7 +43,7 @@ void RectangleShape::_buildRectangle()
 	v = {
 		0.5f, 0.0f, 0.0f,
 		1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -52,7 +52,7 @@ void RectangleShape::_buildRectangle()
 
 		0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 0.0f
 	};
 	vertices.push_back(v);
@@ -81,6 +81,11 @@ RectangleShape::~RectangleShape()
 void RectangleShape::setDiffuseTexture(const std::string & path)
 {
 	getMesh()->setDiffuseTexture(path);
+}
+
+void RectangleShape::setNormalMap(const std::string & path)
+{
+	getMesh()->setNormalTexture(path);
 }
 
 void RectangleShape::DrawAsHud()

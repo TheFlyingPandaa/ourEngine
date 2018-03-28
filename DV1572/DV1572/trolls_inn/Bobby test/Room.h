@@ -18,6 +18,7 @@ struct Tile {
 		m_door = false;
 		m_room = room;
 		quad.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+		quad.setNormalMap("trolls_inn/Resources/NormalMap.jpg");
 		quad.setPos(x, 0, y);
 		quad.Rotate(90, 0, 0);
 	}
