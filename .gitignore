@@ -260,3 +260,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+*.vcxproj
+
+DV1572/DV1572/DV1572\.vcxproj\.filters
