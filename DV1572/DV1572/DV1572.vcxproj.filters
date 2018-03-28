@@ -39,16 +39,7 @@
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ourEngine\interface\OurMath.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ourEngine\core\Camera\FPSCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp">
@@ -92,16 +83,7 @@
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ourEngine\interface\OurMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ourEngine\core\Camera\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ourEngine\core\Camera\FPSCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ourEngine\core\Camera\MayaCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h">

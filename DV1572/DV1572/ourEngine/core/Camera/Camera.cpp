@@ -3,8 +3,8 @@
 using namespace DirectX;
 Camera::Camera()
 {
-	m_pos = XMFLOAT3{ 0,1,-2 };
-	m_lookAt = XMFLOAT3{ 0,0,0 };
+	m_pos = XMFLOAT3{ 0,1,0 };
+	m_lookAt = XMFLOAT3{ 0,0,-1 };
 }
 
 Camera::~Camera()
@@ -68,15 +68,6 @@ void Camera::setViewMatrix()
 		m_up);
 }
 
-void Camera::setViewMatrix(const OurMath::Mat4 & view)
-{
-	DirectX::XMFLOAT4X4 matrix;
-	for(int i = 0; i < 4; i++)
-		for(int j = 0; j < 4; j++)
-			matrix.m[i][j] = view.elements[i + j * 4];
-	m_viewMatrix = DirectX::XMLoadFloat4x4(&matrix);
-}
-
 DirectX::XMMATRIX Camera::getViewMatrix() const
 {
 
@@ -84,7 +75,7 @@ DirectX::XMMATRIX Camera::getViewMatrix() const
 	
 }
 
-void Camera::setMousePos(OurMath::Vec2 mousePos)
+void Camera::setMousePos(XMFLOAT2 mousePos)
 {
 	m_mousePos = mousePos;
 }

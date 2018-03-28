@@ -6,9 +6,6 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
-#include "OurMath.h"
-using namespace OurMath;
-
 const UINT GBUFFER_COUNT = 3;
 
 class Window
@@ -52,13 +49,7 @@ private:
 	ID3D11PixelShader*		m_deferredPixelShader;
 
 	// Input
-	Vec2 m_mousePos;
-	
-	// Function callback pointers
-	void(*m_windowSizeCallbackFunc)(int, int);
-	
-	void(Camera::*m_mousePositionFunc)(Vec2);
-	Camera* m_cameraFuncCaller;
+	DirectX::XMFLOAT2 m_mousePos;
 
 private:
 	bool	_initWindow();
@@ -92,9 +83,6 @@ public:
 	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);
 	void setMouseMiddleScreen();
 
-	void setWindowSizeCallback(void(*func)(int, int));
-	void setMousePositionCallback(Camera* object, void(Camera::*func)(Vec2));
-
-	Vec2 getSize() const;
-	Vec2 getMousePos();
+	DirectX::XMFLOAT2 getSize() const;
+	DirectX::XMFLOAT2 getMousePos();
 };

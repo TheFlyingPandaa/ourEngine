@@ -1,7 +1,6 @@
 #include "../ourEngine/interface/Interface.h"
 #include <iostream>
 #include <chrono>
-#include <glm\glm.hpp>
 const float REFRESH_RATE = 60.0f;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
@@ -22,11 +21,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	int fpsCounter = 0;
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
-
-	Camera* cam = new OrbitCamera(glm::vec3(0,0,-5));
-	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
-
-	//cam.setPosition(0, 100, 100);
+	
+	Camera* cam = new OrbitCamera(wnd.getSize());
 	Mesh m;
 
 	m.LoadModel("trolls_inn/Resources/cube.txt");
@@ -59,12 +55,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			for (int i = 0; i < 9; i++)
+			/*for (int i = 0; i < 9; i++)
 			{
 				shapes[i].Rotate(0, 1, 0);
-			}
-		
-			cam->update();
+			}*/
+
+			cam->update(wnd.getMousePos());
 		}
 
 		fpsCounter++;

@@ -397,7 +397,6 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
-		if(m_windowSizeCallbackFunc != nullptr)m_windowSizeCallbackFunc(m_width, m_height);
 		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
 		if (m_swapChain)
 		{
@@ -442,8 +441,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		m_mousePos.x = LOWORD(lParam);
 		m_mousePos.y = HIWORD(lParam);
-		if(m_cameraFuncCaller!=nullptr)
-			(m_cameraFuncCaller->*m_mousePositionFunc)(Vec2(m_mousePos));
+		
 		break;
 	}
 
@@ -475,24 +473,16 @@ void Window::setMouseMiddleScreen()
 	SetCursorPos(pt.x, pt.y);
 }
 
-void Window::setWindowSizeCallback(void (*func)(int, int))
+
+DirectX::XMFLOAT2 Window::getSize() const
 {
-	this->m_windowSizeCallbackFunc = func;
+	DirectX::XMFLOAT2 sizeVec;
+	sizeVec.x = m_width;
+	sizeVec.y = m_height;
+	return sizeVec;
 }
 
-void Window::setMousePositionCallback(Camera* object, void(Camera::*func)(Vec2))
-{
-	m_cameraFuncCaller = object;
-	m_mousePositionFunc = func;
-}
-
-Vec2 Window::getSize() const
-{
-	
-	return Vec2((float)m_width / 2,(float)m_height / 2);
-}
-
-Vec2 Window::getMousePos()
+DirectX::XMFLOAT2 Window::getMousePos()
 {
 	return m_mousePos;
 }
