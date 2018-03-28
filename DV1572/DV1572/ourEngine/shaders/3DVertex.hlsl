@@ -18,6 +18,7 @@ struct OUTPUT
 	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
 };
 
 
@@ -29,6 +30,7 @@ OUTPUT main(INPUT input)
 	o.worldPos = float4(input.pos,1);
 	o.tex = input.tex;
 	o.normal = input.normal;
+	o.tangent = input.tangent;
 	//o.normal = mul(float4(input.normal, 1), world).xyz;
 
 	return o;
