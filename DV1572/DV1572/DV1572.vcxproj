@@ -130,6 +130,11 @@
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Grid.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Kitchen.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +155,13 @@
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />
     <ClInclude Include="ourEngine\interface\Window.h" />
     <ClInclude Include="ourEngine\Structs.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Bedroom.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Grid.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Kitchen.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ourEngine\shaders\deferredPixelShader.hlsl">

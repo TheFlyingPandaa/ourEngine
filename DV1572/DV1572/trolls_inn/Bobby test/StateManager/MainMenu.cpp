@@ -1,27 +1,27 @@
 #include "MainMenu.h"
 #include <iostream>
 
-MainMenu::MainMenu()
+MainMenu::MainMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	std::cout << "Enter MainMenu\n";
+	this->m_cam = cam;
+	this->_init();
 }
 
 MainMenu::~MainMenu()
 {
-	std::cout << "Exit MainMenu\n";
+
 }
 
 void MainMenu::Update(double deltaTime)
 {
-	int counter = 0;
-	while (counter > 100000)
-	{
-		counter++;
-	}
-	this->m_exitState = true;
+
 }
 
 void MainMenu::Draw()
 {
-	std::cout << "MainMenu draw\n";
+
+}
+
+void MainMenu::_init()
+{
 }
