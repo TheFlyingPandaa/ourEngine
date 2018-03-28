@@ -10,6 +10,7 @@ struct INPUT
 	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
+	float3x3 TBN : TBN;
 };
 
 struct OUTPUT
@@ -23,9 +24,10 @@ OUTPUT main(INPUT input) : SV_TARGET
 {
 	OUTPUT output = (OUTPUT)0;
 	
+	float3 normal = (2.0f * tNormal.Sample(sampAni, input.tex) - 1.0f).xyz;
+	normal = normalize(mul(normal, input.TBN));
+	output.normal = float4(normalize(input.normal + normal), 0.0f);
 	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
-	//output.diffuse = float4(input.normal, 1);
-	output.normal = float4(input.normal, 1);
 	output.pos = input.worldPos;
 	
 	return output;

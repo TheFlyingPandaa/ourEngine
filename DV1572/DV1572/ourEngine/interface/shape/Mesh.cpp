@@ -12,7 +12,7 @@ void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<VERTEX> vertices;
 	DX::loadOBJ(path, vertices);
-
+	DX::CalculateTangents(vertices);
 	// Vertex Buffer
 	D3D11_BUFFER_DESC vBufferDesc;
 	memset(&vBufferDesc, 0, sizeof(vBufferDesc));
