@@ -3,7 +3,7 @@
 using namespace DirectX;
 Camera::Camera()
 {
-	m_pos = XMFLOAT3{ 0,1,0 };
+	m_pos = XMFLOAT3{ 0,0,0 };
 	m_lookAt = XMFLOAT3{ 0,0,-1 };
 }
 
@@ -64,7 +64,7 @@ void Camera::setViewMatrix()
 {
 	m_viewMatrix = XMMatrixLookAtLH(
 		XMLoadFloat3(&m_pos),
-		XMLoadFloat3(&m_lookAt),
+		XMLoadFloat3(&m_pos) + XMLoadFloat3(&m_lookAt),
 		m_up);
 }
 

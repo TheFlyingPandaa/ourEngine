@@ -34,7 +34,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	for (int i = 0; i < 9; i++)
 	{
 		shapes[i].setMesh(&m);
-		shapes[i].setPos(counterx--, 0, counterz--);
+		shapes[i].setPos(counterx-- * 2, 0, 2);
 	}
 	
 	RectangleShape r;
