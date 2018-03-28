@@ -75,6 +75,7 @@ private:
 	
 	void(Camera::*m_mousePositionFunc)(Vec2);
 	Camera* m_cameraFuncCaller;
+	DirectX::XMMATRIX m_HUDview;
 
 private:
 	bool	_initWindow();
@@ -103,8 +104,12 @@ private:
 	void	_initPickingTexture();
 	void	_initPickingShaders();
 	
-	//Tessellation
+	// Tessellation
 	void	_initTessellationShaders();
+
+	// HUD
+	void	_drawHUD();
+
 
 public:
 	Window(HINSTANCE h);

@@ -15,6 +15,7 @@ std::vector<Shape*> DX::g_renderQueue;
 std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
 std::vector<Shape*> DX::g_pickingQueue;
+std::vector<Shape*> DX::g_HUDQueue;
 
 //Standard Tessellation
 ID3D11HullShader* DX::g_standardHullShader;
@@ -173,6 +174,35 @@ void Window::_initTessellationShaders()
 
 	ShaderCreator::CreateDomainShader(DX::g_device, DX::g_standardDomainShader,
 		L"ourEngine/shaders/standardDomainShader.hlsl", "main");
+}
+
+void Window::_drawHUD()
+{
+	DirectX::XMMATRIX viewProj = m_HUDview;
+
+	MESH_BUFFER meshBuffer;
+	for (size_t i = 0; i < DX::g_HUDQueue.size(); i++)
+	{
+		DirectX::XMMATRIX world = DX::g_HUDQueue[i]->getWorld();
+		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
+		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+		DX::g_HUDQueue[i]->ApplyShaders();
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+
+		ID3D11Buffer* v = DX::g_HUDQueue[i]->getVertices();
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->Draw(DX::g_HUDQueue[i]->getMesh()->getNumberOfVertices(), 0);
+	}
 }
 
 void Window::_setSamplerState()
@@ -518,9 +548,15 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_createConstantBuffers(); 
 	_initPickingTexture();
 	_setSamplerState();
+	m_HUDview = DirectX::XMMatrixLookToLH(
+		DirectX::XMVectorSet(0, 0, -0.1, 1),
+		DirectX::XMVectorSet(0, 0, 1, 0),
+		DirectX::XMVectorSet(0, 1, 0, 0)
+	);
 	_initTransparency();
 	
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
+	m_HUDview = m_HUDview * m_projectionMatrix;
 	t1.join();
 	t2.join();
 	ShowWindow(m_hwnd, 10);
@@ -546,6 +582,7 @@ void Window::Clear()
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_renderQueue.clear(); 
 	DX::g_pickingQueue.clear();
+	DX::g_HUDQueue.clear();
 	DX::g_transQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -562,6 +599,7 @@ void Window::Clear()
 void Window::Flush(Camera* c)
 {
 	_prepareGeometryPass();
+	_drawHUD();
 	_geometryPass(*c);
 	_clearTargets();
 	_lightPass();

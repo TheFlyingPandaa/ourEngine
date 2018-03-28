@@ -39,6 +39,15 @@ public:
 	void setRotation(DirectX::XMFLOAT3 rotation);
 	void Rotate(float x, float y, float z);
 	void Rotate(DirectX::XMFLOAT3 rotation);
+	void setScale(float scl);
+	void setScale(float x, float y, float z);
+	void setScale(DirectX::XMFLOAT3 scl);
+	void Scale(float scl);
+	void Scale(float x, float y, float z);
+	void Scale(DirectX::XMFLOAT3 scl);
+	
+	std::string toString() const;
+
 	void ApplyShaders();
 	void CheckPick();
 	const DirectX::XMMATRIX& getWorld() const; 
