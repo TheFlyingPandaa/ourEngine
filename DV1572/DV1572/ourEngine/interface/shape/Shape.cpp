@@ -145,5 +145,17 @@ const DirectX::XMMATRIX & Shape::getWorld() const
 
 void Shape::Draw()
 {
-	DX::g_renderQueue.push_back(this); 
+	if (m_mesh->getMaterial()->isTransparent())
+	{
+		DX::g_transQueue.push_back(this);
+	}
+	else 
+	{
+		DX::g_renderQueue.push_back(this);
+	}
+}
+
+void Shape::TEMPTRANS()
+{
+	DX::g_transQueue.push_back(this);
 }

@@ -44,4 +44,5 @@ public:
 	const DirectX::XMMATRIX& getWorld() const; 
 
 	void Draw();
+	void TEMPTRANS();
 };
