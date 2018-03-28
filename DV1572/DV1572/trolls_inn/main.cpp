@@ -51,8 +51,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 	Mesh wall;
-	wall.LoadModel("trolls_inn/Resources/wall.obj");
-	wall.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+	wall.LoadModel("trolls_inn/Resources/Box.obj");
+	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
