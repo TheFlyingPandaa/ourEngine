@@ -18,11 +18,11 @@ void OrbitCamera::update(DirectX::XMFLOAT2 mousePos)
 	m_mousePos = mousePos;
 	update();
 }
-void printVec3(XMVECTOR vec)
+void printVec3(const char* name , XMVECTOR vec)
 {
 	XMFLOAT3 debugVec;
 	XMStoreFloat3(&debugVec, vec);
-	std::cout << debugVec.x << "," << debugVec.y << "," << debugVec.z << std::endl;
+	std::cout << name << " (" <<debugVec.x << "," << debugVec.y << "," << debugVec.z <<")"<<std::endl;
 }
 void OrbitCamera::update()
 {
@@ -46,26 +46,18 @@ void OrbitCamera::update()
 	if (GetAsyncKeyState(int('Z')))
 	{
 		m_distanceFromTarget += 0.1f;
-		XMVECTOR rotVector = (XMVector3Normalize(xmCamPos + xmLookAt) * m_distanceFromTarget);
 
-		xmCamPos = rotVector;
-		xmLookAt = -rotVector;
+		xmCamPos = xmCamPos + (xmLookAt * -0.1f);
 
-
-		XMStoreFloat3(&m_lookAt, xmLookAt);
 		XMStoreFloat3(&m_pos, xmCamPos);
 	}
 		
 	if (GetAsyncKeyState(int('X')))
 	{
 		m_distanceFromTarget -= 0.1f;
-		XMVECTOR rotVector = (XMVector3Normalize(xmCamPos + xmLookAt) * m_distanceFromTarget);
 
-		xmCamPos = rotVector;
-		xmLookAt = -rotVector;
+		xmCamPos = xmCamPos + (xmLookAt * 0.1f);
 
-
-		XMStoreFloat3(&m_lookAt, xmLookAt);
 		XMStoreFloat3(&m_pos, xmCamPos);
 	}
 
@@ -124,20 +116,25 @@ void OrbitCamera::update()
 		XMStoreFloat3(&m_pos, xmCamPos);
 		
 	}
-		
+
 	if (GetAsyncKeyState(VK_RBUTTON))
 	{
-		
-		XMVECTOR rotVector = (XMVector3Normalize(xmCamPos + xmLookAt) * m_distanceFromTarget);
 
-		XMMATRIX trans = XMMatrixTranslationFromVector(xmCamPos);
-		XMMATRIX rotX = XMMatrixRotationX(delta.y * 0.01f);
-		XMMATRIX rotY = XMMatrixRotationY(delta.x * 0.01f);
-		XMVECTOR newPos = XMVector3Transform(rotVector, rotY * rotX);
+		XMVECTOR rotVector = xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget);
+
+		XMMATRIX trans = XMMatrixTranslationFromVector(rotVector);
+		XMMATRIX transBack = XMMatrixTranslationFromVector(-rotVector);
+
+		XMMATRIX rotX = XMMatrixRotationX(m_pitch * 0.01f);
+		XMMATRIX rotY = XMMatrixRotationY(m_yaw * 0.01f);
+		XMVECTOR newPos = XMVector3Transform(xmCamPos, transBack * rotY * rotX * trans);
+		XMVECTOR newLookAt = XMVector3Transform(xmLookAt, rotY * rotX);
+	
 
 		xmCamPos = newPos;
-		xmLookAt = -newPos;
+		xmLookAt = newLookAt;
 
+	
 
 		XMStoreFloat3(&m_lookAt, xmLookAt);
 		XMStoreFloat3(&m_pos, xmCamPos);
