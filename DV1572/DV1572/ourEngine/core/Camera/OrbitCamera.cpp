@@ -18,7 +18,12 @@ void OrbitCamera::update(DirectX::XMFLOAT2 mousePos)
 	m_mousePos = mousePos;
 	update();
 }
-
+void printVec3(XMVECTOR vec)
+{
+	XMFLOAT3 debugVec;
+	XMStoreFloat3(&debugVec, vec);
+	std::cout << debugVec.x << "," << debugVec.y << "," << debugVec.z << std::endl;
+}
 void OrbitCamera::update()
 {
 	XMVECTOR xmMouse = XMLoadFloat2(&m_mousePos);
@@ -28,30 +33,39 @@ void OrbitCamera::update()
 	XMFLOAT2 delta;
 
 	XMStoreFloat2(&delta, xmDelta);
+	m_yaw = delta.x;
+	m_pitch = delta.y;
 
 	XMVECTOR xmCamPos = XMLoadFloat3(&m_pos);
 	XMVECTOR xmLookAt = XMVector3Normalize(XMLoadFloat3(&m_lookAt));
 
+	static XMFLOAT3 target = { -5, 0, 2 };
+
+	XMVECTOR xmTarget = XMLoadFloat3(&target);
+
 	if (GetAsyncKeyState(int('Z')))
 		m_distanceFromTarget += 0.1f;
-	if (GetAsyncKeyState(VK_SPACE))
-	{
+	if(GetAsyncKeyState(int('X')))
+		m_distanceFromTarget -= 0.1f;
+	
 		if (GetAsyncKeyState(int('W')))
 		{
 			XMVECTOR front = xmLookAt;
-
-
-			xmCamPos += front * 0.1f;
-
+			XMVECTOR up = m_up;
+			XMVECTOR right = -XMVector3Normalize(XMVector3Cross(up, front));
+			XMVECTOR newFront = XMVector3Normalize(XMVector3Cross(up, right));
+			xmCamPos += newFront * 0.1f;
 			XMStoreFloat3(&m_pos, xmCamPos);
 			
 
 		}
 		else if (GetAsyncKeyState(int('S')))
 		{
-			XMVECTOR front = -xmLookAt;
-
-			xmCamPos += front * 0.1f;
+			XMVECTOR front = xmLookAt;
+			XMVECTOR up = m_up;
+			XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, front));
+			XMVECTOR newFront = XMVector3Normalize(XMVector3Cross(up, right));
+			xmCamPos += newFront * 0.1f;
 
 
 			XMStoreFloat3(&m_pos, xmCamPos);
@@ -80,32 +94,33 @@ void OrbitCamera::update()
 			XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, front));
 
 			xmCamPos += right * 0.1f;
-			xmLookAt += right * 0.1f;
-
-
+	
 			XMStoreFloat3(&m_pos, xmCamPos);
 		
 		}
 		
-	}
-	else
-	{
-		XMVECTOR rotPoint = (xmLookAt * m_distanceFromTarget);
+		if (GetAsyncKeyState(VK_SPACE))
+		{
+			
+			XMVECTOR rotVector = (XMVector3Normalize(xmCamPos + xmLookAt) * m_distanceFromTarget);
+
+			XMMATRIX trans = XMMatrixTranslationFromVector(rotVector);
+			XMMATRIX rotX = XMMatrixRotationX(delta.y * 0.1f);
+			XMMATRIX rotY = XMMatrixRotationY(delta.x * 0.1f);
+			XMVECTOR newPos = XMVector3Transform(rotVector, rotY * rotX * trans);
+
+			xmCamPos = newPos;
+			xmLookAt = -newPos;
 
 
-		XMVECTOR RotToPos = rotPoint - xmCamPos;
-		XMMATRIX rotX = XMMatrixRotationX(delta.y * 0.01f);
-		XMMATRIX rotYAndX = rotX * XMMatrixRotationY(delta.x * 0.01f);
-		RotToPos = XMVector3TransformNormal(-RotToPos, rotYAndX);
-
-		XMVECTOR newCamPos = RotToPos - xmCamPos;
-		XMVECTOR newLookAt = XMVector3Normalize(-RotToPos);
-
-		XMStoreFloat3(&m_pos, newCamPos);
-		XMStoreFloat3(&m_lookAt, newLookAt - newCamPos);
-	}
+			XMStoreFloat3(&m_lookAt, xmLookAt);
+		}
+		
+		
 	
+	XMStoreFloat3(&m_pos, xmCamPos);
 
 
 	setViewMatrix();
 }
+
