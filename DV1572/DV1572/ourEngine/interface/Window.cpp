@@ -553,6 +553,7 @@ Window::Window(HINSTANCE h)
 	m_depthStencilView = nullptr;
 	m_depthBufferTex = nullptr;
 	m_samplerState = nullptr;
+	Input::Instance();
 }
 
 Window::~Window()
@@ -731,6 +732,7 @@ Shape * Window::getPicked(Camera* c)
 void Window::Present()
 {
 	m_swapChain->Present(0, 0);
+	Input::_reset();
 }
 
 LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -743,7 +745,6 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
-		if(m_windowSizeCallbackFunc != nullptr)m_windowSizeCallbackFunc(m_width, m_height);
 		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
 		if (m_swapChain)
 		{
@@ -784,12 +785,48 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
+			
+		Input::m_keys[wParam] = true;
 		break;
+	case WM_KEYUP:
+		if (wParam == VK_LBUTTON)
+			Input::m_mouseKeys[0] = false;
+		Input::m_keys[wParam] = false;
+		break;
+
+	// ----- Left Mouse Button -----
+	case WM_LBUTTONDOWN:
+		Input::m_mouseKeys[0] = true;
+		break;
+	case WM_LBUTTONUP:
+		Input::m_mouseKeys[0] = false;
+		break;
+
+	// ----- Middle Mouse Button -----
+	case WM_MBUTTONDOWN:
+		Input::m_mouseKeys[1] = true;
+		break;
+	case WM_MBUTTONUP:
+		Input::m_mouseKeys[1] = false;
+		break;
+
+	// ----- Right Mouse Button -----
+	case WM_RBUTTONDOWN:
+		Input::m_mouseKeys[2] = true;
+		break;
+	case WM_RBUTTONUP:
+		Input::m_mouseKeys[2] = false;
+		break;
+
+	// ----- Mouse Position -----
 	case WM_MOUSEMOVE:
-		m_mousePos.x = LOWORD(lParam);
-		m_mousePos.y = HIWORD(lParam);
-		if(m_cameraFuncCaller!=nullptr)
-			(m_cameraFuncCaller->*m_mousePositionFunc)(Vec2(m_mousePos));
+		Input::m_mousePos.x = LOWORD(lParam);
+		Input::m_mousePos.y = HIWORD(lParam);
+		break;
+
+	// ----- Mouse Wheel -----
+	case WM_MOUSEWHEEL:
+		Input::m_scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / 120.0f;
 		break;
 	}
 
@@ -821,24 +858,16 @@ void Window::setMouseMiddleScreen()
 	SetCursorPos(pt.x, pt.y);
 }
 
-void Window::setWindowSizeCallback(void (*func)(int, int))
+
+DirectX::XMFLOAT2 Window::getSize() const
 {
-	this->m_windowSizeCallbackFunc = func;
+	DirectX::XMFLOAT2 sizeVec;
+	sizeVec.x = m_width;
+	sizeVec.y = m_height;
+	return sizeVec;
 }
 
-void Window::setMousePositionCallback(Camera* object, void(Camera::*func)(Vec2))
-{
-	m_cameraFuncCaller = object;
-	m_mousePositionFunc = func;
-}
-
-Vec2 Window::getSize() const
-{
-	
-	return Vec2((float)m_width / 2,(float)m_height / 2);
-}
-
-Vec2 Window::getMousePos()
+DirectX::XMFLOAT2 Window::getMousePos()
 {
 	return m_mousePos;
 }

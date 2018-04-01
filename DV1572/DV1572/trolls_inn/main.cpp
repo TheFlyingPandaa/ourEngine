@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+
 const float REFRESH_RATE = 60.0f;
 
 inline void _loadModelThread(Mesh * a, const std::string path)
@@ -30,12 +31,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new FPSCamera();
-	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
+	Camera* cam = new OrbitCamera(wnd.getSize());
 
-	//cam.setPosition(0, 100, 100);
 	Mesh a;
-	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+
 	std::thread modelThread(_loadModelThread,&a, "trolls_inn/Resources/Aaakali.txt");
 	
 	RectangleShape HUD;
@@ -51,10 +50,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
+	
 	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	aWall.setMesh(&wall);
-
 
 	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 
@@ -81,6 +80,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	bool pressedInFrame = false;
 	while (wnd.isOpen())
 	{
+		//std::cout << Input::getMouseScroll() << std::endl;
 		wnd.Clear();
 		auto currentTime = steady_clock::now();
 		wnd.PollEvents();
@@ -94,28 +94,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			/*for (int i = 0; i < 9; i++)
-			{
-				shapes[i].Rotate(0, 1, 0);
-			}*/
+	
 			r2.Rotate(0, 1, 0); 
 			r.Rotate(1, 1, 0); 
-			cam->update();
+			cam->update(wnd.getMousePos());
 			Akali.Rotate(0, 0.1, 0);
 			aWall.Rotate(0.1, 0, 0);
+			
+
+			
 		}
 
 		fpsCounter++;
 
-		//HUD.Draw();
+		HUD.Draw();
 		HUD.DrawAsHud();
-		//Akali.Draw();
+		Akali.Draw();
 		//Draw geometry
-		/*for (int i = 0; i < 9; i++)
-		{
-			shapes[i].Draw();
-		}*/
-		//r.Draw();
+
+
+		r.Draw();
 		r.TEMPTRANS();
 		r.CheckPick();
 		r2.Draw();

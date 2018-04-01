@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <iostream>
 
 namespace OurMath
 {
@@ -7,6 +8,8 @@ namespace OurMath
 	// VECTORS
 	struct Vec2
 	{
+		DirectX::XMFLOAT2 vec;
+
 		float x;
 		float y;
 		Vec2();
@@ -52,6 +55,7 @@ namespace OurMath
 		}
 		Vec3 operator+=(const Vec3& vec);
 		Vec3 operator-=(const Vec3& vec);
+		Vec3 operator=(const DirectX::XMFLOAT4& vector);
 
 		DirectX::XMFLOAT3 toXMFLOAT3()
 		{
@@ -61,6 +65,11 @@ namespace OurMath
 			returnVec.z = z;
 			return returnVec;
 		}
+
+		Vec3& Rotate(float angle, Vec3 Axis);
+		Vec3& RotateX(float angle);
+		Vec3& RotateY(float angle);
+
 		Vec3 toDegrees() const;
 
 		static Vec3 ZAxis()
@@ -75,7 +84,11 @@ namespace OurMath
 		{
 			return Vec3(0, 1, 0);
 		}
+
+		friend std::ostream& operator<<(std::ostream& stream, Vec3 vector);
 	};
+	Vec3 Normalize(const Vec3& vec3);
+
 	struct Vec4
 	{
 		float x, y, z, w;
@@ -178,20 +191,29 @@ namespace OurMath
 
 		Mat4();
 		Mat4(float value);
+		Mat4(DirectX::XMFLOAT4X4 mat);
 
 		Mat4& Multiply(const Mat4& other);
 
 		Mat4 operator*(const Mat4& right);
 
 
+		DirectX::XMFLOAT4X4 ToXMFLOAT4X4() const;
+
 		static Mat4 Rotate(float angle, const Vec3& axis);
 		static Mat4 Rotate(const Quaternion& quat);
 		static Mat4 Translate(const Vec3& vector);
-	};
 
+		friend std::ostream& operator<<(std::ostream& stream, Mat4 mat);
+	};
+	Mat4 LookAtLH(Vec3 eye, Vec3 focusPosition, Vec3 up);
+	Mat4 Transpose(const Mat4& mat);
 
 	float toRadians(float degrees);
 	float Length(Vec3 vector);
+
+
+	
 
 
 }

@@ -14,11 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
-    <ClCompile Include="ourEngine\core\Camera\FPSCamera.cpp" />
-    <ClCompile Include="ourEngine\core\Camera\MayaCamera.cpp" />
+    <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
-    <ClCompile Include="ourEngine\interface\light\Light.cpp" />
-    <ClCompile Include="ourEngine\interface\OurMath.cpp" />
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
@@ -31,18 +28,17 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\main.cpp" />
+    <ClCompile Include="ourEngine\interface\light\Light.cpp" />
+    <ClCompile Include="ourEngine\interface\Input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
+    <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
-    <ClInclude Include="ourEngine\core\Camera\FPSCamera.h" />
-    <ClInclude Include="ourEngine\core\Camera\MayaCamera.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h" />
     <ClInclude Include="ourEngine\interface\Interface.h" />
-    <ClInclude Include="ourEngine\interface\light\Light.h" />
-    <ClInclude Include="ourEngine\interface\OurMath.h" />
     <ClInclude Include="ourEngine\interface\shape\3DObject.h" />
     <ClInclude Include="ourEngine\interface\shape\Material.h" />
     <ClInclude Include="ourEngine\interface\shape\Mesh.h" />
@@ -50,13 +46,15 @@
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />
     <ClInclude Include="ourEngine\interface\Window.h" />
     <ClInclude Include="ourEngine\Structs.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\Grid.h" />
     <ClInclude Include="trolls_inn\Bobby test\Kitchen.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Bedroom.h" />
+    <ClInclude Include="ourEngine\interface\light\Light.h" />
+    <ClInclude Include="ourEngine\interface\Input.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

@@ -6,13 +6,13 @@ MayaCamera::MayaCamera()
 	m_rotationSpeed = 0.002f;
 	m_zoomSpeed = 0.2f;
 
-	m_position = OurMath::Vec3(0.0f, 0.0f, 0.0f);
+	m_position = OurMath::Vec3(0.0f, 5.0f, 0.0f);
 	m_rotation = OurMath::Vec3(90.0f, 0.0f, 0.0f);
 
 	m_focalPoint = OurMath::Vec3(0.0f, 0.0f, 0.0f);
 	m_distance = OurMath::Length(m_position - m_focalPoint);
 
-	m_yaw = 3.0f * OurMath::PI / 4.0f;
+	m_yaw =  3.0f * OurMath::PI / 4.0f;
 	m_pitch = OurMath::PI / 4.0f;
 	
 }
@@ -43,8 +43,12 @@ void MayaCamera::update()
 	OurMath::Quaternion orientation = GetOrientation();
 	m_rotation = orientation.ToEulerAngles().toDegrees();
 
+	//Mat4 viewMatrix = Mat4::Translate(m_position.Negative());
+	//viewMatrix = Transpose(viewMatrix);
+
 
 	OurMath::Mat4 viewMatrix = OurMath::Mat4::Translate(OurMath::Vec3(0, 0, 1)) * OurMath::Mat4::Rotate(orientation.Conjugate()) * OurMath::Mat4::Translate(m_position.Negative());
+	std::cout << viewMatrix << std::endl;
 
 	setViewMatrix(viewMatrix);
 }
@@ -58,6 +62,7 @@ void MayaCamera::MouseRotate(const OurMath::Vec2 & delta)
 
 void MayaCamera::MousePan(const OurMath::Vec2 & delta)
 {
+	
 	m_focalPoint += GetRightDirection().Negative() * delta.x * m_panSpeed;
 	m_focalPoint += GetUpDirection() * delta.y * m_panSpeed;
 }

@@ -9,6 +9,7 @@
 #include "OurMath.h"
 #include "shape\Shape.h"
 #include "light\Light.h"
+#include "Input.h"
 
 using namespace OurMath;
 
@@ -70,13 +71,8 @@ private:
 
 
 	// Input
-	Vec2					m_mousePos;
-	
-	// Function callback pointers
-	void(*m_windowSizeCallbackFunc)(int, int);
-	
-	void(Camera::*m_mousePositionFunc)(Vec2);
-	Camera* m_cameraFuncCaller;
+	DirectX::XMFLOAT2 m_mousePos;
+
 	DirectX::XMMATRIX m_HUDview;
 
 private:
@@ -133,9 +129,6 @@ public:
 	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);
 	void setMouseMiddleScreen();
 
-	void setWindowSizeCallback(void(*func)(int, int));
-	void setMousePositionCallback(Camera* object, void(Camera::*func)(Vec2));
-
-	Vec2 getSize() const;
-	Vec2 getMousePos();
+	DirectX::XMFLOAT2 getSize() const;
+	DirectX::XMFLOAT2 getMousePos();
 };
