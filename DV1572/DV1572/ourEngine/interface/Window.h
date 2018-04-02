@@ -24,6 +24,13 @@ private:
 		ID3D11ShaderResourceView*	SRV;
 	};
 
+	struct computeBuffer {
+		float temp;
+		float temp2;
+		float temp3;
+		float temp4;
+	};
+
 private:
 	HINSTANCE				m_hInstance;
 	HWND					m_hwnd;
@@ -68,6 +75,12 @@ private:
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
 
+	//ComputeShader
+	ID3D11Buffer*			m_computeConstantBuffer;
+	ID3D11Buffer*			m_computeOutputBuffer;
+	ID3D11Buffer*			m_computeReadWriteBuffer;
+
+	ID3D11UnorderedAccessView* m_computeUAV;
 
 	// Input
 	Vec2					m_mousePos;
@@ -112,6 +125,10 @@ private:
 
 	// HUD
 	void	_drawHUD();
+
+	//ComputeShader
+	void	_initComputeShader();
+
 
 
 public:
