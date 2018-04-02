@@ -11,6 +11,7 @@
     <FxCompile Include="ourEngine\shaders\standardHullShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transVertexShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />

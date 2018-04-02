@@ -79,8 +79,9 @@ private:
 	ID3D11Buffer*			m_computeConstantBuffer;
 	ID3D11Buffer*			m_computeOutputBuffer;
 	ID3D11Buffer*			m_computeReadWriteBuffer;
-
 	ID3D11UnorderedAccessView* m_computeUAV;
+
+	ID3D11ComputeShader*	m_computeShader;
 
 	// Input
 	Vec2					m_mousePos;
@@ -128,6 +129,7 @@ private:
 
 	//ComputeShader
 	void	_initComputeShader();
+	void	_runComputeShader();
 
 
 

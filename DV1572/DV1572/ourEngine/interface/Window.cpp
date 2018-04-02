@@ -149,6 +149,10 @@ void Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, m_transPixelShader,
 		L"ourEngine/shaders/transPixelShader.hlsl", "main");
 
+	//Compaile Computeshader
+	ShaderCreator::CreateComputeShader(DX::g_device, m_computeShader,
+		L"ourEngine/shaders/testComputeShader.hlsl", "main");
+
 
 	_initPickingShaders();
 	_initTessellationShaders();
@@ -267,6 +271,30 @@ void Window::_initComputeShader()
 		// handle the error, could be fatal or a warning...
 		exit(-1);
 	}
+}
+
+void Window::_runComputeShader() {
+	DX::g_deviceContext->CSSetShader(m_computeShader, NULL, 0);
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	//gDeviceContext->Map(computeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+
+	//computeValuesStore.val = 1;
+	//computeValuesStore.output = XMFLOAT2(0, 0); //Need Padding
+	//computeValuesStore.camPos = XMFLOAT2(XMVectorGetX(cameraPos), XMVectorGetZ(cameraPos));
+	//computeValuesStore.objectPos = XMFLOAT2(renderObject->getPosition().x, renderObject->getPosition().z);
+	//memcpy(dataPtr.pData, &computeValuesStore, sizeof(computeShader));
+	//// UnMap constant buffer so that we can use it again in the GPU
+	//gDeviceContext->Unmap(computeBuffer, 0);
+
+	DX::g_deviceContext->CSSetConstantBuffers(0, 1, &m_computeConstantBuffer);
+	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_computeUAV, NULL);
+
+	DX::g_deviceContext->Dispatch(1, 1, 1);
+
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
 }
 
 void Window::_setSamplerState()
@@ -706,6 +734,7 @@ void Window::Flush(Camera* c, Light& light)
 	_clearTargets();
 	_lightPass(light,*c);
 	_transparencyPass(*c);
+	_runComputeShader();
 }
 
 Shape * Window::getPicked(Camera* c)
