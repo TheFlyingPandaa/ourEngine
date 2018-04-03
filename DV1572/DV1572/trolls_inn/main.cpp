@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+
 const float REFRESH_RATE = 60.0f;
 
 inline void _loadModelThread(Mesh * a, const std::string path)
@@ -11,6 +12,7 @@ inline void _loadModelThread(Mesh * a, const std::string path)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+
 	auto start = std::chrono::system_clock::now();
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -18,10 +20,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
-	
+
 	Window wnd(hInstance);
 	wnd.Init(1280, 720, "Banan");
-	
+
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -30,14 +32,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new FPSCamera();
-	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
+	Camera* cam = new OrbitCamera(wnd.getSize());
+	
 
 	//cam.setPosition(0, 100, 100);
 	Mesh a;
 	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
-	std::thread modelThread(_loadModelThread,&a, "trolls_inn/Resources/Aaakali.txt");
-	
+	std::thread modelThread(_loadModelThread, &a, "trolls_inn/Resources/Aaakali.txt");
+
 	RectangleShape HUD;
 	HUD.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	HUD.setPos(-0.073500, -0.041000, 0);
@@ -69,8 +71,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	r2.setPos(0, 0, 0);
 
-	Light light; 
-	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000); 
+	Light light;
+	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000);
 
 
 
@@ -79,10 +81,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;
 	std::cout << elapsed_seconds.count() << std::endl;
-	
+
 	bool keyPressed = false;
 	bool pressedInFrame = false;
-	float angle = 0.0f; 
+	float angle = 0.0f;
 
 	while (wnd.isOpen())
 	{
@@ -93,20 +95,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		time = steady_clock::now();
 
 		unprocessed += dt / freq;
-		
+
 		while (unprocessed > 1)
 		{
 			updates++;
 			unprocessed -= 1;
 			/*for (int i = 0; i < 9; i++)
 			{
-				shapes[i].Rotate(0, 1, 0);
+			shapes[i].Rotate(0, 1, 0);
 			}*/
-			r2.Rotate(0, 1, 0); 
-			r.Rotate(1, 1, 0); 
-			cam->update();
-			Akali.Rotate(0, 0.1, 0);
-			aWall.Rotate(0.1, 0, 0);
+			
+			cam->update(wnd.getMousePos());
+			
 		}
 
 		fpsCounter++;
@@ -117,7 +117,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//Draw geometry
 		/*for (int i = 0; i < 9; i++)
 		{
-			shapes[i].Draw();
+		shapes[i].Draw();
 		}*/
 		//r.Draw();
 		r.TEMPTRANS();
@@ -138,7 +138,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 
 
-		wnd.Flush(cam,light); 
+		wnd.Flush(cam, light);
 		wnd.Present();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
@@ -150,7 +150,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 	}
 
-	
+
 	delete cam;
 	return 0;
 }
