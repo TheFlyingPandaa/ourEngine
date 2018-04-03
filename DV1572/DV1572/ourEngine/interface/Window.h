@@ -6,12 +6,9 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
-#include "OurMath.h"
 #include "shape\Shape.h"
 #include "light\Light.h"
 #include "Input.h"
-
-using namespace OurMath;
 
 const UINT GBUFFER_COUNT = 3;
 
