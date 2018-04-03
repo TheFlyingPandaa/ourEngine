@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+
 struct VERTEX
 {
 	float x, y, z;		//Position
@@ -40,6 +41,7 @@ struct PICK_BUFFER
 	DirectX::XMFLOAT4A index;
 	DirectX::XMFLOAT4X4A MVP;
 };
+
 
 
 struct V

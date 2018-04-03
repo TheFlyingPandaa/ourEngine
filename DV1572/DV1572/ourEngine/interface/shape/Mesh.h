@@ -15,7 +15,7 @@ private:
 	ID3D11Buffer*	m_vertexBuffer;
 	Material		m_material;
 	int				m_nrOfVertices;
-
+	static int		m_id;
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
@@ -26,4 +26,5 @@ public:
 	Material* getMaterial();
 	ID3D11Buffer* getVertices() const;
 	int getNumberOfVertices() const;
+	bool CheckID(const Mesh& other) const;
 };

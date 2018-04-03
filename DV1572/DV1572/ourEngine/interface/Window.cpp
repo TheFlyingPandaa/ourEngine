@@ -31,6 +31,48 @@ void DX::CleanUp()
 }
 
 
+std::vector < DX::INSTANCE_GROUP > DX::g_instanceGroups;
+
+void DX::submitRenderInstance(Shape* shape)
+{
+	Mesh* currentMesh = shape->getMesh();
+
+	int existingId = -1;
+	for (int i = 0; i < DX::g_instanceGroups.size() && existingId == -1; i++)
+	{
+		if (currentMesh->CheckID(*DX::g_instanceGroups[i].mesh))
+		{
+			existingId = i;
+
+		}
+	}
+
+	INSTANCE_ATTRIB attribDesc;
+	
+
+	XMFLOAT3 pos3 = shape->getPosition();
+	attribDesc.pos = { pos3.x, pos3.y, pos3.y, 1.0f };
+	XMFLOAT3 scl3 = shape->getScale();
+	attribDesc.scale = { scl3.x, scl3.y, scl3.z, 1.0f };
+	XMFLOAT3 rot3 = shape->getRotation();
+	attribDesc.rot = { rot3.x, rot3.y, rot3.z, 1.0f };
+	
+	// Unique Mesh
+	if (existingId == -1)
+	{
+		INSTANCE_GROUP newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.mesh = currentMesh;
+		g_instanceGroups.push_back(newGroup);
+
+	}
+	else
+	{
+		DX::g_instanceGroups[existingId].attribs.push_back(attribDesc);	
+	}
+	
+}
+
 bool Window::_initWindow()
 {
 	WNDCLASSEX wcex = { 0 };
@@ -131,7 +173,10 @@ void Window::_compileShaders()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCEROT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "INSTANCESCA", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",
@@ -349,28 +394,55 @@ void Window::_geometryPass(const Camera &cam)
 
 	MESH_BUFFER meshBuffer;
 	DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
-	for (size_t i = 0; i < DX::g_renderQueue.size(); i++)
-	{
-		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld();
-		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
-		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+	ID3D11Buffer* instanceBuffer;
+	
+	D3D11_BUFFER_DESC instBuffDesc;
+	memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 
-		D3D11_MAPPED_SUBRESOURCE dataPtr;
-		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
-		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
-		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+	instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+	instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * DX::g_instanceGroups[0].attribs.size();
+	instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	instBuffDesc.CPUAccessFlags = 0;
+	instBuffDesc.MiscFlags = 0;
+	instBuffDesc.StructureByteStride = 0;
 
-		DX::g_renderQueue[i]->ApplyShaders();
+	D3D11_SUBRESOURCE_DATA instData;
+	memset(&instData, 0, sizeof(instData));
 
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
+	instData.pSysMem = &DX::g_instanceGroups[0].attribs[0];
 
-		ID3D11Buffer* v = DX::g_renderQueue[i]->getVertices();
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(DX::g_renderQueue[i]->getMesh()->getNumberOfVertices(), 0);
-	}
+	HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+	
+	DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(viewProj);
+	DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+	DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+	DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+	DX::g_renderQueue[0]->ApplyShaders();
+
+	UINT32 vertexSize = sizeof(VERTEX);
+	UINT offset = 0;
+
+	ID3D11Buffer* v = DX::g_instanceGroups[0].mesh->getVertices();
+	ID3D11Buffer* bufferPointers[2];
+	bufferPointers[0] = v;
+	bufferPointers[1] = instanceBuffer;
+	unsigned int strides[2];
+	strides[0] = sizeof(VERTEX);
+	strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+	unsigned int offsets[2];
+	offsets[0] = 0;
+	offsets[1] = 0;
+	//DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+	DX::g_deviceContext->DrawInstanced(DX::g_instanceGroups[0].mesh->getNumberOfVertices(), DX::g_instanceGroups[0].attribs.size(), 0, 0);
+	DX::g_instanceGroups[0].attribs.clear();
+	DX::g_instanceGroups.clear();
+	instanceBuffer->Release();
 }
 
 void Window::_clearTargets()
@@ -855,7 +927,6 @@ void Window::setMouseMiddleScreen()
 	ClientToScreen(m_hwnd, &pt);
 	SetCursorPos(pt.x, pt.y);
 }
-
 
 DirectX::XMFLOAT2 Window::getSize() const
 {

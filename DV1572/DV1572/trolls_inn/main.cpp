@@ -33,59 +33,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float unprocessed = 0;
 
 	Camera* cam = new OrbitCamera(wnd.getSize());
-	
 
-	//cam.setPosition(0, 100, 100);
-	Mesh a;
-	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
-	std::thread modelThread(_loadModelThread, &a, "trolls_inn/Resources/Aaakali.txt");
-
-	RectangleShape HUD;
-	HUD.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	HUD.setPos(-0.073500, -0.041000, 0);
-	HUD.setScale(0.04f);
-	Object3D Akali;
-	a.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-	Akali.setMesh(&a);
-	Akali.setScale(0.2, 0.2, 0.2);
 
 
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
-	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-	aWall.setMesh(&wall);
-	//aWall.setPos(1, 1, 0);
+	const int numberOfWalls = 10;
+	Object3D aWall[numberOfWalls];
+	int counter = 0;
+	for(auto& cWall : aWall)
+	{
+		cWall.setMesh(&wall);
+		cWall.setPos(0.0f, counter++, 0.0f);
 
-
-	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
-
-	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-
-	RectangleShape r;
-	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	r.setPos(-1.5, 1.4, 0);
-
-	RectangleShape r2;
-	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	r2.setPos(0, 0, 0);
-
+	}
 	Light light;
 	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000);
-
-
-
-
-	modelThread.join();
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end - start;
-	std::cout << elapsed_seconds.count() << std::endl;
-
-	bool keyPressed = false;
-	bool pressedInFrame = false;
-	float angle = 0.0f;
-
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -100,10 +65,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			/*for (int i = 0; i < 9; i++)
-			{
-			shapes[i].Rotate(0, 1, 0);
-			}*/
 			
 			cam->update(wnd.getMousePos());
 			
@@ -111,34 +72,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 
-		//HUD.Draw();
-		HUD.DrawAsHud();
-		//Akali.Draw();
-		//Draw geometry
-		/*for (int i = 0; i < 9; i++)
-		{
-		shapes[i].Draw();
-		}*/
-		//r.Draw();
-		r.TEMPTRANS();
-		r.CheckPick();
-		r2.Draw();
-		r2.CheckPick();
-		aWall.Draw();
-		aWall.CheckPick();
-
-		Shape* picked = nullptr;
-		if (GetAsyncKeyState(VK_LBUTTON))
-		{
-			picked = wnd.getPicked(cam);
-		}
-		if (picked)
-		{
-			picked->Move(-0.01f, 0.0f, 0.0f);
-		}
-
+		for(auto& wall:aWall)
+			wall.Draw();
+	
+		
 
 		wnd.Flush(cam, light);
+
 		wnd.Present();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)

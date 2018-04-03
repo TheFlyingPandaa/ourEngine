@@ -1,11 +1,12 @@
 #include "Mesh.h"
 #include "../../core/Dx.h"
 #include "../../core/ObjLoader.h"
-
+int Mesh::m_id = 0;
 Mesh::Mesh()
 {
 	m_vertexBuffer = nullptr;
 	m_nrOfVertices = 0;
+	m_id++;
 }
 
 void Mesh::LoadModel(const std::string & path)
@@ -78,4 +79,9 @@ ID3D11Buffer * Mesh::getVertices() const
 int Mesh::getNumberOfVertices() const
 {
 	return m_nrOfVertices;
+}
+
+bool Mesh::CheckID(const Mesh& other) const
+{
+	return other.m_id == m_id;
 }

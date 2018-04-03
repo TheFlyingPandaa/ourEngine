@@ -31,8 +31,14 @@ public:
 	void setMesh(Mesh* m);
 	Mesh* getMesh() const;
 	ID3D11Buffer* getVertices() const;
+	
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);
+
+	const DirectX::XMFLOAT3& getPosition() const;
+	const DirectX::XMFLOAT3& getScale() const;
+	const DirectX::XMFLOAT3& getRotation() const;
+
 	void Move(float x, float y, float z);
 	void Move(DirectX::XMFLOAT3 move);
 	void setRotation(float x, float y, float z);

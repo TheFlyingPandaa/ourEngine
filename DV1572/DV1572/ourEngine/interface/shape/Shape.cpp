@@ -81,6 +81,21 @@ void Shape::setPos(DirectX::XMFLOAT3 pos)
 	_buildMatrix(); 
 }
 
+const DirectX::XMFLOAT3 & Shape::getPosition() const
+{
+	return m_pos;
+}
+
+const DirectX::XMFLOAT3 & Shape::getScale() const
+{
+	return m_scl;
+}
+
+const DirectX::XMFLOAT3 & Shape::getRotation() const
+{
+	return m_rot;
+}
+
 void Shape::Move(float x, float y, float z)
 {
 	Move(XMFLOAT3(x, y, z)); 
@@ -193,6 +208,7 @@ void Shape::Draw()
 	}
 	else 
 	{
+		DX::submitRenderInstance(this);
 		DX::g_renderQueue.push_back(this);
 	}
 }

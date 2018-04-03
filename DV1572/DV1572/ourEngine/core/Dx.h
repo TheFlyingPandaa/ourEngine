@@ -7,6 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../interface/shape/Shape.h"
 #include <vector>
+#include "../Structs.h"
 
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
@@ -24,7 +25,22 @@ namespace DX
 	extern std::vector<Shape*> g_transQueue;
 	extern std::vector<Shape*> g_pickingQueue;
 	extern std::vector<Shape*> g_HUDQueue;
+	
+	// InstanceRender
+	struct INSTANCE_ATTRIB
+	{
+		DirectX::XMFLOAT4A pos;
+		DirectX::XMFLOAT4A rot;
+		DirectX::XMFLOAT4A scale;
+	};
 
+	struct INSTANCE_GROUP
+	{
+		std::vector<INSTANCE_ATTRIB> attribs;
+		Mesh* mesh;
+	};
+	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
+	extern void submitRenderInstance(Shape* shape);
 
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
@@ -35,4 +51,5 @@ namespace DX
 	extern ID3D11DomainShader* g_standardDomainShader;
 
 	extern void CleanUp();
+	
 }

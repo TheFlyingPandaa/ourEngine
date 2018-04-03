@@ -10,6 +10,10 @@ struct INPUT
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+
+	float4 instancePos : INSTANCEPOS;
+	float4 instanceRot : INSTANCEROT;
+	float4 instanceSca : INSTANCESCA;
 };
 
 struct OUTPUT
@@ -27,7 +31,7 @@ OUTPUT main(INPUT input)
 	OUTPUT o;
 	//o.pos = mul(float4(input.pos, 1),wvp);
 	//o.worldPos = mul(float4(input.pos, 1), world);
-	o.worldPos = float4(input.pos,1);
+	o.worldPos = float4(input.pos + input.instancePos,1);
 	o.tex = input.tex;
 	o.normal = input.normal;
 	o.tangent = input.tangent;
