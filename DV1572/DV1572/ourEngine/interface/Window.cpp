@@ -1,6 +1,8 @@
 ﻿#include "Window.h"
 #include "../core/Dx.h"
 #include <thread>
+#include <iostream>
+#define INDEXED 1
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -131,7 +133,12 @@ void Window::_compileShaders()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+		{ "COLONE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,0,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+		{ "COLTWO", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,16,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+		{ "COLTHREE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,32,D3D11_INPUT_PER_INSTANCE_DATA,1 },
+		{ "COLFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1,48,D3D11_INPUT_PER_INSTANCE_DATA,1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",
@@ -198,10 +205,15 @@ void Window::_drawHUD()
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
+		
+		ID3D11Buffer* v = DX::g_HUDQueue[i]->getVerticesIndexed();
+		ID3D11Buffer* indices = DX::g_HUDQueue[i]->getIndices();
 
-		ID3D11Buffer* v = DX::g_HUDQueue[i]->getVertices();
 		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(DX::g_HUDQueue[i]->getMesh()->getNumberOfVertices(), 0);
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->DrawIndexed(DX::g_HUDQueue[i]->getMesh()->getNumberOfVerticesIndexed(), 0, 0);
+		
+		
 	}
 }
 
@@ -349,28 +361,94 @@ void Window::_geometryPass(const Camera &cam)
 
 	MESH_BUFFER meshBuffer;
 	DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
-	for (size_t i = 0; i < DX::g_renderQueue.size(); i++)
+	
+	struct InstanceType
 	{
-		DirectX::XMMATRIX world = DX::g_renderQueue[i]->getWorld();
-		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
-		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+		XMFLOAT4A w[4];
+	};
+	static bool fuckmeintheass = false;
+	static ID3D11Buffer* instanceBuffer = 0;
+	if (!fuckmeintheass)
+	{
 
-		D3D11_MAPPED_SUBRESOURCE dataPtr;
-		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
-		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
-		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+		// Get all World matrices
+		XMFLOAT4X4A *wMatrices = new XMFLOAT4X4A[DX::g_renderQueue.size()];
+		
+		InstanceType* wMatricesVectors = new InstanceType[DX::g_renderQueue.size()];
 
-		DX::g_renderQueue[i]->ApplyShaders();
+		for (int i = 0; i < DX::g_renderQueue.size(); i++)
+		{
+			DirectX::XMStoreFloat4x4A(&wMatrices[i], DX::g_renderQueue[i]->getWorld());
+			for (int k = 0; k < 4; k++)
+			{
+				wMatricesVectors[i].w[k].x = wMatrices[i].m[k][0];
+				wMatricesVectors[i].w[k].y = wMatrices[i].m[k][1];
+				wMatricesVectors[i].w[k].z = wMatrices[i].m[k][2];
+				wMatricesVectors[i].w[k].w = wMatrices[i].m[k][3];
+			}
+		}
 
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
+		D3D11_BUFFER_DESC instanceBufferDesc;
+		memset(&instanceBufferDesc, 0, sizeof(instanceBufferDesc));
+		instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		instanceBufferDesc.ByteWidth = sizeof(InstanceType) * DX::g_renderQueue.size();
+		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		instanceBufferDesc.CPUAccessFlags = 0;
+		instanceBufferDesc.MiscFlags = 0;
+		instanceBufferDesc.StructureByteStride = 0;
 
-		ID3D11Buffer* v = DX::g_renderQueue[i]->getVertices();
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(DX::g_renderQueue[i]->getMesh()->getNumberOfVertices(), 0);
+		D3D11_SUBRESOURCE_DATA instanceData;
+		instanceData.pSysMem = wMatricesVectors;
+		instanceData.SysMemPitch = 0;
+		instanceData.SysMemSlicePitch = 0;
+		HRESULT hr = DX::g_device->CreateBuffer(&instanceBufferDesc, &instanceData, &instanceBuffer);
+		fuckmeintheass = true;
+		delete[] wMatrices;
+		delete[] wMatricesVectors;
 	}
+
+	
+	
+	DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(viewProj);
+	DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+	DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+	DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+	DX::g_renderQueue[0]->ApplyShaders();
+
+	UINT32 vertexSize = sizeof(VERTEX);
+	UINT offset = 0;
+	if (INDEXED)
+	{
+		ID3D11Buffer* indices = DX::g_renderQueue[0]->getIndices();
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(InstanceType);
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+		ID3D11Buffer* bufferPointer[2];
+		bufferPointer[0] = DX::g_renderQueue[0]->getVerticesIndexed();
+		bufferPointer[1] = instanceBuffer;
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2,bufferPointer, strides, offsets);
+		DX::g_deviceContext->DrawIndexedInstanced(DX::g_renderQueue[0]->getMesh()->getNumberOfVerticesIndexed(), DX::g_renderQueue.size(),0, 0,0);
+	}
+	else
+	{
+		/*ID3D11Buffer* v = DX::g_renderQueue[i]->getVerticesIndexed();
+		ID3D11Buffer* indices = DX::g_renderQueue[i]->getIndices();
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		DX::g_deviceContext->DrawIndexed(DX::g_renderQueue[i]->getMesh()->getNumberOfVerticesIndexed(), 0, 0);*/
+	}
+		
+	
+	
 }
 
 void Window::_clearTargets()
@@ -455,10 +533,12 @@ void Window::_transparencyPass(const Camera & cam)
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-
-		ID3D11Buffer* v = DX::g_transQueue[i]->getVertices();
+		ID3D11Buffer* v = DX::g_transQueue[i]->getVerticesIndexed();
+		ID3D11Buffer* indices = DX::g_transQueue[i]->getIndices();
 		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(DX::g_transQueue[i]->getMesh()->getNumberOfVertices(), 0);
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->DrawIndexed(DX::g_transQueue[i]->getMesh()->getNumberOfVerticesIndexed(), 0,0);
+		
 	}
 }
 
@@ -689,10 +769,13 @@ Shape * Window::getPicked(Camera* c)
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-
-		ID3D11Buffer* v = s->getVertices();
+		ID3D11Buffer* v = s->getVerticesIndexed();
+		ID3D11Buffer* indices = s->getIndices();
 		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVertices(), 0);
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->DrawIndexed(s->getMesh()->getNumberOfVerticesIndexed(), 0, 0);
+		
+		
 	}
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 

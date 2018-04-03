@@ -12,6 +12,7 @@ private:
 	ID3D11DomainShader*		m_ds;
 	ID3D11GeometryShader*	m_gs;
 	ID3D11PixelShader*		m_ps;
+	ID3D11Buffer*			m_instanceBuffer;
 
 	DirectX::XMMATRIX		m_worldMatrix; 
 
@@ -30,7 +31,11 @@ public:
 	Shape();
 	void setMesh(Mesh* m);
 	Mesh* getMesh() const;
-	ID3D11Buffer* getVertices() const;
+
+	ID3D11Buffer* getVerticesIndexed() const;
+	ID3D11Buffer* getVerticesNonIndexed() const;
+	ID3D11Buffer* getIndices() const;
+
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);
 	void Move(float x, float y, float z);

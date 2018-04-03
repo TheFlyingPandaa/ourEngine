@@ -5,6 +5,8 @@ struct VS_CONTROL_POINT_OUTPUT
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+	float4x4 worldMat : HENRIK;
+	float4x4 wvp : WVP;
 	// TODO: change/add other stuff
 };
 
@@ -15,6 +17,8 @@ struct HS_CONTROL_POINT_OUTPUT
 	float2 Tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+	float4x4 worldMat : HENRIK;
+	float4x4 wvp : WVP;
 };
 
 // Output patch constant data.
@@ -60,5 +64,7 @@ HS_CONTROL_POINT_OUTPUT main(
 	Output.Tex = ip[i].tex;
 	Output.normal = ip[i].normal;
 	Output.tangent = ip[i].tangent;
+	Output.worldMat = ip[i].worldMat;
+	Output.wvp = ip[i].wvp;
 	return Output;
 }

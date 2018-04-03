@@ -9,6 +9,7 @@ void Shape::_buildMatrix()
 	XMMATRIX scale = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z); 
 
 	m_worldMatrix = rot * scale * trans; 
+
 }
 
 DirectX::XMFLOAT3 Shape::_convertToRad(DirectX::XMFLOAT3 deg)
@@ -65,9 +66,20 @@ Mesh * Shape::getMesh() const
 	return m_mesh;
 }
 
-ID3D11Buffer * Shape::getVertices() const
+
+ID3D11Buffer * Shape::getVerticesIndexed() const
 {
-	return m_mesh->getVertices();
+	return m_mesh->getVerticesIndexed();
+}
+
+ID3D11Buffer * Shape::getVerticesNonIndexed() const
+{
+	return m_mesh->getVerticesNonIndexed();
+}
+
+ID3D11Buffer * Shape::getIndices() const
+{
+	return m_mesh->getIndicies();
 }
 
 void Shape::setPos(float x, float y, float z)
@@ -78,6 +90,7 @@ void Shape::setPos(float x, float y, float z)
 void Shape::setPos(DirectX::XMFLOAT3 pos)
 {
 	m_pos = pos; 
+
 	_buildMatrix(); 
 }
 
