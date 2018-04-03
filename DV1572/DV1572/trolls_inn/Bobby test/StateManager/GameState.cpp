@@ -20,11 +20,13 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
-	//this->m_cam->update();
+	this->m_cam->update(Input::getMousePosition());
 
 	while (!p_keyEvents->empty())
 	{
 		//Do keypress events here
+		std::cout << p_keyEvents->top() << std::endl;
+		p_keyEvents->pop();
 	}
 	while (!p_pickingEvent->empty())
 	{

@@ -31,8 +31,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new FPSCamera();
-	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
+	Camera* cam = new OrbitCamera(DirectX::XMFLOAT2({1280, 720}));
+	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
 	std::stack<State *> gameStates;
 	std::stack<Shape *> pickingEvents;
@@ -57,8 +57,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		unprocessed += dt / freq;
 
-		
-		//keyEvent.push();
+		if (Input::GetKeyIndex() != -1)
+			keyEvent.push(Input::GetKeyIndex());
 		
 
 		while (unprocessed > 1)
