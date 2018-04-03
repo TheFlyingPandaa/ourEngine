@@ -18,6 +18,7 @@ public:
 	void setHeight(float h);
 	float getHeight() const;
 	void setDiffuseTexture(const std::string &path);
+	void setNormalMap(const std::string &path);
 	void DrawAsHud();
 
 };

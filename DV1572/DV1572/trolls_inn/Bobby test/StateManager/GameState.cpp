@@ -44,6 +44,7 @@ void GameState::Draw()
 
 void GameState::_init()
 {
-	this->m.LoadModel("trolls_inn/Resources/Wall.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
+	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
