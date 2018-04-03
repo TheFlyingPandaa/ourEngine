@@ -69,9 +69,8 @@ void OrbitCamera::update()
 		XMFLOAT3 result;
 		XMStoreFloat3(&result, cosine);
 		float angle = (acos(result.x) *57.2957795f);
-		std::cout << "Angle " << angle << std::endl;
-		if (angle < 75.0f)
-		{
+		
+		
 			xmCamPos = newPos;
 			xmLookAt = newLookAt;
 
@@ -81,7 +80,7 @@ void OrbitCamera::update()
 			XMStoreFloat3(&m_pos, xmCamPos);
 		
 
-		}
+		
 		
 
 	
