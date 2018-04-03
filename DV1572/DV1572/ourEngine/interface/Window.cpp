@@ -480,7 +480,6 @@ void Window::_initTransparency()
 	DX::g_device->CreateBlendState(&omDesc, &m_transBlendState);
 }
 
-
 void Window::_initPickingTexture()
 {
 	D3D11_TEXTURE2D_DESC tDesc{};
@@ -534,8 +533,6 @@ void Window::_initPickingTexture()
 	HRESULT hr = DX::g_device->CreateTexture2D(&StagedDesc, 0, &m_pickingReadBuffer);
 	hr = 0;
 }
-
-
 
 Window::Window(HINSTANCE h)
 {
@@ -732,7 +729,6 @@ Shape * Window::getPicked(Camera* c)
 void Window::Present()
 {
 	m_swapChain->Present(0, 0);
-	Input::_reset();
 }
 
 LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -781,16 +777,16 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			
 		}
 		break;
+	// ----- Keyboard Button -----
 	case WM_KEYDOWN:
+		
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
-			
+		
 		Input::m_keys[wParam] = true;
 		break;
 	case WM_KEYUP:
-		if (wParam == VK_LBUTTON)
-			Input::m_mouseKeys[0] = false;
 		Input::m_keys[wParam] = false;
 		break;
 
@@ -827,6 +823,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	// ----- Mouse Wheel -----
 	case WM_MOUSEWHEEL:
 		Input::m_scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam) / 120.0f;
+	//	std::cout << GET_WHEEL_DELTA_WPARAM(wParam) << std::endl;
 		break;
 	}
 

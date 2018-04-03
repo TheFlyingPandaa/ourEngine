@@ -15,11 +15,6 @@ Input::~Input()
 
 }
 
-void Input::_reset()
-{
-	m_scrollDelta = 0.0f;
-}
-
 bool Input::isKeyPressed(int keyCode)
 {
 	return m_keys[keyCode];
@@ -47,5 +42,7 @@ DirectX::XMFLOAT2 Input::getMousePosition()
 
 float Input::getMouseScroll()
 {
-	return m_scrollDelta;
+	float returnValue = m_scrollDelta;
+	m_scrollDelta = 0.0f;
+	return returnValue;
 }
