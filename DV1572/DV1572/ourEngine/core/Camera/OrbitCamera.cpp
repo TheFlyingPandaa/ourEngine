@@ -71,23 +71,17 @@ void OrbitCamera::update()
 		float angle = (acos(result.x) *57.2957795f);
 		
 		
-			xmCamPos = newPos;
-			xmLookAt = newLookAt;
+		xmCamPos = newPos;
+		xmLookAt = newLookAt;
 
 
 
-			XMStoreFloat3(&m_lookAt, xmLookAt);
-			XMStoreFloat3(&m_pos, xmCamPos);
+		XMStoreFloat3(&m_lookAt, xmLookAt);
+		XMStoreFloat3(&m_pos, xmCamPos);
 		
-
-		
-		
-
-	
-			
 	
 	}
-	else
+	else if(Input::isMouseLeftPressed())
 	{
 		// If Mouse is 20% of the top
 		if (m_lastMouse.y < m_windowDim.y * 0.2)
