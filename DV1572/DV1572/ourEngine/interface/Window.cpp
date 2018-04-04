@@ -672,7 +672,14 @@ Shape * Window::getPicked(Camera* c)
 			exit(0);
 		}
 		//counter.x = 120;
-		DirectX::XMMATRIX mvp = DirectX::XMMatrixTranspose(s->getWorld() * vp);
+		DirectX::XMMATRIX mvp;
+
+		RectangleShape* isRectangle = dynamic_cast<RectangleShape*>(s);
+		if (isRectangle && isRectangle->isHud())
+			mvp = DirectX::XMMatrixTranspose(s->getWorld() * m_HUDview);
+		else
+			mvp = DirectX::XMMatrixTranspose(s->getWorld() * vp);
+
 		DirectX::XMStoreFloat4x4A(&pb.MVP, mvp);
 		pb.index = counter;
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
@@ -700,9 +707,9 @@ Shape * Window::getPicked(Camera* c)
 	
 
 	D3D11_BOX srcBox;
-	srcBox.left = getMousePos().x;
+	srcBox.left = Input::getMousePosition().x;
 	srcBox.right = srcBox.left + 1;
-	srcBox.top = getMousePos().y;
+	srcBox.top = Input::getMousePosition().y;
 	srcBox.bottom = srcBox.top + 1;
 	srcBox.front = 0;
 	srcBox.back = 1;

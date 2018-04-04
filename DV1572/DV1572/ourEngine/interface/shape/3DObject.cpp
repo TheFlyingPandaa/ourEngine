@@ -8,3 +8,8 @@ Object3D::Object3D()
 	setHullShader(DX::g_standardHullShader);
 	setDomainShader(DX::g_standardDomainShader);
 }
+
+std::string Object3D::toString() const
+{
+	return Shape::toString() + "\n";
+}

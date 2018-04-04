@@ -46,7 +46,7 @@ public:
 	void Scale(float x, float y, float z);
 	void Scale(DirectX::XMFLOAT3 scl);
 	
-	std::string toString() const;
+	virtual std::string toString() const = 0;
 
 	void ApplyShaders();
 	void CheckPick();
