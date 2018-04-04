@@ -19,6 +19,7 @@ public:
 	void setHeight(float h);
 	float getHeight() const;
 	void setDiffuseTexture(const std::string &path);
+	void setNormalMap(const std::string &path);
 	void DrawAsHud();
 	//Needs to be Drawn as hud once for this to be true
 	bool isHud() const;

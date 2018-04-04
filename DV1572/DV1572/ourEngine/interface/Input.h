@@ -12,6 +12,8 @@ private:
 	static DirectX::XMFLOAT2 m_mousePos;
 	static float m_scrollDelta;
 
+	static int lastPressed;
+
 	Input();
 	~Input();
 
@@ -71,6 +73,8 @@ public:
 		calls will result in zero scroll. 
 	*/
 	static float getMouseScroll();
+
+	static int GetKeyIndex();
 };
 #endif // !INPUT_H
 

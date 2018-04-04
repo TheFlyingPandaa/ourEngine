@@ -73,7 +73,7 @@ void Mesh::LoadModel(const std::string & path)
 	
 }
 
-void Mesh::LoadModel(const std::vector<VERTEX>& v)
+void Mesh::LoadModel(std::vector<VERTEX>& v)
 {
 	std::vector<unsigned int> indices;
 	std::vector<VERTEX> outVertices;
@@ -93,6 +93,7 @@ void Mesh::LoadModel(const std::vector<VERTEX>& v)
 
 
 	// Vertex Buffer Indexed
+	DX::CalculateTangents(v);
 	D3D11_BUFFER_DESC vBufferDesc;
 	memset(&vBufferDesc, 0, sizeof(vBufferDesc));
 	vBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
