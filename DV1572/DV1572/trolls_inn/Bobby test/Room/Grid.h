@@ -24,8 +24,9 @@ public:
 	~Grid();
 
 	Tile**	getGrid() const;
-	//void	AddRoom(Room* room, bool force = false);
+	
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force);
+	void	Update(Camera * cam);
 	void	Draw();
 	void	DrawString();
 

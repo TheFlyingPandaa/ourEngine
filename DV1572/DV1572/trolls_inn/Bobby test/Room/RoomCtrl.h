@@ -26,6 +26,7 @@ public:
 	void setMesh(Mesh * mesh);
 
 	void AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force = false);
+	void Update(Camera * cam);
 	void Draw();
 	void CreateWalls();
 };

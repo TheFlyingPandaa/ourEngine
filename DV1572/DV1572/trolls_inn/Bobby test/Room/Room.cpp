@@ -22,16 +22,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 
 Room::~Room()
 {
-	for (size_t i = 0; i < up.size(); i++)
-	{
-		delete up[i];
-		delete down[i];
-	}
-	for (size_t i = 0; i < left.size(); i++)
-	{
-		delete left[i];
-		delete right[i];
-	}
+
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const
@@ -61,6 +52,129 @@ bool Room::Inside(Tile * t)
 			t->m_posY >= m_posY && t->m_posY < m_posY + m_sizeY;
 }
 
+void Room::Update(Camera * cam)
+{
+	if (cam)
+	{
+		bool cullWalls[4] = { false, false, false, false };
+		DirectX::XMFLOAT3 camPos3D = cam->getPosition();
+		DirectX::XMFLOAT2 camPosition = { camPos3D.x, camPos3D.z };
+
+		if (camPosition.x < m_posX)
+		{
+			cullWalls[WallDirection::left] = true;
+		}
+		else if (camPosition.x > m_posX + m_sizeX)
+		{
+			cullWalls[WallDirection::right] = true;
+		}
+		if (camPosition.y < m_posY)
+		{
+			cullWalls[WallDirection::down] = true;
+		}
+		else if (camPosition.y > m_posY + m_sizeY)
+		{
+			cullWalls[WallDirection::up] = true;
+		}
+
+		bool changeUp = false;
+		bool changeDown = false;
+		bool changeRight = false;
+		bool changeLeft = false;
+
+		if (m_culledWalls[WallDirection::up] != cullWalls[WallDirection::up])
+		{
+			m_culledWalls[WallDirection::up] = cullWalls[WallDirection::up];
+			changeUp = true;
+		}
+		if (m_culledWalls[WallDirection::down] != cullWalls[WallDirection::down])
+		{
+			m_culledWalls[WallDirection::down] = cullWalls[WallDirection::down];
+			changeDown = true;
+		}
+		if (m_culledWalls[WallDirection::right] != cullWalls[WallDirection::right])
+		{
+			m_culledWalls[WallDirection::right] = cullWalls[WallDirection::right];
+			changeRight = true;
+		}
+		if (m_culledWalls[WallDirection::left] != cullWalls[WallDirection::left])
+		{
+			m_culledWalls[WallDirection::left] = cullWalls[WallDirection::left];
+			changeLeft = true;
+		}
+
+
+		if (changeUp || changeDown)
+		{
+			for (size_t x = 0; x < down.size(); x++)
+			{
+				if (changeDown)
+				{
+					if (m_culledWalls[WallDirection::down])
+						down[x]->setScale(1.0f, 0.05f, 1.0f);
+					else
+						down[x]->setScale(1.0f, 1.0f, 1.0f);
+				}
+			}
+			for (size_t x = 0; x < up.size(); x++)
+			{
+				if (changeUp)
+				{
+					if (m_culledWalls[WallDirection::up])
+						up[x]->setScale(1.0f, 0.05f, 1.0f);
+					else
+						up[x]->setScale(1.0f, 1.0f, 1.0f);
+				}
+			}
+		}
+
+		if (changeRight || changeLeft)
+		{
+			for (size_t y = 0; y < left.size(); y++)
+			{
+				if (changeLeft)
+				{
+					if (m_culledWalls[WallDirection::left])
+						left[y]->setScale(1.0f, 0.05f, 1.0f);
+					else
+						left[y]->setScale(1.0f, 1.0f, 1.0f);
+				}
+			}
+			for (size_t y = 0; y < right.size(); y++)
+			{
+				if (changeRight)
+				{
+					if (m_culledWalls[WallDirection::right])
+						right[y]->setScale(1.0f, 0.05f, 1.0f);
+					else
+						right[y]->setScale(1.0f, 1.0f, 1.0f);
+				}
+			}
+		}
+
+	}
+	for (int i = 0; i < down.size(); i++)
+	{
+		if (down[i]->getIsInner())
+			down[i]->setScale(1.0f, 0.05f, 1.0f);
+	}
+	for (int i = 0; i < up.size(); i++)
+	{
+		if (up[i]->getIsInner())
+			up[i]->setScale(1.0f, 0.05f, 1.0f);
+	}
+	for (int i = 0; i < left.size(); i++)
+	{
+		if (left[i]->getIsInner())
+			left[i]->setScale(1.0f, 0.05f, 1.0f);
+	}
+	for (int i = 0; i < right.size(); i++)
+	{
+		if (right[i]->getIsInner())
+			right[i]->setScale(1.0f, 0.05f, 1.0f);
+	}
+}
+
 int Room::getX() const
 {
 	return m_posX;
@@ -79,6 +193,48 @@ int Room::getSizeX() const
 int Room::getSizeY() const
 {
 	return m_sizeY;
+}
+
+void Room::setWalls(std::vector<Wall*> walls, WallDirection dir)
+{
+	switch (dir)
+	{
+	case 0:
+		up = walls;
+		break;
+	case 1:
+		down = walls;
+		break;
+	case 2:
+		left = walls;
+		break;
+	case 3:
+		right = walls;
+		break;
+	default:
+		break;
+	}
+}
+
+void Room::addWall(Wall * wall, WallDirection dir)
+{
+	switch (dir)
+	{
+	case 0:
+		up.push_back(wall);
+		break;
+	case 1:
+		down.push_back(wall);
+		break;
+	case 2:
+		left.push_back(wall);
+		break;
+	case 3:
+		right.push_back(wall);
+		break;
+	default:
+		break;
+	}
 }
 
 void Room::move(int x, int y)

@@ -9,9 +9,12 @@ class Room
 protected:
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
-	//Tile**	m_tiles;
+
 	std::vector<std::vector<Tile*>> m_tiles;
 
+	bool	m_culledWalls[4] = { false };
+
+	//TODO
 	std::vector<Wall*> up;
 	std::vector<Wall*> down;
 	std::vector<Wall*> left;
@@ -31,14 +34,15 @@ public:
 	virtual int			getY() const;
 	virtual int			getSizeX() const; 
 	virtual int			getSizeY() const; 
+	virtual void		setWalls(std::vector<Wall*> walls, WallDirection dir);
+	virtual void		addWall(Wall* wall, WallDirection dir);
 
 	virtual void		move(int x, int y);
-	//virtual bool		getHasWalls() const;
-	//virtual void		CreateWalls(Mesh * mesh);
 
 	virtual bool		Inside(int x, int y); 
 	virtual bool		Inside(Tile * t); 
 
+	virtual void Update(Camera * cam);
 	virtual void Draw() = 0;
 	virtual std::string	toString() const = 0;
 

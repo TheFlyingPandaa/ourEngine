@@ -32,6 +32,7 @@ public:
 
 	void	setPosition(DirectX::XMFLOAT2 position);
 	void	setRotation(DirectX::XMFLOAT3 rotation);
+	void	setScale(float x, float y, float z);
 
 	bool	getDir(WallDirection dir) const;
 	Tile *	getTile() const;

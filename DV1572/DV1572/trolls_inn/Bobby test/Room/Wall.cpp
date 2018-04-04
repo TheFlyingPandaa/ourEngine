@@ -17,8 +17,6 @@ Wall::~Wall()
 void Wall::Draw()
 {
 	//TODO: Remove Debug
-	if (m_innerWall)
-		m_wall.setScale(1.0f, 0.1f, 1);
 	m_wall.Draw();
 		//m_wall.Scale(1, .2f, 1);
 }
@@ -41,6 +39,11 @@ void Wall::setPosition(DirectX::XMFLOAT2 position)
 void Wall::setRotation(DirectX::XMFLOAT3 rotation)
 {
 	m_wall.Rotate(rotation);
+}
+
+void Wall::setScale(float x, float y, float z)
+{
+	this->m_wall.setScale(x, y, z);
 }
 
 Tile * Wall::getTile() const

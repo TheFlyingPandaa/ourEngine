@@ -44,6 +44,14 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		m_rooms.push_back(room);
 }
 
+void RoomCtrl::Update(Camera * cam)
+{
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		m_rooms[i]->Update(cam);
+	}
+}
+
 void RoomCtrl::Draw()
 {
 	for (int i = 0; i < m_walls.size(); i++)
@@ -82,6 +90,7 @@ void RoomCtrl::CreateWalls()
 				t->m_w[WallDirection::down] = wall;
 				
 				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, this->m_rooms[i]->getY()));
+				m_rooms[i]->addWall(wall, WallDirection::down);
 				this->m_walls.push_back(wall);
 			}
 
@@ -104,6 +113,7 @@ void RoomCtrl::CreateWalls()
 				t->m_w[WallDirection::up] = wall;
 
 				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY()));
+				m_rooms[i]->addWall(wall, WallDirection::up);
 				this->m_walls.push_back(wall);
 			}
 		}
@@ -135,6 +145,7 @@ void RoomCtrl::CreateWalls()
 				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));
 
 				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
+				m_rooms[i]->addWall(wall, WallDirection::left);
 				this->m_walls.push_back(wall);
 			}			
 
@@ -159,6 +170,7 @@ void RoomCtrl::CreateWalls()
 				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));
 
 				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
+				m_rooms[i]->addWall(wall, WallDirection::right);
 				this->m_walls.push_back(wall);
 			}
 		}

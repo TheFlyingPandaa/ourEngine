@@ -109,6 +109,10 @@ void Grid::DrawString()
 	
 }
 
+void Grid::Update(Camera * cam) {
+	m_roomCtrl.Update(cam);
+}
+
 void Grid::CreateWalls(Mesh * mesh)
 {
 	m_roomCtrl.setMesh(mesh);
