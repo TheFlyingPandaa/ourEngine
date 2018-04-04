@@ -23,7 +23,7 @@ private:
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
-	void LoadModel(const std::vector<VERTEX> &v);
+	void LoadModel(std::vector<VERTEX> &v);
 	void setDiffuseTexture(const std::string &path);
 	void setNormalTexture(const std::string &path);
 	void setHighlightTexture(const std::string &path);
