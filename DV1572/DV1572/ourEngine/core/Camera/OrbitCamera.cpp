@@ -56,7 +56,7 @@ void OrbitCamera::update()
 	{
 		m_distanceFromTarget -= modifier;
 
-		std::cout << potDist << std::endl;
+		//std::cout << potDist << std::endl;
 
 		xmCamPos = xmCamPos + (xmLookAt *  modifier);
 	}
