@@ -54,6 +54,8 @@ public:
 	bool	m_door;
 	RectangleShape quad;
 
+	Tile**	adjacent[4] = { nullptr };
+
 	bool	m_walls[4] = { false };
 	bool	isWall(WallDirection dir) const { return m_walls[dir]; }
 };

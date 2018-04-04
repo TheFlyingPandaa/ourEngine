@@ -62,18 +62,21 @@ void RoomCtrl::CreateWalls()
 	{
 		for (int x = 0; x < m_rooms[i]->getSizeX(); x++)
 		{
+			Tile * t = m_rooms[i]->getTiles(x,0);
 			createWall = true;
-			for (size_t j = 0; j < m_walls.size() && !createWall; j++)
+			for (size_t j = 0; j < m_walls.size() && createWall; j++)
 			{
-				if (m_walls[j]->getTile()->isWall(WallDirection::down))
-				{
-					createWall = false;
-					m_walls[j]->setIsInner(true);
-				}
+				Tile * t2 = m_walls[j]->getTile();
+				if (t == t2)
+					if (t2->isWall(WallDirection::down))
+					{
+						createWall = false;
+						m_walls[j]->setIsInner(true);
+					}
 			}
 			if (createWall)
 			{
-				Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + x, this->m_rooms[i]->getY());
+				//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + x, this->m_rooms[i]->getY());
 				t->m_walls[WallDirection::down] = true;
 				Wall * wall = new Wall(t, this->m_wall);
 				
@@ -85,7 +88,7 @@ void RoomCtrl::CreateWalls()
 			createWall = true;
 			for (size_t j = 0; j < m_walls.size() && !createWall; j++)
 			{
-				if (m_walls[j]->getTile()->isWall(WallDirection::up))
+				if (m_walls[j]->getTile()->isWall(WallDirection::down))
 				{
 					createWall = false;
 					m_walls[j]->setIsInner(true);
@@ -93,7 +96,8 @@ void RoomCtrl::CreateWalls()
 			}
 			if (createWall)
 			{
-				Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + x, this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY() - 1);
+				//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + x, this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY() - 1);
+				Tile * t = m_rooms[i]->getTiles(x, this->m_rooms[i]->getSizeY() - 1);
 				t->m_walls[WallDirection::up] = true;
 				Wall * wall = new Wall(t, this->m_wall);
 
@@ -121,7 +125,7 @@ void RoomCtrl::CreateWalls()
 			if (createWall)
 			{
 				//obj->setPos(this->m_posX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-				Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX(), this->m_rooms[i]->getY() + y);
+				Tile * t = m_rooms[i]->getTiles(0, y);
 				t->m_walls[WallDirection::left] = true;
 				Wall * wall = new Wall(t, this->m_wall);
 				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));
@@ -142,7 +146,8 @@ void RoomCtrl::CreateWalls()
 			if (createWall)
 			{
 				//obj->setPos(this->m_posX + this->m_sizeX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-				Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX() - 1, this->m_rooms[i]->getY() + y);
+				//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX() - 1, this->m_rooms[i]->getY() + y);
+				Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getSizeX() - 1, y);
 				t->m_walls[WallDirection::right] = true;
 				Wall * wall = new Wall(t, this->m_wall);
 				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));

@@ -112,7 +112,7 @@ void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType,
 	for (int x = pos.x; x < size.x + pos.x; x++)
 	{
 		tiles[x] = std::vector<Tile*>(size.y);
-		for (int y = pos.y; y < size.y + pos.x; y++)
+		for (int y = pos.y; y < size.y + pos.y; y++)
 		{
 			tiles[x - pos.x][y - pos.y] = this->m_tiles[x][y];
 		}

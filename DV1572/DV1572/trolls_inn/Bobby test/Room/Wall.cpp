@@ -16,7 +16,10 @@ Wall::~Wall()
 
 void Wall::Draw()
 {
-	m_wall.Draw();
+	//TODO: Remove Debug
+	if (!m_innerWall)
+		m_wall.Draw();
+		//m_wall.Scale(1, .2f, 1);
 }
 
 bool Wall::getIsInner() const
