@@ -19,12 +19,7 @@ void OrbitCamera::update(DirectX::XMFLOAT2 mousePos)
 	m_mousePos = mousePos;
 	update();
 }
-void printVec3(const char* name , XMVECTOR vec)
-{
-	XMFLOAT3 debugVec;
-	XMStoreFloat3(&debugVec, vec);
-	std::cout << name << " (" <<debugVec.x << "," << debugVec.y << "," << debugVec.z <<")"<<std::endl;
-}
+
 void OrbitCamera::update()
 {
 	XMVECTOR xmMouse = XMLoadFloat2(&Input::getMousePosition());

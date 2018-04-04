@@ -137,6 +137,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\main.cpp" />
+    <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
+    <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ourEngine\shaders\deferredPixelShader.hlsl">
