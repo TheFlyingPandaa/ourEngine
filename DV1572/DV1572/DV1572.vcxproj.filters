@@ -30,6 +30,7 @@
     <ClCompile Include="trolls_inn\main.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
+    <ClCompile Include="ourEngine\core\Picking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -55,6 +56,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="ourEngine\interface\light\Light.h" />
     <ClInclude Include="ourEngine\interface\Input.h" />
+    <ClInclude Include="ourEngine\core\Picking.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
