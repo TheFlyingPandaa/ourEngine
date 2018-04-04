@@ -11,6 +11,7 @@ private:
 
 	DirectX::XMFLOAT2 rotation;
 	float m_sensitivity;
+	float m_zoomSensitivity;
 	float m_tiltCapDown;
 	float m_tiltCapUp;
 

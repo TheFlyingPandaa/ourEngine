@@ -18,6 +18,7 @@ OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
 	m_sensitivity = 0.01f;
 	m_tiltCapDown = 0.0f;
 	m_tiltCapUp = 0.5f;
+	m_zoomSensitivity = 0.5f;
 
 }
 
@@ -47,11 +48,19 @@ void OrbitCamera::update()
 	XMVECTOR xmLookAt = XMVector3Normalize(XMLoadFloat3(&m_lookAt));
 
 	// --- ZOOM ----
-	float modifier = 0.5f * Input::getMouseScroll();
+	float modifier = m_zoomSensitivity * Input::getMouseScroll();
 
-	m_distanceFromTarget -= modifier;
+	float potDist = m_distanceFromTarget - modifier;
 
-	xmCamPos = xmCamPos + (xmLookAt *  modifier);
+	if (potDist > 2.0f && potDist < 50.0f)
+	{
+		m_distanceFromTarget -= modifier;
+
+		std::cout << potDist << std::endl;
+
+		xmCamPos = xmCamPos + (xmLookAt *  modifier);
+	}
+	
 	
 	XMStoreFloat3(&m_pos, xmCamPos);
 	// --- ZOOM ----
