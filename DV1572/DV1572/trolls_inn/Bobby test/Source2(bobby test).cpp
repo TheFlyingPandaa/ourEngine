@@ -2,7 +2,7 @@
 #include <string>
 #include <stack>
 
-#include "Grid.h"
+#include "../Bobby test/Room/Grid.h"
 #include "StateManager\State.h"
 #include "StateManager\GameState.h"
 #include "StateManager\MainMenu.h"
@@ -31,7 +31,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new OrbitCamera(DirectX::XMFLOAT2({1280, 720}));
+	Camera* cam = new OrbitCamera(wnd.getSize());
 	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
 	std::stack<State *> gameStates;
