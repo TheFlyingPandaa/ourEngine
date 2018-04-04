@@ -53,10 +53,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
-	/*Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+
+	/*Object3D aWall;
 	aWall.setMesh(&wall);*/
-	const int wallAmount = 1;
+	const int wallAmount = 1000;
 	Object3D walls[wallAmount];
 	for (int i = 0; i < wallAmount; i++)
 	{
@@ -102,7 +103,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			
-			cam->update(wnd.getMousePos());
+			cam->update();
 			
 		}
 

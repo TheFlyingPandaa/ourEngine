@@ -110,9 +110,9 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 
-		ID3D11Buffer* v = s->getVertices();
+		ID3D11Buffer* v = s->getVerticesNonIndexed();
 		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVertices(), 0);
+		DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVerticesNonIndexed(), 0);
 	}
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
