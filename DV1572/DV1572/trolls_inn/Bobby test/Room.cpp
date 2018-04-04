@@ -70,12 +70,11 @@ int Room::getSizeY() const
 void Room::move(int x, int y)
 {
 	this->m_posX += x;
-
 	this->m_posY += y;
 
 	for (size_t i = 0; i < up.size(); i++)
 	{
-		 
+		
 	}
 }
 
