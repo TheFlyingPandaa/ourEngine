@@ -47,8 +47,12 @@ namespace ShaderCreator //Maybe subject to change
 		//So this is to shorten DebugTime
 		device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
 		
-		if (FAILED(device->CreateInputLayout(inputDesc, arraySize, pVS->GetBufferPointer(), pVS->GetBufferSize(), &inputLayout)))
+		if (FAILED(hr = device->CreateInputLayout(inputDesc, arraySize, pVS->GetBufferPointer(), pVS->GetBufferSize(), &inputLayout)))
 		{
+
+			_com_error err(hr);
+			OutputDebugString(err.ErrorMessage());
+			OutputDebugStringA((char*)" :Vertex Shader:");
 			pVS->Release();
 		}
 

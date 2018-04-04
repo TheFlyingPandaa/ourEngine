@@ -5,7 +5,7 @@ class RectangleShape : public Shape
 {
 private:
 	float m_width, m_height;
-	Mesh* m;
+	static Mesh* m;
 	bool m_hud;
 
 private:
