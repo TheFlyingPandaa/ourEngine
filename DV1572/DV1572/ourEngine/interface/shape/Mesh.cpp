@@ -2,6 +2,9 @@
 #include "../../core/Dx.h"
 #include "../../core/ObjLoader.h"
 
+// Unique ID 
+int Mesh::m_uniqueID = 0;
+
 Mesh::Mesh()
 {
 	m_vertexBufferIndexed = nullptr;
@@ -9,6 +12,7 @@ Mesh::Mesh()
 	m_indexBuffer = nullptr;
 	m_nrOfVerticesIndexed = 0;
 	m_nrOfVerticesNonIndexed = 0;
+	m_id = m_uniqueID++;
 }
 
 void Mesh::LoadModel(const std::string & path)
@@ -154,4 +158,9 @@ int Mesh::getNumberOfVerticesIndexed() const
 int Mesh::getNumberOfVerticesNonIndexed() const
 {
 	return m_nrOfVerticesNonIndexed;
+}
+
+bool Mesh::CheckID(const Mesh & other) const
+{
+	return other.m_id == m_id;
 }

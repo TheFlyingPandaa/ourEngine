@@ -14,11 +14,6 @@ OrbitCamera::~OrbitCamera()
 {
 }
 
-void OrbitCamera::update(DirectX::XMFLOAT2 mousePos)
-{
-	m_mousePos = mousePos;
-	update();
-}
 void printVec3(const char* name , XMVECTOR vec)
 {
 	XMFLOAT3 debugVec;

@@ -74,8 +74,3 @@ DirectX::XMMATRIX Camera::getViewMatrix() const
 	return m_viewMatrix;
 	
 }
-
-void Camera::setMousePos(XMFLOAT2 mousePos)
-{
-	m_mousePos = mousePos;
-}

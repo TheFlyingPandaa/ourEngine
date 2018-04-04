@@ -8,6 +8,20 @@
 #include "../interface/shape/Shape.h"
 #include <vector>
 
+struct INSTANCE_ATTRIB
+{
+	DirectX::XMFLOAT4A w1;
+	DirectX::XMFLOAT4A w2;
+	DirectX::XMFLOAT4A w3;
+	DirectX::XMFLOAT4A w4;
+};
+
+struct INSTANCE_GROUP
+{
+	std::vector<INSTANCE_ATTRIB> attribs;
+	Shape* shape;
+};
+
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
 	The globals in this klass is not really globals, but rather semi globals.
@@ -29,6 +43,10 @@ namespace DX
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
+
+	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
+	extern void submitToInstance(Shape* shape);
+
 
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;

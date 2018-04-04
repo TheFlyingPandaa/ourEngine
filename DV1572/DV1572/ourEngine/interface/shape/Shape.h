@@ -38,15 +38,23 @@ public:
 
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);
+	DirectX::XMFLOAT3 getPosition() const;
+
 	void Move(float x, float y, float z);
 	void Move(DirectX::XMFLOAT3 move);
+
 	void setRotation(float x, float y, float z);
 	void setRotation(DirectX::XMFLOAT3 rotation);
+	DirectX::XMFLOAT3 getRotation() const;
+
 	void Rotate(float x, float y, float z);
 	void Rotate(DirectX::XMFLOAT3 rotation);
+
 	void setScale(float scl);
 	void setScale(float x, float y, float z);
 	void setScale(DirectX::XMFLOAT3 scl);
+	DirectX::XMFLOAT3 getScale() const;
+
 	void Scale(float scl);
 	void Scale(float x, float y, float z);
 	void Scale(DirectX::XMFLOAT3 scl);

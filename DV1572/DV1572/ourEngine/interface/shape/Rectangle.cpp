@@ -1,63 +1,69 @@
 #include "Rectangle.h"
 #include "../../core/Dx.h"
-
+Mesh* RectangleShape::m = nullptr;
 void RectangleShape::_buildRectangle()
 {
-	m = new Mesh;
-	std::vector<VERTEX> vertices;
+	
+	if (m == nullptr)
+	{
+		m = new Mesh;
+		std::vector<VERTEX> vertices;
 
-	VERTEX v = {
+		VERTEX v = {
 
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
+			0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
 
-	v = {
+		v = {
 
-		0.0f, 0.5f, 0.0f,
-		0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
+			0.0f, 0.5f, 0.0f,
+			0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
 
-	v = {
-		0.5f, 0.5f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
+		v = {
+			0.5f, 0.5f, 0.0f,
+			1.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
 
-	v = {
-		0.5f, 0.5f, 0.0f,
-		1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
+		v = {
+			0.5f, 0.5f, 0.0f,
+			1.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
 
-	v = {
-		0.5f, 0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
+		v = {
+			0.5f, 0.0f, 0.0f,
+			1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
 
-	v = {
+		v = {
 
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f
-	};
-	vertices.push_back(v);
-	m->LoadModel(vertices);
+			0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f
+		};
+		vertices.push_back(v);
+		m->LoadModel(vertices);
+	}
+	
 	setMesh(m);
+
 }
 
 RectangleShape::RectangleShape(float w, float h)
@@ -75,7 +81,12 @@ RectangleShape::RectangleShape(float w, float h)
 
 RectangleShape::~RectangleShape()
 {
-	delete m;
+	if (m)
+	{
+		delete m;
+		m = nullptr;
+	}
+		
 }
 
 void RectangleShape::setDiffuseTexture(const std::string & path)

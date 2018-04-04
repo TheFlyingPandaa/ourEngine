@@ -18,6 +18,8 @@ private:
 	Material			m_material;
 	int					m_nrOfVerticesIndexed;
 	int					m_nrOfVerticesNonIndexed;
+	static int			m_uniqueID;
+	int					m_id;
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
@@ -33,4 +35,5 @@ public:
 	ID3D11Buffer* getIndicies() const;
 	int getNumberOfVerticesIndexed() const;
 	int getNumberOfVerticesNonIndexed() const;
+	bool CheckID(const Mesh& other) const;
 };
