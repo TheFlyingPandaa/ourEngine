@@ -25,6 +25,7 @@ GameState::~GameState()
 void GameState::Update(double deltaTime)
 {
 	this->m_cam->update();
+	
 
 	while (!p_keyEvents->empty() && p_keyEvents->top() != 0)
 	{
