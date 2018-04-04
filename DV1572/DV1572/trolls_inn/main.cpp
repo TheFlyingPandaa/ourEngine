@@ -13,7 +13,7 @@ inline void _loadModelThread(Mesh * a, const std::string path)
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
-	auto start = std::chrono::system_clock::now();
+
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
@@ -66,7 +66,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			
-			cam->update(wnd.getMousePos());
+			cam->update();
 			
 		}
 
@@ -83,7 +83,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			//printf("\rFPS: %d TICK: %d Time: %d", fpsCounter, updates);
+			std::cout << "FPS: " << fpsCounter << "TICK: " << updates << " Time :" << elapsed_seconds.count() << std::endl;
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

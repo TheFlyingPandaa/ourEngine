@@ -1,7 +1,6 @@
 cbuffer MESH_BUFFER : register(b0)
 {
-	float4x4 wvp; 
-	float4x4 world; 
+	float4x4 vp; 
 }
 
 struct INPUT
@@ -18,13 +17,20 @@ struct INPUT
 	float4 w4 : INSTANCEWORLDFOUR;
 };
 
+	float4 w1 : INSTANCEWORLDONE;
+	float4 w2 : INSTANCEWORLDTWO;
+	float4 w3 : INSTANCEWORLDTHREE;
+	float4 w4 : INSTANCEWORLDFOUR;
+};						 
+
 struct OUTPUT
 {
-	//float4 pos : SV_POSITION;
 	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+	float4x4 world : WORLDMAT;
+
 };
 
 
@@ -36,7 +42,6 @@ OUTPUT main(INPUT input)
 	o.tex = input.tex;
 	o.normal = input.normal;
 	o.tangent = input.tangent;
-	//o.normal = mul(float4(input.normal, 1), world).xyz;
 
 	return o;
 }

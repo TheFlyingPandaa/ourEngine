@@ -20,11 +20,13 @@ private:
 	int				m_uniqueID;
 public:
 	Mesh();
+	~Mesh();
 	void LoadModel(const std::string &path);
-	void LoadModel(const std::vector<VERTEX> &v);
+	void LoadModel(std::vector<VERTEX> &v);
 	void setDiffuseTexture(const std::string &path);
 	void setNormalTexture(const std::string &path);
 	void setHighlightTexture(const std::string &path);
+	
 	Material* getMaterial();
 	ID3D11Buffer* getVertices() const;
 	ID3D11Buffer* getIndicesBuffer() const;

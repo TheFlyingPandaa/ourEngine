@@ -33,7 +33,7 @@ struct DIRECTIONAL_LIGHT_BUFFER
 
 struct MESH_BUFFER
 {
-	DirectX::XMFLOAT4X4A MVP, world;
+	DirectX::XMFLOAT4X4A VP;
 };
 
 struct PICK_BUFFER

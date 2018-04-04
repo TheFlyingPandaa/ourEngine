@@ -2,7 +2,7 @@
 #include <string>
 #include <stack>
 
-#include "Grid.h"
+#include "../Bobby test/Room/Grid.h"
 #include "StateManager\State.h"
 #include "StateManager\GameState.h"
 #include "StateManager\MainMenu.h"
@@ -31,13 +31,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new FPSCamera();
-	wnd.setMousePositionCallback(cam, &Camera::setMousePos);
+	Camera* cam = new OrbitCamera(wnd.getSize());
+	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
 	std::stack<State *> gameStates;
 	std::stack<Shape *> pickingEvents;
 	std::stack<int>		keyEvent;
 
+	Light light;
+	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
+	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
+
+	
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
@@ -52,6 +57,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		unprocessed += dt / freq;
 
+		if (Input::GetKeyIndex() != -1)
+			keyEvent.push(Input::GetKeyIndex());
+		
 
 		while (unprocessed > 1)
 		{
@@ -89,7 +97,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 	
 		
-		wnd.Flush(cam);
+		wnd.Flush(cam, light);
 
 		wnd.Present();
 

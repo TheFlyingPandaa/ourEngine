@@ -34,6 +34,8 @@ float4 main(Input input) : SV_Target
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
 	float3 lightToObject = normalize(-dir); 
+	//TODO:Hey Future me Remove this
+	return float4(diffuseSample,1);
 	float3 diffuse = diffuseSample * max(dot(normal, lightToObject), 0.0f); 
 	////////////////////////////////////////////////////////////////////////////////////////////
 

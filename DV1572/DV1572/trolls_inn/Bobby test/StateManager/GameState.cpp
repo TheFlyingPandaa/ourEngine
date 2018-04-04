@@ -6,25 +6,33 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 8, 8);	
-	grid->AddRoom(new Kitchen(0, 0, 8, 3));
-
+	grid = new Grid(0, 0, 16, 16, rect->getMesh());	
+	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
 
 	grid->CreateWalls(&m);
+
+	//grid->CreateWalls(&m);
 }
 
 GameState::~GameState()
 {
 	delete grid;
+	delete rect;
 }
 
 void GameState::Update(double deltaTime)
 {
-	//this->m_cam->update();
+	this->m_cam->update();
+	this->grid->Update(this->m_cam);
+	
 
-	while (!p_keyEvents->empty())
+	while (!p_keyEvents->empty() && p_keyEvents->top() != 0)
 	{
 		//Do keypress events here
+		std::cout << p_keyEvents->top() << std::endl;
+		p_keyEvents->pop();
 	}
 	while (!p_pickingEvent->empty())
 	{
@@ -44,6 +52,10 @@ void GameState::Draw()
 
 void GameState::_init()
 {
-	this->m.LoadModel("trolls_inn/Resources/Wall.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect = new RectangleShape();
+	rect->setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect->setNormalMap("trolls_inn/Resources/NormalMap.jpg");
+	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
+	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
