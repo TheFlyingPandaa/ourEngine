@@ -6,7 +6,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
-#include "shape\Shape.h"
+#include "shape\Rectangle.h"
 #include "light\Light.h"
 #include "Input.h"
 
