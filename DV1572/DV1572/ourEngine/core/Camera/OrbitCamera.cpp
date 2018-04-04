@@ -1,13 +1,24 @@
 #include "OrbitCamera.h"
 #include <iostream>
 #include "../../interface/Input.h"
+void OrbitCamera::setMaxTilt(float t)
+{
+	m_tiltCapUp = t;
+}
+void OrbitCamera::setMinTilt(float t)
+{
+	m_tiltCapDown = t;
+}
 OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
 {
 	m_distanceFromTarget = 10.0f;
-	m_yaw = 0.0f;
-	m_pitch = 0.0f;
 	m_windowDim = windowDim;
 	m_lastMouse = { 0,0 };
+	rotation.x = rotation.y = 0;
+	m_sensitivity = 0.01f;
+	m_tiltCapDown = 0.0f;
+	m_tiltCapUp = 0.5f;
+
 }
 
 OrbitCamera::~OrbitCamera()
@@ -46,35 +57,27 @@ void OrbitCamera::update()
 	// --- ZOOM ----
 	if (Input::isMouseRightPressed())
 	{
-		
+		XMVECTOR rotVector = (xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget));
+		XMVECTOR startLA = XMVectorSet(0, 0, -1, 0);
 
-		XMVECTOR rotVector = xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget);
-		
+		float potentialTilt = rotation.x - yDeltaMouse * m_sensitivity;
 
-		XMMATRIX trans = XMMatrixTranslationFromVector(rotVector);
-		XMMATRIX transBack = XMMatrixTranslationFromVector(-rotVector);
+		if (abs(potentialTilt) < XM_PI * m_tiltCapUp && potentialTilt < 0.0f)
+		{
+			rotation.x -= yDeltaMouse * m_sensitivity;
+		}
+		rotation.y += xDeltaMouse * m_sensitivity;
 
-		XMMATRIX rotX = XMMatrixRotationX(yDeltaMouse * 0.01f);
-		XMMATRIX rotY = XMMatrixRotationY(xDeltaMouse * 0.01f);
-		XMVECTOR newPos = XMVector3Transform(xmCamPos, transBack * rotY * rotX * trans);
-		XMVECTOR newLookAt = XMVector3Transform(xmLookAt, rotY * rotX);
+		XMMATRIX rot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, 0.0f);
 
-		XMFLOAT3 xAxis = { 0,0,-1 };
-		XMVECTOR cosine = XMVector3Dot(newLookAt, XMLoadFloat3(&xAxis)) / (XMVector3Length(newLookAt) * XMVector3Length(XMLoadFloat3(&xAxis)));
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, cosine);
-		float angle = (acos(result.x) *57.2957795f);
-		
+		XMVECTOR newLookAt = XMVector3Normalize(XMVector3Transform(startLA, rot));
+		XMVECTOR newPos = rotVector + (-newLookAt * m_distanceFromTarget);
 		
 		xmCamPos = newPos;
 		xmLookAt = newLookAt;
 
-
-
 		XMStoreFloat3(&m_lookAt, xmLookAt);
 		XMStoreFloat3(&m_pos, xmCamPos);
-		
-	
 	}
 	else if(Input::isMouseLeftPressed())
 	{
@@ -137,19 +140,6 @@ void OrbitCamera::update()
 
 		}
 	}
-
-
-	
-
-	
-
-
-	
-		
-		
-	
-	
-
 
 	setViewMatrix();
 }
