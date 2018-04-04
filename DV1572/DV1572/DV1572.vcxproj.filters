@@ -30,9 +30,11 @@
     <ClCompile Include="trolls_inn\main.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
-    <ClCompile Include="trolls_inn\Shop\Economy.cpp" />
-    <ClCompile Include="trolls_inn\Attributes and Level system\Attributes.cpp" />
-    <ClCompile Include="trolls_inn\Attributes and Level system\LevelTracker.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Attributes.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\LevelTracker.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -58,9 +60,11 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="ourEngine\interface\light\Light.h" />
     <ClInclude Include="ourEngine\interface\Input.h" />
-    <ClInclude Include="trolls_inn\Shop\Economy.h" />
-    <ClInclude Include="trolls_inn\Attributes and Level system\Attributes.h" />
-    <ClInclude Include="trolls_inn\Attributes and Level system\LevelTracker.h" />
+    <ClInclude Include="trolls_inn\AI_Base\Attributes.h" />
+    <ClInclude Include="trolls_inn\AI_Base\Customer.h" />
+    <ClInclude Include="trolls_inn\AI_Base\Economy.h" />
+    <ClInclude Include="trolls_inn\AI_Base\LevelTracker.h" />
+    <ClInclude Include="trolls_inn\AI_Base\Staff.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
