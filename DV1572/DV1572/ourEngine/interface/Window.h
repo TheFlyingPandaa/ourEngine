@@ -97,7 +97,6 @@ private:
 	void	_initTransparency();
 
 	//	Picking
-	void	_initPickingTexture();
 	void	_initPickingShaders();
 	
 	// Tessellation
