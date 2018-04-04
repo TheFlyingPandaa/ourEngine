@@ -82,6 +82,8 @@ void DX::CleanUp()
 	DX::g_3DVertexShader->Release();
 	DX::g_3DPixelShader->Release();
 	DX::g_inputLayout->Release();
+	DX::g_standardHullShader->Release();
+	DX::g_standardDomainShader->Release();
 }
 
 
@@ -694,9 +696,55 @@ Window::Window(HINSTANCE h)
 
 Window::~Window()
 {
-	m_swapChain->Release();
 	m_backBufferRTV->Release();
-	
+	m_swapChain->Release();
+
+	m_depthStencilView->Release();
+	m_depthBufferTex->Release();
+
+	//m_projectionMatrix->Release();
+
+	m_samplerState->Release();
+
+	m_meshConstantBuffer->Release();
+	//m_pointLightsConstantBuffer->Release();
+	if (m_pointLightsConstantBuffer != nullptr)
+	{
+		m_pointLightsConstantBuffer->Release();
+	}
+	m_cameraPosConstantBuffer->Release();
+	if (m_lightBuffer != nullptr)
+	{
+		m_lightBuffer->Release();
+	}
+
+	for (size_t i = 0; i < GBUFFER_COUNT; i++)
+	{
+		m_gbuffer[i].SRV->Release();
+		m_gbuffer[i].RTV->Release();
+		m_gbuffer[i].TextureMap->Release();
+	}
+	m_deferredVertexShader->Release();
+	m_deferredPixelShader->Release();
+	m_transVertexShader->Release();
+	m_transPixelShader->Release();
+	m_transBlendState->Release();
+
+	m_pickingTexture.SRV->Release();
+	m_pickingTexture.RTV->Release();
+	m_pickingTexture.TextureMap->Release();
+
+	m_pickingVertexShader->Release();
+	m_pickingPixelShader->Release();
+	m_pickingBuffer->Release();
+	m_pickingReadBuffer->Release();
+
+	m_computeConstantBuffer->Release();
+	m_computeOutputBuffer->Release();
+	m_computeReadWriteBuffer->Release();
+	m_computeUAV->Release();
+	m_computeShader->Release();
+
 	DX::CleanUp();
 	
 	//This is for leaking, I have no idea

@@ -22,6 +22,7 @@ private:
 	int					m_id;
 public:
 	Mesh();
+	~Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(const std::vector<VERTEX> &v);
 	void setDiffuseTexture(const std::string &path);

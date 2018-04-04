@@ -141,7 +141,7 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 	int index = static_cast<int>(pixel.x + (pixel.y * 255) + (pixel.z * 255 * 255) + 0.5f);
 	DX::g_deviceContext->Unmap(m_pickingReadBuffer, 0);
-
+	//m_depthStencilView->Release();
 	if (index == 0)
 		return nullptr;
 	return DX::g_pickingQueue[index - 1];

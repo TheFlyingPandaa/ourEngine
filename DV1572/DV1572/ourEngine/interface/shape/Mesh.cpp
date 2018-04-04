@@ -15,6 +15,16 @@ Mesh::Mesh()
 	m_id = m_uniqueID++;
 }
 
+Mesh::~Mesh()
+{
+	if(m_vertexBufferNonIndexed)
+		m_vertexBufferNonIndexed->Release();
+	if(m_vertexBufferIndexed)
+		m_vertexBufferIndexed->Release();
+	if (m_indexBuffer)
+		m_indexBuffer->Release();
+}
+
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<VERTEX> vertices;

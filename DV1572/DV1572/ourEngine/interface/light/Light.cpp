@@ -89,6 +89,10 @@ void Light::Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, flo
 
 Light::~Light()
 {
+	m_pShadowTexture->Release();
+	m_pDepthStencilView->Release();
+	m_pShaderResourceView->Release();
+	m_pLightBuffer->Release();
 }
 
 XMFLOAT4A Light::getPos() const
