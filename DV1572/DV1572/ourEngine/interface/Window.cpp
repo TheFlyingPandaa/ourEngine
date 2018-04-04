@@ -753,17 +753,7 @@ Window::~Window()
 	Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	DX::g_device->Release();
 	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
-	DX::g_device->Release();
+	
 	
 }
 
@@ -834,6 +824,7 @@ void Window::Clear()
 
 void Window::Flush(Camera* c, Light& light)
 {
+	//ReportLiveObjects();
 	_prepareGeometryPass();
 	_drawHUD();
 	_geometryPass(*c);
