@@ -13,7 +13,7 @@ inline void _loadModelThread(Mesh * a, const std::string path)
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
-	auto start = std::chrono::system_clock::now();
+
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
@@ -53,24 +53,32 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
-	Object3D aWall;
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-	aWall.setMesh(&wall);
+
+	/*Object3D aWall;
+	aWall.setMesh(&wall);*/
+	const int wallAmount = 1000;
+	Object3D walls[wallAmount];
+	for (int i = 0; i < wallAmount; i++)
+	{
+		walls[i].setMesh(&wall);
+		walls[i].setPos(i, 0, 0);
+	}
 	//aWall.setPos(1, 1, 0);
 
 
-	a.LoadModel("trolls_inn/Resources/Aaakali.txt");
+	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
 
 	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 
-	RectangleShape r;
+	/*RectangleShape r;
 	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	r.setPos(-1.5, 1.4, 0);
 
 	RectangleShape r2;
 	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	r2.setPos(0, 0, 0);
-
+*/
 	Light light;
 	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000);
 
@@ -78,14 +86,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 	modelThread.join();
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end - start;
-	std::cout << elapsed_seconds.count() << std::endl;
 
-	bool keyPressed = false;
-	bool pressedInFrame = false;
-	float angle = 0.0f;
-
+	
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -100,50 +102,32 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			/*for (int i = 0; i < 9; i++)
-			{
-			shapes[i].Rotate(0, 1, 0);
-			}*/
 			
-			cam->update(wnd.getMousePos());
+			cam->update();
 			
 		}
 
 		fpsCounter++;
 
-		//HUD.Draw();
-		HUD.DrawAsHud();
-		//Akali.Draw();
-		//Draw geometry
-		/*for (int i = 0; i < 9; i++)
-		{
-		shapes[i].Draw();
-		}*/
-		//r.Draw();
-		r.TEMPTRANS();
-		r.CheckPick();
-		r2.Draw();
-		r2.CheckPick();
-		aWall.Draw();
-		aWall.CheckPick();
+	
 
-		Shape* picked = nullptr;
-		if (GetAsyncKeyState(VK_LBUTTON))
+		for (int i = 0; i < wallAmount; i++)
 		{
-			picked = wnd.getPicked(cam);
-		}
-		if (picked)
-		{
-			picked->Move(-0.01f, 0.0f, 0.0f);
+			walls[i].Draw();
 		}
 
-
+	
+		auto start = std::chrono::system_clock::now();
 		wnd.Flush(cam, light);
+		auto end = std::chrono::system_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end - start;
+		
 		wnd.Present();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			//printf("\rFPS: %d TICK: %d Time: %d", fpsCounter, updates);
+			std::cout << "FPS: " << fpsCounter << "TICK: " << updates << " Time :" << elapsed_seconds.count() << std::endl;
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);
