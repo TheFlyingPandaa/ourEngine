@@ -6,12 +6,13 @@ class RectangleShape : public Shape
 private:
 	float m_width, m_height;
 	Mesh* m;
+	bool m_hud;
 
 private:
 	void _buildRectangle();
 
 public:
-	RectangleShape(float w = 1.0f, float h = 1.0f);
+	RectangleShape(float w = 10.0f, float h = 10.0f);
 	~RectangleShape();
 	void setWidth(float w);
 	float getWidth() const;
@@ -19,5 +20,8 @@ public:
 	float getHeight() const;
 	void setDiffuseTexture(const std::string &path);
 	void DrawAsHud();
+	//Needs to be Drawn as hud once for this to be true
+	bool isHud() const;
+	std::string toString() const override;
 
 };
