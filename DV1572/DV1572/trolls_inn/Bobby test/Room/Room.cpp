@@ -6,14 +6,18 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
-	this->m_hasWalls = false;
-	
-	this->m_wall = m;
-
-	if (m)
-		CreateWalls(m);
 
 	//TODO: Dont forget to send the tiles you lil cunt :D
+}
+
+Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles)
+{
+	this->m_posX = posX;
+	this->m_posY = posY;
+	this->m_sizeX = sizeX;
+	this->m_sizeY = sizeY;
+
+	this->m_tiles = tiles;
 }
 
 Room::~Room()
@@ -30,10 +34,20 @@ Room::~Room()
 	}
 }
 
-Tile ** Room::getTiles() const
+std::vector<std::vector<Tile*>> Room::getTiles() const
 {
-	return m_tiles;
+	return this->m_tiles;
 }
+
+Tile * Room::getTiles(int x, int y) const
+{
+	if (x >= 0 && x < this->m_sizeX && y >= 0 && y < this->m_sizeY)
+		return m_tiles[x][y];
+	else
+		return nullptr;
+}
+
+
 
 bool Room::Inside(int x, int y)
 {
@@ -78,11 +92,11 @@ void Room::move(int x, int y)
 	}
 }
 
-bool Room::getHasWalls() const
+/*bool Room::getHasWalls() const
 {
 	return this->m_hasWalls;
-}
-
+}*/
+/*
 void Room::CreateWalls(Mesh * mesh)
 {
 	this->m_wall = mesh;
@@ -94,14 +108,14 @@ void Room::CreateWalls(Mesh * mesh)
 		obj->setMesh(m_wall);
 
 		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		down.push_back(obj);
 
 		obj = new Object3D();
 		obj->setMesh(m_wall);
 
 		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY + m_sizeY);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		up.push_back(obj);
 	}
 
@@ -112,7 +126,7 @@ void Room::CreateWalls(Mesh * mesh)
 
 		obj->setRotation(0, 90, 0);
 		obj->setPos(this->m_posX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		left.push_back(obj);
 
 		obj = new Object3D();
@@ -121,7 +135,8 @@ void Room::CreateWalls(Mesh * mesh)
 
 		obj->setRotation(0, 90, 0);
 		obj->setPos(this->m_posX + this->m_sizeX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		obj->setScale(0.5f);
+		//obj->setScale(0.5f);
 		right.push_back(obj);
 	}
 }
+*/
