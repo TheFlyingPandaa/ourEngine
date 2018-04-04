@@ -13,8 +13,8 @@ private:
 	bool				m_walls[4] = { false };
 	//Tile**				m_tiles;
 	Mesh*				m_tileMesh;
-	std::vector<std::vector<Tile*>> m_tiles;
 	RoomCtrl			m_roomCtrl;
+	std::vector<std::vector<Tile*>> m_tiles;
 
 
 	bool				_intersect(Room * room, bool close = false, Room ** otherRef = nullptr, bool getRef = false);

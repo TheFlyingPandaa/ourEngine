@@ -44,18 +44,21 @@ public:
 		m_posX = x;
 		m_posY = y;
 		m_door = false;
-		//quad.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-		//quad.setNormalMap("trolls_inn/Resources/NormalMap.jpg");
+		
 		quad.setMesh(mesh);
 		quad.setPos(x, 0, y);
-		quad.Rotate(90, 0, 0);
+		quad.Rotate(90, 0, 0);		
 	}
+	void	setAdjacent(Tile* tile, WallDirection dir);
+	Tile*	getAdjacent(WallDirection dir);
 	int		m_posY;
 	int		m_posX;
 	bool	m_door;
 	Object3D quad;
 
-	Tile**	adjacent[4] = { nullptr };
+	Tile*	adjacent[4] = { nullptr };
+
+	Wall*	m_w[4] = { nullptr };
 
 	bool	m_walls[4] = { false };
 	bool	isWall(WallDirection dir) const { return m_walls[dir]; }

@@ -17,8 +17,9 @@ Wall::~Wall()
 void Wall::Draw()
 {
 	//TODO: Remove Debug
-	if (!m_innerWall)
-		m_wall.Draw();
+	if (m_innerWall)
+		m_wall.setScale(1.0f, 0.1f, 1);
+	m_wall.Draw();
 		//m_wall.Scale(1, .2f, 1);
 }
 

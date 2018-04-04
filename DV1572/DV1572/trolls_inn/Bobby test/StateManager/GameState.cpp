@@ -6,9 +6,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 8, 8, rect->getMesh());	
-	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(1, 1), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(0,1), DirectX::XMINT2(2,2), RoomType::kitchen, true);
+	grid = new Grid(0, 0, 64, 64, rect->getMesh());	
+	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
 
 	grid->CreateWalls(&m);
 
@@ -18,6 +19,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 GameState::~GameState()
 {
 	delete grid;
+	delete rect;
 }
 
 void GameState::Update(double deltaTime)

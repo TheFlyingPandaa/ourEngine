@@ -55,6 +55,35 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			*/
 		}
 	}
+	for (int i = 0; i < sizeX; i++)
+	{
+		for (int j = 0; j < sizeY; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				if (k == WallDirection::up) {
+					if (j + 1 < sizeY) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], static_cast<WallDirection>(k));
+					}					
+				}
+				else if (k == WallDirection::down) {
+					if (j - 1 > 0) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j - 1], static_cast<WallDirection>(k));
+					}
+				}
+				else if (k == WallDirection::left) {
+					if (i - 1 > 0) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j], static_cast<WallDirection>(k));
+					}
+				}
+				else if (k == WallDirection::right) {
+					if (i + 1 < sizeX) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j], static_cast<WallDirection>(k));
+					}
+				}
+			}
+		}
+	}
 }
 Grid::~Grid()
 {
@@ -113,7 +142,7 @@ void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType,
 	std::vector<std::vector<Tile*>> tiles(size.x);
 	for (int x = pos.x; x < size.x + pos.x; x++)
 	{
-		tiles[x] = std::vector<Tile*>(size.y);
+		tiles[x - pos.x] = std::vector<Tile*>(size.y);
 		for (int y = pos.y; y < size.y + pos.y; y++)
 		{
 			tiles[x - pos.x][y - pos.y] = this->m_tiles[x][y];
