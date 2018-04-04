@@ -9,6 +9,7 @@ void Shape::_buildMatrix()
 	XMMATRIX scale = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z); 
 
 	m_worldMatrix = rot * scale * trans; 
+
 }
 
 DirectX::XMFLOAT3 Shape::_convertToRad(DirectX::XMFLOAT3 deg)
@@ -53,6 +54,8 @@ Shape::Shape()
 	m_rot = { 0,0,0 };
 	m_scl = XMFLOAT3{ 1,1,1 };
 	_buildMatrix();
+
+
 }
 
 void Shape::setMesh(Mesh * m)
@@ -65,9 +68,20 @@ Mesh * Shape::getMesh() const
 	return m_mesh;
 }
 
-ID3D11Buffer * Shape::getVertices() const
+
+ID3D11Buffer * Shape::getVerticesIndexed() const
 {
-	return m_mesh->getVertices();
+	return m_mesh->getVerticesIndexed();
+}
+
+ID3D11Buffer * Shape::getVerticesNonIndexed() const
+{
+	return m_mesh->getVerticesNonIndexed();
+}
+
+ID3D11Buffer * Shape::getIndices() const
+{
+	return m_mesh->getIndicies();
 }
 
 void Shape::setPos(float x, float y, float z)
@@ -78,7 +92,13 @@ void Shape::setPos(float x, float y, float z)
 void Shape::setPos(DirectX::XMFLOAT3 pos)
 {
 	m_pos = pos; 
+
 	_buildMatrix(); 
+}
+
+DirectX::XMFLOAT3 Shape::getPosition() const
+{
+	return m_pos;
 }
 
 void Shape::Move(float x, float y, float z)
@@ -102,6 +122,11 @@ void Shape::setRotation(DirectX::XMFLOAT3 rotation)
 {
 	m_rot = _convertToRad(rotation);
 	_buildMatrix();
+}
+
+DirectX::XMFLOAT3 Shape::getRotation() const
+{
+	return m_rot;
 }
 
 void Shape::Rotate(float x, float y, float z)
@@ -130,6 +155,11 @@ void Shape::setScale(DirectX::XMFLOAT3 scl)
 {
 	m_scl = scl;
 	_buildMatrix();
+}
+
+DirectX::XMFLOAT3 Shape::getScale() const
+{
+	return m_scl;
 }
 
 void Shape::Scale(float scl)
@@ -169,6 +199,7 @@ void Shape::ApplyShaders()
 	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
 	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
 	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+
 	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
 	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
 	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
@@ -193,7 +224,8 @@ void Shape::Draw()
 	}
 	else 
 	{
-		DX::g_renderQueue.push_back(this);
+		DX::submitToInstance(this);
+		//DX::g_renderQueue.push_back(this);
 	}
 }
 

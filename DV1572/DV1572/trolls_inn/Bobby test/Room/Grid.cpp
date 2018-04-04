@@ -28,12 +28,14 @@ bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
 }
 
 
-Grid::Grid(int posX, int posY, int sizeX, int sizeY)
+Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
+
+	this->m_tileMesh = mesh;
 
 	this->m_tiles = std::vector<std::vector<Tile*>>(this->m_sizeX);
 	for (int i = 0; i < sizeX; i++)
@@ -41,7 +43,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY)
 		this->m_tiles[i] = std::vector<Tile*>(this->m_sizeY);
 		for (int j = 0; j < sizeY; j++)
 		{
-			Tile* t = new Tile(posX, posY, sizeX, sizeY);
+			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
 			t->quad.setScale(2.0f);
 			t->quad.setPos(i + posX, 0, j + posY);
 			this->m_tiles[i][j] = t;

@@ -7,6 +7,7 @@
 class GameState : public State {
 private:
 	Mesh m;
+	RectangleShape* rect;
 	Grid* grid;
 	Grid* grid2;
 

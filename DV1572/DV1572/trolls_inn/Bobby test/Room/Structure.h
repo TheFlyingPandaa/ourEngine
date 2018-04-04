@@ -39,20 +39,21 @@ public:
 
 class Tile {
 public:
-	Tile(int x = 0, int y = 0, int sizeX = 0, int sizeY = 0)
+	Tile(int x = 0, int y = 0, int sizeX = 0, int sizeY = 0, Mesh * mesh = nullptr)
 	{
 		m_posX = x;
 		m_posY = y;
 		m_door = false;
-		quad.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-		quad.setNormalMap("trolls_inn/Resources/NormalMap.jpg");
+		//quad.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+		//quad.setNormalMap("trolls_inn/Resources/NormalMap.jpg");
+		quad.setMesh(mesh);
 		quad.setPos(x, 0, y);
 		quad.Rotate(90, 0, 0);
 	}
 	int		m_posY;
 	int		m_posX;
 	bool	m_door;
-	RectangleShape quad;
+	Object3D quad;
 
 	Tile**	adjacent[4] = { nullptr };
 

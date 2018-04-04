@@ -6,7 +6,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 8, 8);	
+	grid = new Grid(0, 0, 8, 8, rect->getMesh());	
 	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(1, 1), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(0,1), DirectX::XMINT2(2,2), RoomType::kitchen, true);
 
@@ -22,7 +22,7 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
-	this->m_cam->update(Input::getMousePosition());
+	this->m_cam->update();
 
 	while (!p_keyEvents->empty() && p_keyEvents->top() != 0)
 	{
@@ -48,6 +48,9 @@ void GameState::Draw()
 
 void GameState::_init()
 {
+	rect = new RectangleShape();
+	rect->setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect->setNormalMap("trolls_inn/Resources/NormalMap.jpg");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");

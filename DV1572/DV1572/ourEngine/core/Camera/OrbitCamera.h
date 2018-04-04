@@ -15,8 +15,8 @@ public:
 
 	OrbitCamera(DirectX::XMFLOAT2 windowDim);
 	~OrbitCamera();
-	void update(DirectX::XMFLOAT2 mousePos);
+
+	void update();
 
 private:
-	void update();
 };
