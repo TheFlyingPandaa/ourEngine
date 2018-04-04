@@ -15,12 +15,17 @@ private:
 	Type race;
 	int posX, posY;
 
+	int hungry;
+	int tired;
+	int thirsty;
+
 public:
 	Customer();
 	Customer(Type race, int gold);
 	~Customer();
 
 	Attributes getAttributes() const;
+
 	int getGold() const;
 	Type getRace() const;
 	int getPosX() const;

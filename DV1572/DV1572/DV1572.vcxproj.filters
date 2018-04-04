@@ -35,6 +35,7 @@
     <ClCompile Include="trolls_inn\AI_Base\LevelTracker.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AITest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />

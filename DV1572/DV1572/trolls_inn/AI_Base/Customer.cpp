@@ -4,6 +4,12 @@ Customer::Customer()
 {
 }
 
+Customer::Customer(Type race, int gold)
+{
+	this->race = race;
+	this->gold = gold;
+}
+
 Customer::~Customer()
 {
 }
