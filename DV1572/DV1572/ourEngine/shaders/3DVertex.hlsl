@@ -11,9 +11,11 @@ struct INPUT
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 
-	float4 instancePos : INSTANCEPOS;
-	float4 instanceRot : INSTANCEROT;
-	float4 instanceSca : INSTANCESCA;
+
+	float4 w1 : INSTANCEWORLDONE;
+	float4 w2 : INSTANCEWORLDTWO;
+	float4 w3 : INSTANCEWORLDTHREE;
+	float4 w4 : INSTANCEWORLDFOUR;
 };
 
 struct OUTPUT
@@ -29,9 +31,8 @@ struct OUTPUT
 OUTPUT main(INPUT input)
 {
 	OUTPUT o;
-	//o.pos = mul(float4(input.pos, 1),wvp);
-	//o.worldPos = mul(float4(input.pos, 1), world);
-	o.worldPos = float4(input.pos + input.instancePos,1);
+	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
+	o.worldPos = mul(float4(input.pos,1), world);
 	o.tex = input.tex;
 	o.normal = input.normal;
 	o.tangent = input.tangent;

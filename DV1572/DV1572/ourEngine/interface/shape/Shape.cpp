@@ -209,7 +209,6 @@ void Shape::Draw()
 	else 
 	{
 		DX::submitRenderInstance(this);
-		DX::g_renderQueue.push_back(this);
 	}
 }
 

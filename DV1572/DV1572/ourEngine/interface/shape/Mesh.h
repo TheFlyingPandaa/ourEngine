@@ -13,9 +13,11 @@ class Mesh
 {
 private:
 	ID3D11Buffer*	m_vertexBuffer;
+	ID3D11Buffer*	m_indexBuffer;
 	Material		m_material;
 	int				m_nrOfVertices;
-	static int		m_id;
+	static int		m_idCounter;
+	int				m_uniqueID;
 public:
 	Mesh();
 	void LoadModel(const std::string &path);
@@ -25,6 +27,7 @@ public:
 	void setHighlightTexture(const std::string &path);
 	Material* getMaterial();
 	ID3D11Buffer* getVertices() const;
+	ID3D11Buffer* getIndicesBuffer() const;
 	int getNumberOfVertices() const;
 	bool CheckID(const Mesh& other) const;
 };

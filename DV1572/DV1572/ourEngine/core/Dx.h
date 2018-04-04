@@ -29,15 +29,16 @@ namespace DX
 	// InstanceRender
 	struct INSTANCE_ATTRIB
 	{
-		DirectX::XMFLOAT4A pos;
-		DirectX::XMFLOAT4A rot;
-		DirectX::XMFLOAT4A scale;
+		DirectX::XMFLOAT4A w1;
+		DirectX::XMFLOAT4A w2;
+		DirectX::XMFLOAT4A w3;
+		DirectX::XMFLOAT4A w4;
 	};
 
 	struct INSTANCE_GROUP
 	{
 		std::vector<INSTANCE_ATTRIB> attribs;
-		Mesh* mesh;
+		Shape* shape;
 	};
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
 	extern void submitRenderInstance(Shape* shape);
