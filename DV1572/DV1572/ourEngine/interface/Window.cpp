@@ -898,9 +898,11 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 		
 		Input::m_keys[wParam] = true;
+		Input::lastPressed = wParam;
 		break;
 	case WM_KEYUP:
 		Input::m_keys[wParam] = false;
+		Input::lastPressed = -1;
 		break;
 
 	// ----- Left Mouse Button -----

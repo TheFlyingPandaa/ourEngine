@@ -1,5 +1,5 @@
 #pragma once
-#include "../Grid.h"
+#include "../Room/Grid.h"
 #include "State.h"
 #include "MainMenu.h"
 
@@ -7,6 +7,7 @@
 class GameState : public State {
 private:
 	Mesh m;
+	RectangleShape* rect;
 	Grid* grid;
 	Grid* grid2;
 

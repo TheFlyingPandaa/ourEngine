@@ -117,6 +117,11 @@ void RectangleShape::setDiffuseTexture(const std::string & path)
 	getMesh()->setDiffuseTexture(path);
 }
 
+void RectangleShape::setNormalMap(const std::string & path)
+{
+	getMesh()->setNormalTexture(path);
+}
+
 void RectangleShape::DrawAsHud()
 {
 	m_hud = true;

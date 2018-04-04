@@ -5,6 +5,9 @@ Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, Mesh * m) : Room(posX
 {
 
 }
+Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles) : Room(posX, posY, sizeX, sizeY, tiles)
+{
+}
 Kitchen::~Kitchen()
 {
 
@@ -13,7 +16,7 @@ Kitchen::~Kitchen()
 
 void Kitchen::Draw()
 {
-	for (size_t x = 0; x < down.size(); x++)
+	/*for (size_t x = 0; x < down.size(); x++)
 	{
 		down[x]->Draw();
 		down[x]->CheckPick();
@@ -23,7 +26,7 @@ void Kitchen::Draw()
 	{
 		left[y]->Draw();
 		right[y]->Draw();
-	}
+	}*/
 }
 std::string Kitchen::toString() const
 {
