@@ -343,7 +343,7 @@ void Window::_initComputeShader()
 void Window::_runComputeShader() {
 	DX::g_deviceContext->CSSetShader(m_computeShader, NULL, 0);
 
-	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	//D3D11_MAPPED_SUBRESOURCE dataPtr;
 	//gDeviceContext->Map(computeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 
 	//computeValuesStore.val = 1;
@@ -507,7 +507,7 @@ void Window::_geometryPass(const Camera &cam)
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
 
 	MESH_BUFFER meshBuffer;
-	DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
+	//DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
 	
 	ID3D11Buffer* instanceBuffer = nullptr;
 
@@ -516,7 +516,7 @@ void Window::_geometryPass(const Camera &cam)
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
-		instBuffDesc.ByteWidth = sizeof(INSTANCE_ATTRIB) * instance.attribs.size();
+		instBuffDesc.ByteWidth = sizeof(INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
 		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA instData;
@@ -559,7 +559,7 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVerticesIndexed(), instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVerticesIndexed(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 	
@@ -730,14 +730,14 @@ Window::~Window()
 	m_transPixelShader->Release();
 	m_transBlendState->Release();
 
-	m_pickingTexture.SRV->Release();
-	m_pickingTexture.RTV->Release();
-	m_pickingTexture.TextureMap->Release();
+	if(m_pickingTexture.SRV) m_pickingTexture.SRV->Release();
+	if(m_pickingTexture.RTV) m_pickingTexture.RTV->Release();
+	if(m_pickingTexture.TextureMap) m_pickingTexture.TextureMap->Release();
 
 	m_pickingVertexShader->Release();
 	m_pickingPixelShader->Release();
 	m_pickingBuffer->Release();
-	m_pickingReadBuffer->Release();
+	if(m_pickingReadBuffer) m_pickingReadBuffer->Release();
 
 	m_computeConstantBuffer->Release();
 	m_computeOutputBuffer->Release();
@@ -752,6 +752,19 @@ Window::~Window()
 	HRESULT Result = DX::g_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&DebugDevice);
 	Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	DX::g_device->Release();
+	
 }
 
 bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
@@ -769,9 +782,9 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	Picking::InitPickingTexture(width, height, m_sampleCount, m_pickingTexture.TextureMap, m_pickingTexture.RTV, m_pickingTexture.SRV, m_pickingReadBuffer);
 	_setSamplerState();
 	m_HUDview = DirectX::XMMatrixLookToLH(
-		DirectX::XMVectorSet(0, 0, -0.1, 1),
-		DirectX::XMVectorSet(0, 0, 1, 0),
-		DirectX::XMVectorSet(0, 1, 0, 0)
+		DirectX::XMVectorSet(0.0f, 0.0f, -0.1f, 1.0f),
+		DirectX::XMVectorSet(0, 0, 1.0f, 0),
+		DirectX::XMVectorSet(0, 1.0f, 0, 0)
 	);
 	_initTransparency();
 
@@ -968,8 +981,8 @@ void Window::setMouseMiddleScreen()
 DirectX::XMFLOAT2 Window::getSize() const
 {
 	DirectX::XMFLOAT2 sizeVec;
-	sizeVec.x = m_width;
-	sizeVec.y = m_height;
+	sizeVec.x = (float)m_width;
+	sizeVec.y = (float)m_height;
 	return sizeVec;
 }
 
