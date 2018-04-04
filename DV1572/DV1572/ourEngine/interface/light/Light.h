@@ -19,11 +19,11 @@ private:
 	float m_width; 
 	float m_height; 
 
-	ID3D11Texture2D* m_pShadowTexture; 
-	ID3D11DepthStencilView* m_pDepthStencilView; 
-	ID3D11ShaderResourceView* m_pShaderResourceView; 
+	ID3D11Texture2D*			m_pShadowTexture; 
+	ID3D11DepthStencilView*		m_pDepthStencilView; 
+	ID3D11ShaderResourceView*	m_pShaderResourceView; 
 
-	ID3D11Buffer* m_pLightBuffer;
+	ID3D11Buffer*				m_pLightBuffer;
 
 	void _createResources(); 
 

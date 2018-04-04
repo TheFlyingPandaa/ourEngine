@@ -29,6 +29,7 @@ protected:
 
 public:
 	Shape();
+	~Shape();
 	void setMesh(Mesh* m);
 	Mesh* getMesh() const;
 

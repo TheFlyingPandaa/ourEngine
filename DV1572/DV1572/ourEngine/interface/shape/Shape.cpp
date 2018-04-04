@@ -58,6 +58,11 @@ Shape::Shape()
 
 }
 
+Shape::~Shape()
+{
+
+}
+
 void Shape::setMesh(Mesh * m)
 {
 	m_mesh = m;
