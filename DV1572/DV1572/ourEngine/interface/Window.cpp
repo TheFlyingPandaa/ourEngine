@@ -150,6 +150,10 @@ void Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, m_transPixelShader,
 		L"ourEngine/shaders/transPixelShader.hlsl", "main");
 
+	//Compaile Computeshader
+	ShaderCreator::CreateComputeShader(DX::g_device, m_computeShader,
+		L"ourEngine/shaders/testComputeShader.hlsl", "main");
+
 
 	_initPickingShaders();
 	_initTessellationShaders();
@@ -204,6 +208,94 @@ void Window::_drawHUD()
 		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
 		DX::g_deviceContext->Draw(DX::g_HUDQueue[i]->getMesh()->getNumberOfVertices(), 0);
 	}
+}
+
+void Window::_initComputeShader()
+{
+	HRESULT hr;
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.ByteWidth = sizeof(computeBuffer);
+	//bufferDesc.ByteWidth = sizeof(float) * 4;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+	hr = 0;
+	hr = DX::g_device->CreateBuffer(&bufferDesc, nullptr, &m_computeConstantBuffer);
+	if (FAILED(hr))
+	{
+		// handle the error, could be fatal or a warning...
+		exit(-1);
+	}
+	//OUTPUTBUFFER
+	D3D11_BUFFER_DESC outputDesc;
+	outputDesc.Usage = D3D11_USAGE_DEFAULT;
+	outputDesc.ByteWidth = sizeof(computeBuffer);// *NUM_PARTICLES;
+	//bufferDesc.ByteWidth = sizeof(float) * 4;
+	outputDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+	outputDesc.CPUAccessFlags = 0;
+	outputDesc.StructureByteStride = sizeof(computeBuffer);
+	//bufferDesc.ByteWidth = sizeof(float) * 4;
+	outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	hr = 0;
+	hr = DX::g_device->CreateBuffer(&outputDesc, 0, &m_computeOutputBuffer);
+	if (FAILED(hr))
+	{
+		// handle the error, could be fatal or a warning...
+		exit(-1);
+	}
+	//SAME SHIT ASS ABOVE BUT FOR OTHER
+	outputDesc.Usage = D3D11_USAGE_STAGING;
+	outputDesc.BindFlags = 0;
+	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	hr = DX::g_device->CreateBuffer(&outputDesc, 0, &m_computeReadWriteBuffer);
+	if (FAILED(hr))
+	{
+		// handle the error, could be fatal or a warning...
+		exit(-1);
+	}
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	uavDesc.Buffer.FirstElement = 0;
+	uavDesc.Buffer.Flags = 0;
+	//uavDesc.Buffer.NumElements = NUM_PARTICLES; //Number of "particles"
+	uavDesc.Buffer.NumElements = 1;
+	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+
+	hr = DX::g_device->CreateUnorderedAccessView(m_computeOutputBuffer, &uavDesc, &m_computeUAV);
+	if (FAILED(hr))
+	{
+		// handle the error, could be fatal or a warning...
+		exit(-1);
+	}
+}
+
+void Window::_runComputeShader() {
+	DX::g_deviceContext->CSSetShader(m_computeShader, NULL, 0);
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	//gDeviceContext->Map(computeBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+
+	//computeValuesStore.val = 1;
+	//computeValuesStore.output = XMFLOAT2(0, 0); //Need Padding
+	//computeValuesStore.camPos = XMFLOAT2(XMVectorGetX(cameraPos), XMVectorGetZ(cameraPos));
+	//computeValuesStore.objectPos = XMFLOAT2(renderObject->getPosition().x, renderObject->getPosition().z);
+	//memcpy(dataPtr.pData, &computeValuesStore, sizeof(computeShader));
+	//// UnMap constant buffer so that we can use it again in the GPU
+	//gDeviceContext->Unmap(computeBuffer, 0);
+
+	DX::g_deviceContext->CSSetConstantBuffers(0, 1, &m_computeConstantBuffer);
+	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_computeUAV, NULL);
+
+	DX::g_deviceContext->Dispatch(1, 1, 1);
+
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
 }
 
 void Window::_setSamplerState()
@@ -535,7 +627,9 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 		DirectX::XMVectorSet(0, 1, 0, 0)
 	);
 	_initTransparency();
-	
+
+	_initComputeShader();
+
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
 	m_HUDview = m_HUDview * m_projectionMatrix;
 	t1.join();
@@ -585,6 +679,7 @@ void Window::Flush(Camera* c, Light& light)
 	_clearTargets();
 	_lightPass(light,*c);
 	_transparencyPass(*c);
+	_runComputeShader();
 }
 
 Shape * Window::getPicked(Camera* c)
