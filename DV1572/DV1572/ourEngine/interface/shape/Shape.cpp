@@ -74,21 +74,6 @@ Mesh * Shape::getMesh() const
 }
 
 
-ID3D11Buffer * Shape::getVerticesIndexed() const
-{
-	return m_mesh->getVerticesIndexed();
-}
-
-ID3D11Buffer * Shape::getVerticesNonIndexed() const
-{
-	return m_mesh->getVerticesNonIndexed();
-}
-
-ID3D11Buffer * Shape::getIndices() const
-{
-	return m_mesh->getIndicies();
-}
-
 void Shape::setPos(float x, float y, float z)
 {
 	setPos(XMFLOAT3(x, y, z)); 
@@ -229,7 +214,7 @@ void Shape::Draw()
 	}
 	else 
 	{
-		DX::submitRenderInstance(this);
+		DX::submitToInstance(this);
 	}
 }
 

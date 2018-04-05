@@ -22,7 +22,7 @@ std::vector<Shape*> DX::g_HUDQueue;
 ID3D11HullShader* DX::g_standardHullShader;
 ID3D11DomainShader* DX::g_standardDomainShader;
 
-std::vector<INSTANCE_GROUP> DX::g_instanceGroups;
+std::vector<DX::INSTANCE_GROUP> DX::g_instanceGroups;
 
 void DX::submitToInstance(Shape* shape)
 {
@@ -87,57 +87,6 @@ void DX::CleanUp()
 }
 
 
-std::vector < DX::INSTANCE_GROUP > DX::g_instanceGroups;
-
-void DX::submitRenderInstance(Shape* shape)
-{
-
-	int existingId = -1;
-	for (int i = 0; i < DX::g_instanceGroups.size() && existingId == -1; i++)
-	{
-		if (shape->getMesh()->CheckID(*DX::g_instanceGroups[i].shape->getMesh()))
-		{
-			existingId = i;
-
-		}
-	}
-	INSTANCE_ATTRIB attribDesc;
-
-
-	XMMATRIX xmWorldMat = shape->getWorld();
-	XMFLOAT4X4A worldMat;
-
-	XMStoreFloat4x4A(&worldMat, xmWorldMat);
-
-	XMFLOAT4A rows[4];
-	for (int i = 0; i < 4; i++)
-	{
-		rows[i].x = worldMat.m[i][0];
-		rows[i].y = worldMat.m[i][1];
-		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];
-	}
-
-
-	attribDesc.w1 = rows[0];
-	attribDesc.w2 = rows[1];
-	attribDesc.w3 = rows[2];
-	attribDesc.w4 = rows[3];
-
-
-	// Unique Mesh
-	if (existingId == -1)
-	{
-		INSTANCE_GROUP newGroup;
-		newGroup.attribs.push_back(attribDesc);
-		newGroup.shape = shape;
-		g_instanceGroups.push_back(newGroup);
-	}
-	else
-	{
-		DX::g_instanceGroups[existingId].attribs.push_back(attribDesc);
-	}
-}
 
 bool Window::_initWindow()
 {
@@ -578,7 +527,7 @@ void Window::_geometryPass(const Camera &cam)
 
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, vp);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);

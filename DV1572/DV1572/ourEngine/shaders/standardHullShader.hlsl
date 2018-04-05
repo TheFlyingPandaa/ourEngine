@@ -15,6 +15,7 @@ struct HS_CONTROL_POINT_OUTPUT
 	float2 Tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+	float4x4 world : WORLDMAT;
 };
 
 // Output patch constant data.
@@ -22,7 +23,6 @@ struct HS_CONSTANT_DATA_OUTPUT
 {
 	float EdgeTessFactor[3]			: SV_TessFactor; // e.g. would be [4] for a quad domain
 	float InsideTessFactor			: SV_InsideTessFactor; // e.g. would be Inside[2] for a quad domain
-	float4x4 World : WORLDMAT;
 	// TODO: change/add other stuff
 };
 
@@ -40,7 +40,6 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(
 	Output.EdgeTessFactor[1] = 
 	Output.EdgeTessFactor[2] = 
 	Output.InsideTessFactor = 1.0f; // e.g. could calculate dynamic tessellation factors instead
-	Output.World = ip[0].world;
 	return Output;
 }
 
@@ -61,6 +60,7 @@ HS_CONTROL_POINT_OUTPUT main(
 	Output.Tex = ip[i].tex;
 	Output.normal = ip[i].normal;
 	Output.tangent = ip[i].tangent;
+	Output.world = ip[i].world;
 	
 	return Output;
 }

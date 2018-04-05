@@ -9,20 +9,6 @@
 #include <vector>
 #include "../Structs.h"
 
-struct INSTANCE_ATTRIB
-{
-	DirectX::XMFLOAT4A w1;
-	DirectX::XMFLOAT4A w2;
-	DirectX::XMFLOAT4A w3;
-	DirectX::XMFLOAT4A w4;
-};
-
-struct INSTANCE_GROUP
-{
-	std::vector<INSTANCE_ATTRIB> attribs;
-	Shape* shape;
-};
-
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
 	The globals in this klass is not really globals, but rather semi globals.
@@ -54,8 +40,7 @@ namespace DX
 		std::vector<INSTANCE_ATTRIB> attribs;
 		Shape* shape;
 	};
-	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
-	extern void submitRenderInstance(Shape* shape);
+
 
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
