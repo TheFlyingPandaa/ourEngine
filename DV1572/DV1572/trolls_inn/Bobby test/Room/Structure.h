@@ -47,8 +47,8 @@ public:
 		m_door = false;
 		
 		quad.setMesh(mesh);
-		quad.setPos(x, 0, y);
-		quad.Rotate(90, 0, 0);		
+		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
+		quad.Rotate(90.0f, 0.0f, 0.0f);		
 	}
 	void	setAdjacent(Tile* tile, WallDirection dir);
 	Tile*	getAdjacent(WallDirection dir);

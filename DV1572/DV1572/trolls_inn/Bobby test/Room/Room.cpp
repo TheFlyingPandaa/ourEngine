@@ -54,6 +54,7 @@ bool Room::Inside(Tile * t)
 
 void Room::Update(Camera * cam)
 {
+	
 	if (cam)
 	{
 		bool cullWalls[4] = { false, false, false, false };

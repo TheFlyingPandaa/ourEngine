@@ -91,7 +91,7 @@ void OrbitCamera::update()
 		// If Mouse is 20% of the top
 		if (m_lastMouse.y < m_windowDim.y * 0.2)
 		{
-			float acceleration = 1 - (m_lastMouse.y) / (m_windowDim.y * 0.2);
+			float acceleration = 1.0f - (m_lastMouse.y) / (m_windowDim.y * 0.2f);
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = -XMVector3Normalize(XMVector3Cross(up, front));
@@ -106,7 +106,7 @@ void OrbitCamera::update()
 		{
 
 			float distanceGap = m_windowDim.y - (m_windowDim.y * 0.8f);
-			float acceleration = (m_lastMouse.y - m_windowDim.y * 0.8) / distanceGap;
+			float acceleration = (m_lastMouse.y - m_windowDim.y * 0.8f) / distanceGap;
 
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
@@ -123,7 +123,7 @@ void OrbitCamera::update()
 		// If the mouse is 20% to the left of the screen
 		if (m_lastMouse.x < m_windowDim.x * 0.2f)
 		{
-			float acceleration = 1 - (m_lastMouse.x) / (m_windowDim.x * 0.2);
+			float acceleration = 1.0f - (m_lastMouse.x) / (m_windowDim.x * 0.2f);
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = -XMVector3Normalize(XMVector3Cross(up, front));
