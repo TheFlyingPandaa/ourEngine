@@ -1,5 +1,6 @@
 #include "../../ourEngine/interface/Window.h"
 #include "Customer.h"
+#include "CustomerFlowControl.h"
 #include "Staff.h"
 #include <vector>
 #include <DirectXMath.h>
@@ -173,6 +174,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	dijkstra(connections, 4);
 	
+	std::cout << std::endl;
+	
+	CustomerFlowControl cFL;
+	cFL.print();
+	cFL.update();
+	std::cout << std::endl;
+	cFL.print();
 
 	system("pause");
 
