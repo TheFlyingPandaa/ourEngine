@@ -13,6 +13,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	grid->CreateWalls(&m);
 
+	std::cout << sizeof(int) << std::endl;
+	std::cout << sizeof(short) << std::endl;
+	std::cout << sizeof(int64_t) << std::endl;
+	
+
 	//grid->CreateWalls(&m);
 }
 
@@ -31,7 +36,7 @@ void GameState::Update(double deltaTime)
 	while (!p_keyEvents->empty() && p_keyEvents->top() != 0)
 	{
 		//Do keypress events here
-		std::cout << p_keyEvents->top() << std::endl;
+		//std::cout << p_keyEvents->top() << std::endl;
 		p_keyEvents->pop();
 	}
 	while (!p_pickingEvent->empty())
