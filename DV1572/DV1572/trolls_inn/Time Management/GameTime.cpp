@@ -27,7 +27,7 @@ GameTime::~GameTime()
 
 void GameTime::updateCurrentTime(float refreshRate, Light& light)
 {
-	m_currentClockValue = 1.0f; //(1.0f / refreshRate);
+	m_currentClockValue = 1.0f;// (1.0f / refreshRate);
 	m_seconds += m_currentClockValue; 
 	
 	if (m_currentClockValue >= 1)
@@ -37,17 +37,15 @@ void GameTime::updateCurrentTime(float refreshRate, Light& light)
 	}
 	
 
-	light.setDir(DirectX::XMFLOAT4A((float)cos((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f),
-									(float)sin((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f), 0.0f, 0.0f));
+	light.setDir(DirectX::XMFLOAT4A((float)cos((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f), (float)sin((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f), 0.0f, 0.0f));
 	//std::cout << "X: " << (float)cos((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f) << " Y: " << (float)sin((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f) << std::endl;
 
-	if (m_minutes >= 24)
-		m_totalSeconds = 0;
+	//if (m_minutes >= 24)
+		//m_totalSeconds = 0;
 
-	light.setColor(DirectX::XMFLOAT4A((float)abs(cos((m_totalSeconds / (60.0f * 24.0f)) * (3.14159265358979323846f * 2) + 3.14159265358979323846f)),
-		1.0f, 1.0f, 1.0f));
+	light.setColor(m_fFinalColor);
 
-	return;
+	//return;
 
 	switch (m_currentTime)
 	{
@@ -108,7 +106,7 @@ void GameTime::updateCurrentTime(float refreshRate, Light& light)
 		{
 
 			std::cout << "Evening to Night" << std::endl;
-			m_targetInterpolate = DirectX::XMVECTOR{ 20.0f / m_divider,20.0f / m_divider, 70.0f / m_divider };
+			m_targetInterpolate = DirectX::XMVECTOR{ 20.0f / m_divider,20.0f / m_divider, 150.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
 			m_currentFinalColor = DirectX::XMVectorLerp(m_startInterpolate, m_targetInterpolate, m_colorScaleFactor);
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_currentFinalColor);
@@ -153,7 +151,7 @@ void GameTime::updateCurrentTime(float refreshRate, Light& light)
 			m_seconds = 0;
 			m_currentTime = MORNINGTONOON;
 			m_totalSeconds = 0;
-			m_startInterpolate = m_currentFinalColor;
+			//m_startInterpolate = m_currentFinalColor;
 		}
 		break;
 	}
