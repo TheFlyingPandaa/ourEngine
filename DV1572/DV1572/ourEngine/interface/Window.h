@@ -79,6 +79,13 @@ private:
 	ID3D11Buffer*			m_computeReadWriteBuffer;
 	ID3D11UnorderedAccessView* m_computeUAV;
 
+	//Shadow
+	ID3D11Texture2D*			m_shadowDepthTexture;
+	ID3D11DepthStencilView*		m_shadowDSV;
+	ID3D11ShaderResourceView*	m_shadowSRV;
+	ID3D11VertexShader*			m_shadowVertexShader;
+	ID3D11PixelShader*			m_shadowPixelShader;
+
 	ID3D11ComputeShader*	m_computeShader;
 
 	// Input
@@ -101,6 +108,7 @@ private:
 	void	_createDepthBuffer();
 	
 	// Deferred Rendering
+	void	_shadowPass(const Camera & cam,const Light& light);
 	void	_initGBuffer();
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);
@@ -123,6 +131,9 @@ private:
 	void	_initComputeShader();
 	void	_runComputeShader();
 
+	//Shadow
+	void	_initShadowBuffer();
+	void	_clearShaderResources();
 
 
 public:

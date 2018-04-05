@@ -13,6 +13,9 @@ private:
 	XMFLOAT4A m_dir; 
 	XMFLOAT4A m_color;
 
+	XMMATRIX m_viewProj;
+	XMMATRIX m_proj;
+
 	DirectX::XMFLOAT3 pos, lookAt;
 	const DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -35,7 +38,7 @@ public:
 	XMFLOAT4A getDir() const;
 	XMFLOAT4A getColor() const; 
 
-	void Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height); 
+	void Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height, Camera * cam); 
 
 	void setPos(XMFLOAT4A pos); 
 	void setDir(XMFLOAT4A dir); 
@@ -43,7 +46,9 @@ public:
 
 	void Move(XMFLOAT4A move); 
 
-	void updateMatrix(const Camera& cam); 
+	void updateMatrix(); 
+
+	XMMATRIX getViewProjMatrix() const;
 
 	ID3D11DepthStencilView*& getDepthView(); 
 	DIRECTIONAL_LIGHT_BUFFER& getBuffer(); 

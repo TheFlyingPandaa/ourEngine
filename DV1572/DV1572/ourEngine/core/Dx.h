@@ -19,12 +19,7 @@ namespace DX
 	
 	extern ID3D11Device* g_device;
 	extern ID3D11DeviceContext* g_deviceContext;
-
-	extern std::vector<Shape*> g_renderQueue; 
-	extern std::vector<Shape*> g_shadowQueue;
-	extern std::vector<Shape*> g_transQueue;
 	extern std::vector<Shape*> g_pickingQueue;
-	extern std::vector<Shape*> g_HUDQueue;
 	
 	// InstanceRender
 	struct INSTANCE_ATTRIB
@@ -49,6 +44,7 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsShadow;
 
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);

@@ -42,6 +42,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	const int numberOfWalls = 10;
 	Object3D aWall[numberOfWalls];
+
+	Object3D box[100];
+	for (int i = 0; i < 100; i++)
+	{
+		box[i].setMesh(&wall);
+		box[i].setPos(i * 0.1, 0.1 * i, -0.2 * i);
+	}
+	
+
 	int counter = 0;
 	for(auto& cWall : aWall)
 	{
@@ -49,8 +58,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		cWall.setPos(0.0f, counter++, 0.0f);
 
 	}
+	cam->setPosition(0, 0, 2);
+	cam->update();
+	
 	Light light;
-	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000);
+	light.Init(XMFLOAT4A{ 0,5,0,1 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1280, 720, cam);
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -72,11 +84,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 
-		for(auto& wall:aWall)
+		/*for(auto& wall:aWall)
 			wall.Draw();
-	
+	*/
+		//box.Draw();
+		for (int i = 0; i < 100; i++)
+		{
+			box[i].CastShadow();
+			box[i].Draw();
+		}
 		
-
+		//light.updateMatrix();
 		wnd.Flush(cam, light);
 
 		wnd.Present();
@@ -84,7 +102,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
 			//printf("\rFPS: %d TICK: %d Time: %d", fpsCounter, updates);
-			std::cout << "FPS: " << fpsCounter << "TICK: " << updates << " Time :" << elapsed_seconds.count() << std::endl;
+			std::cout << "FPS: " << fpsCounter << "TICK: " << updates << " Time :"  << std::endl;
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

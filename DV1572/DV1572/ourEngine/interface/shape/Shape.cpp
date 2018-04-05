@@ -218,6 +218,11 @@ void Shape::Draw()
 	}
 }
 
+void Shape::CastShadow()
+{
+	DX::submitToInstance(this, DX::g_instanceGroupsShadow);
+}
+
 void Shape::TEMPTRANS()
 {
 	DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
