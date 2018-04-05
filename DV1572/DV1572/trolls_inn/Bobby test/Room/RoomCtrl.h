@@ -17,6 +17,7 @@ private:
 	std::vector<Room*>	m_rooms;
 	std::vector<Wall*>	m_walls;
 	
+	bool				_intersect(Room * room);
 
 	Mesh*				m_wall;
 public:

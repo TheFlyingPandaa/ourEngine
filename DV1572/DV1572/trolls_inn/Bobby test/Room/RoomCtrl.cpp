@@ -2,6 +2,11 @@
 
 
 
+bool RoomCtrl::_intersect(Room * room)
+{
+	return false;
+}
+
 RoomCtrl::RoomCtrl()
 {
 
@@ -33,8 +38,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
-		
+		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);		
 		break;
 	default:
 		break;

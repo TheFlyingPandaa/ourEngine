@@ -1,12 +1,6 @@
 #include "Grid.h"
 #include <math.h>
 
-bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
-{	
-	//TODO:
-	return false;
-}
-
 
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
