@@ -47,7 +47,11 @@ namespace DX
 	extern ID3D11InputLayout* g_inputLayout;
 
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
-	extern void submitToInstance(Shape* shape);
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
+
+
+	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 
 
 	//Tesselltion

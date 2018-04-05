@@ -10,8 +10,7 @@ Mesh::Mesh()
 }
 
 Mesh::~Mesh()
-{
-	
+{	
 	if(m_vertexBuffer)
 		m_vertexBuffer->Release();
 	if (m_indexBuffer)

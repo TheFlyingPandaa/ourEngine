@@ -42,7 +42,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
 
-	
+	RectangleShape HUD;
+	HUD.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
@@ -96,6 +97,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (picked)
 			pickingEvents.push(picked);
 	
+		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);
 

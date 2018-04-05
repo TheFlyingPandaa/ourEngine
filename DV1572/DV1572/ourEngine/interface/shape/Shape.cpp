@@ -210,15 +210,15 @@ void Shape::Draw()
 {
 	if (m_mesh->getMaterial()->isTransparent())
 	{
-		DX::g_transQueue.push_back(this);
+		DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 	}
 	else 
 	{
-		DX::submitToInstance(this);
+		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
 }
 
 void Shape::TEMPTRANS()
 {
-	DX::g_transQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 }
