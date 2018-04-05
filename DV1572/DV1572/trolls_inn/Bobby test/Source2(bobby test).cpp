@@ -42,8 +42,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
 
+	Mesh test;
+	test.MakeRectangle();
+	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+
 	RectangleShape HUD;
-	HUD.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	HUD.setMesh(&test);
 	HUD.setHeight(250);
 	HUD.setWidth(250);
 	HUD.setScreenPos(0, 0);

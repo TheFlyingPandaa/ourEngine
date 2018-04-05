@@ -6,7 +6,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 64, 64, rect->getMesh());	
+	grid = new Grid(0, 0, 64, 64, &rect);	
 	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
@@ -27,7 +27,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 GameState::~GameState()
 {
 	delete grid;
-	delete rect;
 }
 
 void GameState::Update(double deltaTime)
@@ -94,9 +93,9 @@ void GameState::Draw()
 
 void GameState::_init()
 {
-	rect = new RectangleShape();
-	rect->setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	rect->setNormalMap("trolls_inn/Resources/NormalMap.jpg");
+	rect.MakeRectangle();
+	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");

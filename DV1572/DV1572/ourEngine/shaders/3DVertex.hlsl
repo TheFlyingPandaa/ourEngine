@@ -24,7 +24,6 @@ struct OUTPUT
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
-
 };
 
 

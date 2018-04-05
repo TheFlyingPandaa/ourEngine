@@ -83,6 +83,64 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 	m_nrOfVertices = static_cast<int>(indices.size());
 }
 
+void Mesh::MakeRectangle()
+{
+	std::vector<VERTEX> vertices;
+
+	VERTEX v = {
+
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	v = {
+
+		0.0f, 0.5f, 0.0f,
+		0.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	v = {
+		0.5f, 0.5f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	v = {
+		0.5f, 0.5f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	v = {
+		0.5f, 0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	v = {
+
+		0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, 0.0f
+	};
+	vertices.push_back(v);
+
+	this->LoadModel(vertices);
+}
+
 void Mesh::setDiffuseTexture(const std::string& path)
 {
 	ID3D11Resource* texture;
