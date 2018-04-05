@@ -32,11 +32,7 @@ public:
 	~Shape();
 	void setMesh(Mesh* m);
 	Mesh* getMesh() const;
-
-	ID3D11Buffer* getVerticesIndexed() const;
-	ID3D11Buffer* getVerticesNonIndexed() const;
-	ID3D11Buffer* getIndices() const;
-
+	
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);
 	DirectX::XMFLOAT3 getPosition() const;

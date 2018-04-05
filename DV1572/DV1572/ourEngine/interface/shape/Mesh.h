@@ -12,14 +12,12 @@
 class Mesh
 {
 private:
-	ID3D11Buffer *		m_vertexBufferNonIndexed;
-	ID3D11Buffer*		m_vertexBufferIndexed;
-	ID3D11Buffer*		m_indexBuffer;
-	Material			m_material;
-	int					m_nrOfVerticesIndexed;
-	int					m_nrOfVerticesNonIndexed;
-	static int			m_uniqueID;
-	int					m_id;
+	ID3D11Buffer*	m_vertexBuffer;
+	ID3D11Buffer*	m_indexBuffer;
+	Material		m_material;
+	int				m_nrOfVertices;
+	static int		m_idCounter;
+	int				m_uniqueID;
 public:
 	Mesh();
 	~Mesh();
@@ -30,11 +28,8 @@ public:
 	void setHighlightTexture(const std::string &path);
 	
 	Material* getMaterial();
-
-	ID3D11Buffer* getVerticesIndexed() const;
-	ID3D11Buffer* getVerticesNonIndexed() const;
-	ID3D11Buffer* getIndicies() const;
-	int getNumberOfVerticesIndexed() const;
-	int getNumberOfVerticesNonIndexed() const;
+	ID3D11Buffer* getVertices() const;
+	ID3D11Buffer* getIndicesBuffer() const;
+	int getNumberOfVertices() const;
 	bool CheckID(const Mesh& other) const;
 };

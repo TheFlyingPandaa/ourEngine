@@ -7,8 +7,6 @@
 #include <sstream>
 #include "WICTextureLoader\WICTextureLoader.h"
 #include <map>
-#include <vector>
-
 
 
 namespace DX

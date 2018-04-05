@@ -33,61 +33,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float unprocessed = 0;
 
 	Camera* cam = new OrbitCamera(wnd.getSize());
-	
 
-	//cam.setPosition(0, 100, 100);
-	Mesh a;
-	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
-	std::thread modelThread(_loadModelThread, &a, "trolls_inn/Resources/Aaakali.txt");
-
-	RectangleShape HUD;
-	HUD.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	HUD.setPos(-0.073500, -0.041000, 0);
-	HUD.setScale(0.04f);
-	Object3D Akali;
-	a.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-	Akali.setMesh(&a);
-	Akali.setScale(0.2, 0.2, 0.2);
 
 
 	Mesh wall;
 	wall.LoadModel("trolls_inn/Resources/Box.obj");
 	wall.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
 	wall.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-
-	/*Object3D aWall;
-	aWall.setMesh(&wall);*/
-	const int wallAmount = 1000;
-	Object3D walls[wallAmount];
-	for (int i = 0; i < wallAmount; i++)
+	const int numberOfWalls = 10;
+	Object3D aWall[numberOfWalls];
+	int counter = 0;
+	for(auto& cWall : aWall)
 	{
-		walls[i].setMesh(&wall);
-		walls[i].setPos(i, 0, 0);
+		cWall.setMesh(&wall);
+		cWall.setPos(0.0f, counter++, 0.0f);
+
 	}
-	//aWall.setPos(1, 1, 0);
-
-
-	//a.LoadModel("trolls_inn/Resources/Aaakali.txt");
-
-	a.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-
-	/*RectangleShape r;
-	r.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	r.setPos(-1.5, 1.4, 0);
-
-	RectangleShape r2;
-	r2.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	r2.setPos(0, 0, 0);
-*/
 	Light light;
 	light.Init(XMFLOAT4A{ 10,500,20,0 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1000, 1000);
-
-
-
-
-	modelThread.join();
-
-	
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -109,19 +72,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 
+		for(auto& wall:aWall)
+			wall.Draw();
 	
-
-		for (int i = 0; i < wallAmount; i++)
-		{
-			walls[i].Draw();
-		}
-
-	
-		auto start = std::chrono::system_clock::now();
-		wnd.Flush(cam, light);
-		auto end = std::chrono::system_clock::now();
-		std::chrono::duration<double> elapsed_seconds = end - start;
 		
+
+		wnd.Flush(cam, light);
+
 		wnd.Present();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)

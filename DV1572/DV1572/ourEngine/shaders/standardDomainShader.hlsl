@@ -21,6 +21,7 @@ struct CONTROL_POINT_INPUT
 	float2 Tex : TEXELS;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
+	float4x4 world : WORLDMAT;
 
 };
 
@@ -29,7 +30,6 @@ struct HS_CONSTANT_DATA_OUTPUT
 {
 	float EdgeTessFactor[3]			: SV_TessFactor; // e.g. would be [4] for a quad domain
 	float InsideTessFactor			: SV_InsideTessFactor; // e.g. would be Inside[2] for a quad domain
-	float4x4 World : WORLDMAT;
 	// TODO: change/add other stuff
 };
 
@@ -44,20 +44,18 @@ DS_OUTPUT main(
 	DS_OUTPUT Output;
 
 	float4 positions = patch[0].Pos * domain.x + patch[1].Pos * domain.y + patch[2].Pos * domain.z;
-
 	Output.worldPos = positions;
 	Output.pos = mul(positions, vp);
 	Output.tex = patch[0].Tex * domain.x + patch[1].Tex * domain.y + patch[2].Tex * domain.z;
 
 	float3 n = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
-	Output.normal = normalize(mul(n,input.World));
-
+	Output.normal = normalize(n);
 	float3 t = patch[0].tangent * domain.x + patch[1].tangent * domain.y + patch[2].tangent * domain.z;
 	t = normalize(t - dot(t, n) * n);
 
-	Output.TBN[0] = normalize(mul(float4(t, 0), input.World).xyz);
+	Output.TBN[0] = normalize(mul(float4(t, 0), patch[0].world).xyz);
 	float3 bt = normalize(cross(n, t)); //Might be other way around... lol
-	Output.TBN[1] = normalize(mul(float4(bt, 0), input.World).xyz);
+	Output.TBN[1] = normalize(mul(float4(bt, 0), patch[0].world).xyz);
 	Output.TBN[2] = Output.normal;
 
 	return Output;
