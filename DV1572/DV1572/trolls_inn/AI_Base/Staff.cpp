@@ -1,6 +1,6 @@
 #include "Staff.h"
 
-Type Staff::getProfession() const
+Staff::Type Staff::getProfession() const
 {
 	return this->profession;
 }

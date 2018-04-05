@@ -1,18 +1,19 @@
 #pragma once
 #include "LevelTracker.h"
 
-enum Type
-{
-	Maid,
-	Assassin,
-	Thief,
-	Cook,
-	Bartender,
-	Guard
-};
-
 class Staff
 {
+public:
+	enum Type
+	{
+		Maid,
+		Assassin,
+		Thief,
+		Cook,
+		Bartender,
+		Guard
+	};
+
 private:
 	LevelTracker level;
 	Type profession;
