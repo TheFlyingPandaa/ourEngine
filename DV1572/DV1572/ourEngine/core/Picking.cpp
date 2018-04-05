@@ -120,9 +120,9 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 
 	D3D11_BOX srcBox;
-	srcBox.left = Input::getMousePosition().x;
+	srcBox.left = static_cast<UINT>(Input::getMousePosition().x);
 	srcBox.right = srcBox.left + 1;
-	srcBox.top = Input::getMousePosition().y;
+	srcBox.top = static_cast<UINT>(Input::getMousePosition().y);
 	srcBox.bottom = srcBox.top + 1;
 	srcBox.front = 0;
 	srcBox.back = 1;

@@ -20,7 +20,7 @@ struct OUTPUT
 	float4 pos		: SV_Target2;
 };
 
-OUTPUT main(INPUT input) : SV_TARGET
+OUTPUT main(INPUT input)// : SV_TARGET
 {
 	OUTPUT output = (OUTPUT)0;
 	

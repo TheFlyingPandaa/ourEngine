@@ -49,7 +49,7 @@ void Mesh::LoadModel(const std::string & path)
 	iData.pSysMem = indices.data();
 	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
 
-	m_nrOfVertices = indices.size();
+	m_nrOfVertices = static_cast<int>(indices.size());
 }
 
 void Mesh::LoadModel(std::vector<VERTEX>& v)
@@ -81,7 +81,7 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 	iData.pSysMem = indices.data();
 	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
 
-	m_nrOfVertices = indices.size();
+	m_nrOfVertices = static_cast<int>(indices.size());
 }
 
 void Mesh::setDiffuseTexture(const std::string& path)

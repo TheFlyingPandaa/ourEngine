@@ -80,17 +80,20 @@ Tile ** Grid::getGrid() const
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
-	std::vector<std::vector<Tile*>> tiles(size.x);
-	for (int x = pos.x; x < size.x + pos.x; x++)
-	{
-		tiles[x - pos.x] = std::vector<Tile*>(size.y);
-		for (int y = pos.y; y < size.y + pos.y; y++)
-		{
-			tiles[x - pos.x][y - pos.y] = this->m_tiles[x][y];
-		}
-	}
+	if (pos.x + size.x < m_sizeX && pos.y + size.y < m_sizeY) {
 
-	m_roomCtrl.AddRoom(pos, size, roomType, tiles, force);
+		std::vector<std::vector<Tile*>> tiles(size.x);
+		for (int x = pos.x; x < size.x + pos.x; x++)
+		{
+			tiles[x - pos.x] = std::vector<Tile*>(size.y);
+			for (int y = pos.y; y < size.y + pos.y; y++)
+			{
+				tiles[x - pos.x][y - pos.y] = this->m_tiles[x][y];
+			}
+		}
+
+		m_roomCtrl.AddRoom(pos, size, roomType, tiles, force);
+	}
 }
 void Grid::Draw()
 {
@@ -115,7 +118,8 @@ void Grid::Update(Camera * cam) {
 
 void Grid::CreateWalls(Mesh * mesh)
 {
-	m_roomCtrl.setMesh(mesh);
+	if (mesh)
+		m_roomCtrl.setMesh(mesh);
 	m_roomCtrl.CreateWalls();
 }
 

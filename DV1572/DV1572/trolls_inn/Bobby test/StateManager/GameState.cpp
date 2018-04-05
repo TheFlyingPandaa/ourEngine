@@ -6,18 +6,21 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 16, 16, rect->getMesh());	
+	grid = new Grid(0, 0, 64, 64, rect->getMesh());	
 	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
+	//grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	//grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
+	posX = 1;
+	posY = 1;
+	//grid->AddRoom(DirectX::XMINT2(2 * pos++, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 
 	grid->CreateWalls(&m);
 
-	std::cout << sizeof(int) << std::endl;
-	std::cout << sizeof(short) << std::endl;
-	std::cout << sizeof(int64_t) << std::endl;
+	//std::cout << sizeof(int) << std::endl;
+	//std::cout << sizeof(short) << std::endl;
+	//std::cout << sizeof(int64_t) << std::endl;
 	
-
+	previousKey = -1;
 	//grid->CreateWalls(&m);
 }
 
@@ -33,12 +36,46 @@ void GameState::Update(double deltaTime)
 	this->grid->Update(this->m_cam);
 	
 
-	while (!p_keyEvents->empty() && p_keyEvents->top() != 0)
+	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{
 		//Do keypress events here
 		//std::cout << p_keyEvents->top() << std::endl;
+
+		if (p_keyEvents->top() == 'W' && p_keyEvents->top() != previousKey)
+		{
+			
+			grid->AddRoom(DirectX::XMINT2(2 * posX, 2 * posY++), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->CreateWalls();
+			
+		}
+		if (p_keyEvents->top() == 'S' && p_keyEvents->top() != previousKey)
+		{
+
+			grid->AddRoom(DirectX::XMINT2(2 * posX, 2 * posY--), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->CreateWalls();
+
+		}
+		if (p_keyEvents->top() == 'D' && p_keyEvents->top() != previousKey)
+		{
+
+			grid->AddRoom(DirectX::XMINT2(2 * posX++, 2 * posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->CreateWalls();
+
+		}
+		if (p_keyEvents->top() == 'A' && p_keyEvents->top() != previousKey)
+		{
+
+			grid->AddRoom(DirectX::XMINT2(2 * posX--, 2 * posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->CreateWalls();
+
+		}
+		previousKey = p_keyEvents->top();
 		p_keyEvents->pop();
+
+		
 	}
+	if (p_keyEvents->empty() || p_keyEvents->top() == 0)
+		previousKey = -1;
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
