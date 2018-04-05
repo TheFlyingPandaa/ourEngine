@@ -217,6 +217,8 @@ void Window::_compileShaders()
 	ShaderCreator::CreateComputeShader(DX::g_device, m_computeShader,
 		L"ourEngine/shaders/testComputeShader.hlsl", "main");
 
+	/*ShaderCreator::CreateVertexShader(DX::g_device, m_deferredVertexShader,
+		L"ourEngine/Shaders/deferredVertexShader.hlsl", "main");*/
 
 	_initPickingShaders();
 	_initTessellationShaders();
