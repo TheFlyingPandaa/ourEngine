@@ -89,7 +89,7 @@ void RoomCtrl::CreateWalls()
 				Wall * wall = new Wall(t, this->m_wall);
 				t->m_w[WallDirection::down] = wall;
 				
-				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, this->m_rooms[i]->getY()));
+				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY())));
 				m_rooms[i]->addWall(wall, WallDirection::down);
 				this->m_walls.push_back(wall);
 			}
@@ -112,7 +112,7 @@ void RoomCtrl::CreateWalls()
 				Wall * wall = new Wall(t, this->m_wall);
 				t->m_w[WallDirection::up] = wall;
 
-				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY()));
+				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY())));
 				m_rooms[i]->addWall(wall, WallDirection::up);
 				this->m_walls.push_back(wall);
 			}

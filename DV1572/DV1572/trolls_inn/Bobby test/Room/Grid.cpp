@@ -25,7 +25,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		{
 			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
 			t->quad.setScale(2.0f);
-			t->quad.setPos(i + posX, 0, j + posY);
+			t->quad.setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
 			this->m_tiles[i][j] = t;
 		}
 	}
