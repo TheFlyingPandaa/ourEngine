@@ -1,18 +1,12 @@
 #include "Mesh.h"
 #include "../../core/Dx.h"
 #include "../../core/ObjLoader.h"
-
-// Unique ID 
-int Mesh::m_uniqueID = 0;
-
+int Mesh::m_idCounter = 0;
 Mesh::Mesh()
 {
-	m_vertexBufferIndexed = nullptr;
-	m_vertexBufferNonIndexed = nullptr;
-	m_indexBuffer = nullptr;
-	m_nrOfVerticesIndexed = 0;
-	m_nrOfVerticesNonIndexed = 0;
-	m_id = m_uniqueID++;
+	m_vertexBuffer = nullptr;
+	m_nrOfVertices = 0;
+	m_uniqueID = m_idCounter++;
 }
 
 Mesh::~Mesh()
@@ -28,34 +22,22 @@ Mesh::~Mesh()
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<VERTEX> vertices;
-	std::vector<VERTEX> out_vertices;
+	std::vector<VERTEX> indexedVertices;
 	std::vector<unsigned int> indices;
 	DX::loadOBJ(path, vertices);
 	DX::CalculateTangents(vertices);
-	DX::indexVertices(vertices, indices, out_vertices);
-
-	// Vertex Buffer non indexed
-	D3D11_BUFFER_DESC vBufferDesc;
-	memset(&vBufferDesc, 0, sizeof(vBufferDesc));
-	vBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vBufferDesc.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(vertices.size());
-
-	D3D11_SUBRESOURCE_DATA vData;
-	vData.pSysMem = vertices.data();
-	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDesc, &vData, &m_vertexBufferNonIndexed);
-	m_nrOfVerticesNonIndexed = vertices.size();
+	DX::indexVertices(vertices, indices, indexedVertices);
 
 	// Vertex Buffer Indexed
 	D3D11_BUFFER_DESC vBufferDescIndexed;
 	memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
 	vBufferDescIndexed.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vBufferDescIndexed.Usage = D3D11_USAGE_DEFAULT;
-	vBufferDescIndexed.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(out_vertices.size());
+	vBufferDescIndexed.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(indexedVertices.size());
 
 	D3D11_SUBRESOURCE_DATA vDataIndexed;
-	vDataIndexed.pSysMem = out_vertices.data();
-	hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBufferIndexed);
+	vDataIndexed.pSysMem = indexedVertices.data();
+	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffer);
 
 	// Index buffer
 	D3D11_BUFFER_DESC vIndexBufferDesc;
@@ -68,9 +50,7 @@ void Mesh::LoadModel(const std::string & path)
 	iData.pSysMem = indices.data();
 	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
 
-	m_nrOfVerticesIndexed = indices.size();
-
-	
+	m_nrOfVertices = indices.size();
 }
 
 void Mesh::LoadModel(std::vector<VERTEX>& v)
@@ -151,27 +131,17 @@ ID3D11Buffer * Mesh::getVerticesIndexed() const
 	return m_vertexBufferIndexed;
 }
 
-ID3D11Buffer * Mesh::getVerticesNonIndexed() const
-{
-	return m_vertexBufferNonIndexed;
-}
-
-ID3D11Buffer * Mesh::getIndicies() const
+ID3D11Buffer * Mesh::getIndicesBuffer() const
 {
 	return m_indexBuffer;
 }
 
-int Mesh::getNumberOfVerticesIndexed() const
+int Mesh::getNumberOfVertices() const
 {
-	return m_nrOfVerticesIndexed;
+	return m_vertexBufferNonIndexed;
 }
 
-int Mesh::getNumberOfVerticesNonIndexed() const
+bool Mesh::CheckID(const Mesh& other) const
 {
-	return m_nrOfVerticesNonIndexed;
-}
-
-bool Mesh::CheckID(const Mesh & other) const
-{
-	return other.m_id == m_id;
+	return other.m_uniqueID == m_uniqueID;
 }

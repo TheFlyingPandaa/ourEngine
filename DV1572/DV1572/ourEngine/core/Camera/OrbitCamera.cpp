@@ -138,7 +138,7 @@ void OrbitCamera::update()
 		else if (m_lastMouse.x > m_windowDim.x * 0.8f)
 		{
 			float distanceGap = m_windowDim.x - (m_windowDim.x * 0.8f);
-			float accceleration = (m_lastMouse.x - m_windowDim.x * 0.8) / distanceGap;
+			float accceleration = (m_lastMouse.x - m_windowDim.x * 0.8f) / distanceGap;
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, front));

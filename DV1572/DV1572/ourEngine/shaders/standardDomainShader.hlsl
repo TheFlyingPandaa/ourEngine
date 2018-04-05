@@ -44,14 +44,12 @@ DS_OUTPUT main(
 	DS_OUTPUT Output;
 
 	float4 positions = patch[0].Pos * domain.x + patch[1].Pos * domain.y + patch[2].Pos * domain.z;
-
 	Output.worldPos = positions;
-	Output.pos = mul(positions, vp);
+	Output.pos = mul(positions, wvp);
 	Output.tex = patch[0].Tex * domain.x + patch[1].Tex * domain.y + patch[2].Tex * domain.z;
 
 	float3 n = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
-	Output.normal = normalize(mul(n,input.World));
-
+	Output.normal = normalize(n);
 	float3 t = patch[0].tangent * domain.x + patch[1].tangent * domain.y + patch[2].tangent * domain.z;
 	t = normalize(t - dot(t, n) * n);
 

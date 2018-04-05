@@ -7,6 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../interface/shape/Shape.h"
 #include <vector>
+#include "../Structs.h"
 
 struct INSTANCE_ATTRIB
 {
@@ -38,7 +39,23 @@ namespace DX
 	extern std::vector<Shape*> g_transQueue;
 	extern std::vector<Shape*> g_pickingQueue;
 	extern std::vector<Shape*> g_HUDQueue;
+	
+	// InstanceRender
+	struct INSTANCE_ATTRIB
+	{
+		DirectX::XMFLOAT4A w1;
+		DirectX::XMFLOAT4A w2;
+		DirectX::XMFLOAT4A w3;
+		DirectX::XMFLOAT4A w4;
+	};
 
+	struct INSTANCE_GROUP
+	{
+		std::vector<INSTANCE_ATTRIB> attribs;
+		Shape* shape;
+	};
+	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
+	extern void submitRenderInstance(Shape* shape);
 
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
@@ -53,4 +70,5 @@ namespace DX
 	extern ID3D11DomainShader* g_standardDomainShader;
 
 	extern void CleanUp();
+	
 }

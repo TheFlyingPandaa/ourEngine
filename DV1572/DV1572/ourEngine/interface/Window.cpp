@@ -87,6 +87,58 @@ void DX::CleanUp()
 }
 
 
+std::vector < DX::INSTANCE_GROUP > DX::g_instanceGroups;
+
+void DX::submitRenderInstance(Shape* shape)
+{
+
+	int existingId = -1;
+	for (int i = 0; i < DX::g_instanceGroups.size() && existingId == -1; i++)
+	{
+		if (shape->getMesh()->CheckID(*DX::g_instanceGroups[i].shape->getMesh()))
+		{
+			existingId = i;
+
+		}
+	}
+	INSTANCE_ATTRIB attribDesc;
+
+
+	XMMATRIX xmWorldMat = shape->getWorld();
+	XMFLOAT4X4A worldMat;
+
+	XMStoreFloat4x4A(&worldMat, xmWorldMat);
+
+	XMFLOAT4A rows[4];
+	for (int i = 0; i < 4; i++)
+	{
+		rows[i].x = worldMat.m[i][0];
+		rows[i].y = worldMat.m[i][1];
+		rows[i].z = worldMat.m[i][2];
+		rows[i].w = worldMat.m[i][3];
+	}
+
+
+	attribDesc.w1 = rows[0];
+	attribDesc.w2 = rows[1];
+	attribDesc.w3 = rows[2];
+	attribDesc.w4 = rows[3];
+
+
+	// Unique Mesh
+	if (existingId == -1)
+	{
+		INSTANCE_GROUP newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = shape;
+		g_instanceGroups.push_back(newGroup);
+	}
+	else
+	{
+		DX::g_instanceGroups[existingId].attribs.push_back(attribDesc);
+	}
+}
+
 bool Window::_initWindow()
 {
 	WNDCLASSEX wcex = { 0 };
@@ -188,7 +240,6 @@ void Window::_compileShaders()
 		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		
 		// INSTANCE ATTRIBUTES
 		{ "INSTANCEWORLDONE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDTWO", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -503,12 +554,13 @@ void Window::_prepareGeometryPass()
 
 void Window::_geometryPass(const Camera &cam)
 {
+
 	DirectX::XMMATRIX view = cam.getViewMatrix();
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
 
 	MESH_BUFFER meshBuffer;
-	//DIRECTIONAL_LIGHT_BUFFER lightBuffer; 
 	
+
 	ID3D11Buffer* instanceBuffer = nullptr;
 
 	for (auto& instance : DX::g_instanceGroups)
@@ -516,7 +568,7 @@ void Window::_geometryPass(const Camera &cam)
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
-		instBuffDesc.ByteWidth = sizeof(INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
 		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA instData;
@@ -526,7 +578,7 @@ void Window::_geometryPass(const Camera &cam)
 
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -538,14 +590,14 @@ void Window::_geometryPass(const Camera &cam)
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVerticesIndexed();
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
 
 		unsigned int strides[2];
 		strides[0] = sizeof(VERTEX);
-		strides[1] = sizeof(INSTANCE_ATTRIB);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
 
 		unsigned int offsets[2];
 		offsets[0] = 0;
@@ -554,12 +606,12 @@ void Window::_geometryPass(const Camera &cam)
 
 
 		Mesh* mesh = instance.shape->getMesh();
-		ID3D11Buffer* indices = mesh->getIndicies();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVerticesIndexed(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 	
@@ -969,7 +1021,6 @@ void Window::setMouseMiddleScreen()
 	ClientToScreen(m_hwnd, &pt);
 	SetCursorPos(pt.x, pt.y);
 }
-
 
 DirectX::XMFLOAT2 Window::getSize() const
 {
