@@ -1,7 +1,7 @@
 #pragma once
 #include "LevelTracker.h"
 
-enum Type
+enum Professions
 {
 	Maid,
 	Assassin,
@@ -15,11 +15,20 @@ class Staff
 {
 private:
 	LevelTracker level;
-	Type profession;
+	Professions profession;
 	int posX, posY;
 
 public:
-	Type getProfession() const;
+	Staff();
+	Staff(Professions profession);
+	Staff(Professions profession, int level);
+	~Staff();
+	
+	Professions getProfession() const;
 	int getPosX() const;
 	int getPosY() const;
+	LevelTracker& getLevelTracker();
+
+	// move by offset
+	void move(int x, int y);
 };

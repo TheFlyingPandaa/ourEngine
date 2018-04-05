@@ -4,27 +4,27 @@ Customer::Customer()
 {
 }
 
-Customer::Customer(Type race, int gold)
+Customer::Customer(Race race, int gold)
 {
 	this->race = race;
-	this->gold = gold;
+	this->economy = Economy(gold);
 }
 
 Customer::~Customer()
 {
 }
 
-Attributes Customer::getAttributes() const
+Attributes& Customer::getAttributes()
 {
 	return this->stats;
 }
 
-int Customer::getGold() const
+Economy& Customer::getEconomy()
 {
-	return this->gold;
+	return this->economy;
 }
 
-Type Customer::getRace() const
+Race Customer::getRace() const
 {
 	return this->race;
 }
@@ -37,4 +37,40 @@ int Customer::getPosX() const
 int Customer::getPosY() const
 {
 	return this->posY;
+}
+
+int Customer::getHungry() const
+{
+	return this->hungry;
+}
+
+int Customer::getTired() const
+{
+	return this->tired;
+}
+
+int Customer::getThirsty() const
+{
+	return this->thirsty;
+}
+
+void Customer::setHungry(int value)
+{
+	this->hungry = value;
+}
+
+void Customer::setTired(int value)
+{
+	this->tired = value;
+}
+
+void Customer::setThirsty(int value)
+{
+	this->thirsty = value;
+}
+
+void Customer::move(int x, int y)
+{
+	this->posX += x;
+	this->posY += y;
 }

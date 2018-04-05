@@ -2,7 +2,12 @@
 
 Economy::Economy()
 {
-	this->gold = 100;
+	this->gold = 0;
+}
+
+Economy::Economy(int startGold)
+{
+	this->gold = startGold;
 }
 
 Economy::~Economy()

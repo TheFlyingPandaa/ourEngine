@@ -1,18 +1,21 @@
 #pragma once
 #include "Attributes.h"
+#include "Economy.h"
 
-enum Type
+enum Race
 {
 	Human,
-	Troll
+	Troll,
+	Orc,
+	Dwarf
 };
 
 class Customer
 {
 private:
 	Attributes stats;
-	int gold;
-	Type race;
+	Economy economy;
+	Race race;
 	int posX, posY;
 
 	int hungry;
@@ -21,13 +24,21 @@ private:
 
 public:
 	Customer();
-	Customer(Type race, int gold);
+	Customer(Race race, int gold);
 	~Customer();
 
-	Attributes getAttributes() const;
-
-	int getGold() const;
-	Type getRace() const;
+	Attributes& getAttributes();
+	Economy& getEconomy();
+	Race getRace() const;
 	int getPosX() const;
 	int getPosY() const;
+	int getHungry() const;
+	int getTired() const;
+	int getThirsty() const;
+
+	void setHungry(int value);
+	void setTired(int value);
+	void setThirsty(int value);
+
+	void move(int x, int y);
 };

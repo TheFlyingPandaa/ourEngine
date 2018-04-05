@@ -5,12 +5,13 @@
 class Economy
 {
 private:
-	int							gold;
-	std::vector<int>			transactions;
-	std::vector<std::string>	transactionsDocumentation;
+	int	gold;
+	std::vector<int> transactions;
+	std::vector<std::string> transactionsDocumentation;
 
 public:
 	Economy();
+	Economy(int startGold);
 	~Economy();
 
 	void deposit(int amount);
