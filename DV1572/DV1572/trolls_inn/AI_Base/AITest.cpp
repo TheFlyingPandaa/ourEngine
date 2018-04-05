@@ -7,21 +7,42 @@
 #include <iostream>
 using namespace DirectX;
 
-struct Room
-{
-	XMFLOAT2 pos;
-	int roomTiles[8][8];
-};
 const int roomCount = 5;
 
 int connections[roomCount][roomCount] = { 0 };
+
+
+enum RoomType
+{
+	HallRoom,
+	BedRoom,
+	DrinkRoom,
+	EatRoom,
+	EntranceRoom
+};
+
+struct Room
+{
+	XMFLOAT2 pos;
+	RoomType type;
+	std::vector<int> roomPaths[roomCount];
+	int roomTiles[8][8];
+};
+std::vector<Room> rooms;
 
 void makeRoomConnection(int source, int destination)
 {
 	connections[source][destination] = 1;
 	connections[destination][source] = 1;
 }
-
+void printRoomPath(int src, int dst)
+{
+	std::cout << src + 1 << "->" << dst + 1 << " ";
+	for (int i = 0; i < rooms.at(src).roomPaths[dst].size(); i++)
+	{
+		std::cout << rooms.at(src).roomPaths[dst].at(i) << " ";
+	}
+}
 void printConnections()
 {
 	std::cout << " ";
@@ -52,31 +73,25 @@ int minDistance(int dist[], bool sptSet[])
 	return min_index;
 }
 
-// Function to print shortest path from source to j
-// using parent array
-void printPath(int parent[], int j)
+
+void travelPath(int parent[], int j, int src, int dst)
 {
-	// Base Case : If j is source
 	if (parent[j] == -1)
 		return;
 
-	printPath(parent, parent[j]);
-
-	printf("%d ", j + 1);
+	travelPath(parent, parent[j], src, dst);
+	// Put path in room
+	rooms.at(src).roomPaths[dst].push_back(j + 1);
 }
 
-// A utility function to print the constructed distance
-// array
 int printSolution(int dist[], int parent[], int src)
 {
-	printf("Vertex\t  Distance\tPath");
+
 	for (int i = 0; i < roomCount; i++)
 	{
-		if (i == src) continue;
-		printf("\n%d -> %d \t\t %d\t%d ", src + 1, i + 1, dist[i], src + 1);
-		printPath(parent, i);
+		if (i != src)
+			travelPath(parent, i, src, i);
 	}
-	std::cout << std::endl;
 	return src;
 }
 
@@ -136,35 +151,52 @@ void dijkstra(int graph[roomCount][roomCount], int src)
 	printSolution(dist, parent, src);
 }
 
-
+int getEntrance()
+{
+	int index = -1;
+	for (int i = 0; i < roomCount && index == -1; i++)
+	{
+		if (rooms.at(i).type == EntranceRoom)
+			index = i;
+	}
+	return index;
+}
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
-
-	std::vector<Room> rooms;
+	
+	std::vector<Customer> customers;
+	
+	// Create rooms
 	Room room1;
 	room1.pos.x = -1;
 	room1.pos.y = 1;
+	room1.type = BedRoom;
 
 	Room room2;
 	room2.pos.x = 1;
 	room2.pos.y = 1;
+	room2.type = HallRoom;
 
 	Room room3;
 	room3.pos.x = 1;
 	room3.pos.y = -1;
+	room3.type = EntranceRoom;
 
 	Room room4;
 	room4.pos.x = 2;
 	room4.pos.y = -1;
+	room4.type = DrinkRoom;
 
 	Room room5;
 	room5.pos.x = 2;
 	room5.pos.y = 1;
+	room5.type = EatRoom;
 	rooms.push_back(room1); rooms.push_back(room2); rooms.push_back(room3); rooms.push_back(room4); rooms.push_back(room5);
-
+	
+	// Create Connections which go both ways
 	makeRoomConnection(0, 1);
 	makeRoomConnection(1, 2);
 	makeRoomConnection(2, 3);
@@ -172,21 +204,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	printConnections();
 
-	dijkstra(connections, 4);
+	// Create route network for everyroom.
+	for(int i = 0; i < roomCount; i++)
+		dijkstra(connections, i);
 	
 	std::cout << std::endl;
 	
 	CustomerFlowControl cFL;
-	cFL.print();
-	cFL.update();
-	cFL.print();
-	cFL.update();
-	cFL.print();
-	cFL.update();
-	cFL.print();
-	cFL.update();
-	cFL.print();
-	cFL.update();
+
+	customers.push_back(cFL.update());
+
+	std::cout << customers.back().getRaceStr() << " is " << customers.back().getActionStr() << std::endl;
+
+	int entanceIndex = getEntrance();
+
+	printRoomPath(1, 4);
+	
+	
+	
+
 	system("pause");
 
 

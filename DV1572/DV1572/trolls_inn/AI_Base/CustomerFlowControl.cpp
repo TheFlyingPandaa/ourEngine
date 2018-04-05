@@ -132,11 +132,12 @@ Customer CustomerFlowControl::update()
 	
 	if (this->rNG.generateRandomNumber(0, 100) > 1)
 		nextCustomer = this->evaluate();
-	// bonus customer of random race (?)
 	else
 		nextCustomer = this->generateRandomCustomer();
 
-	std::cout << nextCustomer.getRaceStr() << std::endl;
+	nextCustomer.setPosX(1);
+	nextCustomer.setPosY(-1);
+	std::cout << "A " << nextCustomer.getRaceStr()<< " has arrived!" << std::endl;
 	return nextCustomer;
 }
 

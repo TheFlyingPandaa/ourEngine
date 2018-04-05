@@ -10,6 +10,13 @@ enum Race
 	Dwarf
 };
 
+enum Action
+{
+	DrinkAction,
+	EatAction,
+	SleepAction
+};
+
 class Customer
 {
 private:
@@ -30,9 +37,19 @@ public:
 	Attributes& getAttributes();
 	Economy& getEconomy();
 	Race getRace() const;
+
 	const char* getRaceStr() const;
+
+	Action getAction() const;
+
+	const char* getActionStr() const;
+
 	int getPosX() const;
 	int getPosY() const;
+
+	void setPosX(int x);
+	void setPosY(int y);
+
 	int getHungry() const;
 	int getTired() const;
 	int getThirsty() const;

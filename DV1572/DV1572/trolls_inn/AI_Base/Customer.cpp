@@ -45,6 +45,32 @@ const char * Customer::getRaceStr() const
 	return "NO RACE!";
 }
 
+Action Customer::getAction() const
+{
+	// tired 1
+	// hungry 2
+	// thristy 5
+	Action action;
+	int value = std::max(std::max(tired, hungry), thirsty);
+	action = (value == tired) ? SleepAction : (value == hungry) ? EatAction : DrinkAction;
+	return action;
+}
+
+const char * Customer::getActionStr() const
+{
+	Action action = getAction();
+	switch (action)
+	{
+	case DrinkAction:
+		return "Drink";
+	case EatAction:
+		return "Eat";
+	case SleepAction:
+		return "Sleep";
+	}
+	return "NO ACTION";
+}
+
 int Customer::getPosX() const
 {
 	return this->posX;
@@ -53,6 +79,16 @@ int Customer::getPosX() const
 int Customer::getPosY() const
 {
 	return this->posY;
+}
+
+void Customer::setPosX(int x)
+{
+	this->posX = x;
+}
+
+void Customer::setPosY(int y)
+{
+	this->posY = y;
 }
 
 int Customer::getHungry() const
