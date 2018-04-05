@@ -4,6 +4,23 @@
 
 bool RoomCtrl::_intersect(Room * room)
 {
+	for (size_t i = 0; i < m_rooms.size(); i++)
+	{
+		if ((std::abs(room->getX() - m_rooms[i]->getX()) * 2) < (room->getSizeX() + m_rooms[i]->getSizeX()) &&
+			(std::abs(room->getY() - m_rooms[i]->getY()) * 2) < (room->getSizeY() + m_rooms[i]->getSizeY()))
+			return true;
+	}
+	return false;
+}
+
+bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
+{
+	for (size_t i = 0; i < m_rooms.size(); i++)
+	{
+		if ((std::abs(pos.x - m_rooms[i]->getX()) * 2) < (size.x + m_rooms[i]->getSizeX()) &&
+			(std::abs(pos.y - m_rooms[i]->getY()) * 2) < (size.y + m_rooms[i]->getSizeY()))
+			return true;
+	}
 	return false;
 }
 
@@ -35,6 +52,10 @@ void RoomCtrl::setMesh(Mesh * mesh)
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force)
 {
 	Room * room = nullptr;
+	
+	if (_intersect(pos, size))
+		return;
+
 	switch (roomType)
 	{
 	case kitchen:
@@ -52,6 +73,7 @@ void RoomCtrl::Update(Camera * cam)
 {
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
+		std::cout << m_rooms.size() << std::endl;
 		m_rooms[i]->Update(cam);
 	}
 }

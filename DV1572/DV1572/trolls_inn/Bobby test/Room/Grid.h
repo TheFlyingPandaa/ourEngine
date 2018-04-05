@@ -17,7 +17,7 @@ private:
 	std::vector<std::vector<Tile*>> m_tiles;
 
 
-	bool				_intersect(Room * room, bool close = false, Room ** otherRef = nullptr, bool getRef = false);
+	//bool				_intersect(Room * room, bool close = false, Room ** otherRef = nullptr, bool getRef = false);
 	
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
