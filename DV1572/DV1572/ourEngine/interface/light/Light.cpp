@@ -4,7 +4,9 @@
 void Light::updateMatrix(const Camera& cam)
 {
 	pos = XMFLOAT3(0, 0, 10);
-	lookAt = XMFLOAT3(0,0,-1);
+	DirectX::XMVECTOR vDir; 
+	vDir = DirectX::XMLoadFloat4A(&m_lightBuffer.dir); 
+	DirectX::XMStoreFloat3(&lookAt, vDir); 
 	
 	XMMATRIX view = XMMatrixLookAtLH(
 		XMLoadFloat3(&pos),

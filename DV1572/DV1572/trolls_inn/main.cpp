@@ -109,7 +109,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}*/
 			
 			cam->update(wnd.getMousePos());
-			timeOfDay.updateCurrentTime(REFRESH_RATE);
+			timeOfDay.updateCurrentTime(REFRESH_RATE,light);
 			light.setColor(timeOfDay.getFinalSunColor()); 
 		}
 

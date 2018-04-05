@@ -27,10 +27,10 @@
     <ClCompile Include="trolls_inn\Bobby test\Room.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
-    <ClCompile Include="trolls_inn\main.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
