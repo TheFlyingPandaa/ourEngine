@@ -30,6 +30,7 @@ public:
 	Attributes& getAttributes();
 	Economy& getEconomy();
 	Race getRace() const;
+	const char* getRaceStr() const;
 	int getPosX() const;
 	int getPosY() const;
 	int getHungry() const;

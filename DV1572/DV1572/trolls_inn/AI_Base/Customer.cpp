@@ -29,6 +29,22 @@ Race Customer::getRace() const
 	return this->race;
 }
 
+const char * Customer::getRaceStr() const
+{
+	switch (race)
+	{
+	case Human:
+		return "Human";
+	case Troll:
+		return "Troll";
+	case Orc:
+		return "Orc";
+	case Dwarf:
+		return "Dwarf";
+	}
+	return "NO RACE!";
+}
+
 int Customer::getPosX() const
 {
 	return this->posX;

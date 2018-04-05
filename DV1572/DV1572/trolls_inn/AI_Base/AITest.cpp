@@ -179,9 +179,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	CustomerFlowControl cFL;
 	cFL.print();
 	cFL.update();
-	std::cout << std::endl;
 	cFL.print();
-
+	cFL.update();
+	cFL.print();
+	cFL.update();
+	cFL.print();
+	cFL.update();
+	cFL.print();
+	cFL.update();
 	system("pause");
 
 

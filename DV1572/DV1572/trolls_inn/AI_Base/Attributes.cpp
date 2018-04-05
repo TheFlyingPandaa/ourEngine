@@ -12,6 +12,11 @@ Attributes::Attributes()
 	this->foodQuality = 0;
 }
 
+Attributes::Attributes(int rep, int sta, int pri, int cre, int shad, int drin, int fod)
+	: reputation(rep), standard(sta), prices(pri), creepy(cre), shady(shad), drinkQuality(drin), foodQuality(fod)
+{
+}
+
 Attributes::~Attributes()
 {
 }
@@ -54,34 +59,42 @@ int Attributes::getFoodQuality() const
 void Attributes::setReputation(int value)
 {
 	this->reputation += value;
+	this->reputation = std::min(std::max(this->reputation, -10), 10);
 }
 
 void Attributes::setStandard(int value)
 {
 	this->standard += value;
+	this->standard = std::min(std::max(this->standard, -10), 10);
 }
 
 void Attributes::setPrices(int value)
 {
 	this->prices += value;
+	this->prices = std::min(std::max(this->prices, -10), 10);
 }
 
 void Attributes::setCreepy(int value)
 {
+	
 	this->creepy += value;
+	this->creepy = std::min(std::max(this->creepy, -10), 10);
 }
 
 void Attributes::setShady(int value)
 {
 	this->shady += value;
+	this->shady = std::min(std::max(this->shady, -10), 10);
 }
 
 void Attributes::setDrinkQuality(int value)
 {
 	this->drinkQuality += value;
+	this->drinkQuality = std::min(std::max(this->drinkQuality, -10), 10);
 }
 
 void Attributes::setFoodQuality(int value)
 {
 	this->foodQuality += value;
+	this->foodQuality = std::min(std::max(this->foodQuality, -10), 10);
 }
