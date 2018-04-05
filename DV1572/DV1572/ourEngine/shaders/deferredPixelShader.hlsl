@@ -33,9 +33,9 @@ float4 main(Input input) : SV_Target
 	float3 ambient = diffuseSample * 0.2f;
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	float3 lightToObject = normalize(-dir); 
+	float3 lightToObject = normalize(-dir.xyz); 
 	//TODO:Hey Future me Remove this
-	return float4(diffuseSample,1);
+	//return float4(diffuseSample,1);
 	float3 diffuse = diffuseSample * max(dot(normal, lightToObject), 0.0f); 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ float4 main(Input input) : SV_Target
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 
-	float3 finalColor = ambient + (finalSpec + diffuse) * color; 
+	float3 finalColor = ambient + (finalSpec + diffuse) * color.xyz; 
 
 	return float4(finalColor, 1);
 }

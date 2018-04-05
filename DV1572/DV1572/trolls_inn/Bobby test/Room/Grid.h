@@ -30,6 +30,6 @@ public:
 	void	Draw();
 	void	DrawString();
 
-	void	CreateWalls(Mesh * mesh);
+	void	CreateWalls(Mesh * mesh = nullptr);
 };
 

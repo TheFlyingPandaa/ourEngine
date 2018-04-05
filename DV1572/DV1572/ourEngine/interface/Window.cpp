@@ -958,7 +958,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 		
 		Input::m_keys[wParam] = true;
-		Input::lastPressed = wParam;
+		Input::lastPressed = static_cast<int>(wParam);
 		break;
 	case WM_KEYUP:
 		Input::m_keys[wParam] = false;
@@ -993,6 +993,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		Input::m_mousePos.x = LOWORD(lParam);
 		Input::m_mousePos.y = HIWORD(lParam);
+		//SetCursorPos(Input::m_mousePos.x, Input::m_mousePos.y);
 		break;
 
 	// ----- Mouse Wheel -----
