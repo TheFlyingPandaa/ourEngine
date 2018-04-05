@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <chrono>
+#include "../Time Management/GameTime.h"
 
 const float REFRESH_RATE = 60.0f;
 
@@ -42,6 +43,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
 
+	GameTime gameTime;
+
 	Mesh test;
 	test.MakeRectangle();
 	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
@@ -73,6 +76,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
+
+			gameTime.updateCurrentTime(REFRESH_RATE, light);
 
 			if (!gameStates.empty())
 			{
