@@ -84,7 +84,7 @@ private:
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
 
-	DirectX::XMMATRIX m_HUDview;
+	DirectX::XMMATRIX m_HUDviewProj;
 
 private:
 	bool	_initWindow();

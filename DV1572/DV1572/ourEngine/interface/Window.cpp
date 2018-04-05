@@ -22,15 +22,17 @@ std::vector<Shape*> DX::g_HUDQueue;
 ID3D11HullShader* DX::g_standardHullShader;
 ID3D11DomainShader* DX::g_standardDomainShader;
 
-std::vector<DX::INSTANCE_GROUP> DX::g_instanceGroups;
+std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroups;
+std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsHUD;
+std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsTransparancy;
 
-void DX::submitToInstance(Shape* shape)
+void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
 	
 	int existingId = -1;
-	for (int i = 0; i < DX::g_instanceGroups.size() && existingId == -1; i++)
+	for (int i = 0; i < queue.size() && existingId == -1; i++)
 	{
-		if (shape->getMesh()->CheckID(*DX::g_instanceGroups[i].shape->getMesh()))
+		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
 		{
 			existingId = i;
 
@@ -66,11 +68,11 @@ void DX::submitToInstance(Shape* shape)
 		INSTANCE_GROUP newGroup;
 		newGroup.attribs.push_back(attribDesc);
 		newGroup.shape = shape;
-		g_instanceGroups.push_back(newGroup);
+		queue.push_back(newGroup);
 	}
 	else
 	{
-		DX::g_instanceGroups[existingId].attribs.push_back(attribDesc);
+		queue[existingId].attribs.push_back(attribDesc);
 	}
 	
 }
@@ -244,15 +246,27 @@ void Window::_initTessellationShaders()
 
 void Window::_drawHUD()
 {
-	/*DirectX::XMMATRIX viewProj = m_HUDview;
+	DirectX::XMMATRIX viewProj = m_HUDviewProj;
 
 	MESH_BUFFER meshBuffer;
-	for (size_t i = 0; i < DX::g_HUDQueue.size(); i++)
+	ID3D11Buffer* instanceBuffer = nullptr;
+
+	for (auto& instance : DX::g_instanceGroupsHUD)
 	{
-		DirectX::XMMATRIX world = DX::g_HUDQueue[i]->getWorld();
-		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
-		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+
+
+		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -260,20 +274,34 @@ void Window::_drawHUD()
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		DX::g_HUDQueue[i]->ApplyShaders();
+		instance.shape->ApplyShaders();
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-		
-		ID3D11Buffer* v = DX::g_HUDQueue[i]->getVerticesIndexed();
-		ID3D11Buffer* indices = DX::g_HUDQueue[i]->getIndices();
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
 
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
-		DX::g_deviceContext->DrawIndexed(DX::g_HUDQueue[i]->getMesh()->getNumberOfVerticesIndexed(), 0, 0);
-		
-		
-	}*/
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
 }
 
 void Window::_initComputeShader()
@@ -616,11 +644,9 @@ void Window::_lightPass(Light& light, Camera& cam)
 
 void Window::_transparencyPass(const Camera & cam)
 {
-
-	/*DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
-
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 
 	DX::g_deviceContext->VSSetShader(m_transVertexShader, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -633,12 +659,26 @@ void Window::_transparencyPass(const Camera & cam)
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
 
 	MESH_BUFFER meshBuffer;
-	for (size_t i = 0; i < DX::g_transQueue.size(); i++)
+
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+
+	for (auto& instance : DX::g_instanceGroupsTransparancy)
 	{
-		DirectX::XMMATRIX world = DX::g_transQueue[i]->getWorld();
-		DirectX::XMStoreFloat4x4A(&meshBuffer.world, DirectX::XMMatrixTranspose(world));
-		DirectX::XMMATRIX wvp = DirectX::XMMatrixTranspose(world * viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.MVP, wvp);
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+
+
+		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -648,13 +688,30 @@ void Window::_transparencyPass(const Camera & cam)
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-		ID3D11Buffer* v = DX::g_transQueue[i]->getVerticesIndexed();
-		ID3D11Buffer* indices = DX::g_transQueue[i]->getIndices();
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
+
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
-		DX::g_deviceContext->DrawIndexed(DX::g_transQueue[i]->getMesh()->getNumberOfVerticesIndexed(), 0,0);
-		
-	}*/
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
 }
 
 void Window::_initTransparency()
@@ -772,7 +829,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_createConstantBuffers(); 
 	Picking::InitPickingTexture(width, height, m_sampleCount, m_pickingTexture.TextureMap, m_pickingTexture.RTV, m_pickingTexture.SRV, m_pickingReadBuffer);
 	_setSamplerState();
-	m_HUDview = DirectX::XMMatrixLookToLH(
+	m_HUDviewProj = DirectX::XMMatrixLookToLH(
 		DirectX::XMVectorSet(0.0f, 0.0f, -0.1f, 1.0f),
 		DirectX::XMVectorSet(0, 0, 1.0f, 0),
 		DirectX::XMVectorSet(0, 1.0f, 0, 0)
@@ -782,7 +839,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	_initComputeShader();
 
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
-	m_HUDview = m_HUDview * m_projectionMatrix;
+	m_HUDviewProj = m_HUDviewProj * m_projectionMatrix;
 	t1.join();
 	t2.join();
 	ShowWindow(m_hwnd, 10);
@@ -811,6 +868,8 @@ void Window::Clear()
 	DX::g_HUDQueue.clear();
 	DX::g_transQueue.clear();
 	DX::g_instanceGroups.clear();
+	DX::g_instanceGroupsHUD.clear();
+	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
@@ -837,7 +896,7 @@ void Window::Flush(Camera* c, Light& light)
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDview, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer);
+	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer);
 }
 
 void Window::Present()

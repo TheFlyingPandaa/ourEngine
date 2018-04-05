@@ -125,7 +125,7 @@ void RectangleShape::setNormalMap(const std::string & path)
 void RectangleShape::DrawAsHud()
 {
 	m_hud = true;
-	DX::g_HUDQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_instanceGroupsHUD);
 }
 
 bool RectangleShape::isHud() const
