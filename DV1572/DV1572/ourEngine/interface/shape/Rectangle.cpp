@@ -90,6 +90,26 @@ RectangleShape::~RectangleShape()
 		
 }
 
+void RectangleShape::setScreenPos(float x, float y)
+{
+	DirectX::XMFLOAT2 pos(x, y);
+
+	this->setScreenPos(pos);
+}
+
+void RectangleShape::setScreenPos(DirectX::XMFLOAT2 pos)
+{
+	DirectX::XMFLOAT3 start(-0.0736f, -0.0414f, 0.0f);
+	start.x += (pos.x / 8625.0f);
+	start.y += (pos.y / 8625.0f);
+
+	Shape::setPos(start);
+
+
+
+
+}
+
 void RectangleShape::setWidth(float w)
 {
 	m_width = w;

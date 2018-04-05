@@ -44,6 +44,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	RectangleShape HUD;
 	HUD.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+	HUD.setHeight(250);
+	HUD.setWidth(250);
+	HUD.setScreenPos(0, 0);
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
@@ -96,7 +99,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (picked)
 			pickingEvents.push(picked);
-	
+		
+		HUD.CheckPick();
+		if (GetAsyncKeyState(VK_LBUTTON))
+			picked = wnd.getPicked(cam);
+		if (picked)
+			std::cout << "LOLOOLOL\n";
+
 		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);

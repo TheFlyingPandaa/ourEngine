@@ -14,6 +14,10 @@ private:
 public:
 	RectangleShape(float w = 10.0f, float h = 10.0f);
 	~RectangleShape();
+	void setScreenPos(float x, float y);
+	void setScreenPos(DirectX::XMFLOAT2 pos);
+
+
 	void setWidth(float w);
 	float getWidth() const;
 	void setHeight(float h);
