@@ -6,7 +6,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 {
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 64, 64, &rect);	
+	grid = new Grid(0, 0, 16, 16, &rect);	
 	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
@@ -34,13 +34,13 @@ void GameState::Update(double deltaTime)
 	//system("cls");
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-	std::cout << posX << " " << posY << std::endl;
+	//std::cout << posX << " " << posY << std::endl;
 
 	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{
 		//Do keypress events here
 		//std::cout << p_keyEvents->top() << std::endl;
-
+		/*
 		if (p_keyEvents->top() == 'W' && p_keyEvents->top() != previousKey)
 		{
 			
@@ -69,6 +69,7 @@ void GameState::Update(double deltaTime)
 			grid->CreateWalls();
 
 		}
+		*/
 		previousKey = p_keyEvents->top();
 		p_keyEvents->pop();
 

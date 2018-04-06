@@ -93,7 +93,6 @@ void RoomCtrl::Update(Camera * cam)
 {
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
-		std::cout << m_rooms.size() << std::endl;
 		m_rooms[i]->Update(cam);
 	}
 }
@@ -157,7 +156,6 @@ void RoomCtrl::CreateWalls()
 					}
 				if (createWall)
 				{
-					//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + x, this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY() - 1);
 					Tile * t = m_rooms[i]->getTiles(x, this->m_rooms[i]->getSizeY() - 1);
 					t->m_walls[WallDirection::up] = true;
 					Wall * wall = new Wall(t, this->m_wall);
