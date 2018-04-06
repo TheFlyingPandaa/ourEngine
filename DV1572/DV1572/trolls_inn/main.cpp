@@ -44,6 +44,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Object3D aWall[numberOfWalls];
 
 	Object3D box[100];
+
+	Object3D plane;
+	plane.setMesh(&wall);
+	plane.setScale(100, 1, 100);
+	plane.setPos(0, -2, 0);
 	for (int i = 0; i < 100; i++)
 	{
 		box[i].setMesh(&wall);
@@ -62,7 +67,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	cam->update();
 	
 	Light light;
-	light.Init(XMFLOAT4A{ 0,5,0,1 }, XMFLOAT4A{ 0.0f, -1.0f,0.0f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1280, 720, cam);
+	light.Init(XMFLOAT4A{ 0,5,5,1 }, XMFLOAT4A{ 0.0f, -0.5f,-0.5f,0.0f }, XMFLOAT4A{ 1.0f,1.0f,1.0f,0.0f }, 1280, 720);
 	while (wnd.isOpen())
 	{
 		wnd.Clear();
@@ -93,8 +98,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			box[i].CastShadow();
 			box[i].Draw();
 		}
+		plane.CastShadow();
+		plane.Draw();
 		
 		//light.updateMatrix();
+
 		wnd.Flush(cam, light);
 
 		wnd.Present();

@@ -4,27 +4,26 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include "../../core/Camera/Camera.h"
-using namespace DirectX; 
+
 class Light
 {
 private: 
-	DIRECTIONAL_LIGHT_BUFFER m_lightBuffer; 
-	XMFLOAT4A m_pos;
-	XMFLOAT4A m_dir; 
-	XMFLOAT4A m_color;
+	DIRECTIONAL_LIGHT_BUFFER		m_lightBuffer;
+	DirectX::XMFLOAT4A				m_pos;
+	DirectX::XMFLOAT4A				m_dir;
+	DirectX::XMFLOAT4A				m_color;
 
-	XMMATRIX m_viewProj;
-	XMMATRIX m_proj;
+	DirectX::XMMATRIX				m_viewProj;
+	DirectX::XMMATRIX				m_proj;
 
-	DirectX::XMFLOAT3 pos, lookAt;
 	const DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
-	float m_width; 
-	float m_height; 
+	float						m_width; 
+	float						m_height; 
 
-	ID3D11Texture2D*			m_pShadowTexture; 
-	ID3D11DepthStencilView*		m_pDepthStencilView; 
-	ID3D11ShaderResourceView*	m_pShaderResourceView; 
+	ID3D11Texture2D*			m_shadowTexture; 
+	ID3D11DepthStencilView*		m_shadowDepthStencilView; 
+	ID3D11ShaderResourceView*	m_shadowShaderResourceView; 
 
 	ID3D11Buffer*				m_pLightBuffer;
 
@@ -32,25 +31,27 @@ private:
 
 public:
 	Light(); 
-	~Light(); 
+	~Light();
 
-	XMFLOAT4A getPos() const; 
-	XMFLOAT4A getDir() const;
-	XMFLOAT4A getColor() const; 
+	DirectX::XMFLOAT4A getPos() const;
+	DirectX::XMFLOAT4A getDir() const;
+	DirectX::XMFLOAT4A getColor() const; 
 
-	void Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height, Camera * cam); 
+	void Init(DirectX::XMFLOAT4A pos, DirectX::XMFLOAT4A dir, DirectX::XMFLOAT4A color, float width, float height); 
 
-	void setPos(XMFLOAT4A pos); 
-	void setDir(XMFLOAT4A dir); 
-	void setColor(XMFLOAT4A color); 
+	void setPos(DirectX::XMFLOAT4A pos); 
+	void setDir(DirectX::XMFLOAT4A dir); 
+	void setColor(DirectX::XMFLOAT4A color); 
 
-	void Move(XMFLOAT4A move); 
+	void Move(DirectX::XMFLOAT4A move); 
 
-	void updateMatrix(); 
+	void updateMatrix();
 
-	XMMATRIX getViewProjMatrix() const;
+	DirectX::XMMATRIX getViewProjMatrix() const;
 
 	ID3D11DepthStencilView*& getDepthView(); 
+	ID3D11ShaderResourceView*& getResourceView();
+
 	DIRECTIONAL_LIGHT_BUFFER& getBuffer(); 
 	ID3D11Buffer* getBufferPointer(); 
 };

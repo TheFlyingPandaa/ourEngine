@@ -110,7 +110,7 @@ private:
 	void	_createDepthBuffer();
 	
 	// Deferred Rendering
-	void	_shadowPass(const Camera & cam,const Light& light);
+	void	_shadowPass(const Camera & cam, Light& light);
 	void	_initGBuffer();
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);

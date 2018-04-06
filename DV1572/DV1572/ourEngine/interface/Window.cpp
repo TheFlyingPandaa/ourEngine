@@ -36,14 +36,14 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 		}
 	}
 	INSTANCE_ATTRIB attribDesc;
-	
-		
-	XMMATRIX xmWorldMat = shape->getWorld();
-	XMFLOAT4X4A worldMat;
+
+
+	DirectX::XMMATRIX xmWorldMat = shape->getWorld();
+	DirectX::XMFLOAT4X4A worldMat;
 	
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
-	XMFLOAT4A rows[4];
+	DirectX::XMFLOAT4A rows[4];
 	for (int i = 0; i < 4; i++)
 	{
 		rows[i].x = worldMat.m[i][0];
@@ -528,7 +528,7 @@ void Window::_createDepthBuffer()
 	_initShadowBuffer();
 }
 
-void Window::_shadowPass(const Camera & cam, const Light& light)
+void Window::_shadowPass(const Camera & cam, Light& light)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
@@ -538,28 +538,10 @@ void Window::_shadowPass(const Camera & cam, const Light& light)
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_shadowPixelShader, nullptr, 0);
 
-	DX::g_deviceContext->OMSetRenderTargets(0,NULL,m_shadowDSV);
-	DX::g_deviceContext->ClearDepthStencilView(m_shadowDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
-	DirectX::XMVECTOR pos = -dir * 5;//DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
-	//DirectX::XMVECTOR u = DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
-
-	//DirectX::XMMATRIX view = light.get
-
-	//DirectX::XMMATRIX viewProj = light.getViewProjMatrix();
-	tempp += 0.01;
-	DirectX::XMMATRIX viewProj = XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 5.0f, 0.1f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-		//am.getViewMatrix()
-		*
-		//m_projectionMatrix;
-		DirectX::XMMatrixOrthographicLH((float)m_width * 0.005f, (float)m_height * 0.005f, 0.1f, 2000.0f);
-	//DirectX::XMMatrixOrthographicLH(160, 90, 0.1f, 200.0f);
-		//DirectX::XMMatrixPerspectiveFovLH(XMConvertToRadians(45), (float)m_width/(float)m_height, 0.1, 200);
-
+	DX::g_deviceContext->OMSetRenderTargets(0,NULL,light.getDepthView());
+	DX::g_deviceContext->ClearDepthStencilView(light.getDepthView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	
+	//DirectX::XMMATRIX viewProj = 
 
 	MESH_BUFFER meshBuffer;
 	ID3D11Buffer* instanceBuffer = nullptr;
@@ -577,7 +559,7 @@ void Window::_shadowPass(const Camera & cam, const Light& light)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 
 
-		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		DirectX::XMMATRIX vp = light.getViewProjMatrix();
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
@@ -751,6 +733,8 @@ void Window::_lightPass(Light& light, Camera& cam)
 	{
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
+	//ADDRESS CAN GO DOWN THE SHITTER
+	DX::g_deviceContext->PSSetShaderResources(adress++,1,&light.getResourceView());
  
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
