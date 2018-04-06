@@ -36,8 +36,8 @@ public:
 	virtual int			getY() const;
 	virtual int			getSizeX() const; 
 	virtual int			getSizeY() const; 
-	virtual void		setWalls(std::vector<Wall*> walls, WallDirection dir);
-	virtual void		addWall(Wall* wall, WallDirection dir);
+	virtual void		setWalls(std::vector<Wall*> walls, Direction dir);
+	virtual void		addWall(Wall* wall, Direction dir);
 
 	virtual void		addAdjasentRoom(Room * room);
 

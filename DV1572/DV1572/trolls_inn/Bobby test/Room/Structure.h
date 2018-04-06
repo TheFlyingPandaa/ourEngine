@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../ourEngine/interface/Interface.h"
 
-enum WallDirection {
+enum Direction {
 	up,
 	down,
 	left,
@@ -34,7 +34,7 @@ public:
 	void	setRotation(DirectX::XMFLOAT3 rotation);
 	void	setScale(float x, float y, float z);
 
-	bool	getDir(WallDirection dir) const;
+	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
 };
 
@@ -50,8 +50,8 @@ public:
 		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
 		quad.Rotate(90.0f, 0.0f, 0.0f);		
 	}
-	void	setAdjacent(Tile* tile, WallDirection dir);
-	Tile*	getAdjacent(WallDirection dir);
+	void	setAdjacent(Tile* tile, Direction dir);
+	Tile*	getAdjacent(Direction dir);
 	int		m_posY;
 	int		m_posX;
 	bool	m_door;
@@ -62,5 +62,5 @@ public:
 	Wall*	m_w[4] = { nullptr };
 
 	bool	m_walls[4] = { false };
-	bool	isWall(WallDirection dir) const { return m_walls[dir]; }
+	bool	isWall(Direction dir) const { return m_walls[dir]; }
 };
