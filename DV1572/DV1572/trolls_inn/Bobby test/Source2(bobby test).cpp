@@ -9,6 +9,10 @@
 
 #include <iostream>
 #include <chrono>
+//extern "C" {
+//	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+//}
+
 
 const float REFRESH_RATE = 60.0f;
 

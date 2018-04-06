@@ -115,6 +115,10 @@ void GameState::_checkCreationOfRoom()
 			m_firstPickedTile = p_pickingEvent->top();
 			p_pickingEvent->pop();
 		}
+		else
+		{
+			m_firstPick = false;
+		}
 	}
 	if (m_lastPick && !m_lastPickedTile)
 	{
@@ -123,14 +127,18 @@ void GameState::_checkCreationOfRoom()
 			m_lastPickedTile = p_pickingEvent->top();
 			p_pickingEvent->pop();
 		}
+		else
+		{
+			m_lastPick = false;
+		}
 	}
 
-	if (Input::isMouseLeftPressed() && !m_firstPick)
+	if (Input::isMouseMiddlePressed() && !m_firstPick)
 	{
 		m_firstPick = true;
 		this->grid->PickTiles();
 	}
-	else if (!Input::isMouseLeftPressed() && m_firstPick && !m_lastPick && m_firstPickedTile)
+	else if (!Input::isMouseMiddlePressed() && m_firstPick && !m_lastPick && m_firstPickedTile)
 	{
 		m_lastPick = true;
 		this->grid->PickTiles();
@@ -146,16 +154,22 @@ void GameState::_checkCreationOfRoom()
 			DirectX::XMINT2 roomOffset(static_cast<int>(offsetF.x + 0.5f), static_cast<int>(offsetF.z + 0.5f));
 			if (roomPos.x >= 0 && roomPos.y >= 0 && roomOffset.x >= 0 && roomOffset.y >= 0)
 			{
-				if (roomOffset.x > roomPos.x)
+				if (roomOffset.x < roomPos.x)
 				{
 					std::swap(roomPos.x, roomOffset.x);
 				}
-				if (roomOffset.y > roomPos.y)
+				if (roomOffset.y < roomPos.y)
 				{
 					std::swap(roomPos.y, roomOffset.y);
 				}
 
-				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
+				roomOffset.x -= roomPos.x - 1;
+				roomOffset.y -= roomPos.y - 1;
+
+				std::cout << "POS: " << roomPos.x << ":" << roomPos.y << std::endl;
+				std::cout << "OFF: " << roomOffset.x << ":" << roomOffset.y << std::endl;
+
+				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, false);
 				grid->CreateWalls();
 			}
 		}
@@ -168,6 +182,11 @@ void GameState::_checkCreationOfRoom()
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && !m_firstPickedTile && m_lastPickedTile)
+	{
+		m_firstPickedTile = m_lastPickedTile = nullptr;
+		m_lastPick = m_firstPick = false;
+	}
+	else if (m_firstPick && m_lastPick && !m_firstPickedTile && !m_firstPickedTile)
 	{
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
