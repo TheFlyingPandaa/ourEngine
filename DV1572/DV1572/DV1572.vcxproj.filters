@@ -73,5 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
+    <Library Include="ourEngine\core\Audio\AudioLibxRL.lib" />
   </ItemGroup>
 </Project>

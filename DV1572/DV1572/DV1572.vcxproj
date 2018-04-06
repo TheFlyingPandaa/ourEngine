@@ -275,7 +275,12 @@
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
+    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Audio\AudioLibxRL.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
