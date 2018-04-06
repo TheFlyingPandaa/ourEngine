@@ -10,10 +10,14 @@
 #include <iostream>
 #include <chrono>
 
+#include "../../ourEngine/core/Audio/Audio.h"
+
 const float REFRESH_RATE = 60.0f;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
 	AllocConsole();
@@ -53,6 +57,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	HUD.setScreenPos(0, 0);
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
+
+	std::unique_ptr<AudioEngine> audEngine;
+	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
+	#ifdef _DEBUG
+	eflags = eflags | AudioEngine_Debug;
+	#endif
+	audEngine = std::make_unique<AudioEngine>(eflags);
+	std::unique_ptr<SoundEffect> soundEffect;
+	soundEffect = std::make_unique<SoundEffect>(audEngine.get(), L"trolls_inn/Resources/test.wav");
+	auto effect = soundEffect->CreateInstance();
+	//effect->Play(true); effect->Play(true);
 	
 	while (wnd.isOpen())
 	{
@@ -92,6 +107,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 
 		}
+
+		if (!audEngine->Update())
+		{
+			// No audio device is active
+			if (audEngine->IsCriticalError())
+			{
+			}
+		}
+
+		
+
 
 		fpsCounter++;
 		if (!gameStates.empty())
