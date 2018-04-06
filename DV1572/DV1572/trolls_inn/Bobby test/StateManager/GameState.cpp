@@ -1,6 +1,6 @@
 #include "GameState.h"
 #include <iostream>
-
+#include <stdlib.h>
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -31,9 +31,10 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
+	//system("cls");
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-	
+	std::cout << posX << " " << posY << std::endl;
 
 	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{
@@ -43,28 +44,28 @@ void GameState::Update(double deltaTime)
 		if (p_keyEvents->top() == 'W' && p_keyEvents->top() != previousKey)
 		{
 			
-			grid->AddRoom(DirectX::XMINT2(2 * posX, 2 * posY++), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->AddRoom(DirectX::XMINT2(posX, posY++), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 			grid->CreateWalls();
 			
 		}
 		if (p_keyEvents->top() == 'S' && p_keyEvents->top() != previousKey)
 		{
 
-			grid->AddRoom(DirectX::XMINT2(2 * posX, 2 * posY--), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->AddRoom(DirectX::XMINT2(posX, posY--), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 			grid->CreateWalls();
 
 		}
 		if (p_keyEvents->top() == 'D' && p_keyEvents->top() != previousKey)
 		{
 
-			grid->AddRoom(DirectX::XMINT2(2 * posX++, 2 * posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->AddRoom(DirectX::XMINT2(posX++, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 			grid->CreateWalls();
 
 		}
 		if (p_keyEvents->top() == 'A' && p_keyEvents->top() != previousKey)
 		{
 
-			grid->AddRoom(DirectX::XMINT2(2 * posX--, 2 * posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+			grid->AddRoom(DirectX::XMINT2(posX--, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 			grid->CreateWalls();
 
 		}

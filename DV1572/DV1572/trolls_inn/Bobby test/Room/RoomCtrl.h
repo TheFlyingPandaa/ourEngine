@@ -17,6 +17,9 @@ private:
 	std::vector<Room*>	m_rooms;
 	std::vector<Wall*>	m_walls;
 	
+	bool				_intersect(Room * room);
+	bool				_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+	bool				_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 
 	Mesh*				m_wall;
 public:

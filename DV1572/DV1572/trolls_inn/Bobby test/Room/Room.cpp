@@ -238,6 +238,11 @@ void Room::addWall(Wall * wall, WallDirection dir)
 	}
 }
 
+void Room::addAdjasentRoom(Room * room)
+{
+	adjasent.push_back(room);
+}
+
 void Room::move(int x, int y)
 {
 	this->m_posX += x;

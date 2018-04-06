@@ -20,6 +20,8 @@ protected:
 	std::vector<Wall*> left;
 	std::vector<Wall*> right;
 
+	std::vector<Room*> adjasent;
+
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
 	Room(int posX, int posY , int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles);
@@ -36,6 +38,8 @@ public:
 	virtual int			getSizeY() const; 
 	virtual void		setWalls(std::vector<Wall*> walls, WallDirection dir);
 	virtual void		addWall(Wall* wall, WallDirection dir);
+
+	virtual void		addAdjasentRoom(Room * room);
 
 	virtual void		move(int x, int y);
 
