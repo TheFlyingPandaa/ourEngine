@@ -69,10 +69,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	#endif
 	audEngine = std::make_unique<AudioEngine>(eflags);
 	std::unique_ptr<SoundEffect> soundEffect;
-	soundEffect = std::make_unique<SoundEffect>(audEngine.get(), L"trolls_inn/Resources/test.wav");
+	soundEffect = std::make_unique<SoundEffect>(audEngine.get(), L"trolls_inn/Resources/lolol.wav");
 	auto effect = soundEffect->CreateInstance();
-	//effect->Play(true); effect->Play(true);
+	//effect->Play(true);
 	
+	bool pressed = false;
+	bool play = false;
+
 	while (wnd.isOpen())
 	{
 		
@@ -108,6 +111,29 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 
 				}
+			}
+
+
+			if (Input::isKeyPressed('P') && !pressed)
+			{
+				if (!play)
+				{
+					effect->Stop(false);
+					effect->Play(true);
+					play = true;
+				}
+				else
+				{
+					effect->Play(false);
+					effect->Stop(true);
+					play = false;
+				}
+				
+				pressed = true;
+			}
+			else if (!Input::isKeyPressed('P') && pressed)
+			{
+				pressed = false;
 			}
 
 		}
