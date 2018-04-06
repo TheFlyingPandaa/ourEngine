@@ -120,14 +120,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ourEngine\core\Audio\AudioEngine.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\DynamicSoundEffectInstance.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundCommon.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundEffect.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundEffectInstance.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WaveBank.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WaveBankReader.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WAVFileReader.cpp" />
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
@@ -152,11 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
-    <ClInclude Include="ourEngine\core\Audio\pch.h" />
-    <ClInclude Include="ourEngine\core\Audio\PlatformHelpers.h" />
-    <ClInclude Include="ourEngine\core\Audio\SoundCommon.h" />
-    <ClInclude Include="ourEngine\core\Audio\WaveBankReader.h" />
-    <ClInclude Include="ourEngine\core\Audio\WAVFileReader.h" />
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
@@ -286,6 +273,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,11 +1,12 @@
+
 #include <iostream>
 #include <string>
 #include <stack>
 
 #include "../Bobby test/Room/Grid.h"
-#include "StateManager\State.h"
-#include "StateManager\GameState.h"
-#include "StateManager\MainMenu.h"
+#include "StateManager/State.h"
+#include "StateManager/GameState.h"
+#include "StateManager/MainMenu.h"
 
 #include <iostream>
 #include <chrono>
@@ -16,11 +17,17 @@
 
 #include "../../ourEngine/core/Audio/Audio.h"
 
+#ifdef NDEBUG
+	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
+#else
+	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxDB.lib")
+#endif // ENV64BIT
+
+
 const float REFRESH_RATE = 60.0f;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
@@ -163,7 +170,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (GetAsyncKeyState(VK_LBUTTON))
 			picked = wnd.getPicked(cam);
 		if (picked)
-			std::cout << "LOLOOLOL\n";
+			std::cout << "LOLOOLOL/n";
 
 		HUD.DrawAsHud();
 		
@@ -173,7 +180,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			printf("/rFPS: %d TICK: %d", fpsCounter, updates);
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

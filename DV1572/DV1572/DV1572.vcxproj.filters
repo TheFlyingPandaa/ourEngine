@@ -34,14 +34,6 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\AudioEngine.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundCommon.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\DynamicSoundEffectInstance.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundEffect.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WAVFileReader.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\SoundEffectInstance.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WaveBank.cpp" />
-    <ClCompile Include="ourEngine\core\Audio\WaveBankReader.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -70,12 +62,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
-    <ClInclude Include="ourEngine\core\Audio\SoundCommon.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
-    <ClInclude Include="ourEngine\core\Audio\pch.h" />
-    <ClInclude Include="ourEngine\core\Audio\PlatformHelpers.h" />
-    <ClInclude Include="ourEngine\core\Audio\WAVFileReader.h" />
-    <ClInclude Include="ourEngine\core\Audio\WaveBankReader.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -83,5 +70,8 @@
   <ItemGroup>
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
   </ItemGroup>
 </Project>
