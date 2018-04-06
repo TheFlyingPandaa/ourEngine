@@ -23,6 +23,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
+
 	Camera* cam = new OrbitCamera(wnd.getSize());
 	cam->update();
 
@@ -34,9 +35,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	mBox.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
 	mBox.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
-	Object3D box1;
-	box1.setMesh(&mBox);
-	box1.setPos(0, 0, 0);
+	const long int NR = 256;
+
+	Object3D box1[NR];
+	for (int i = 0; i < NR; i++)
+	{
+		box1[i].setMesh(&mBox);
+		box1[i].setPos(i, 0, 0);
+	}
 
 	while (wnd.isOpen())
 	{
@@ -58,18 +64,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 		
-		bool somethingPicked = false;
-		box1.Draw();
-		if (Input::isMouseLeftPressed())
+		bool picked = false;
+		for (int i = 0; i < NR; i++)
 		{
-			box1.CheckPick();
-			somethingPicked = true;
+			box1[i].Draw();
+			if (Input::isMouseMiddlePressed())
+			{
+				box1[i].CheckPick();
+				picked = true;
+			}
 		}
-		box1.CheckPick();
-		wnd.getPicked(cam);
 
-		if (somethingPicked && wnd.getPicked(cam) != nullptr)
-			std::cout << "LOLOLOL\n";
+		if (picked)
+		{
+			Shape * pick = wnd.getPicked(cam);
+			if (pick)
+				pick->Move(0, 1, 0);
+		}
+
 
 		wnd.Flush(cam, light);
 		wnd.Present();

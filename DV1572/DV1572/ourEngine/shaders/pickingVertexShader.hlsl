@@ -27,18 +27,17 @@ OUTPUT main(INPUT input, uint id : SV_InstanceID)
 {
 	OUTPUT o;
 	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
-	float4x4 wvp = world * vp;
+    o.pos = mul(float4(input.pos, 1), world);
 
-	o.pos = mul(float4(input.pos, 1), wvp);
+	o.pos = mul(o.pos, vp);
 
 	uint index = id + 1;
-
-	o.color.r = index % 255;
-	index -= o.color.r;
-	o.color.g = index % 255;
-	index -= o.color.g;
-	o.color.b = index % 255;
 	o.color.w = 1.0f;
+	o.color.r = index % 256;
+	index /= 256;
+	o.color.g = index % 256;
+	index /= 256;
+	o.color.b = index % 256;
 
 	return o;
 }
