@@ -4,9 +4,14 @@
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
+	m_firstPick = false;
+	m_lastPick = false;
+	m_firstPickedTile = nullptr;
+	m_lastPickedTile = nullptr;
+
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 64, 64, &rect);	
+	grid = new Grid(0, 0, 8, 8, &rect);	
 	grid->AddRoom(DirectX::XMINT2(0, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(2, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	//grid->AddRoom(DirectX::XMINT2(0, 2), DirectX::XMINT2(4, 2), RoomType::kitchen, true);
@@ -33,7 +38,7 @@ void GameState::Update(double deltaTime)
 {
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-	
+	_checkCreationOfRoom();
 
 	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{
@@ -99,4 +104,72 @@ void GameState::_init()
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+}
+
+void GameState::_checkCreationOfRoom()
+{
+	if (m_firstPick && !m_firstPickedTile)
+	{
+		if (!p_pickingEvent->empty())
+		{
+			m_firstPickedTile = p_pickingEvent->top();
+			p_pickingEvent->pop();
+		}
+	}
+	if (m_lastPick && !m_lastPickedTile)
+	{
+		if (!p_pickingEvent->empty())
+		{
+			m_lastPickedTile = p_pickingEvent->top();
+			p_pickingEvent->pop();
+		}
+	}
+
+	if (Input::isMouseLeftPressed() && !m_firstPick)
+	{
+		m_firstPick = true;
+		this->grid->PickTiles();
+	}
+	else if (!Input::isMouseLeftPressed() && m_firstPick && !m_lastPick && m_firstPickedTile)
+	{
+		m_lastPick = true;
+		this->grid->PickTiles();
+	}
+	else if (m_firstPick && m_lastPick)
+	{
+		if (m_firstPickedTile && m_lastPickedTile)
+		{
+			//TODO : CREATE ROOM
+			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
+			DirectX::XMFLOAT3 offsetF = m_lastPickedTile->getPosition();
+			DirectX::XMINT2 roomPos(static_cast<int>(posF.x + 0.5f), static_cast<int>(posF.z + 0.5f));
+			DirectX::XMINT2 roomOffset(static_cast<int>(offsetF.x + 0.5f), static_cast<int>(offsetF.z + 0.5f));
+			if (roomPos.x >= 0 && roomPos.y >= 0 && roomOffset.x >= 0 && roomOffset.y >= 0)
+			{
+				if (roomOffset.x > roomPos.x)
+				{
+					std::swap(roomPos.x, roomOffset.x);
+				}
+				if (roomOffset.y > roomPos.y)
+				{
+					std::swap(roomPos.y, roomOffset.y);
+				}
+
+				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
+				grid->CreateWalls();
+			}
+		}
+		m_firstPickedTile = m_lastPickedTile = nullptr;
+		m_lastPick = m_firstPick = false;
+	}
+	else if (m_firstPick && m_lastPick && m_firstPickedTile && !m_lastPickedTile)
+	{
+		m_firstPickedTile = m_lastPickedTile = nullptr;
+		m_lastPick = m_firstPick = false;
+	}
+	else if (m_firstPick && m_lastPick && !m_firstPickedTile && m_lastPickedTile)
+	{
+		m_firstPickedTile = m_lastPickedTile = nullptr;
+		m_lastPick = m_firstPick = false;
+	}
 }

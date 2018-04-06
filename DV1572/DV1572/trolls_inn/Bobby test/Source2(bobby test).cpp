@@ -98,8 +98,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			gameStates.top()->Draw();
 
 		Shape* picked = nullptr;
-		if (GetAsyncKeyState(VK_LBUTTON))		
-			picked = wnd.getPicked(cam);
+		picked = wnd.getPicked(cam);
 
 		if (picked)
 			pickingEvents.push(picked);

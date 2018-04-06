@@ -13,5 +13,5 @@ public:
 	~Picking();
 
 	static void InitPickingTexture(const int widht, const int height, const int sample, ID3D11Texture2D*& TextureMap, ID3D11RenderTargetView*&RTV, ID3D11ShaderResourceView*&SRV, ID3D11Texture2D*&  m_pickingReadBuffer);
-	static Shape* getPicked(Camera* c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer);
+	static Shape* getPicked(Camera* c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer, ID3D11Buffer *& m_meshConstantBuffer);
 };   

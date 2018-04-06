@@ -54,7 +54,7 @@ void Picking::InitPickingTexture(const int width, const int height, const int sa
 	hr = 0;
 }
 
-Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer)
+Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer, ID3D11Buffer *& m_meshConstantBuffer)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
@@ -64,56 +64,123 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 	DX::g_deviceContext->ClearRenderTargetView(RTV, color);
 	DX::g_deviceContext->OMSetRenderTargets(1, &RTV, m_depthStencilView);
 
-	PICK_BUFFER pb;
-	DirectX::XMMATRIX vp = c->getViewMatrix() * m_projectionMatrix;
-	DirectX::XMFLOAT4A counter = { 0.0f, 0.0f, 0.0f, 0.0f };
-	pb.index = DirectX::XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
-	for (auto s : DX::g_pickingQueue)
+	DirectX::XMMATRIX view = c->getViewMatrix();
+	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
+
+
+	DX::g_deviceContext->VSSetShader(m_pickingVertexShader, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_pickingPixelShader, nullptr, 0);
+
+
+	MESH_BUFFER meshBuffer;
+	ID3D11Buffer* instanceBuffer = nullptr;
+
+	for (auto& instance : DX::g_instanceGroupsPicking)
 	{
-		if (++counter.x > 255)
-		{
-			counter.x = 0;
-			counter.y++;
-		}
-		if (counter.y > 255)
-		{
-			counter.y = 0;
-			counter.z++;
-		}
-		if (counter.z > 255)
-		{
-			exit(0);
-		}
-		//counter.x = 120;
-		DirectX::XMMATRIX mvp;
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-		RectangleShape* isRectangle = dynamic_cast<RectangleShape*>(s);
-		if (isRectangle && isRectangle->isHud())
-			mvp = DirectX::XMMatrixTranspose(s->getWorld() * m_HUDview);
-		else
-			mvp = DirectX::XMMatrixTranspose(s->getWorld() * vp);
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 
-		DirectX::XMStoreFloat4x4A(&pb.MVP, mvp);
-		pb.index = counter;
+
+		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
+
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
-		DX::g_deviceContext->Map(m_pickingBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &pb, sizeof(PICK_BUFFER));
-		DX::g_deviceContext->Unmap(m_pickingBuffer, 0);
-		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_pickingBuffer);
-
-		DX::g_deviceContext->VSSetShader(m_pickingVertexShader, nullptr, 0);
-		DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
-		DX::g_deviceContext->PSSetShader(m_pickingPixelShader, nullptr, 0);
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
 
-		ID3D11Buffer* v = s->getMesh()->getVertices();
-		DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-		DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVertices(), 0);
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
 	}
+
+
+
+
+	//PICK_BUFFER pb;
+	//DirectX::XMMATRIX vp = c->getViewMatrix() * m_projectionMatrix;
+	//DirectX::XMFLOAT4A counter = { 0.0f, 0.0f, 0.0f, 0.0f };
+	//pb.index = DirectX::XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+	//for (auto s : DX::g_pickingQueue)
+	//{
+	//	if (++counter.x > 255)
+	//	{
+	//		counter.x = 0;
+	//		counter.y++;
+	//	}
+	//	if (counter.y > 255)
+	//	{
+	//		counter.y = 0;
+	//		counter.z++;
+	//	}
+	//	if (counter.z > 255)
+	//	{
+	//		exit(0);
+	//	}
+	//	//counter.x = 120;
+	//	DirectX::XMMATRIX mvp;
+
+	//	RectangleShape* isRectangle = dynamic_cast<RectangleShape*>(s);
+	//	if (isRectangle && isRectangle->isHud())
+	//		mvp = DirectX::XMMatrixTranspose(s->getWorld() * m_HUDview);
+	//	else
+	//		mvp = DirectX::XMMatrixTranspose(s->getWorld() * vp);
+
+	//	DirectX::XMStoreFloat4x4A(&pb.MVP, mvp);
+	//	pb.index = counter;
+	//	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	//	DX::g_deviceContext->Map(m_pickingBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	//	memcpy(dataPtr.pData, &pb, sizeof(PICK_BUFFER));
+	//	DX::g_deviceContext->Unmap(m_pickingBuffer, 0);
+	//	DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_pickingBuffer);
+
+	//	DX::g_deviceContext->VSSetShader(m_pickingVertexShader, nullptr, 0);
+	//	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	//	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	//	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	//	DX::g_deviceContext->PSSetShader(m_pickingPixelShader, nullptr, 0);
+
+	//	UINT32 vertexSize = sizeof(VERTEX);
+	//	UINT offset = 0;
+
+	//	ID3D11Buffer* v = s->getMesh()->getVertices();
+	//	DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
+	//	DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVertices(), 0);
+	//}
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	//gDeviceContext->CopyResource(computeReadWriteBuffer, computeOutputBuffer);

@@ -132,12 +132,12 @@
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
@@ -164,7 +164,6 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\RoomPlacer.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />

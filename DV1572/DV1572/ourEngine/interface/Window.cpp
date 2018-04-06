@@ -25,6 +25,7 @@ ID3D11DomainShader* DX::g_standardDomainShader;
 std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroups;
 std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsTransparancy;
+std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsPicking;
 
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
@@ -226,7 +227,6 @@ void Window::_compileShaders()
 
 void Window::_initPickingShaders()
 {
-
 	ShaderCreator::CreateVertexShader(DX::g_device, m_pickingVertexShader,
 		L"ourEngine/Shaders/pickingVertexShader.hlsl", "main");
 
@@ -870,6 +870,7 @@ void Window::Clear()
 	DX::g_instanceGroups.clear();
 	DX::g_instanceGroupsHUD.clear();
 	DX::g_instanceGroupsTransparancy.clear();
+	DX::g_instanceGroupsPicking.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
@@ -896,7 +897,7 @@ void Window::Flush(Camera* c, Light& light)
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer);
+	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer);
 }
 
 void Window::Present()
