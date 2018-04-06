@@ -107,6 +107,16 @@ void Grid::Draw()
 
 	m_roomCtrl.Draw();
 }
+void Grid::PickTiles()
+{
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		for (int j = 0; j < m_sizeY; j++)
+		{
+			m_tiles[i][j]->quad.CheckPick();
+		}
+	}
+}
 void Grid::DrawString()
 {
 	

@@ -28,6 +28,9 @@ public:
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force);
 	void	Update(Camera * cam);
 	void	Draw();
+
+	void	PickTiles();
+
 	void	DrawString();
 
 	void	CreateWalls(Mesh * mesh = nullptr);

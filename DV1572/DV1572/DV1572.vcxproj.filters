@@ -62,6 +62,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\RoomPlacer.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

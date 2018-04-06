@@ -164,6 +164,7 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\RoomPlacer.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
