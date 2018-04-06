@@ -24,6 +24,26 @@ bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	return false;
 }
 
+bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
+{
+	//Kolla vilken sida det är för current room
+		//up
+			//kolla om de är brevid
+		//down
+			//kolla om de är brevid
+		//left
+			//kolla om de är brevid
+		//right
+			//kolla om de är brevid
+
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+
+	}
+
+	return false;
+}
+
 RoomCtrl::RoomCtrl()
 {
 
@@ -52,9 +72,9 @@ void RoomCtrl::setMesh(Mesh * mesh)
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force)
 {
 	Room * room = nullptr;
-	
-	if (_intersect(pos, size))
-		return;
+	if (!force)
+		if (_intersect(pos, size))
+			return;
 
 	switch (roomType)
 	{
