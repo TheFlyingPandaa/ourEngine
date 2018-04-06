@@ -9,6 +9,10 @@
 
 #include <iostream>
 #include <chrono>
+//extern "C" {
+//	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+//}
+
 
 #include "../../ourEngine/core/Audio/Audio.h"
 
@@ -124,8 +128,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			gameStates.top()->Draw();
 
 		Shape* picked = nullptr;
-		if (GetAsyncKeyState(VK_LBUTTON))		
-			picked = wnd.getPicked(cam);
+		picked = wnd.getPicked(cam);
 
 		if (picked)
 			pickingEvents.push(picked);

@@ -49,6 +49,7 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsPicking;
 
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);

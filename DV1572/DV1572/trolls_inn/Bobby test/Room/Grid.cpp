@@ -80,7 +80,7 @@ Tile ** Grid::getGrid() const
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
-	if (pos.x + size.x < m_sizeX && pos.y + size.y < m_sizeY) {
+	if (pos.x + size.x <= m_sizeX && pos.y + size.y <= m_sizeY) {
 
 		std::vector<std::vector<Tile*>> tiles(size.x);
 		for (int x = pos.x; x < size.x + pos.x; x++)
@@ -106,6 +106,16 @@ void Grid::Draw()
 	}
 
 	m_roomCtrl.Draw();
+}
+void Grid::PickTiles()
+{
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		for (int j = 0; j < m_sizeY; j++)
+		{
+			m_tiles[i][j]->quad.CheckPick();
+		}
+	}
 }
 void Grid::DrawString()
 {

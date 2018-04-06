@@ -16,7 +16,16 @@ private:
 
 	int previousKey;
 
-	virtual void _init() override;
+	bool m_firstPick;
+	bool m_lastPick;
+	Shape * m_firstPickedTile;
+	Shape * m_lastPickedTile;
+
+
+	virtual void	_init() override;
+	void			_checkCreationOfRoom();
+
+
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
 	~GameState();
