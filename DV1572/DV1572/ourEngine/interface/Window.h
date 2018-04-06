@@ -93,6 +93,8 @@ private:
 
 	DirectX::XMMATRIX m_HUDviewProj;
 
+	float tempp = 0;
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();

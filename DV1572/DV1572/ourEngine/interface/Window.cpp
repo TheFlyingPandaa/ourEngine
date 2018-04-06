@@ -530,28 +530,33 @@ void Window::_createDepthBuffer()
 
 void Window::_shadowPass(const Camera & cam, const Light& light)
 {
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->VSSetShader(m_shadowVertexShader, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
-	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_shadowPixelShader, nullptr, 0);
 
 	DX::g_deviceContext->OMSetRenderTargets(0,NULL,m_shadowDSV);
 	DX::g_deviceContext->ClearDepthStencilView(m_shadowDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
+	DirectX::XMVECTOR dir = DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
+	DirectX::XMVECTOR pos = -dir * 5;//DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
+	//DirectX::XMVECTOR u = DirectX::XMVector3Normalize(XMLoadFloat4(&light.getDir()));
+
 	//DirectX::XMMATRIX view = light.get
 
 	//DirectX::XMMATRIX viewProj = light.getViewProjMatrix();
-	DirectX::XMMATRIX viewProj = /*XMMatrixLookAtLH(
-		XMVectorSet(-100.0f, 0.0f, 10.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 2.0f, 0.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))*/
-		cam.getViewMatrix()
+	tempp += 0.01;
+	DirectX::XMMATRIX viewProj = XMMatrixLookAtLH(
+		XMVectorSet(0.0f, 5.0f, 0.1f, 1.0f),
+		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
+		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+		//am.getViewMatrix()
 		*
 		//m_projectionMatrix;
-		DirectX::XMMatrixOrthographicRH((float)m_width, (float)m_height, 0.1f, 200.0f);
+		DirectX::XMMatrixOrthographicLH((float)m_width * 0.005f, (float)m_height * 0.005f, 0.1f, 2000.0f);
 	//DirectX::XMMatrixOrthographicLH(160, 90, 0.1f, 200.0f);
 		//DirectX::XMMatrixPerspectiveFovLH(XMConvertToRadians(45), (float)m_width/(float)m_height, 0.1, 200);
 
