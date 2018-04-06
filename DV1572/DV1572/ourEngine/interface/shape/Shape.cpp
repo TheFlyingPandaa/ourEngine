@@ -199,6 +199,7 @@ void Shape::ApplyShaders()
 void Shape::CheckPick()
 {
 	DX::g_pickingQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_instanceGroupsPicking);
 }
 
 const DirectX::XMMATRIX & Shape::getWorld() const

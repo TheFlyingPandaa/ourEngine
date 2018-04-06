@@ -30,7 +30,6 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
@@ -43,6 +42,7 @@
     <ClCompile Include="ourEngine\core\Audio\SoundEffectInstance.cpp" />
     <ClCompile Include="ourEngine\core\Audio\WaveBank.cpp" />
     <ClCompile Include="ourEngine\core\Audio\WaveBankReader.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
