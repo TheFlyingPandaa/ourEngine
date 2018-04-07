@@ -51,7 +51,7 @@ Tile * Wall::getTile() const
 	return m_tile;
 }
 
-bool Wall::getDir(WallDirection dir) const
+bool Wall::getDir(Direction dir) const
 {
 	return m_wallDir[dir];
 }

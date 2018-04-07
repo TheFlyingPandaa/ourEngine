@@ -1,12 +1,6 @@
 #include "Grid.h"
 #include <math.h>
 
-bool Grid::_intersect(Room * room, bool close, Room ** otherRef, bool getRef)
-{	
-	//TODO:
-	return false;
-}
-
 
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
@@ -35,24 +29,24 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		{
 			for (int k = 0; k < 4; k++)
 			{
-				if (k == WallDirection::up) {
+				if (k == Direction::up) {
 					if (j + 1 < sizeY) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], static_cast<WallDirection>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], static_cast<Direction>(k));
 					}					
 				}
-				else if (k == WallDirection::down) {
+				else if (k == Direction::down) {
 					if (j - 1 > 0) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i][j - 1], static_cast<WallDirection>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j - 1], static_cast<Direction>(k));
 					}
 				}
-				else if (k == WallDirection::left) {
+				else if (k == Direction::left) {
 					if (i - 1 > 0) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j], static_cast<WallDirection>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j], static_cast<Direction>(k));
 					}
 				}
-				else if (k == WallDirection::right) {
+				else if (k == Direction::right) {
 					if (i + 1 < sizeX) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j], static_cast<WallDirection>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j], static_cast<Direction>(k));
 					}
 				}
 			}
@@ -80,7 +74,7 @@ Tile ** Grid::getGrid() const
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
-	if (pos.x + size.x <= m_sizeX && pos.y + size.y <= m_sizeY) {
+	if (pos.x + size.x < m_sizeX && pos.y + size.y < m_sizeY && pos.x >= 0 && pos.y >= 0) {
 
 		std::vector<std::vector<Tile*>> tiles(size.x);
 		for (int x = pos.x; x < size.x + pos.x; x++)

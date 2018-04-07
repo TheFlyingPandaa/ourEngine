@@ -63,19 +63,19 @@ void Room::Update(Camera * cam)
 
 		if (camPosition.x < m_posX)
 		{
-			cullWalls[WallDirection::left] = true;
+			cullWalls[Direction::left] = true;
 		}
 		else if (camPosition.x > m_posX + m_sizeX)
 		{
-			cullWalls[WallDirection::right] = true;
+			cullWalls[Direction::right] = true;
 		}
 		if (camPosition.y < m_posY)
 		{
-			cullWalls[WallDirection::down] = true;
+			cullWalls[Direction::down] = true;
 		}
 		else if (camPosition.y > m_posY + m_sizeY)
 		{
-			cullWalls[WallDirection::up] = true;
+			cullWalls[Direction::up] = true;
 		}
 
 		bool changeUp = false;
@@ -83,24 +83,24 @@ void Room::Update(Camera * cam)
 		bool changeRight = false;
 		bool changeLeft = false;
 
-		if (m_culledWalls[WallDirection::up] != cullWalls[WallDirection::up])
+		if (m_culledWalls[Direction::up] != cullWalls[Direction::up])
 		{
-			m_culledWalls[WallDirection::up] = cullWalls[WallDirection::up];
+			m_culledWalls[Direction::up] = cullWalls[Direction::up];
 			changeUp = true;
 		}
-		if (m_culledWalls[WallDirection::down] != cullWalls[WallDirection::down])
+		if (m_culledWalls[Direction::down] != cullWalls[Direction::down])
 		{
-			m_culledWalls[WallDirection::down] = cullWalls[WallDirection::down];
+			m_culledWalls[Direction::down] = cullWalls[Direction::down];
 			changeDown = true;
 		}
-		if (m_culledWalls[WallDirection::right] != cullWalls[WallDirection::right])
+		if (m_culledWalls[Direction::right] != cullWalls[Direction::right])
 		{
-			m_culledWalls[WallDirection::right] = cullWalls[WallDirection::right];
+			m_culledWalls[Direction::right] = cullWalls[Direction::right];
 			changeRight = true;
 		}
-		if (m_culledWalls[WallDirection::left] != cullWalls[WallDirection::left])
+		if (m_culledWalls[Direction::left] != cullWalls[Direction::left])
 		{
-			m_culledWalls[WallDirection::left] = cullWalls[WallDirection::left];
+			m_culledWalls[Direction::left] = cullWalls[Direction::left];
 			changeLeft = true;
 		}
 
@@ -111,7 +111,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeDown)
 				{
-					if (m_culledWalls[WallDirection::down])
+					if (m_culledWalls[Direction::down])
 						down[x]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						down[x]->setScale(1.0f, 1.0f, 1.0f);
@@ -121,7 +121,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeUp)
 				{
-					if (m_culledWalls[WallDirection::up])
+					if (m_culledWalls[Direction::up])
 						up[x]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						up[x]->setScale(1.0f, 1.0f, 1.0f);
@@ -135,7 +135,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeLeft)
 				{
-					if (m_culledWalls[WallDirection::left])
+					if (m_culledWalls[Direction::left])
 						left[y]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						left[y]->setScale(1.0f, 1.0f, 1.0f);
@@ -145,7 +145,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeRight)
 				{
-					if (m_culledWalls[WallDirection::right])
+					if (m_culledWalls[Direction::right])
 						right[y]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						right[y]->setScale(1.0f, 1.0f, 1.0f);
@@ -196,7 +196,7 @@ int Room::getSizeY() const
 	return m_sizeY;
 }
 
-void Room::setWalls(std::vector<Wall*> walls, WallDirection dir)
+void Room::setWalls(std::vector<Wall*> walls, Direction dir)
 {
 	switch (dir)
 	{
@@ -217,7 +217,7 @@ void Room::setWalls(std::vector<Wall*> walls, WallDirection dir)
 	}
 }
 
-void Room::addWall(Wall * wall, WallDirection dir)
+void Room::addWall(Wall * wall, Direction dir)
 {
 	switch (dir)
 	{
@@ -236,6 +236,11 @@ void Room::addWall(Wall * wall, WallDirection dir)
 	default:
 		break;
 	}
+}
+
+void Room::addAdjasentRoom(Room * room)
+{
+	adjasent.push_back(room);
 }
 
 void Room::move(int x, int y)
