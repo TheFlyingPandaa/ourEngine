@@ -15,7 +15,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	posX = 1;
 	posY = 1;
-	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(2, 2), RoomType::kitchen);
+	//grid->AddRoom(DirectX::XMINT2(4, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
 	//grid->AddRoom(DirectX::XMINT2(3, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
 
 	grid->CreateWalls(&m);
