@@ -57,6 +57,13 @@ bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 				return true;
 			}
 		}
+		else if (pos.x == mx || pos.x + size.x == x)
+		{
+			if (pos.y < my && pos.y + size.y > y)
+			{
+				return true;
+			}
+		}
 	}
 
 	return false;
