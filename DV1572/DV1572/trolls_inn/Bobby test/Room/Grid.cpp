@@ -171,6 +171,11 @@ void Grid::DrawString()
 	
 }
 
+RoomCtrl & Grid::getRoomCtrl()
+{
+	return m_roomCtrl;
+}
+
 void Grid::Update(Camera * cam) {
 	m_roomCtrl.Update(cam);
 }
