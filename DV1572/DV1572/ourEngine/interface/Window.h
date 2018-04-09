@@ -78,8 +78,11 @@ private:
 	ID3D11Buffer*			m_computeOutputBuffer;
 	ID3D11Buffer*			m_computeReadWriteBuffer;
 	ID3D11UnorderedAccessView* m_computeUAV;
-
 	ID3D11ComputeShader*	m_computeShader;
+
+	//HUD
+	ID3D11VertexShader*		m_hudVertexShader;
+	ID3D11PixelShader*		m_hudPixelShader;
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;

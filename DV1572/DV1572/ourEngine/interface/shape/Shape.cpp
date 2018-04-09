@@ -198,6 +198,17 @@ void Shape::ApplyShaders()
 
 }
 
+void Shape::ApplyMaterials()
+{
+	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
+	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
+	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+
+	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
+	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
+	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
+}
+
 void Shape::CheckPick()
 {
 	DX::g_pickingQueue.push_back(this);
@@ -217,6 +228,11 @@ DirectX::XMFLOAT4A Shape::getColor()
 void Shape::setColor(float r, float g, float b, float a)
 {
 	m_highLightColor = DirectX::XMFLOAT4A{ r,g,b,a };
+}
+
+void Shape::setColor(DirectX::XMFLOAT4A color)
+{
+	m_highLightColor = color;	//Fucking magnus wanted more functionality... erg erg passive argressive jocke :]
 }
 
 void Shape::Draw()
