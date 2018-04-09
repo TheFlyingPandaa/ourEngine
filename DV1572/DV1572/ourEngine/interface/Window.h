@@ -72,6 +72,8 @@ private:
 	ID3D11PixelShader*		m_pickingPixelShader;
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
+	ID3D11Buffer*			m_pickingOffsetBuffer;
+
 
 	//ComputeShader
 	ID3D11Buffer*			m_computeConstantBuffer;

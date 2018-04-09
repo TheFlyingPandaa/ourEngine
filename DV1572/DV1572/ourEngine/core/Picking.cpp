@@ -4,6 +4,13 @@
 #include "../interface/Input.h"
 #pragma comment (lib, "d3d11.lib")
 
+struct OFFSETBUFFER {
+	float temp;
+	float temp2;	//Padding
+	float temp3;
+	float temp4;
+};
+
 Picking::Picking()
 {
 }
@@ -54,7 +61,7 @@ void Picking::InitPickingTexture(const int width, const int height, const int sa
 	hr = 0;
 }
 
-Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer, ID3D11Buffer *& m_meshConstantBuffer)
+Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthStencilView*& m_depthStencilView, const DirectX::XMMATRIX m_projectionMatrix, DirectX::XMMATRIX m_HUDview, ID3D11Buffer*& m_pickingBuffer, ID3D11VertexShader*& m_pickingVertexShader, ID3D11PixelShader*& m_pickingPixelShader, ID3D11Texture2D*& TextureMap, ID3D11Texture2D*& m_pickingReadBuffer, ID3D11Buffer *& m_meshConstantBuffer, ID3D11Buffer* &m_pickingOffsetBuffer)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
@@ -76,8 +83,10 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 
 	MESH_BUFFER meshBuffer;
-	ID3D11Buffer* instanceBuffer = nullptr;
+	OFFSETBUFFER offsetBuffer;
 
+	ID3D11Buffer* instanceBuffer = nullptr;
+	int counter = 0;
 	for (auto& instance : DX::g_instanceGroupsPicking)
 	{
 		D3D11_BUFFER_DESC instBuffDesc;
@@ -100,6 +109,13 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+
+		offsetBuffer.temp = counter;
+
+		DX::g_deviceContext->Map(m_pickingOffsetBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &offsetBuffer, sizeof(OFFSETBUFFER));
+		DX::g_deviceContext->Unmap(m_pickingOffsetBuffer, 0);
+		DX::g_deviceContext->VSSetConstantBuffers(1, 1, &m_pickingOffsetBuffer);
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -125,6 +141,7 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		counter += instance.attribs.size();
 		instanceBuffer->Release();
 	}
 
