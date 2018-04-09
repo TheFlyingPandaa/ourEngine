@@ -92,7 +92,7 @@ namespace DX
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
 
-		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device, widecstr, &texture, &textureView);
+		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
 	}
 
 	static void CalculateTangents(std::vector<VERTEX> &model)
