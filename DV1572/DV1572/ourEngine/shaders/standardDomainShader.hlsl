@@ -10,6 +10,7 @@ struct DS_OUTPUT
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
+	float4 color : HIGHLIGHTCOLOR;
 
 	// TODO: change/add other stuff
 };
@@ -22,6 +23,7 @@ struct CONTROL_POINT_INPUT
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
+	float4 color : HIGHLIGHTCOLOR;
 
 };
 
@@ -57,6 +59,8 @@ DS_OUTPUT main(
 	float3 bt = normalize(cross(n, t)); //Might be other way around... lol
 	Output.TBN[1] = normalize(mul(float4(bt, 0), patch[0].world).xyz);
 	Output.TBN[2] = Output.normal;
+
+	Output.color = patch[0].color * domain.x + patch[1].color * domain.y + patch[2].color * domain.z;
 
 	return Output;
 }

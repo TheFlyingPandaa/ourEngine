@@ -53,6 +53,8 @@ Shape::Shape()
 	m_pos = { 0, 0, 0 };
 	m_rot = { 0,0,0 };
 	m_scl = XMFLOAT3{ 1,1,1 };
+
+	m_highLightColor = XMFLOAT4A{ 1.0f,1.0f,1.0f ,1.0f };
 	_buildMatrix();
 
 
@@ -205,6 +207,16 @@ void Shape::CheckPick()
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 
+}
+
+DirectX::XMFLOAT4A Shape::getColor()
+{
+	return m_highLightColor;
+}
+
+void Shape::setColor(float r, float g, float b, float a)
+{
+	m_highLightColor = DirectX::XMFLOAT4A{ r,g,b,a };
 }
 
 void Shape::Draw()

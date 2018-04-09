@@ -15,6 +15,8 @@ struct INPUT
 	float4 w2 : INSTANCEWORLDTWO;
 	float4 w3 : INSTANCEWORLDTHREE;
 	float4 w4 : INSTANCEWORLDFOUR;
+
+	float4 color : HIGHLIGHTCOLOR;
 };
 
 struct OUTPUT
@@ -24,6 +26,7 @@ struct OUTPUT
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
+	float4 color : HIGHLIGHTCOLOR;
 };
 
 
@@ -36,6 +39,6 @@ OUTPUT main(INPUT input)
 	o.tex = input.tex;
 	o.normal = input.normal;
 	o.tangent = input.tangent;
-
+	o.color = input.color;
 	return o;
 }
