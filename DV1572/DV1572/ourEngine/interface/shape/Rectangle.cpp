@@ -23,16 +23,16 @@ RectangleShape::~RectangleShape()
 {
 }
 
-void RectangleShape::setScreenPos(float x, float y)
+void RectangleShape::setScreenPos(float x, float y, float depth)
 {
-	DirectX::XMFLOAT2 pos(x, y);
+	DirectX::XMFLOAT3 pos(x, y, depth);
 
 	this->setScreenPos(pos);
 }
 
-void RectangleShape::setScreenPos(DirectX::XMFLOAT2 pos)
+void RectangleShape::setScreenPos(DirectX::XMFLOAT3 pos)
 {
-	DirectX::XMFLOAT3 start(-0.0736f, -0.0414f, 0.0f);
+	DirectX::XMFLOAT3 start(-0.0736f, -0.0414f, pos.z);
 	start.x += (pos.x / 8625.0f);
 	start.y += (pos.y / 8625.0f);
 
@@ -46,7 +46,7 @@ void RectangleShape::setScreenPos(DirectX::XMFLOAT2 pos)
 void RectangleShape::setWidth(float w)
 {
 	m_width = w;
-	this->setScale(w / 4500, m_height / 4500, 1.0f);
+	this->setScale(w / 4345, m_height / 4345, 1.0f);
 }
 
 float RectangleShape::getWidth() const
@@ -57,7 +57,7 @@ float RectangleShape::getWidth() const
 void RectangleShape::setHeight(float h)
 {
 	m_height = h;
-	this->setScale(m_width / 4500, h / 4500, 1.0f);
+	this->setScale(m_width / 4345, h / 4345, 1.0f);
 }
 
 float RectangleShape::getHeight() const

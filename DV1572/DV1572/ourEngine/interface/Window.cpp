@@ -266,6 +266,7 @@ void Window::_drawHUD()
 	//The hud has a special kind of view matrix.
 	//This allowes it to stick to the screen
 	DirectX::XMMATRIX viewProj = m_HUDviewProj;
+	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 
 	MESH_BUFFER meshBuffer;
 	ID3D11Buffer* instanceBuffer = nullptr;

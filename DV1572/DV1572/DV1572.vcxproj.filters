@@ -37,6 +37,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +68,7 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -74,6 +76,7 @@
   <ItemGroup>
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
