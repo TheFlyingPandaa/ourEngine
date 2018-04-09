@@ -7,6 +7,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_firstPick = false;
 	m_lastPick = false;
 	m_firstPickedTile = nullptr;
+	m_middlePickedTile = nullptr;
 	m_lastPickedTile = nullptr;
 
 	this->m_cam = cam;
@@ -120,6 +121,29 @@ void GameState::_checkCreationOfRoom()
 			m_firstPick = false;
 		}
 	}
+	else if (m_firstPick && m_firstPickedTile && Input::isMouseMiddlePressed())
+	{
+		this->grid->PickTiles();
+		
+		if (!p_pickingEvent->empty())
+		{
+			m_middlePickedTile = p_pickingEvent->top();
+			p_pickingEvent->pop();
+
+			DirectX::XMINT2 start(
+				static_cast<int>(m_firstPickedTile->getPosition().x + 0.5f),
+				static_cast<int>(m_firstPickedTile->getPosition().z + 0.5f)
+			);
+
+			DirectX::XMINT2 end(
+				static_cast<int>(m_middlePickedTile->getPosition().x + 0.5f),
+				static_cast<int>(m_middlePickedTile->getPosition().z + 0.5f)
+			);
+
+			this->grid->SetColor(start, end, XMFLOAT3(0.1,1,0.1));
+		}
+	}
+
 	if (m_lastPick && !m_lastPickedTile)
 	{
 		if (!p_pickingEvent->empty())
@@ -173,21 +197,30 @@ void GameState::_checkCreationOfRoom()
 				grid->CreateWalls();
 			}
 		}
+		/*m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);*/
 		m_firstPickedTile = m_lastPickedTile = nullptr;
+
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && m_firstPickedTile && !m_lastPickedTile)
 	{
+		/*m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);*/
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && !m_firstPickedTile && m_lastPickedTile)
 	{
+		/*m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);*/
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && !m_firstPickedTile && !m_firstPickedTile)
 	{
+		/*m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);*/
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
