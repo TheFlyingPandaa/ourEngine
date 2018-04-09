@@ -16,6 +16,9 @@
 //#pragma warning(disable : 4061 4265 4365 4571 4623 4625 4626 4628 4668 4710 4711 4746 4774 4820 4987 5026 5027 5031 5032 5039)
 
 #include "../../ourEngine/core/Audio/Audio.h"
+#include "../../ourEngine/core/Font/SpriteBatch.h"
+#include "../../ourEngine/core/Font/SpriteFont.h"
+#include "../../ourEngine/core/Dx.h"
 
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
@@ -86,6 +89,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	bool pressed = false;
 	bool play = false;
+
+	std::unique_ptr<DirectX::SpriteFont> m_font;
+	m_font = std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont");
+	DirectX::XMVECTOR m_fontPos = DirectX::XMVECTOR{1280/2,720/2,1,1};
+	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+	m_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
 
 	while (wnd.isOpen())
 	{
@@ -175,7 +184,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		
 		wnd.Flush(cam, light);
 
-		wnd.Present();
+		m_spriteBatch->Begin();
+
+		const wchar_t* output = L"Magnus Suger Kuk:D";
+
+		DirectX::XMVECTOR origin = m_font->MeasureString(output) / 2.f;
+
+		m_font->DrawString(m_spriteBatch.get(), output,
+			m_fontPos, Colors::White, 0.f, origin);
+
+		m_spriteBatch->End();
+
+  		wnd.Present();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{

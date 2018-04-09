@@ -37,6 +37,13 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
+    <ClCompile Include="ourEngine\core\Font\BinaryReader.cpp" />
+    <ClCompile Include="ourEngine\core\Font\CommonStates.cpp" />
+    <ClCompile Include="ourEngine\core\Font\DDSTextureLoader.cpp" />
+    <ClCompile Include="ourEngine\core\Font\GraphicsMemory.cpp" />
+    <ClCompile Include="ourEngine\core\Font\SpriteBatch.cpp" />
+    <ClCompile Include="ourEngine\core\Font\SpriteFont.cpp" />
+    <ClCompile Include="ourEngine\core\Font\VertexTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -65,6 +72,22 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
+    <ClInclude Include="ourEngine\core\Font\AlignedNew.h" />
+    <ClInclude Include="ourEngine\core\Font\BinaryReader.h" />
+    <ClInclude Include="ourEngine\core\Font\CommonStates.h" />
+    <ClInclude Include="ourEngine\core\Font\ConstantBuffer.h" />
+    <ClInclude Include="ourEngine\core\Font\dds.h" />
+    <ClInclude Include="ourEngine\core\Font\DDSTextureLoader.h" />
+    <ClInclude Include="ourEngine\core\Font\DemandCreate.h" />
+    <ClInclude Include="ourEngine\core\Font\DirectXHelpers.h" />
+    <ClInclude Include="ourEngine\core\Font\GraphicsMemory.h" />
+    <ClInclude Include="ourEngine\core\Font\LoaderHelpers.h" />
+    <ClInclude Include="ourEngine\core\Font\pch.h" />
+    <ClInclude Include="ourEngine\core\Font\PlatformHelpers.h" />
+    <ClInclude Include="ourEngine\core\Font\SharedResourcePool.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
+    <ClInclude Include="ourEngine\core\Font\VertexTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -76,5 +99,9 @@
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
     <Library Include="ourEngine\core\Audio\AudioLibxRL.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ourEngine\core\Font\Shaders\Compiled\SpriteEffect_SpritePixelShader.inc" />
+    <None Include="ourEngine\core\Font\Shaders\Compiled\SpriteEffect_SpriteVertexShader.inc" />
   </ItemGroup>
 </Project>
