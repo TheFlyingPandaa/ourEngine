@@ -18,9 +18,13 @@ private:
 
 	bool m_firstPick;
 	bool m_lastPick;
+	bool m_isPlaceable;
 	Shape * m_firstPickedTile;
 	Shape * m_middlePickedTile;
 	Shape * m_lastPickedTile;
+
+	DirectX::XMINT2 m_prevStart;
+	DirectX::XMINT2 m_prevEnd;
 
 
 	virtual void	_init() override;

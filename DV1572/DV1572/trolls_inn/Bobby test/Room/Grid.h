@@ -30,7 +30,9 @@ public:
 	void	Draw();
 
 	void	PickTiles();
-	void	SetColor(DirectX::XMINT2 start, DirectX::XMINT2 end, DirectX::XMFLOAT3 color);
+	bool	CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end);
+
+	void	ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end);
 
 	void	DrawString();
 

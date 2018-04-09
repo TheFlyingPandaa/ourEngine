@@ -40,11 +40,13 @@ bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	return false;
 }
 
-bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
+bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
 	Room* r;
 	int x, mx;
 	int y, my;
+
+	bool isPlaceable = false;
 
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
@@ -54,24 +56,26 @@ bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 		y = r->getY();
 		my = r->getY() + r->getSizeY();
 
-		if (pos.y == my || pos.y + size.y == y)
-		{
-			
-			if (pos.x < mx && pos.x + size.x > x)
-			{
-				return true;
-			}
+		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
+			pos.x + size.x > m_rooms[i]->getX() &&
+			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY() &&
+			pos.y + size.y > m_rooms[i]->getY())
+			return false;
+		
+		if ((pos.y == my || pos.y + size.y == y))
+		{	
+			if ((pos.x < mx && pos.x + size.x > x))
+				isPlaceable = true;			
 		}
-		else if (pos.x == mx || pos.x + size.x == x)
+		if ((pos.x == mx || pos.x + size.x == x))
 		{
-			if (pos.y < my && pos.y + size.y > y)
-			{
-				return true;
-			}
+			if ((pos.y < my && pos.y + size.y > y))
+				isPlaceable = true;
 		}
+		
 	}
 
-	return false;
+	return isPlaceable;
 }
 
 RoomCtrl::RoomCtrl()
@@ -103,10 +107,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 {
 	Room * room = nullptr;
 	if (!force)
-	{
-		if (_intersect(pos, size))
-			return;
-		if (!_isPlaceable(pos, size))
+	{		
+		if (!isPlaceable(pos, size))
 			return;
 	}
 	switch (roomType)

@@ -107,13 +107,16 @@ void Grid::PickTiles()
 	{
 		for (int j = 0; j < m_sizeY; j++)
 		{
+			
+			m_tiles[i][j]->quad.setColor(1.0f,1.0f,1.0f);
 			m_tiles[i][j]->quad.CheckPick();
-			m_tiles[i][j]->quad.setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }
-void Grid::SetColor(DirectX::XMINT2 start, DirectX::XMINT2 end, DirectX::XMFLOAT3 color)
+bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 {
+	DirectX::XMFLOAT3 color(0.1f, 1.0f, .1f);
+		
 	if (end.x < start.x)
 	{
 		std::swap(end.x, start.x);
@@ -122,13 +125,43 @@ void Grid::SetColor(DirectX::XMINT2 start, DirectX::XMINT2 end, DirectX::XMFLOAT
 	{
 		std::swap(end.y, start.y);
 	}
+	
+	DirectX::XMINT2 roomOffset = end;
 
+
+	roomOffset.x -= start.x - 1;
+	roomOffset.y -= start.y - 1;
+	bool placeable = m_roomCtrl.isPlaceable(start, roomOffset);
+	if (!placeable)
+		color = XMFLOAT3(1.0f, 0.3f, 0.3f);
+
+	
 
 	for (int i = start.x; i < end.x + 1; i++)
 	{
 		for (int j = start.y; j < end.y + 1; j++)
 		{
 			m_tiles[i][j]->quad.setColor(color.x, color.y, color.z);
+		}
+	}
+	return placeable;
+}
+
+void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
+{
+	if (end.x < pos.x)
+	{
+		std::swap(end.x, pos.x);
+	}
+	if (end.y < pos.y)
+	{
+		std::swap(end.y, pos.y);
+	}
+	for (int i = pos.x; i < end.x + 1; i++)
+	{
+		for (int j = pos.y; j < end.y + 1; j++)
+		{
+			m_tiles[i][j]->quad.setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }

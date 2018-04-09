@@ -172,12 +172,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			
 		}
 		HUD.CheckPick();
-		if (GetAsyncKeyState(VK_LBUTTON))
-			picked = wnd.getPicked(cam);
-		if (picked) {
-			std::cout << "LOLOOLOL/n";
-			//picked->setColor(0.2f, 0.2f, 0.2f);
-		}
 		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);
@@ -186,7 +180,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("/rFPS: %d TICK: %d", fpsCounter, updates);
+			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

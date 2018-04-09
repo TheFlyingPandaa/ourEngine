@@ -9,6 +9,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_firstPickedTile = nullptr;
 	m_middlePickedTile = nullptr;
 	m_lastPickedTile = nullptr;
+	m_isPlaceable = false;
+
+	m_prevStart	  = XMINT2(0,0);
+	m_prevEnd	  = XMINT2(0,0);
 
 	this->m_cam = cam;
 	this->_init();
@@ -112,6 +116,7 @@ void GameState::_init()
 
 void GameState::_checkCreationOfRoom()
 {
+	
 	if (m_firstPick && !m_firstPickedTile)
 	{
 		if (!p_pickingEvent->empty())
@@ -142,8 +147,12 @@ void GameState::_checkCreationOfRoom()
 				static_cast<int>(m_middlePickedTile->getPosition().x + 0.5f),
 				static_cast<int>(m_middlePickedTile->getPosition().z + 0.5f)
 			);
-
-			this->grid->SetColor(start, end, XMFLOAT3(0.1,1,0.1));
+			
+			//this->grid->ResetTileColor(XMINT2(0,0), m_prevEnd);
+			m_prevEnd = end;
+			m_prevStart = start;
+			m_isPlaceable = this->grid->CheckAndMarkTiles(start, end);
+			
 		}
 	}
 
@@ -163,16 +172,18 @@ void GameState::_checkCreationOfRoom()
 	if (Input::isMouseMiddlePressed() && !m_firstPick)
 	{
 		m_firstPick = true;
+	
 		this->grid->PickTiles();
 	}
 	else if (!Input::isMouseMiddlePressed() && m_firstPick && !m_lastPick && m_firstPickedTile)
 	{
 		m_lastPick = true;
+
 		this->grid->PickTiles();
 	}
 	else if (m_firstPick && m_lastPick)
 	{
-		if (m_firstPickedTile && m_lastPickedTile)
+		if (m_firstPickedTile && m_lastPickedTile  && m_isPlaceable)
 		{
 			//TODO : CREATE ROOM
 			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
@@ -193,37 +204,35 @@ void GameState::_checkCreationOfRoom()
 				roomOffset.x -= roomPos.x - 1;
 				roomOffset.y -= roomPos.y - 1;
 
-				std::cout << "POS: " << roomPos.x << ":" << roomPos.y << std::endl;
-				std::cout << "OFF: " << roomOffset.x << ":" << roomOffset.y << std::endl;
-
-				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen);
+				
+				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
 				grid->CreateWalls();
 			}
 		}
-		/*m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);*/
+		m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && m_firstPickedTile && !m_lastPickedTile)
 	{
-		/*m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);*/
+		m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && !m_firstPickedTile && m_lastPickedTile)
 	{
-		/*m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);*/
+		m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
 	else if (m_firstPick && m_lastPick && !m_firstPickedTile && !m_firstPickedTile)
 	{
-		/*m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);*/
+		m_firstPickedTile->setColor(1, 1, 1);
+		m_lastPickedTile->setColor(1, 1, 1);
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
