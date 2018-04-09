@@ -9,7 +9,26 @@ using namespace DirectX;
 
 const int roomCount = 5;
 
+
+
 int connections[roomCount][roomCount] = { 0 };
+
+struct Node
+{
+	XMFLOAT2 tile;
+	Node* parent;
+	float fCost, gCost, hCost;
+	Node(XMFLOAT2 tile, Node* parent, float gCost, float hCost)
+		:tile(tile), parent(parent), gCost(gCost), hCost(hCost) {}
+	bool operator>(const Node& other) const
+	{
+		return fCost > other.fCost;
+	}
+	bool operator==(const XMFLOAT2& other) const
+	{
+		return tile.x == other.x && tile.y == other.y;
+	}
+};
 
 
 enum RoomType
@@ -149,6 +168,64 @@ void dijkstra(int graph[roomCount][roomCount], int src)
 
 	// print the constructed distance array
 	printSolution(dist, parent, src);
+}
+
+float getDistance(XMFLOAT2 tile, XMFLOAT2 goal)
+{
+	XMVECTOR xmTile = XMLoadFloat2(&tile);
+	XMVECTOR xmGoal = XMLoadFloat2(&goal);
+	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
+}
+
+std::vector<Node*> findPath(XMFLOAT2 start, XMFLOAT2 goal)
+{
+	std::vector<Node*> openList;
+	std::vector<Node*> closedList;
+	Node* current = new Node(start, nullptr, 0, getDistance(start, goal));
+	openList.push_back(current);
+	while (openList.size() > 0)
+	{
+		std::sort(openList.begin(), openList.end(), [](const Node& n1, const Node& n2) -> bool
+		{ return n1 > n2; }
+		);
+
+		current = openList.at(0);
+
+		if (*current == goal)
+		{
+			std::vector<Node*> path;
+			while (current->parent != nullptr)
+			{
+				path.push_back(current);
+				current = current->parent;
+			}
+			// Memory clear
+			// openlist && closedList
+			return path;
+		}
+		openList.erase(openList.begin()); // Remove first entry
+		closedList.push_back(current);		// add the entry to the closed list
+
+		for (int i = 0; i < 9; i++) {
+			if (i == 4) continue;
+			int x = current->tile.x;
+			int y = current->tile.y;
+			int xi = (i % 3) - 1;
+			int yi = (i / 3) - 1;
+			Node* at = getTile(x + xi, y + yi);
+			if (at == null) continue;
+			//if (at.solid()) continue; Add if not traversable
+			XMFLOAT2 a;
+			a.x = x + xi;
+			a.y = y + yi;
+			double gCost = current->gCost + (getDistance(current->tile, a) == 1 ? 1 : 0.95);
+			double hCost = getDistance(a, goal);
+			Node node = new Node(a, current, gCost, hCost);
+			if (vecInList(closedList, a) && gCost >= node.gCost) continue;
+			if (!vecInList(openList, a) || gCost < node.gCost) openList.add(node);
+		}
+
+	}
 }
 
 int getEntrance()
