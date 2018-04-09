@@ -11,6 +11,16 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_lastPickedTile = nullptr;
 	m_isPlaceable = false;
 
+	box.LoadModel("trolls_inn/Resources/box.obj");
+	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
+
+	c.setModel(&box);
+	c.setPosition(0.5, 0.5);
+	c.setFloor(1);
+
+
+
 	m_prevStart	  = XMINT2(0,0);
 	m_prevEnd	  = XMINT2(0,0);
 
@@ -46,6 +56,28 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	_checkCreationOfRoom();
+	c.Update();
+
+	if (Input::isKeyPressed('W') && !move)
+		c.Move(Character::WalkDirection::UP);
+	else if (Input::isKeyPressed('S') && !move)
+		c.Move(Character::WalkDirection::DOWN);
+	else if (Input::isKeyPressed('D') && !move)
+		c.Move(Character::WalkDirection::RIGHT);
+	else if (Input::isKeyPressed('A') && !move)
+		c.Move(Character::WalkDirection::LEFT);
+
+	if (Input::isKeyPressed('W') || Input::isKeyPressed('A') ||
+		Input::isKeyPressed('S') || Input::isKeyPressed('D'))
+	{
+		move = true;
+	}
+	else
+	{
+		move = false;
+	}
+
+
 
 	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{
@@ -101,6 +133,7 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
+	c.Draw();
 	//this->grid2->Draw();
 }
 

@@ -171,7 +171,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 			
 		}
-		HUD.CheckPick();
 		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);

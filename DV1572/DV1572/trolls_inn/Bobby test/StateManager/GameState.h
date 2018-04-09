@@ -2,6 +2,7 @@
 #include "../Room/Grid.h"
 #include "State.h"
 #include "MainMenu.h"
+#include "../Character.h"
 
 
 class GameState : public State {
@@ -25,6 +26,11 @@ private:
 
 	DirectX::XMINT2 m_prevStart;
 	DirectX::XMINT2 m_prevEnd;
+
+	//TEST
+	Mesh box;
+	Character c;
+	bool move = false;
 
 
 	virtual void	_init() override;
