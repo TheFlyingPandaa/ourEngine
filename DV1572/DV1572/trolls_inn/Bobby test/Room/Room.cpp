@@ -6,7 +6,18 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
+	
+	
 
+	for (unsigned short x = 0; x < m_tiles.size(); x++)
+	{
+		for (unsigned short y = 0; y < m_tiles[x].size(); y++)
+		{
+			//8D
+			//To scale
+			m_tiles[x][y]->setMesh(m);
+		}
+	}
 	//TODO: Dont forget to send the tiles you lil cunt :D
 }
 
@@ -47,6 +58,19 @@ Tile * Room::getTiles(int x, int y) const
 		return m_tiles[x][y];
 	else
 		return nullptr;
+}
+
+void Room::setTile(Mesh * mesh)
+{
+	for (int x = 0; x < m_tiles.size(); x++)
+	{
+		for (int y = 0; y < m_tiles[x].size(); y++)
+		{
+			m_tiles[x][y]->setMesh(mesh);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+		}
+	}
 }
 
 

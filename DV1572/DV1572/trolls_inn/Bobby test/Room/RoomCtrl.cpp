@@ -2,6 +2,11 @@
 
 
 
+void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
+{
+	m_tileMesh[roomType] = mesh;
+}
+
 bool RoomCtrl::_intersect(Room * room)
 {
 	for (size_t i = 0; i < m_rooms.size(); i++)
@@ -114,7 +119,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);		
+		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);	
+		room->setTile(m_tileMesh[0]);
 		break;
 	default:
 		break;

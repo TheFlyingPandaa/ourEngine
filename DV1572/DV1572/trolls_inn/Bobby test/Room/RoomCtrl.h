@@ -5,8 +5,11 @@
 #include "Structure.h"
 #include "Kitchen.h"
 
+
+const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
-	kitchen
+	kitchen,
+	bedroom
 };
 
 const float WALLOFFSET = 0.5f;
@@ -19,10 +22,14 @@ private:
 	
 
 	Mesh*				m_wall;
+	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
+	
 public:
 	RoomCtrl();
 	~RoomCtrl();
 
+	
+	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	bool				_intersect(Room * room);
 	bool				_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	bool				isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);

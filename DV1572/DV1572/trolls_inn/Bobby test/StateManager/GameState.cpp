@@ -27,6 +27,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 	this->_init();
 	grid = new Grid(0, 0, 16, 16, &rect);	
+	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	
@@ -139,9 +140,12 @@ void GameState::Draw()
 
 void GameState::_init()
 {
+	kitchenTile.MakeRectangle();
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	kitchenTile.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	rect.MakeRectangle();
 	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	rect.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
+	rect.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");

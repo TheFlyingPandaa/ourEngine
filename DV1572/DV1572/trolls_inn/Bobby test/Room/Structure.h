@@ -47,7 +47,7 @@ public:
 		
 		quad.setMesh(mesh);
 		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
-		quad.Rotate(90.0f, 0.0f, 0.0f);		
+		quad.setRotation(90.0f, 0.0f, 0.0f);		
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
 	void	setRoom(Room * room);
@@ -67,6 +67,7 @@ public:
 	bool	getWallSpotPopulated(Direction dir) const;
 
 	Object3D&	getQuad();
+	void	setMesh(Mesh * mesh);
 private:
 	int		m_posY;
 	int		m_posX;
@@ -76,6 +77,7 @@ private:
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
 	Room *	m_room = nullptr;
+
 	Tile*	adjacent[4] = { nullptr };
 	Wall*	m_w[4] = { nullptr };
 	
