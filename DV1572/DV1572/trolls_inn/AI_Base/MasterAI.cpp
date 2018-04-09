@@ -40,6 +40,7 @@ void MasterAI::update()
 			// Customer wants path to Action area
 
 		}
+
 		loopCounter++;
 	}
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
@@ -53,9 +54,10 @@ void MasterAI::update()
 	{
 		// Customer wants path to exit
 
-		// Send review to inn
-		if (true) // if customer reached end of path
-			this->inn.customerReview(leavingCustomer.getAttributes());
+		// Send review to inn if customer reached end of path
+		//this->inn.customerReview(leavingCustomer.getAttributes());
+
+		loopCounter++;
 	}
 	
 	
