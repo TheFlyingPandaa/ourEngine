@@ -67,6 +67,7 @@ public:
 	bool	getWallSpotPopulated(Direction dir) const;
 
 	Object3D&	getQuad();
+	void	setMesh(Mesh * mesh);
 private:
 	int		m_posY;
 	int		m_posX;
@@ -76,7 +77,6 @@ private:
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
 	Room *	m_room = nullptr;
-	void	setMesh(Mesh * mesh);
 
 	Tile*	adjacent[4] = { nullptr };
 	Wall*	m_w[4] = { nullptr };
