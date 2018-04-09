@@ -1,6 +1,7 @@
 #pragma once
 #include "Attributes.h"
 #include "Economy.h"
+#include <queue>
 
 enum Race
 {
@@ -17,12 +18,22 @@ enum Action
 	SleepAction
 };
 
+enum CustomerState
+{
+	Idle,
+	Walking,
+	Drinking,
+	Eating,
+	Sleeping
+};
+
 class Customer
 {
 private:
 	Attributes stats;
 	Economy economy;
 	Race race;
+	std::queue<CustomerState> stateQueue;
 	int posX, posY;
 
 	int hungry;
@@ -54,11 +65,14 @@ public:
 	int getHungry() const;
 	int getTired() const;
 	int getThirsty() const;
+	CustomerState getCustomerState() const;
+	void getNextCustomerState();
 	bool getLeavingInn() const;
 
 	void setHungry(int value);
 	void setTired(int value);
 	void setThirsty(int value);
+	void setCustomerState(CustomerState newState);
 	void setLeavingInn(bool isLeaving);
 
 	void move(int x, int y);

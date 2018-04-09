@@ -17,6 +17,8 @@ void MasterAI::update()
 	std::vector<int> leavingCustomersIDs;
 	int loopCounter = 0;
 
+	// iterate through customers
+	// calculate what actions customers should take
 	for (auto customer : this->customers)
 	{
 		desiredAction = customer.getAction();
@@ -32,7 +34,7 @@ void MasterAI::update()
 		if (customer.getEconomy().getGold() < price)
 		{
 			// Customer leaves inn
-			// Bool or new array with leaving customers?
+			// Save id for leaving customers
 			leavingCustomersIDs.push_back(loopCounter);
 		}
 		else
@@ -48,14 +50,19 @@ void MasterAI::update()
 		this->leavingCustomers.push_back(this->customers[leavingCustomersIDs[i]]);
 		this->customers.erase(this->customers.begin() + leavingCustomersIDs[i]);
 	}
-	loopCounter = 0;
 	
+	std::vector<int> goneCustomers;
+	loopCounter = 0;
+
+	// iterate through leaving customers
 	for (auto leavingCustomer : this->leavingCustomers)
 	{
 		// Customer wants path to exit
 
 		// Send review to inn if customer reached end of path
 		//this->inn.customerReview(leavingCustomer.getAttributes());
+
+		// if customer sent review then delete
 
 		loopCounter++;
 	}

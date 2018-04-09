@@ -8,6 +8,7 @@ Customer::Customer(Race race, int gold)
 {
 	this->race = race;
 	this->economy = Economy(gold);
+	this->setCustomerState(Walking);
 	this->leavingInn = false;
 }
 
@@ -107,6 +108,16 @@ int Customer::getThirsty() const
 	return this->thirsty;
 }
 
+CustomerState Customer::getCustomerState() const
+{
+	return this->stateQueue.front();
+}
+
+void Customer::getNextCustomerState()
+{
+	this->stateQueue.pop();
+}
+
 bool Customer::getLeavingInn() const
 {
 	return this->leavingInn;
@@ -125,6 +136,11 @@ void Customer::setTired(int value)
 void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
+}
+
+void Customer::setCustomerState(CustomerState newState)
+{
+	this->stateQueue.push(newState);
 }
 
 void Customer::setLeavingInn(bool isLeaving)
