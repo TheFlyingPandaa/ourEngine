@@ -60,6 +60,8 @@ public:
 	virtual std::string toString() const = 0;
 
 	void ApplyShaders();
+	void ApplyMaterials();
+
 	void CheckPick();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);

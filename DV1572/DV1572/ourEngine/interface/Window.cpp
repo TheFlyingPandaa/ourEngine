@@ -222,6 +222,12 @@ void Window::_compileShaders()
 	ShaderCreator::CreateComputeShader(DX::g_device, m_computeShader,
 		L"ourEngine/shaders/testComputeShader.hlsl", "main");
 
+	//HUD Shader
+	ShaderCreator::CreateVertexShader(DX::g_device, m_hudVertexShader,
+		L"ourEngine/Shaders/hudVertexShader.hlsl", "main");
+	ShaderCreator::CreatePixelShader(DX::g_device, m_hudPixelShader,
+		L"ourEngine/shaders/hudPixelShader.hlsl", "main");
+
 
 	_initPickingShaders();
 	_initTessellationShaders();
@@ -255,6 +261,15 @@ void Window::_drawHUD()
 	MESH_BUFFER meshBuffer;
 	ID3D11Buffer* instanceBuffer = nullptr;
 
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->VSSetShader(m_hudVertexShader, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_hudPixelShader, nullptr, 0);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+
 	for (auto& instance : DX::g_instanceGroupsHUD)
 	{
 		D3D11_BUFFER_DESC instBuffDesc;
@@ -276,9 +291,9 @@ void Window::_drawHUD()
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
-		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		instance.shape->ApplyShaders();
+		instance.shape->ApplyMaterials();
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -890,12 +905,13 @@ void Window::Clear()
 void Window::Flush(Camera* c, Light& light)
 {
 	//ReportLiveObjects();
+	
 	_prepareGeometryPass();
-	_drawHUD();
 	_geometryPass(*c);
 	_clearTargets();
 	_lightPass(light,*c);
 	_transparencyPass(*c);
+	_drawHUD();
 	_runComputeShader();
 }
 
