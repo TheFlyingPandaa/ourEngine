@@ -19,6 +19,7 @@ private:
 	bool m_firstPick;
 	bool m_lastPick;
 	Shape * m_firstPickedTile;
+	Shape * m_middlePickedTile;
 	Shape * m_lastPickedTile;
 
 

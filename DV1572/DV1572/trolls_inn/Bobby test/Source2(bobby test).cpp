@@ -172,7 +172,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			picked = wnd.getPicked(cam);
 		if (picked) {
 			std::cout << "LOLOOLOL/n";
-			picked->setColor(0.2f, 0.2f, 0.2f);
+			//picked->setColor(0.2f, 0.2f, 0.2f);
 		}
 		HUD.DrawAsHud();
 		

@@ -114,9 +114,31 @@ void Grid::PickTiles()
 		for (int j = 0; j < m_sizeY; j++)
 		{
 			m_tiles[i][j]->quad.CheckPick();
+			m_tiles[i][j]->quad.setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }
+void Grid::SetColor(DirectX::XMINT2 start, DirectX::XMINT2 end, DirectX::XMFLOAT3 color)
+{
+	if (end.x < start.x)
+	{
+		std::swap(end.x, start.x);
+	}
+	if (end.y < start.y)
+	{
+		std::swap(end.y, start.y);
+	}
+
+
+	for (int i = start.x; i < end.x + 1; i++)
+	{
+		for (int j = start.y; j < end.y + 1; j++)
+		{
+			m_tiles[i][j]->quad.setColor(color.x, color.y, color.z);
+		}
+	}
+}
+
 void Grid::DrawString()
 {
 	

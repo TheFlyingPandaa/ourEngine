@@ -30,6 +30,7 @@ public:
 	void	Draw();
 
 	void	PickTiles();
+	void	SetColor(DirectX::XMINT2 start, DirectX::XMINT2 end, DirectX::XMFLOAT3 color);
 
 	void	DrawString();
 
