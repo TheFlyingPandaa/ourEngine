@@ -39,9 +39,12 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 
 		}
 	}
+
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
 	INSTANCE_ATTRIB attribDesc;
 	
-		
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
 	
@@ -62,12 +65,14 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w3 = rows[2];
 	attribDesc.w4 = rows[3];
 
-	attribDesc.highLightColor = shape->getColor();
+	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 
 	
 	// Unique Mesh
 	if (existingId == -1)
 	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
 		INSTANCE_GROUP newGroup;
 		newGroup.attribs.push_back(attribDesc);
 		newGroup.shape = shape;
@@ -75,6 +80,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	}
 	else
 	{
+		//If the mesh allready exists we just push it into a exsiting queue
 		queue[existingId].attribs.push_back(attribDesc);
 	}
 	
@@ -142,11 +148,11 @@ HRESULT Window::_initDirect3DContext()
 	scd.BufferCount = 1;                                    // one back buffer
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	scd.OutputWindow = m_hwnd;                           // the window to be used
-	scd.SampleDesc.Count = m_sampleCount;                               // how many multisamples
+	scd.OutputWindow = m_hwnd;								// the window to be used
+	scd.SampleDesc.Count = m_sampleCount;                   // how many multisamples
 	scd.Windowed = !m_fullscreen;							// windowed/full-screen mode
 
-						   // create a device, device context and swap chain using the information in the scd struct
+	// create a device, device context and swap chain using the information in the scd struct
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -167,8 +173,9 @@ HRESULT Window::_initDirect3DContext()
 		m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 		// use the back buffer address to create the render target
 		DX::g_device->CreateRenderTargetView(pBackBuffer, NULL, &m_backBufferRTV);
+		//we are creating the standard depth buffer here.
 		_createDepthBuffer();
-		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);	//As a standard we set the rendertarget. But it will be changed in the prepareGeoPass
 		pBackBuffer->Release();
 	}
 	return hr;
@@ -199,7 +206,7 @@ void Window::_compileShaders()
 		{ "INSTANCEWORLDTWO", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDTHREE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-
+		//This is the attribute that allows the color change without constant buffer
 		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
@@ -256,11 +263,14 @@ void Window::_initTessellationShaders()
 
 void Window::_drawHUD()
 {
+	//The hud has a special kind of view matrix.
+	//This allowes it to stick to the screen
 	DirectX::XMMATRIX viewProj = m_HUDviewProj;
 
 	MESH_BUFFER meshBuffer;
 	ID3D11Buffer* instanceBuffer = nullptr;
 
+	//We change the vertexShaders and so on here, this is done because don't want to change rectangle.
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->VSSetShader(m_hudVertexShader, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -270,7 +280,7 @@ void Window::_drawHUD()
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
-	for (auto& instance : DX::g_instanceGroupsHUD)
+	for (auto& instance : DX::g_instanceGroupsHUD)	//Every instance has it's own queue
 	{
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
@@ -282,18 +292,20 @@ void Window::_drawHUD()
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+		//We copy the data into the attribute part of the layout.
+		//This is what makes instancing special
 
+		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);	//Grabing the viewMatrix
+		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);				
 
-		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
-
+		//Sending the viewProj matrix in to a constant buffer, this is to get the positions in the end.
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		instance.shape->ApplyMaterials();
+		instance.shape->ApplyMaterials();	//Applymaterials won't change the shaders, it will only copy the textures and whatever to the gpu
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -311,7 +323,6 @@ void Window::_drawHUD()
 		offsets[1] = 0;
 
 
-
 		Mesh* mesh = instance.shape->getMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
@@ -325,6 +336,13 @@ void Window::_drawHUD()
 
 void Window::_initComputeShader()
 {
+	//What makes compute shaders wierd is the buffer
+	//To make it work we need a standard constantBuffer to get the viewmatrix or whatever.
+	//But to get the output we need to create 3 things
+	//1 buffer that is conected to the UAV so we can ge the data out of the gpu
+	//and then the a buffer to copy from the UAV buffer to a buffer that we can read in the CPU. it's fucking retarded.
+	//Nvida pls fix getData();
+
 	HRESULT hr;
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -388,6 +406,10 @@ void Window::_initComputeShader()
 }
 
 void Window::_runComputeShader() {
+	//The computeShader works like every other thingy. 
+	//You set the assinged shader
+	//Then run it. 
+	//then the retarded thing where we get the output 
 	DX::g_deviceContext->CSSetShader(m_computeShader, NULL, 0);
 
 	//D3D11_MAPPED_SUBRESOURCE dataPtr;
@@ -404,9 +426,9 @@ void Window::_runComputeShader() {
 	DX::g_deviceContext->CSSetConstantBuffers(0, 1, &m_computeConstantBuffer);
 	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, &m_computeUAV, NULL);
 
-	DX::g_deviceContext->Dispatch(1, 1, 1);
+	DX::g_deviceContext->Dispatch(1, 1, 1);	//This is where we run it. by changing the number we can get more groupes
 
-	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };	//NUll everything to please directx
 	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
 }
@@ -519,6 +541,8 @@ void Window::_initGBuffer()
 	sDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	sDesc.Texture2D.MipLevels = 1;
 
+	//The GBuffer Has 3 elements. A texture that we can write our output to, a rendertarget that has the texture maped to it
+	//And then a shaderResourceView to be able to access it at a later date
 	for (auto &g : m_gbuffer)
 	{
 		DX::g_device->CreateTexture2D(&tDesc, nullptr, &g.TextureMap);
@@ -534,10 +558,9 @@ void Window::_prepareGeometryPass()
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);*/
 
+	//The patchlist is used for tessellation, the tessellator takes patches not points
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
-
-	
 
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
 
@@ -551,8 +574,8 @@ void Window::_prepareGeometryPass()
 void Window::_geometryPass(const Camera &cam)
 {
 
-	DirectX::XMMATRIX view = cam.getViewMatrix();
-	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
+	DirectX::XMMATRIX view = cam.getViewMatrix();			//Getting the view matrix from the camera.
+	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;	//The smashing it with projection
 
 	MESH_BUFFER meshBuffer;
 	
@@ -571,7 +594,8 @@ void Window::_geometryPass(const Camera &cam)
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
-
+		//We copy the data into the attribute part of the layout.
+		//This is what makes instancing special
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
@@ -582,7 +606,7 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		instance.shape->ApplyShaders();
+		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;

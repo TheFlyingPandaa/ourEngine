@@ -69,6 +69,7 @@ public:
 	
 	DirectX::XMFLOAT4A getColor();
 	void setColor(float r, float g, float b, float a = 1);
+	void setColor(DirectX::XMFLOAT4A color);
 
 	void Draw();
 	void TEMPTRANS();

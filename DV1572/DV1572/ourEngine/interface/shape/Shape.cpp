@@ -230,6 +230,11 @@ void Shape::setColor(float r, float g, float b, float a)
 	m_highLightColor = DirectX::XMFLOAT4A{ r,g,b,a };
 }
 
+void Shape::setColor(DirectX::XMFLOAT4A color)
+{
+	m_highLightColor = color;	//Fucking magnus wanted more functionality... erg erg passive argressive jocke :]
+}
+
 void Shape::Draw()
 {
 	if (m_mesh->getMaterial()->isTransparent())
