@@ -18,6 +18,17 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	this->m_sizeY = sizeY;
 
 	this->m_tiles = tiles;
+
+	for (unsigned short x = 0; x < tiles.size(); x++)
+	{
+		for (unsigned short y = 0; y < tiles[x].size(); y++)
+		{
+			tiles[x][y]->m_inside = true;
+			tiles[x][y]->m_isWalkeble = true;
+			tiles[x][y]->setRoom(this);
+
+		}
+	}
 }
 
 Room::~Room()

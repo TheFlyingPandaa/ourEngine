@@ -166,7 +166,7 @@ void RoomCtrl::CreateWalls()
 						t2->m_w[Direction::up]->setIsInner(true);
 					}
 
-				if (createWall)
+				if (createWall) // where we aculy create the walls
 				{
 					t->m_walls[Direction::down] = true;
 					Wall * wall = new Wall(t, this->m_wall);
