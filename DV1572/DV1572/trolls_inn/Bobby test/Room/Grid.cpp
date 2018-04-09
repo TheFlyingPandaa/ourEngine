@@ -74,7 +74,7 @@ Tile ** Grid::getGrid() const
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
-	if (pos.x + size.x < m_sizeX && pos.y + size.y < m_sizeY && pos.x >= 0 && pos.y >= 0) {
+	if (pos.x + size.x <= m_sizeX && pos.y + size.y <= m_sizeY && pos.x >= 0 && pos.y >= 0) {
 
 		std::vector<std::vector<Tile*>> tiles(size.x);
 		for (int x = pos.x; x < size.x + pos.x; x++)

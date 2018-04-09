@@ -13,6 +13,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	grid = new Grid(0, 0, 16, 16, &rect);	
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
+	
 	posX = 1;
 	posY = 1;
 	//grid->AddRoom(DirectX::XMINT2(4, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
@@ -170,7 +172,7 @@ void GameState::_checkCreationOfRoom()
 				std::cout << "POS: " << roomPos.x << ":" << roomPos.y << std::endl;
 				std::cout << "OFF: " << roomOffset.x << ":" << roomOffset.y << std::endl;
 
-				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, false);
+				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen);
 				grid->CreateWalls();
 			}
 		}

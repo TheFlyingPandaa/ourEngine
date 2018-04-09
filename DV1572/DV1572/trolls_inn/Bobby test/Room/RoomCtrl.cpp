@@ -17,26 +17,31 @@ bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
 	for (size_t i = 0; i < m_rooms.size(); i++)
 	{
-		if ((std::abs(pos.x - m_rooms[i]->getX()) * 2) < (size.x + m_rooms[i]->getSizeX()) &&
-			(std::abs(pos.y - m_rooms[i]->getY()) * 2) < (size.y + m_rooms[i]->getSizeY()))
+		/*if ((pos.x > m_rooms[i]->getX() && pos.y > m_rooms[i]->getY() && 
+			pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() && 
+			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY()) || 
+			(pos.x + size.x > m_rooms[i]->getX() && pos.y + size.y > m_rooms[i]->getY() &&
+			pos.x + size.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
+			pos.y + size.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY()))*/
+
+		/*if (!(pos.x > m_rooms[i]->getX() + m_rooms[i]->getSizeX()
+			|| pos.x + size.x < m_rooms[i]->getX()
+			|| pos.y + size.y > m_rooms[i]->getY()
+			|| pos.y > m_rooms[i]->getY() + m_rooms[i]->getSizeY()))*/
+		//if ((std::abs(pos.x - m_rooms[i]->getX()) * 2) < (size.x + m_rooms[i]->getSizeX()) &&
+		//	(std::abs(pos.y - m_rooms[i]->getY()) * 2) < (size.y + m_rooms[i]->getSizeY()))
+		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
+			pos.x + size.x > m_rooms[i]->getX() &&
+			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY() &&
+			pos.y + size.y > m_rooms[i]->getY())
 			return true;
+
 	}
 	return false;
 }
 
 bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
-	//Kolla vilken sida det är för current room
-		//up
-			//kolla om de är brevid
-		//down
-			//kolla om de är brevid
-		//left
-			//kolla om de är brevid
-		//right
-			//kolla om de är brevid
-
-	Direction dir;
 	Room* r;
 	int x, mx;
 	int y, my;
@@ -51,7 +56,7 @@ bool RoomCtrl::_isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 
 		if (pos.y == my || pos.y + size.y == y)
 		{
-			dir = Direction::up;
+			
 			if (pos.x < mx && pos.x + size.x > x)
 			{
 				return true;
