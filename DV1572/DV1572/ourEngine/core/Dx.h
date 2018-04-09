@@ -7,6 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../interface/shape/Shape.h"
 #include <vector>
+#include "../Structs.h"
 
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
@@ -24,15 +25,42 @@ namespace DX
 	extern std::vector<Shape*> g_transQueue;
 	extern std::vector<Shape*> g_pickingQueue;
 	extern std::vector<Shape*> g_HUDQueue;
+	
+	// InstanceRender
+	struct INSTANCE_ATTRIB
+	{
+		DirectX::XMFLOAT4A w1;
+		DirectX::XMFLOAT4A w2;
+		DirectX::XMFLOAT4A w3;
+		DirectX::XMFLOAT4A w4;
+
+		DirectX::XMFLOAT4A highLightColor;
+	};
+
+	struct INSTANCE_GROUP
+	{
+		std::vector<INSTANCE_ATTRIB> attribs;
+		Shape* shape;
+	};
 
 
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
 
+	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsPicking;
+
+
+	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
+
+
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;
 	extern ID3D11DomainShader* g_standardDomainShader;
 
 	extern void CleanUp();
+	
 }

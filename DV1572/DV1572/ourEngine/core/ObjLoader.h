@@ -6,7 +6,7 @@
 #include <vector>
 #include <sstream>
 #include "WICTextureLoader\WICTextureLoader.h"
-
+#include <map>
 
 
 namespace DX
@@ -92,12 +92,12 @@ namespace DX
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
 
-		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device, widecstr, &texture, &textureView);
+		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
 	}
 
 	static void CalculateTangents(std::vector<VERTEX> &model)
 	{
-		for (size_t i = 0; i < model.size(); i += 3)
+		for (int i = 0; i < model.size(); i += 3)
 		{
 			int j = i + 1;
 			int k = i + 2;
@@ -130,6 +130,61 @@ namespace DX
 				model[index].tx = DirectX::XMVectorGetX(vTangent);
 				model[index].ty = DirectX::XMVectorGetY(vTangent);
 				model[index].tz = DirectX::XMVectorGetZ(vTangent);
+			}
+		}
+	}
+
+	static void indexVertices(const std::vector<VERTEX>& vertices, std::vector<unsigned int>& indices, std::vector<VERTEX>& outVertices)
+	{
+		struct PackedVertex
+		{
+			DirectX::XMFLOAT3 position;
+			DirectX::XMFLOAT3 uv;
+			DirectX::XMFLOAT3 normal;
+
+			bool operator<(const PackedVertex& other) const
+			{
+				return memcmp((void*)this, (void*)&other, sizeof(PackedVertex)) > 0;
+			}
+		};
+
+		//struct VERTEX
+		//{
+		//	float x, y, z;		//Position
+		//	float u, v;			//Texel
+		//	float nx, ny, nz;	//Normal
+		//	float tx, ty, tz;	//Tangent
+		//};
+		std::map<PackedVertex, unsigned short> vertexToOutIndex;
+
+		for (unsigned i = 0; i < vertices.size(); i++)
+		{
+			DirectX::XMFLOAT3 pos;
+			pos.x = vertices[i].x;
+			pos.y = vertices[i].y;
+			pos.z = vertices[i].z;
+			DirectX::XMFLOAT3 uv;
+			uv.x = vertices[i].u;
+			uv.y = vertices[i].v;
+			DirectX::XMFLOAT3 normal;
+			normal.x = vertices[i].nx;
+			normal.y = vertices[i].ny;
+			normal.z = vertices[i].nz;
+			PackedVertex packed = { pos,uv,normal };
+
+			std::map<PackedVertex, unsigned short>::iterator it = vertexToOutIndex.find(packed);
+
+			if (it != vertexToOutIndex.end())
+			{
+				unsigned short index = it->second;
+				indices.push_back(index);
+			}
+			else
+			{
+				outVertices.push_back(vertices[i]);
+				unsigned short newIndex = (unsigned short)outVertices.size() - 1;
+				indices.push_back(newIndex);
+				vertexToOutIndex[packed] = newIndex;
 			}
 		}
 	}

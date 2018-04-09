@@ -11,6 +11,7 @@ struct INPUT
 	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
+	float4 color : HIGHLIGHTCOLOR;
 };
 
 struct OUTPUT
@@ -20,7 +21,7 @@ struct OUTPUT
 	float4 pos		: SV_Target2;
 };
 
-OUTPUT main(INPUT input) : SV_TARGET
+OUTPUT main(INPUT input)// : SV_TARGET
 {
 	OUTPUT output = (OUTPUT)0;
 	
@@ -28,6 +29,7 @@ OUTPUT main(INPUT input) : SV_TARGET
 	normal = normalize(mul(normal, input.TBN));
 	output.normal = float4(normalize(input.normal + normal), 0.0f);
 	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
+	output.diffuse = output.diffuse * input.color;
 	output.pos = input.worldPos;
 	
 	return output;

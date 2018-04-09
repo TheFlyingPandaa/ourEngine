@@ -6,6 +6,8 @@ bool Input::m_mouseKeys[3];
 DirectX::XMFLOAT2 Input::m_mousePos;
 float Input::m_scrollDelta;
 
+int Input::lastPressed;
+
 Input::Input()
 {
 }
@@ -45,4 +47,9 @@ float Input::getMouseScroll()
 	float returnValue = m_scrollDelta;
 	m_scrollDelta = 0.0f;
 	return returnValue;
+}
+
+int Input::GetKeyIndex()
+{
+	return lastPressed;
 }

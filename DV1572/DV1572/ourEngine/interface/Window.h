@@ -6,7 +6,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
-#include "shape\Shape.h"
+#include "shape\Rectangle.h"
 #include "light\Light.h"
 #include "Input.h"
 
@@ -20,6 +20,13 @@ private:
 		ID3D11Texture2D*			TextureMap;
 		ID3D11RenderTargetView*		RTV;
 		ID3D11ShaderResourceView*	SRV;
+	};
+
+	struct computeBuffer {
+		float temp;
+		float temp2;
+		float temp3;
+		float temp4;
 	};
 
 private:
@@ -66,11 +73,21 @@ private:
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
 
+	//ComputeShader
+	ID3D11Buffer*			m_computeConstantBuffer;
+	ID3D11Buffer*			m_computeOutputBuffer;
+	ID3D11Buffer*			m_computeReadWriteBuffer;
+	ID3D11UnorderedAccessView* m_computeUAV;
+	ID3D11ComputeShader*	m_computeShader;
+
+	//HUD
+	ID3D11VertexShader*		m_hudVertexShader;
+	ID3D11PixelShader*		m_hudPixelShader;
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
 
-	DirectX::XMMATRIX m_HUDview;
+	DirectX::XMMATRIX m_HUDviewProj;
 
 private:
 	bool	_initWindow();
@@ -97,7 +114,6 @@ private:
 	void	_initTransparency();
 
 	//	Picking
-	void	_initPickingTexture();
 	void	_initPickingShaders();
 	
 	// Tessellation
@@ -105,6 +121,11 @@ private:
 
 	// HUD
 	void	_drawHUD();
+
+	//ComputeShader
+	void	_initComputeShader();
+	void	_runComputeShader();
+
 
 
 public:
