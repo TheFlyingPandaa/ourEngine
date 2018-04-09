@@ -71,6 +71,11 @@ Tile ** Grid::getGrid() const
 	return nullptr;	
 }
 
+std::vector<std::vector<Tile*>> Grid::getTiles() const
+{
+	return m_tiles;
+}
+
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {

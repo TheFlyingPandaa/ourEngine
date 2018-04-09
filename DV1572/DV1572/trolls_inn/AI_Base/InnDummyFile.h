@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Attributes.h"
 class InnDummyFile
 {
 private:

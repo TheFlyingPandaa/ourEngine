@@ -49,6 +49,7 @@ public:
 		quad.setMesh(mesh);
 		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
 		quad.Rotate(90.0f, 0.0f, 0.0f);		
+		m_walkable = true;
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
 	Tile*	getAdjacent(Direction dir);
@@ -56,6 +57,11 @@ public:
 	int		m_posX;
 	bool	m_door;
 	Object3D quad;
+	bool m_walkable;
+	bool isWalkbale() const
+	{
+		return m_walkable;
+	}
 
 	Tile*	adjacent[4] = { nullptr };
 

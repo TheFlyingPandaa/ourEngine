@@ -52,11 +52,14 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
-	//system("cls");
+
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
+
 	_checkCreationOfRoom();
+
 	c.Update();
+
 
 	if (Input::isKeyPressed('W') && !move)
 		c.Move(Character::WalkDirection::UP);

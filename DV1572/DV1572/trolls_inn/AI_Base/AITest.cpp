@@ -226,6 +226,7 @@ std::vector<Node*> findPath(XMFLOAT2 start, XMFLOAT2 goal)
 		}
 
 	}
+	return std::vector<Node*>();
 }
 
 int getEntrance()
