@@ -10,6 +10,7 @@ enum Direction {
 //deferred context
 
 class Tile;
+class Room;
 
 class Wall
 {
@@ -52,10 +53,16 @@ public:
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
 	Tile*	getAdjacent(Direction dir);
+	void	setRoom(Room * room);
 	int		m_posY;
 	int		m_posX;
 	bool	m_door;
 	Object3D quad;
+
+	bool	m_inside = false;
+	bool	m_isWalkeble = false;
+
+	Room *	m_room = nullptr;
 
 	Tile*	adjacent[4] = { nullptr };
 
