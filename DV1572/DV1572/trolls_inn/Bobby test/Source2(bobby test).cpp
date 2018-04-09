@@ -65,12 +65,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	test.MakeRectangle();
 	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
-	RectangleShape HUD;
-	HUD.setMesh(&test);
-	HUD.setHeight(250);
-	HUD.setWidth(250);
-	HUD.setScreenPos(0, 0);
-
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 
 	std::unique_ptr<AudioEngine> audEngine;
@@ -171,7 +165,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 			
 		}
-		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);
 

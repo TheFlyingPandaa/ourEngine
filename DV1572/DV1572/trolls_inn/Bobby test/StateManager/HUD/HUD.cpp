@@ -70,9 +70,9 @@ bool HUD::LoadHud(const std::string & path)
 
 				d *= 0.00001f;
 
-				r->setScreenPos(m_windowX * pX, m_windowY * pY, d);
-				r->setWidth(m_windowX * sX);
-				r->setHeight(m_windowY * sY);
+				r->setScreenPos(pX, pY, d);
+				r->setWidth(sX);
+				r->setHeight(sY);
 				
 				if (p != 0)
 					m_quadsNonClickAble.push_back(r);

@@ -46,7 +46,7 @@ void RectangleShape::setScreenPos(DirectX::XMFLOAT3 pos)
 void RectangleShape::setWidth(float w)
 {
 	m_width = w;
-	this->setScale(w / 4345, m_height / 4345, 1.0f);
+	this->setScale(w / 4346, m_height / 4346, 1.0f);
 }
 
 float RectangleShape::getWidth() const
@@ -57,7 +57,7 @@ float RectangleShape::getWidth() const
 void RectangleShape::setHeight(float h)
 {
 	m_height = h;
-	this->setScale(m_width / 4345, h / 4345, 1.0f);
+	this->setScale(m_width / 4346, h / 4346, 1.0f);
 }
 
 float RectangleShape::getHeight() const
