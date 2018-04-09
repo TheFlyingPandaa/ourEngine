@@ -1,5 +1,5 @@
 #include "Character.h" 
-
+#include <iostream>
 Character::Character()
 {
 	m_floor = 0;
@@ -129,10 +129,50 @@ Character::WalkDirection Character::getDirection() const
 {
 	return m_currentDir;
 }
+const char* printDir(Character::WalkDirection dir)
+{
+	switch (dir)
+	{
+	case Character::UP:
+		return "Up";
+	case Character::DOWN:
+		return "Down";
+	case Character::RIGHT:
+		return "Right";
+	case Character::LEFT:
+		return "Left";
+	}
+	return "No movement";
+		
+}
+Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT2 oldPos, XMFLOAT2 newPos) const
+{
+
+	XMVECTOR oldPosWithoutOffset = XMLoadFloat2(&oldPos);
+	XMVECTOR xmNewPos = XMLoadFloat2(&newPos);
+	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, xmDeltaPos);
+	WalkDirection dir;
+	
+	if (result.x > 0) dir = RIGHT;
+	else if(result.x < 0) dir = LEFT;
+	else if (result.y > 0) dir = UP;
+	else if (result.y < 0) dir = DOWN;
+
+	std::cout << printDir(dir) << std::endl;
+
+	return dir;
+}
 
 int Character::getFloor() const
 {
 	return m_floor;
+}
+
+bool Character::walkQueueDone() const
+{
+	return m_goQueue.size() == 0;
 }
 
 void Character::Draw()

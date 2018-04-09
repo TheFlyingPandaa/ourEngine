@@ -180,10 +180,81 @@ void Grid::Update(Camera * cam) {
 	m_roomCtrl.Update(cam);
 }
 
+
 void Grid::CreateWalls(Mesh * mesh)
 {
 	if (mesh)
 		m_roomCtrl.setMesh(mesh);
 	m_roomCtrl.CreateWalls();
+}
+
+float Grid::getDistance(const Tile& t1, const Tile& t2) const
+{
+	XMVECTOR xmTile = XMLoadFloat2(&t1.getPosition());
+	XMVECTOR xmGoal = XMLoadFloat2(&t2.getPosition());
+	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
+}
+
+std::vector<Node*> Grid::findPath(Tile startTile, Tile endTile) const
+{
+	std::vector<Node*> openList;
+	std::vector<Node*> closedList;
+	std::vector<Node*> pointerBank;
+	Node* current = new Node(&startTile, nullptr, 0, getDistance(startTile, endTile));
+	pointerBank.push_back(current);
+	openList.push_back(current);
+	while (openList.size() > 0)
+	{
+		std::sort(openList.begin(), openList.end(), [](const Node* n1, const Node* n2) -> bool
+		{ return *n1 < *n2; }
+		);
+
+		current = openList.at(0);
+
+		if (*current == endTile)
+		{
+			std::vector<Node*> path;
+			Node* walker = current;
+			while (walker->parent != nullptr)
+			{
+				path.push_back(new Node(*walker));
+				walker = walker->parent;
+			}
+			for (auto& p : pointerBank)
+				delete p;
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+		openList.erase(openList.begin()); // Remove first entry
+		closedList.push_back(current);		// add the entry to the closed list
+
+		for (int i = 0; i < 9; i++) {
+		
+			if (i == 0 || i == 2 || i == 4 || i == 6 || i == 8) continue;
+			int x = current->tile->getPosition().x;
+			int y = current->tile->getPosition().y;
+			int xi = (i % 3) - 1;
+			int yi = (i / 3) - 1;
+			Tile* at = getTile(x + xi,y + yi);
+			if (at == nullptr) continue;
+			else if (!at->isWalkbale()) continue;
+
+			float gCost = current->gCost + (getDistance(*current->tile, *at) == 1 ? 1 : 0.95);
+			float hCost = getDistance(*at, endTile);
+			Node* node = new Node(at, current, gCost, hCost);
+			pointerBank.push_back(node);
+			if (std::find(closedList.begin(), closedList.end(), node) != closedList.end() && gCost >= node->gCost) continue;
+			if (std::find(openList.begin(), openList.end(), node) == openList.end() || gCost < node->gCost) openList.push_back(node);
+		}
+
+	}
+	return std::vector<Node*>();
+}
+
+Tile* Grid::getTile(int x, int y) const
+{
+	if (x < 0 || x > m_tiles[0].size() || y < 0 || y > m_tiles[0].size())
+		return nullptr;
+	return m_tiles[x][y];
 }
 

@@ -76,4 +76,6 @@ public:
 
 	bool	m_walls[4] = { false };
 	bool	isWall(Direction dir) const { return m_walls[dir]; }
+	XMFLOAT2 getPosition() const;
+	bool operator==(const Tile& other) const;
 };

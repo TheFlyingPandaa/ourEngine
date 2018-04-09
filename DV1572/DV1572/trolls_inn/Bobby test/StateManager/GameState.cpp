@@ -17,7 +17,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	c.setModel(&box);
 	c.setPosition(0.5, 0.5);
-	c.setFloor(1);
+	c.setFloor(0);
 
 
 
@@ -49,7 +49,13 @@ GameState::~GameState()
 {
 	delete grid;
 }
-
+void printPath(std::vector<Node*> path)
+{
+	int index = 0;
+	for (const auto& p : path)
+		std::cout << index++ << " [" << p->tile->getPosition().x << "," << p->tile->getPosition().y <<"] ";
+	std::cout << std::endl;
+}
 void GameState::Update(double deltaTime)
 {
 
@@ -59,7 +65,10 @@ void GameState::Update(double deltaTime)
 	_checkCreationOfRoom();
 
 	c.Update();
+	
 
+	//std::cout << "Position: " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+	
 
 	if (Input::isKeyPressed('W') && !move)
 		c.Move(Character::WalkDirection::UP);
@@ -127,8 +136,27 @@ void GameState::Update(double deltaTime)
 	{
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
+		std::cout << "\t\tObj" << obj->getPosition().x  << "," << obj->getPosition().z << std::endl;
+		static bool run = false;
+		if (!run && Input::isKeyPressed('K'))
+		{
+			std::vector<Node*> path = grid->findPath(*grid->getTile(c.getPosition().x - 0.5f, c.getPosition().y - 0.5f), *grid->getTile(obj->getPosition().x, obj->getPosition().z));
+			printPath(path);
+			XMFLOAT2 oldPos = c.getPosition();
+			XMFLOAT2 offset = { 0.5f, 0.5f };
+			XMVECTOR xmCalcVec2 = XMLoadFloat2(&oldPos) - XMLoadFloat2(&offset);
+			XMStoreFloat2(&oldPos, xmCalcVec2);
+			std::vector<Character::WalkDirection> direction;
+			direction.push_back(c.getDirectionFromPoint(oldPos, path[0]->tile->getPosition()));
+			for (int i = 1; i < path.size() - 1; i++)
+				direction.push_back(c.getDirectionFromPoint(path[i]->tile->getPosition(), path[i + 1]->tile->getPosition()));
+			for (const auto& dir : direction)
+				c.Move(dir);
 
-		//do Picking events here
+			run = true;
+		}
+		run = !c.walkQueueDone();
+		
 	}
 }
 
@@ -273,3 +301,5 @@ void GameState::_checkCreationOfRoom()
 		m_lastPick = m_firstPick = false;
 	}
 }
+
+

@@ -3,6 +3,8 @@
 #include "State.h"
 #include "MainMenu.h"
 #include "../Character.h"
+#include <vector>
+#include <algorithm>
 
 
 class GameState : public State {
