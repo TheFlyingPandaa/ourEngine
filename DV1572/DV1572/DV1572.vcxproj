@@ -136,6 +136,7 @@
     <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\CustomerFlowControl.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\LevelTracker.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Grid.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\MasterAI.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />

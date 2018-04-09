@@ -1,22 +1,9 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
 
-/*int CustomerFlowControl::randomInt(int lowerBound, int upperBound)
-{
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-	int lower_bound = lowerBound;
-	int upper_bound = upperBound;
-	std::uniform_int_distribution<int> unif(lower_bound, upper_bound);
-	std::default_random_engine randomEngine(seed);
-	int a_random_int = unif(randomEngine);
-
-	return a_random_int;
-}*/
-
 Customer CustomerFlowControl::evaluate()
 {
-	// update inn attributes
-	
+	// Update inn attributes
 	auto getPoints = [&](Race atri) 
 	{
 		Attributes attributes;
@@ -67,7 +54,7 @@ Customer CustomerFlowControl::evaluate()
 
 Customer CustomerFlowControl::generateCustomer(Race race)
 {
-	// generate a customer with the desired race and a random amount of gold
+	// Generate a customer with the desired race and a random amount of gold
 	Customer newCustomer(race, this->rNG.generateRandomNumber(50, 150));
 	newCustomer.setHungry(this->rNG.generateRandomNumber(-10, 10));
 	newCustomer.setThirsty(this->rNG.generateRandomNumber(-10, 10));
@@ -79,7 +66,7 @@ Customer CustomerFlowControl::generateCustomer(Race race)
 Customer CustomerFlowControl::generateRandomCustomer()
 {
 	Customer newCustomer;
-	int randomRace = this->rNG.generateRandomNumber(1, 3);
+	int randomRace = this->rNG.generateRandomNumber(1, 4);
 
 	switch (randomRace)
 	{

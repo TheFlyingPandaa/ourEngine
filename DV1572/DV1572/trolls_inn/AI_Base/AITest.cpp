@@ -218,7 +218,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	int entanceIndex = getEntrance();
 
-	printRoomPath(1, 4);
+	printRoomPath(0, 3);
 	
 	
 	

@@ -28,6 +28,7 @@ private:
 	int hungry;
 	int tired;
 	int thirsty;
+	bool leavingInn;
 
 public:
 	Customer();
@@ -53,10 +54,12 @@ public:
 	int getHungry() const;
 	int getTired() const;
 	int getThirsty() const;
+	bool getLeavingInn() const;
 
 	void setHungry(int value);
 	void setTired(int value);
 	void setThirsty(int value);
+	void setLeavingInn(bool isLeaving);
 
 	void move(int x, int y);
 };

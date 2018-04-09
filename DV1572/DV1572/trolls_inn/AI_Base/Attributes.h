@@ -24,7 +24,7 @@ public:
 	int getDrinkQuality() const;
 	int getFoodQuality() const;
 
-	// adds the function argument to the attribute
+	// Adds the function argument to the attribute
 	void setReputation(int value);
 	void setStandard(int value);
 	void setPrices(int value);

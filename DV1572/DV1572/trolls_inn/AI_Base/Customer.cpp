@@ -8,6 +8,7 @@ Customer::Customer(Race race, int gold)
 {
 	this->race = race;
 	this->economy = Economy(gold);
+	this->leavingInn = false;
 }
 
 Customer::~Customer()
@@ -106,6 +107,11 @@ int Customer::getThirsty() const
 	return this->thirsty;
 }
 
+bool Customer::getLeavingInn() const
+{
+	return this->leavingInn;
+}
+
 void Customer::setHungry(int value)
 {
 	this->hungry = value;
@@ -119,6 +125,11 @@ void Customer::setTired(int value)
 void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
+}
+
+void Customer::setLeavingInn(bool isLeaving)
+{
+	this->leavingInn = isLeaving;
 }
 
 void Customer::move(int x, int y)

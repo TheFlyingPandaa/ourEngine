@@ -25,7 +25,7 @@ bool Economy::withdraw(int amount)
 {
 	bool enoughGold = false;
 
-	if (this->gold > amount)
+	if (this->gold >= amount)
 	{
 		enoughGold = true;
 		this->gold -= amount;
