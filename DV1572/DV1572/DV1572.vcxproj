@@ -132,6 +132,7 @@
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />
     <ClInclude Include="ourEngine\interface\Window.h" />
     <ClInclude Include="ourEngine\Structs.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
