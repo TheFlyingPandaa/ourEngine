@@ -62,6 +62,8 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w3 = rows[2];
 	attribDesc.w4 = rows[3];
 
+	attribDesc.highLightColor = shape->getColor();
+
 	
 	// Unique Mesh
 	if (existingId == -1)
@@ -196,7 +198,9 @@ void Window::_compileShaders()
 		{ "INSTANCEWORLDONE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDTWO", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDTHREE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+
+		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",

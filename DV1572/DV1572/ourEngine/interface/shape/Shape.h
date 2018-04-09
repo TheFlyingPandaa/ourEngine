@@ -14,7 +14,8 @@ private:
 	ID3D11PixelShader*		m_ps;
 	ID3D11Buffer*			m_instanceBuffer;
 
-	DirectX::XMMATRIX		m_worldMatrix; 
+	DirectX::XMMATRIX		m_worldMatrix;
+	DirectX::XMFLOAT4A		m_highLightColor;
 
 private: 
 	void _buildMatrix();
@@ -62,7 +63,10 @@ public:
 	void CheckPick();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
-	const DirectX::XMMATRIX& getWorld() const; 
+	const DirectX::XMMATRIX& getWorld() const;
+	
+	DirectX::XMFLOAT4A getColor();
+	void setColor(float r, float g, float b, float a = 1);
 
 	void Draw();
 	void TEMPTRANS();

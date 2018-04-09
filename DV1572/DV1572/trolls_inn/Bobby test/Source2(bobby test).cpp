@@ -13,7 +13,7 @@
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
-
+//#pragma warning(disable : 4061 4265 4365 4571 4623 4625 4626 4628 4668 4710 4711 4746 4774 4820 4987 5026 5027 5031 5032 5039)
 
 #include "../../ourEngine/core/Audio/Audio.h"
 
@@ -163,15 +163,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		Shape* picked = nullptr;
 		picked = wnd.getPicked(cam);
 
-		if (picked)
+		if (picked) {
 			pickingEvents.push(picked);
-		
+			
+		}
 		HUD.CheckPick();
 		if (GetAsyncKeyState(VK_LBUTTON))
 			picked = wnd.getPicked(cam);
-		if (picked)
+		if (picked) {
 			std::cout << "LOLOOLOL/n";
-
+			picked->setColor(0.2f, 0.2f, 0.2f);
+		}
 		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);

@@ -33,6 +33,8 @@ namespace DX
 		DirectX::XMFLOAT4A w2;
 		DirectX::XMFLOAT4A w3;
 		DirectX::XMFLOAT4A w4;
+
+		DirectX::XMFLOAT4A highLightColor;
 	};
 
 	struct INSTANCE_GROUP
