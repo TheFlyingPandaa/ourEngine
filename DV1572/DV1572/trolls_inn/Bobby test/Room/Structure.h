@@ -7,8 +7,6 @@ enum Direction {
 	left,
 	right
 };
-//deferred context
-
 class Tile;
 class Room;
 
@@ -52,8 +50,24 @@ public:
 		quad.Rotate(90.0f, 0.0f, 0.0f);		
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
-	Tile*	getAdjacent(Direction dir);
 	void	setRoom(Room * room);
+	void	setInside(bool value);
+	void	setIsWalkeble(bool value);
+
+	int		getPosX() const;
+	int		getPosY() const;
+
+	Tile*	getAdjacent(Direction dir);
+
+	bool	isWall(Direction dir) const { return m_walls[dir]; }
+	void	setTileWalls(Direction dir, Wall* value);
+	Wall*	getTileWalls(Direction dir) const;
+
+	void	setWallSpotPopulated(Direction dir, bool value);
+	bool	getWallSpotPopulated(Direction dir) const;
+
+	Object3D&	getQuad();
+private:
 	int		m_posY;
 	int		m_posX;
 	bool	m_door;
@@ -61,13 +75,9 @@ public:
 
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
-
 	Room *	m_room = nullptr;
-
 	Tile*	adjacent[4] = { nullptr };
-
 	Wall*	m_w[4] = { nullptr };
-
+	
 	bool	m_walls[4] = { false };
-	bool	isWall(Direction dir) const { return m_walls[dir]; }
 };

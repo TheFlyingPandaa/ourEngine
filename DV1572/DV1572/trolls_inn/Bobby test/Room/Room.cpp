@@ -23,8 +23,8 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	{
 		for (unsigned short y = 0; y < tiles[x].size(); y++)
 		{
-			tiles[x][y]->m_inside = true;
-			tiles[x][y]->m_isWalkeble = true;
+			tiles[x][y]->setInside(true);
+			tiles[x][y]->setIsWalkeble(true);
 			tiles[x][y]->setRoom(this);
 
 		}
@@ -59,8 +59,8 @@ bool Room::Inside(int x, int y)
 
 bool Room::Inside(Tile * t)
 {
-	return	t->m_posX >= m_posX && t->m_posY < m_posX + m_sizeX &&
-			t->m_posY >= m_posY && t->m_posY < m_posY + m_sizeY;
+	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
+			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
 
 void Room::Update(Camera * cam)
