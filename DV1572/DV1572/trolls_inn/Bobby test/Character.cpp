@@ -26,21 +26,15 @@ void Character::Update()
 
 		Go dir = m_goQueue.front();
 
-		if ((dir.dir == LEFT || dir.dir == RIGHT) && abs(dir.stepsLeft) <= 0.01f)
+		if (abs(dir.stepsLeft) <= 0.01f)
 		{
 			dir.stepsLeft = 0.0f;
 			//m_model.setPos(pos.x + 0.5f, pos.y, pos.z); 
-			printf("%f", pos.x);
+			//printf("%f", pos.x);
 
 			moving = false;
 		}
-		else if ((dir.dir == DOWN || dir.dir == UP) && abs(dir.stepsLeft) <= 0.01f)
-		{
-			dir.stepsLeft = 0.0f;
-			//m_model.setPos(pos.x, pos.y, round(pos.z) + 0.5f); 
-			moving = false;
-		}
-
+		
 		if (!moving)
 			m_goQueue.pop_front();
 		else
@@ -56,8 +50,20 @@ void Character::Update()
 			case UP:
 				m_model.Move(0.0f, 0.0f, m_speed);
 				break;
+			case UPRIGHT:
+				m_model.Move(m_speed, 0.0f, m_speed);
+				break;
+			case UPLEFT:
+				m_model.Move(-m_speed, 0.0f, m_speed);
+				break;
 			case DOWN:
 				m_model.Move(0.0f, 0.0f, -m_speed);
+				break;
+			case DOWNRIGHT:
+				m_model.Move(m_speed, 0.0f, -m_speed);
+				break;
+			case DOWNLEFT:
+				m_model.Move(-m_speed, 0.0f, -m_speed);
 				break;
 			case RIGHT:
 				m_model.Move(m_speed, 0.0f, 0.0f);
@@ -86,8 +92,20 @@ void Character::Turn(WalkDirection dir)
 	case UP:
 		m_model.setRotation(0.0f, 180.0f, 0.0f);
 		break;
+	case UPRIGHT:
+		m_model.setRotation(0.0f, 60.0f, 0.0f);
+		break;
+	case UPLEFT:
+		m_model.setRotation(0.0f, 240.0f, 0.0f);
+		break;
 	case DOWN:
 		m_model.setRotation(0.0f, 0.0f, 0.0f);
+		break;
+	case DOWNRIGHT:
+		m_model.setRotation(0.0f, -60.0f, 0.0f);
+		break;
+	case DOWNLEFT:
+		m_model.setRotation(0.0f, -150.0f, 0.0f);
 		break;
 	case RIGHT:
 		m_model.setRotation(0.0f, -90.0f, 0.0f);
@@ -155,12 +173,26 @@ Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT2 oldPos, XMFLO
 	XMStoreFloat2(&result, xmDeltaPos);
 	WalkDirection dir;
 	
-	if (result.x > 0) dir = RIGHT;
-	else if(result.x < 0) dir = LEFT;
+	if (result.x > 0) 
+	{
+		dir = RIGHT;
+		if (result.y > 0)
+			dir = UPRIGHT;
+		else if (result.y < 0)
+			dir = DOWNRIGHT;
+	}
+	else if (result.x < 0)
+	{
+		dir = LEFT;
+		if (result.y > 0)
+			dir = UPLEFT;
+		else if (result.y < 0)
+			dir = DOWNLEFT;
+	}
 	else if (result.y > 0) dir = UP;
 	else if (result.y < 0) dir = DOWN;
 
-	std::cout << printDir(dir) << std::endl;
+	//std::cout << printDir(dir) << std::endl;
 
 	return dir;
 }

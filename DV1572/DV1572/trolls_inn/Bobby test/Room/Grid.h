@@ -65,8 +65,8 @@ public:
 
 	void	CreateWalls(Mesh * mesh = nullptr);
 
-	float getDistance(const Tile& t1, const Tile& t2) const;
-	std::vector<Node*> findPath(Tile startTile, Tile endTile) const;
+	float getDistance(const Tile* t1, const Tile* t2) const;
+	std::vector<Node*> findPath(Tile* startTile, Tile* endTile) const;
 	Tile* getTile(int x, int y) const;
 
 };

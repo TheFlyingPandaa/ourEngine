@@ -5,7 +5,12 @@ enum Direction {
 	up,
 	down,
 	left,
-	right
+	right,
+	upright, // SPECIAL CASES
+	upleft,
+	downright,
+	downleft,
+	noneSpecial
 };
 //deferred context
 
@@ -41,22 +46,21 @@ public:
 
 class Tile {
 public:
-	Tile(int x = 0, int y = 0, int sizeX = 0, int sizeY = 0, Mesh * mesh = nullptr)
+	Tile(int sizeX = 0, int sizeY = 0, Mesh * mesh = nullptr)
 	{
-		m_posX = x;
-		m_posY = y;
 		m_door = false;
 		
 		quad.setMesh(mesh);
-		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
+		quad.setPos(static_cast<float>(0), 0.0f, static_cast<float>(0));
 		quad.Rotate(90.0f, 0.0f, 0.0f);		
 		m_walkable = true;
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
+	void	setAdjacent(Tile * tile, int dir);
 	Tile*	getAdjacent(Direction dir);
+	Tile*	getAdjacent(int dir);
 	void	setRoom(Room * room);
-	int		m_posY;
-	int		m_posX;
+
 	bool	m_door;
 	Object3D quad;
 	bool m_walkable;
@@ -69,8 +73,17 @@ public:
 	bool	m_isWalkeble = false;
 
 	Room *	m_room = nullptr;
-
-	Tile*	adjacent[4] = { nullptr };
+	/*
+	0 = up
+	1 = down
+	2 = left
+	3 = right
+	4 = upright
+	5 = upleft
+	6 = downright
+	7 = downleft
+	*/
+	Tile*	adjacent[8] = { nullptr };
 
 	Wall*	m_w[4] = { nullptr };
 

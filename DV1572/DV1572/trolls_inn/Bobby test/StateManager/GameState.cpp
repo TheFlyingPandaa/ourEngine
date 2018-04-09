@@ -56,6 +56,14 @@ void printPath(std::vector<Node*> path)
 		std::cout << index++ << " [" << p->tile->getPosition().x << "," << p->tile->getPosition().y <<"] ";
 	std::cout << std::endl;
 }
+
+// round float to n decimals precision
+float round_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 void GameState::Update(double deltaTime)
 {
 
@@ -136,26 +144,28 @@ void GameState::Update(double deltaTime)
 	{
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
-		std::cout << "\t\tObj" << obj->getPosition().x  << "," << obj->getPosition().z << std::endl;
-		static bool run = false;
-		if (!run && Input::isKeyPressed('K'))
+		//std::cout << "\t\tObj" << obj->getPosition().x  << "," << obj->getPosition().z << std::endl;
+		if (c.walkQueueDone())
 		{
-			std::vector<Node*> path = grid->findPath(*grid->getTile(c.getPosition().x - 0.5f, c.getPosition().y - 0.5f), *grid->getTile(obj->getPosition().x, obj->getPosition().z));
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+			std::cout << "Tile( " << xTile << "," << yTile << ")"<< std::endl;
+			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 			printPath(path);
-			XMFLOAT2 oldPos = c.getPosition();
-			XMFLOAT2 offset = { 0.5f, 0.5f };
-			XMVECTOR xmCalcVec2 = XMLoadFloat2(&oldPos) - XMLoadFloat2(&offset);
-			XMStoreFloat2(&oldPos, xmCalcVec2);
+			XMFLOAT2 oldPos = { float(xTile), float(yTile) };
 			std::vector<Character::WalkDirection> direction;
 			direction.push_back(c.getDirectionFromPoint(oldPos, path[0]->tile->getPosition()));
-			for (int i = 1; i < path.size() - 1; i++)
+
+			for (int i = 0; i < path.size() - 1; i++)
 				direction.push_back(c.getDirectionFromPoint(path[i]->tile->getPosition(), path[i + 1]->tile->getPosition()));
+			std::cout << "Direction size: "<< direction.size() << std::endl;
 			for (const auto& dir : direction)
 				c.Move(dir);
+			for (auto& p : path)
+				delete p;
 
-			run = true;
 		}
-		run = !c.walkQueueDone();
 		
 	}
 }

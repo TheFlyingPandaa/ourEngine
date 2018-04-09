@@ -17,41 +17,79 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		this->m_tiles[i] = std::vector<Tile*>(this->m_sizeY);
 		for (int j = 0; j < sizeY; j++)
 		{
-			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
+			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 			t->quad.setScale(2.0f);
 			t->quad.setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
 			this->m_tiles[i][j] = t;
 		}
 	}
+	int leftCounter = 0;
+
 	for (int i = 0; i < sizeX; i++)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			for (int k = 0; k < 4; k++)
+			int upright = 0;
+			int upleft = 0;
+			int downright = 0;
+			int downleft = 0;
+			for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 			{
-				if (k == Direction::up) {
+				
+				Direction dir = static_cast<Direction>(dirIndex);
+				if (dir == Direction::up) {
 					if (j + 1 < sizeY) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], static_cast<Direction>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], dir);
+						upright++;
+						upleft++;
 					}					
 				}
-				else if (k == Direction::down) {
-					if (j - 1 > 0) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i][j - 1], static_cast<Direction>(k));
+				else if (dir == Direction::down) {
+					if (j - 1 >= 0) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i][j - 1], dir);
+						downright++;
+						downleft++;
 					}
 				}
-				else if (k == Direction::left) {
-					if (i - 1 > 0) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j], static_cast<Direction>(k));
+				else if (dir == Direction::left) {
+					if (i - 1 >= 0) {
+						m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j], dir);
+						upleft++;
+						downleft++;
 					}
 				}
-				else if (k == Direction::right) {
+				else if (dir == Direction::right) {
 					if (i + 1 < sizeX) {
-						m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j], static_cast<Direction>(k));
+						m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j], dir);
+						upright++;
+						downright++;
 					}
+				}
+
+				if (upright == 2)
+				{
+					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j + 1], 4);
+					upright = 0;
+				}
+				if (upleft == 2)
+				{
+					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j + 1], 5);
+					upleft = 0;
+				}
+				if (downright == 2)
+				{
+					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j - 1], 6);
+					downright = 0;
+				}
+				if (downleft == 2)
+				{
+					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j - 1], 7);
+					downleft = 0;
 				}
 			}
 		}
 	}
+
 }
 Grid::~Grid()
 {	
@@ -188,64 +226,78 @@ void Grid::CreateWalls(Mesh * mesh)
 	m_roomCtrl.CreateWalls();
 }
 
-float Grid::getDistance(const Tile& t1, const Tile& t2) const
+float Grid::getDistance(const Tile* t1, const Tile* t2) const
 {
-	XMVECTOR xmTile = XMLoadFloat2(&t1.getPosition());
-	XMVECTOR xmGoal = XMLoadFloat2(&t2.getPosition());
+	XMVECTOR xmTile = XMLoadFloat2(&t1->getPosition());
+	XMVECTOR xmGoal = XMLoadFloat2(&t2->getPosition());
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
-
-std::vector<Node*> Grid::findPath(Tile startTile, Tile endTile) const
+bool compare(Node* a, Node* b) { return (*a < *b); }
+std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 {
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
 	std::vector<Node*> pointerBank;
-	Node* current = new Node(&startTile, nullptr, 0, getDistance(startTile, endTile));
-	pointerBank.push_back(current);
+
+	Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
 	openList.push_back(current);
+
+	pointerBank.push_back(current);
+
+
+	std::cout << "Start Tile: (" << startTile->quad.getPosition().x << "," << startTile->quad.getPosition().z << ")" << std::endl;
+	std::cout << "End Tile: (" << endTile->quad.getPosition().x << "," << endTile->quad.getPosition().z << ")" << std::endl;
+	int i = 0;
 	while (openList.size() > 0)
 	{
-		std::sort(openList.begin(), openList.end(), [](const Node* n1, const Node* n2) -> bool
-		{ return *n1 < *n2; }
-		);
+		std::cout << "i " << i++ << std::endl;
+		current = *openList.begin();
+		for (auto node : openList) {
+			if (node->fCost <= current->fCost) {
+				current = node;
+			}
+		}
 
-		current = openList.at(0);
 
-		if (*current == endTile)
+		if (*current == *endTile)
 		{
 			std::vector<Node*> path;
-			Node* walker = current;
-			while (walker->parent != nullptr)
+			while (current->parent != nullptr)
 			{
-				path.push_back(new Node(*walker));
-				walker = walker->parent;
+				path.push_back(new Node(*current));
+				current = current->parent;
 			}
+
 			for (auto& p : pointerBank)
 				delete p;
 			std::reverse(path.begin(), path.end());
 			return path;
 		}
-		openList.erase(openList.begin()); // Remove first entry
-		closedList.push_back(current);		// add the entry to the closed list
-
-		for (int i = 0; i < 9; i++) {
 		
-			if (i == 0 || i == 2 || i == 4 || i == 6 || i == 8) continue;
-			int x = current->tile->getPosition().x;
-			int y = current->tile->getPosition().y;
-			int xi = (i % 3) - 1;
-			int yi = (i / 3) - 1;
-			Tile* at = getTile(x + xi,y + yi);
-			if (at == nullptr) continue;
-			else if (!at->isWalkbale()) continue;
+		closedList.push_back(current);		// add the entry to the closed list
+		openList.erase(std::find(openList.begin(),openList.end(), current));   // Remove first entry
 
-			float gCost = current->gCost + (getDistance(*current->tile, *at) == 1 ? 1 : 0.95);
-			float hCost = getDistance(*at, endTile);
-			Node* node = new Node(at, current, gCost, hCost);
-			pointerBank.push_back(node);
-			if (std::find(closedList.begin(), closedList.end(), node) != closedList.end() && gCost >= node->gCost) continue;
-			if (std::find(openList.begin(), openList.end(), node) == openList.end() || gCost < node->gCost) openList.push_back(node);
+		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
+		{
+			
+			Direction dir = static_cast<Direction>(dirIndex);
+			Tile* currentTile = current->tile->getAdjacent(dir);
+			if (currentTile == nullptr || !currentTile->isWalkbale()) continue; // Jump this one
+
+			float gCost = current->gCost + getDistance(current->tile, currentTile);
+
+			float hCost = getDistance(currentTile, endTile);
+			Node* newNode = new Node(currentTile, current, gCost, hCost);
+
+			if (std::find(closedList.begin(), closedList.end(), newNode) != closedList.end() && gCost >= newNode->gCost) continue;
+			if (std::find(openList.begin(), openList.end(), newNode) == openList.end() || gCost < newNode->gCost)
+			{
+				openList.push_back(newNode);
+				pointerBank.push_back(newNode);
+			}
+			
 		}
+		
 
 	}
 	return std::vector<Node*>();
@@ -253,7 +305,7 @@ std::vector<Node*> Grid::findPath(Tile startTile, Tile endTile) const
 
 Tile* Grid::getTile(int x, int y) const
 {
-	if (x < 0 || x > m_tiles[0].size() || y < 0 || y > m_tiles[0].size())
+	if (x < 0 || x > m_sizeX || y < 0 || y >m_sizeY)
 		return nullptr;
 	return m_tiles[x][y];
 }

@@ -179,7 +179,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			//printf("\rFPS: %d TICK: %d", fpsCounter, updates);
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

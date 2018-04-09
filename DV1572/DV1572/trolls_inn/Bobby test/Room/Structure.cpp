@@ -11,6 +11,17 @@ Tile * Tile::getAdjacent(Direction dir)
 	return this->adjacent[dir];
 }
 
+void Tile::setAdjacent(Tile * tile, int dir)
+{
+	this->adjacent[dir] = tile;
+
+}
+
+Tile * Tile::getAdjacent(int dir)
+{
+	return this->adjacent[dir];
+}
+
 void Tile::setRoom(Room * room)
 {
 	this->m_room = room;
@@ -25,5 +36,7 @@ XMFLOAT2 Tile::getPosition() const
 
 bool Tile::operator==(const Tile & other) const
 {
-	return m_posX == other.m_posX && m_posY == other.m_posY;
+	XMFLOAT3 pos = quad.getPosition();
+	XMFLOAT3 otherPos = other.quad.getPosition();
+	return pos.x == otherPos.x && pos.y == otherPos.y && pos.z == otherPos.z;
 }

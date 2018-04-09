@@ -59,8 +59,9 @@ bool Room::Inside(int x, int y)
 
 bool Room::Inside(Tile * t)
 {
-	return	t->m_posX >= m_posX && t->m_posY < m_posX + m_sizeX &&
-			t->m_posY >= m_posY && t->m_posY < m_posY + m_sizeY;
+	XMFLOAT3 position = t->quad.getPosition();
+	return	position.x >= m_posX && position.y < m_posX + m_sizeX &&
+			position.y >= m_posY && position.y < m_posY + m_sizeY;
 }
 
 void Room::Update(Camera * cam)

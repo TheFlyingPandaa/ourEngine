@@ -10,7 +10,11 @@ public:
 	enum WalkDirection
 	{
 		UP,
+		UPRIGHT,
+		UPLEFT,
 		DOWN,
+		DOWNRIGHT,
+		DOWNLEFT,
 		LEFT,
 		RIGHT
 	};

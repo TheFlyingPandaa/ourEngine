@@ -37,6 +37,7 @@ Customer CustomerFlowControl::evaluate()
 	race = Orc;
 	
 	int highestScore = 0;
+	// Human is first and dwarf is the last in the enum structure. IMPORTANT
 	for (int currentRace = Human; currentRace != Dwarf; currentRace++)
 	{
 		Race cr = static_cast<Race>(currentRace);
