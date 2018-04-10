@@ -15,8 +15,7 @@ GameTime::GameTime()
 	m_colorScaleFactor = 0.0001f;
 	m_rotationFactor = 0.0001f;
 	
-	//m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
-	m_sunStartInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+	m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
 	m_sunTargetInterpolate = DirectX::XMVECTOR{ 0,0,0 };
 	
 	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 }; 
@@ -66,8 +65,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		if (m_minutes <= 6) 
 		{
 			std::cout << "Morning to Noon" << std::endl;
-			//m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
-			m_sunTargetInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f); 
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor); 
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor); 
@@ -93,8 +91,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		{
 			std::cout << "Noon to Evening" << std::endl;
 
-			m_sunTargetInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
-			//m_sunTargetInterpolate = DirectX::XMVECTOR{ 230.0f / m_divider,120.0f / m_divider, 120.0f / m_divider };
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 230.0f / m_divider,120.0f / m_divider, 120.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
@@ -119,8 +116,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		if (m_minutes <= 18) 
 		{
 			std::cout << "Evening to Night" << std::endl;
-			//m_sunTargetInterpolate = DirectX::XMVECTOR{ 90.0f / m_divider,70.0f / m_divider, 190.0f / m_divider };
-			m_sunTargetInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 90.0f / m_divider,70.0f / m_divider, 190.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
@@ -146,16 +142,13 @@ void GameTime::updateCurrentTime(float refreshRate)
 		if (m_minutes <= 21)
 		{
 			std::cout << "Night to Mid" << std::endl;
-			//m_sunTargetInterpolate = DirectX::XMVECTOR{ 50.0f / m_divider,50.0f / m_divider, 90.0f / m_divider };
-			m_sunTargetInterpolate = DirectX::XMVECTOR{255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 50.0f / m_divider,50.0f / m_divider, 220.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (3.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
 				
-			//m_sunRotationStart = DirectX::XMVECTOR{ -1, 0, 0 }; 
-			//m_sunRotationTarget = DirectX::XMVECTOR{ 0, -1, 0 }; 
-			m_sunRotationTarget = DirectX::XMVECTOR{ 0, 1, 0 }; 
-			
+
+			m_sunRotationTarget = DirectX::XMVECTOR{ 0, 1, 0 };			
 			m_rotationFactor = m_colorScaleFactor;
 			m_sunFinalRotation = DirectX::XMVectorLerp(m_sunRotationStart, m_sunRotationTarget, m_rotationFactor);
 			DirectX::XMVector3Normalize(m_sunFinalRotation);
@@ -176,8 +169,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		if (m_minutes <= 24)
 		{
 			std::cout << "Night to Morning" << std::endl;
-			//m_sunTargetInterpolate = DirectX::XMVECTOR{ 30.0f / m_divider,30.0f / m_divider, 85.0f / m_divider };
-			m_sunTargetInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 30.0f / m_divider,30.0f / m_divider, 85.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (3.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
 			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
@@ -192,8 +184,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		{
 			m_seconds = 0;
 			m_currentTime = MORNINGTONOON;
-			//m_sunStartInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
-			m_sunTargetInterpolate = DirectX::XMVECTOR{ 255.0f / m_divider,255.0f / m_divider, 255.0f / m_divider };
+			m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
 			m_sunRotationStart = m_sunFinalRotation; 
 			m_totalSeconds = 0;
 			m_minutes = 0; 
