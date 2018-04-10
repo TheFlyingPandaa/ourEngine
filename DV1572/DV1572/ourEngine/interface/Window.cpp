@@ -22,10 +22,10 @@ std::vector<Shape*> DX::g_HUDQueue;
 ID3D11HullShader* DX::g_standardHullShader;
 ID3D11DomainShader* DX::g_standardDomainShader;
 
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroups;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsHUD;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsTransparancy;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsPicking;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
+std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
@@ -84,6 +84,66 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 		queue[existingId].attribs.push_back(attribDesc);
 	}
 	
+}
+void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>& queue)
+{
+	int existingId = -1;
+	for (int i = 0; i < queue.size() && existingId == -1; i++)
+	{
+		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
+		{
+			existingId = i;
+
+		}
+	}
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB attribDesc;
+
+	XMMATRIX xmWorldMat = shape->getWorld();
+	XMFLOAT4X4A worldMat;
+	long index = DX::g_pickingQueue.size() - 1;
+
+	XMStoreFloat4x4A(&worldMat, xmWorldMat);
+
+	XMFLOAT4A rows[4];
+	for (int i = 0; i < 4; i++)
+	{
+		rows[i].x = worldMat.m[i][0];
+		rows[i].y = worldMat.m[i][1];
+		rows[i].z = worldMat.m[i][2];
+		rows[i].w = worldMat.m[i][3];
+	}
+
+
+	attribDesc.w1 = rows[0];
+	attribDesc.w2 = rows[1];
+	attribDesc.w3 = rows[2];
+	attribDesc.w4 = rows[3];
+
+	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
+
+
+												   // Unique Mesh
+	if (existingId == -1)
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_INDEXED newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = shape;
+		newGroup.index.push_back(index);
+		queue.push_back(newGroup);
+		
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		queue[existingId].attribs.push_back(attribDesc);
+		queue[existingId].index.push_back(index);
+	}
+
 }
 
 void DX::CleanUp()
