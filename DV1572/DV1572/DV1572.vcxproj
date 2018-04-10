@@ -157,6 +157,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -174,6 +175,8 @@
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h" />
@@ -197,6 +200,7 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\AI_Base\Economy.h" />
@@ -289,6 +293,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
   </ItemGroup>

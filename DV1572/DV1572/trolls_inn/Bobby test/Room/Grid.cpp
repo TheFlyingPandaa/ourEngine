@@ -1,6 +1,14 @@
 #include "Grid.h"
 #include <math.h>
 
+bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
+{
+	for (auto& cur : list)
+		if (*cur == *node)
+			return true;
+	return false;
+}
+
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
 	this->m_posX = posX;
@@ -247,7 +255,7 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 
 	while (openList.size() > 0)
 	{
-
+		std::cout << closedList.size() << std::endl;
 		std::sort(openList.begin(), openList.end(), [](Node* a1, Node* a2) {return a1->fCost < a2->fCost; });
 		current = openList.at(0);
 
@@ -285,18 +293,20 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 				continue;
 			//--Rules End Here--
 
-			float gCost = current->gCost + getDistance(current->tile, currentTile);
+			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95);
 
 			float hCost = getDistance(currentTile, endTile);
 			Node* newNode = new Node(currentTile, current, gCost, hCost);
+			pointerBank.push_back(newNode);
 
-			if (std::find(closedList.begin(), closedList.end(), newNode) != closedList.end()) 
+			if (_findInVec(closedList,newNode) && gCost >= newNode->gCost)
 				continue;
-			if (std::find(openList.begin(), openList.end(), newNode) == openList.end())
+			if (!_findInVec(openList, newNode) || gCost < newNode->gCost)
 			{
 				openList.push_back(newNode);
-				pointerBank.push_back(newNode);
+				
 			}
+			
 			
 		}
 		

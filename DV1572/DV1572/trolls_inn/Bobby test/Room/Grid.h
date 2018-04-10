@@ -43,7 +43,7 @@ private:
 	Mesh*				m_tileMesh;
 	RoomCtrl			m_roomCtrl;
 	std::vector<std::vector<Tile*>> m_tiles;
-	
+	bool _findInVec(std::vector<Node*>& list, Node* node) const;
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();

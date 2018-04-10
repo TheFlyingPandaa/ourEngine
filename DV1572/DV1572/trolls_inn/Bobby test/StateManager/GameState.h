@@ -5,6 +5,7 @@
 #include "../Character.h"
 #include <vector>
 #include <algorithm>
+#include "HUD/HUD.h"
 
 
 class GameState : public State {
@@ -13,6 +14,8 @@ private:
 	Mesh rect;
 	Grid* grid;
 	Grid* grid2;
+
+	HUD m_gameHud;
 
 	int posX;
 	int posY;

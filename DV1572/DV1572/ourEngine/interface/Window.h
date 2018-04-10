@@ -72,6 +72,8 @@ private:
 	ID3D11PixelShader*		m_pickingPixelShader;
 	ID3D11Buffer*			m_pickingBuffer;
 	ID3D11Texture2D*		m_pickingReadBuffer;
+	ID3D11Buffer*			m_pickingOffsetBuffer;
+
 
 	//ComputeShader
 	ID3D11Buffer*			m_computeConstantBuffer;
@@ -89,9 +91,12 @@ private:
 
 	DirectX::XMMATRIX m_HUDviewProj;
 
+	D3D11_VIEWPORT m_viewport;
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
+	void	_initViewPort();
 	void	_setViewport();
 	void	_compileShaders();
 	void	_setSamplerState();
@@ -137,6 +142,8 @@ public:
 	bool isOpen();
 	void Clear();
 	void Flush(Camera* c, Light& light);
+
+	void FullReset();
 
 	//Do this once per loop and if pressed
 	Shape* getPicked(Camera* c);

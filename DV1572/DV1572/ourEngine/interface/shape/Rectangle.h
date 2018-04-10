@@ -13,8 +13,8 @@ private:
 public:
 	RectangleShape(float w = 10.0f, float h = 10.0f);
 	~RectangleShape();
-	void setScreenPos(float x, float y);
-	void setScreenPos(DirectX::XMFLOAT2 pos);
+	void setScreenPos(float x, float y, float depth = 0.0f);
+	void setScreenPos(DirectX::XMFLOAT3 pos);
 
 
 	void setWidth(float w);
