@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <stack>
@@ -20,6 +19,8 @@
 #include "../../ourEngine/core/Font/SpriteFont.h"
 #include "../../ourEngine/core/Dx.h"
 
+#include "../../ourEngine/core/FileReader.h"
+
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
@@ -37,6 +38,10 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	bool working;
+	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
+	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
+
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
@@ -44,9 +49,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 
-	Window wnd(hInstance);
-	wnd.Init(1280, 720, "Banan");
+	
 
+	Window wnd(hInstance);
+	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -55,7 +61,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new OrbitCamera(wnd.getSize());
+	Camera* cam = new OrbitCamera(wnd.getSize(), XMFLOAT3(gameLoadState.camX,gameLoadState.camY, gameLoadState.camZ));
 	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
 	std::stack<State *> gameStates;
@@ -85,7 +91,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	bool pressed = false;
 	bool play = false;
-
 	std::unique_ptr<DirectX::SpriteFont> m_font;
 	m_font = std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont");
 	DirectX::XMVECTOR m_fontPos = DirectX::XMVECTOR{1280/2,720/2,1,1};
@@ -196,12 +201,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			std::string title;
+			title = "Fps ";
+			title += std::to_string(fpsCounter);
+			title += " Tick ";
+			title += std::to_string(updates);
+			wnd.setTitle(title.c_str());
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);
 		}
-	}	
+	}
+	
+	XMFLOAT3 camPos = cam->getPosition();
+	gameLoadState.camX = camPos.x;
+	gameLoadState.camY = camPos.y;
+	gameLoadState.camZ = camPos.z;
+
+	//FileReader::StatesFileWrite(gameLoadState);
 
 	while (!gameStates.empty())
 	{

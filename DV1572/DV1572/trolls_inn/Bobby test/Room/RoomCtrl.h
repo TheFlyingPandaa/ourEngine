@@ -19,7 +19,6 @@ class RoomCtrl
 private:
 	std::vector<Room*>	m_rooms;
 	std::vector<Wall*>	m_walls;
-	
 	Mesh*				m_doorMesh;
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];

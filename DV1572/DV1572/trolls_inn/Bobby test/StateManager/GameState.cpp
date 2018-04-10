@@ -20,7 +20,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	c.setModel(&box);
 	c.setPosition(0.5, 0.5);
-	c.setFloor(1);
+	c.setFloor(0);
 
 
 
@@ -29,7 +29,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 16, 16, &rect);	
+	grid = new Grid(0, 0, 32, 32, &rect);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
@@ -49,13 +49,26 @@ GameState::~GameState()
 	delete grid;
 }
 
+// round float to n decimals precision
+float round_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 void GameState::Update(double deltaTime)
 {
-	//system("cls");
+
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
+
 	_checkCreationOfRoom();
+
 	c.Update();
+	
+
+	//std::cout << "Position: " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+	
 
 	if (Input::isKeyPressed('W') && !move)
 		c.Move(Character::WalkDirection::UP);
@@ -105,6 +118,28 @@ void GameState::Update(double deltaTime)
 		}
 
 		//do Picking events here
+		if (c.walkQueueDone() && Input::isMouseLeftPressed())
+		{
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+			
+			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+			for (int i = 0; i < path.size() - 1; i++)
+				c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+			
+			for (auto& p : path)
+				delete p;
+
+		}
+		
 	}
 }
 
@@ -206,7 +241,7 @@ void GameState::_checkCreationOfRoom()
 	{
 		if (m_firstPickedTile && m_lastPickedTile  && m_isPlaceable)
 		{
-			//TODO : CREATE ROOM
+
 			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
 			DirectX::XMFLOAT3 offsetF = m_lastPickedTile->getPosition();
 			DirectX::XMINT2 roomPos(static_cast<int>(posF.x + 0.5f), static_cast<int>(posF.z + 0.5f));
@@ -259,3 +294,5 @@ void GameState::_checkCreationOfRoom()
 		m_lastPick = m_firstPick = false;
 	}
 }
+
+

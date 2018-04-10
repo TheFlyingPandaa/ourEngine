@@ -16,6 +16,11 @@ Tile * Tile::getAdjacent(Direction dir)
 	return this->adjacent[dir];
 }
 
+bool Tile::getIsWalkeble() const
+{
+	return m_isWalkeble;
+}
+
 void Tile::setTileWalls(Direction dir, Wall* value)
 {
 	m_w[dir] = value;
@@ -34,6 +39,11 @@ bool Tile::getWallSpotPopulated(Direction dir) const
 Object3D & Tile::getQuad()
 {
 	return quad;
+}
+
+void Tile::setMesh(Mesh * mesh)
+{
+	this->quad.setMesh(mesh);
 }
 
 void Tile::setWallSpotPopulated(Direction dir, bool value)
@@ -58,18 +68,24 @@ void Tile::setIsWalkeble(bool value)
 
 int Tile::getPosX() const
 {
-	return this->m_posX;
+	return 0;
 }
 
 int Tile::getPosY() const
 {
-	return this->m_posY;
+	return 0;
 }
 
-void Tile::setMesh(Mesh * mesh)
+XMFLOAT2 Tile::getPosition() const
 {
-	this->quad.setMesh(mesh);
-	
-	//quad.setPos(static_cast<float>(m_posX), 0.0f, static_cast<float>(m_posY));
-	//quad.setRotation(90.0f, 0.0f, 0.0f);
+	XMFLOAT3 posVector = quad.getPosition();
+	XMFLOAT2 returnFloat = { posVector.x, posVector.z };
+	return returnFloat;
+}
+
+bool Tile::operator==(const Tile & other) const
+{
+	XMFLOAT3 pos = quad.getPosition();
+	XMFLOAT3 otherPos = other.quad.getPosition();
+	return pos.x == otherPos.x && pos.y == otherPos.y && pos.z == otherPos.z;
 }

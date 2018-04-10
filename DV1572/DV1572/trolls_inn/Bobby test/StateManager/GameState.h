@@ -3,6 +3,8 @@
 #include "State.h"
 #include "MainMenu.h"
 #include "../Character.h"
+#include <vector>
+#include <algorithm>
 #include "HUD/HUD.h"
 
 
@@ -43,7 +45,6 @@ private:
 
 	virtual void	_init() override;
 	void			_checkCreationOfRoom();
-
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);

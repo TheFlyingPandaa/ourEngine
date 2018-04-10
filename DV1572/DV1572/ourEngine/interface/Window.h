@@ -137,7 +137,7 @@ public:
 	Window(HINSTANCE h);
 	~Window();
 
-	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0);
+	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0, const bool working = true);
 	void PollEvents();
 	bool isOpen();
 	void Clear();
@@ -153,7 +153,7 @@ public:
 	LRESULT WndProc(UINT, WPARAM, LPARAM);
 	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);
 	void setMouseMiddleScreen();
-
+	void setTitle(LPCSTR string);
 	DirectX::XMFLOAT2 getSize() const;
 	DirectX::XMFLOAT2 getMousePos();
 };
