@@ -144,24 +144,24 @@ void GameState::Update(double deltaTime)
 	{
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
-		//std::cout << "\t\tObj" << obj->getPosition().x  << "," << obj->getPosition().z << std::endl;
+
 		if (c.walkQueueDone())
 		{
 			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+
 			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-			std::cout << "Tile( " << xTile << "," << yTile << ")"<< std::endl;
+
 			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
-			printPath(path);
+
 			XMFLOAT2 oldPos = { float(xTile), float(yTile) };
-			std::vector<Character::WalkDirection> direction;
-			direction.push_back(c.getDirectionFromPoint(oldPos, path[0]->tile->getPosition()));
+			
+			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getPosition()));
 
 			for (int i = 0; i < path.size() - 1; i++)
-				direction.push_back(c.getDirectionFromPoint(path[i]->tile->getPosition(), path[i + 1]->tile->getPosition()));
-			std::cout << "Direction size: "<< direction.size() << std::endl;
-			for (const auto& dir : direction)
-				c.Move(dir);
+				c.Move(c.getDirectionFromPoint(path[i]->tile->getPosition(), path[i + 1]->tile->getPosition()));
+			
 			for (auto& p : path)
 				delete p;
 

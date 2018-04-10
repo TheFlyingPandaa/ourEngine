@@ -281,8 +281,15 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 		{
 			
 			Direction dir = static_cast<Direction>(dirIndex);
+
 			Tile* currentTile = current->tile->getAdjacent(dir);
-			if (currentTile == nullptr || !currentTile->isWalkbale()) continue; // Jump this one
+
+			if (currentTile == nullptr)
+				continue;
+			if (currentTile->m_room != nullptr)
+				continue; // Jump this one
+			if (!currentTile->isWalkbale())
+				continue;
 
 			float gCost = current->gCost + getDistance(current->tile, currentTile);
 
