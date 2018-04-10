@@ -212,7 +212,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	gameLoadState.camY = camPos.y;
 	gameLoadState.camZ = camPos.z;
 
-	FileReader::StatesFileWrite(gameLoadState);
+	//FileReader::StatesFileWrite(gameLoadState);
 
 	while (!gameStates.empty())
 	{
