@@ -11,6 +11,9 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_lastPickedTile = nullptr;
 	m_isPlaceable = false;
 
+	m_gameHud.setWindowSize(1280, 720);
+	m_gameHud.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
+
 	box.LoadModel("trolls_inn/Resources/box.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
@@ -33,17 +36,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	
 	posX = 1;
 	posY = 1;
-	//grid->AddRoom(DirectX::XMINT2(4, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
-	//grid->AddRoom(DirectX::XMINT2(3, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
-
-	grid->CreateWalls(&m);
-
-	//std::cout << sizeof(int) << std::endl;
-	//std::cout << sizeof(short) << std::endl;
-	//std::cout << sizeof(int64_t) << std::endl;
-	
+	grid->CreateWalls(&m);	
+	grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
-	//grid->CreateWalls(&m);
+	
 }
 
 GameState::~GameState()
@@ -78,46 +74,10 @@ void GameState::Update(double deltaTime)
 		move = false;
 	}
 
-
-
-	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
+	while (!p_keyEvents->empty())
 	{
-		//Do keypress events here
-		//std::cout << p_keyEvents->top() << std::endl;
-		/*
-		if (p_keyEvents->top() == 'W' && p_keyEvents->top() != previousKey)
-		{
-			
-			grid->AddRoom(DirectX::XMINT2(posX, posY++), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-			
-		}
-		if (p_keyEvents->top() == 'S' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX, posY--), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		if (p_keyEvents->top() == 'D' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX++, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		if (p_keyEvents->top() == 'A' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX--, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		*/
 		previousKey = p_keyEvents->top();
-		p_keyEvents->pop();
-
-		
+		p_keyEvents->pop();		
 	}
 	if (p_keyEvents->empty() || p_keyEvents->top() == 0)
 		previousKey = -1;
@@ -134,6 +94,10 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
+	m_gameHud.Draw();
+	
+
+	//TEST
 	c.Draw();
 	//this->grid2->Draw();
 }
@@ -141,10 +105,10 @@ void GameState::Draw()
 void GameState::_init()
 {
 	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	kitchenTile.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");

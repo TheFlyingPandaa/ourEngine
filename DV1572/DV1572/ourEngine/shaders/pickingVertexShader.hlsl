@@ -3,6 +3,15 @@ cbuffer MESH_BUFFER : register(b0)
 	float4x4 vp;
 }
 
+cbuffer OFFSETBUFFER : register(b1)
+{
+	float temp;
+	float temp2;	//Padding
+	float temp3;
+	float temp4;
+}
+
+
 struct INPUT
 {
 	float3 pos : POSITION;
@@ -31,7 +40,7 @@ OUTPUT main(INPUT input, uint id : SV_InstanceID)
 
 	o.pos = mul(o.pos, vp);
 
-	uint index = id + 1;
+	uint index = id + 1 + temp;
 	o.color.w = 1.0f;
 	o.color.r = index % 256;
 	index /= 256;

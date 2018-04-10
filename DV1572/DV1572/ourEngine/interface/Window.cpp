@@ -22,10 +22,10 @@ std::vector<Shape*> DX::g_HUDQueue;
 ID3D11HullShader* DX::g_standardHullShader;
 ID3D11DomainShader* DX::g_standardDomainShader;
 
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroups;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsHUD;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsTransparancy;
-std::vector<DX::INSTANCE_GROUP>		DX::g_instanceGroupsPicking;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
+std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
@@ -84,6 +84,66 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 		queue[existingId].attribs.push_back(attribDesc);
 	}
 	
+}
+void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>& queue)
+{
+	int existingId = -1;
+	for (int i = 0; i < queue.size() && existingId == -1; i++)
+	{
+		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
+		{
+			existingId = i;
+
+		}
+	}
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB attribDesc;
+
+	XMMATRIX xmWorldMat = shape->getWorld();
+	XMFLOAT4X4A worldMat;
+	long index =static_cast<long>(DX::g_pickingQueue.size() - 1);
+
+	XMStoreFloat4x4A(&worldMat, xmWorldMat);
+
+	XMFLOAT4A rows[4];
+	for (int i = 0; i < 4; i++)
+	{
+		rows[i].x = worldMat.m[i][0];
+		rows[i].y = worldMat.m[i][1];
+		rows[i].z = worldMat.m[i][2];
+		rows[i].w = worldMat.m[i][3];
+	}
+
+
+	attribDesc.w1 = rows[0];
+	attribDesc.w2 = rows[1];
+	attribDesc.w3 = rows[2];
+	attribDesc.w4 = rows[3];
+
+	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
+
+
+												   // Unique Mesh
+	if (existingId == -1)
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_INDEXED newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = shape;
+		newGroup.index.push_back(index);
+		queue.push_back(newGroup);
+		
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		queue[existingId].attribs.push_back(attribDesc);
+		queue[existingId].index.push_back(index);
+	}
+
 }
 
 void DX::CleanUp()
@@ -181,16 +241,20 @@ HRESULT Window::_initDirect3DContext()
 	return hr;
 }
 
+void Window::_initViewPort()
+{
+	m_viewport.Width = static_cast<float>(m_width);
+	m_viewport.Height = static_cast<float>(m_height);
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0;
+	m_viewport.TopLeftY = 0;
+}
+
 void Window::_setViewport()
 {
-	D3D11_VIEWPORT vp;
-	vp.Width = static_cast<float>(m_width);
-	vp.Height = static_cast<float>(m_height);
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	DX::g_deviceContext->RSSetViewports(1, &vp);
+	
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 void Window::_compileShaders()
@@ -266,6 +330,7 @@ void Window::_drawHUD()
 	//The hud has a special kind of view matrix.
 	//This allowes it to stick to the screen
 	DirectX::XMMATRIX viewProj = m_HUDviewProj;
+	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 
 	MESH_BUFFER meshBuffer;
 	ID3D11Buffer* instanceBuffer = nullptr;
@@ -866,6 +931,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	m_fullscreen = fullscreen;
 	_initWindow();
 	HRESULT hr = _initDirect3DContext();
+	_initViewPort();
 	_setViewport();
 	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
 	std::thread t2(&Window::_initGBuffer, this);	//_initGBuffer();
@@ -939,9 +1005,15 @@ void Window::Flush(Camera* c, Light& light)
 	_runComputeShader();
 }
 
+void Window::FullReset()
+{
+	DX::g_deviceContext->ClearState();
+	_setViewport();
+}
+
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer);
+	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
 }
 
 void Window::Present()

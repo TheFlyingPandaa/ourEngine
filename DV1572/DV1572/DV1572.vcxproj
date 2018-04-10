@@ -140,6 +140,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
   </ItemGroup>
@@ -148,6 +149,8 @@
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
@@ -168,6 +171,7 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
@@ -282,6 +286,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
   </ItemGroup>
@@ -293,6 +298,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Library>
     <Library Include="ourEngine\core\Audio\AudioLibxRL.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Font\FontLibxDB.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Font\FontLibxRL.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Library>
   </ItemGroup>

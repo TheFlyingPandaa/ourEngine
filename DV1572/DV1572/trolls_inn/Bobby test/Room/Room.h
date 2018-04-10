@@ -14,6 +14,7 @@ protected:
 
 	bool	m_culledWalls[4] = { false };
 
+	std::vector<Wall*> m_allWalls;
 	//TODO
 	std::vector<Wall*> up;
 	std::vector<Wall*> down;
@@ -41,6 +42,8 @@ public:
 	virtual void		addWall(Wall* wall, Direction dir);
 
 	virtual void		addAdjasentRoom(Room * room);
+	virtual std::vector<Room*>	getAdjasent() const;
+	virtual std::vector<Wall*>	getAllWalls() const;
 
 	virtual void		move(int x, int y);
 
