@@ -7,7 +7,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
 	
-	
+	//this->m_hasDoor = false;
 
 	for (unsigned short x = 0; x < m_tiles.size(); x++)
 	{
@@ -29,6 +29,8 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	this->m_sizeY = sizeY;
 
 	this->m_tiles = tiles;
+
+	//this->m_hasDoor = false;
 
 	for (unsigned short x = 0; x < tiles.size(); x++)
 	{
@@ -146,7 +148,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeDown)
 				{
-					if (m_culledWalls[Direction::down])
+					if (m_culledWalls[Direction::down] && !down[x]->getIsDoor())
 						down[x]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						down[x]->setScale(1.0f, 1.0f, 1.0f);
@@ -156,7 +158,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeUp)
 				{
-					if (m_culledWalls[Direction::up])
+					if (m_culledWalls[Direction::up] && !up[x]->getIsDoor())
 						up[x]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						up[x]->setScale(1.0f, 1.0f, 1.0f);
@@ -170,7 +172,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeLeft)
 				{
-					if (m_culledWalls[Direction::left])
+					if (m_culledWalls[Direction::left] && !left[y]->getIsDoor())
 						left[y]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						left[y]->setScale(1.0f, 1.0f, 1.0f);
@@ -180,7 +182,7 @@ void Room::Update(Camera * cam)
 			{
 				if (changeRight)
 				{
-					if (m_culledWalls[Direction::right])
+					if (m_culledWalls[Direction::right] && !right[y]->getIsDoor())
 						right[y]->setScale(1.0f, 0.05f, 1.0f);
 					else
 						right[y]->setScale(1.0f, 1.0f, 1.0f);
@@ -191,22 +193,22 @@ void Room::Update(Camera * cam)
 	}
 	for (int i = 0; i < down.size(); i++)
 	{
-		if (down[i]->getIsInner())
+		if (down[i]->getIsInner() && !down[i]->getIsDoor())
 			down[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < up.size(); i++)
 	{
-		if (up[i]->getIsInner())
+		if (up[i]->getIsInner() && !up[i]->getIsDoor())
 			up[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < left.size(); i++)
 	{
-		if (left[i]->getIsInner())
+		if (left[i]->getIsInner() && !left[i]->getIsDoor())
 			left[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < right.size(); i++)
 	{
-		if (right[i]->getIsInner())
+		if (right[i]->getIsInner() && !right[i]->getIsDoor())
 			right[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 }
@@ -288,14 +290,46 @@ void Room::addAdjasentRoom(Room * room)
 	adjasent.push_back(room);
 }
 
-std::vector<Room*> Room::getAdjasent() const
+std::vector<Room*>* Room::getAdjasent()
 {
-	return adjasent;
+	return &adjasent;
 }
 
-std::vector<Wall*> Room::getAllWalls() const
+std::vector<Wall*>* Room::getAllWalls()
 {
-	return m_allWalls;
+	return &m_allWalls;
+}
+
+std::vector<Wall*>* Room::getWall(Direction dir)
+{
+	switch (dir)
+	{
+	case Direction::up:
+		return &up;
+		break;
+	case Direction::down:
+		return &down;
+		break;
+	case Direction::left:
+		return &left;
+		break;
+	case Direction::right:
+		return &right;
+		break;
+	default:
+		return nullptr;
+		break;
+	}
+}
+
+void Room::setHasDoor(Direction dir, bool value)
+{
+	this->m_hasDoor[dir] = value;
+}
+
+bool Room::getHasDoor(Direction dir) const
+{
+	return this->m_hasDoor[dir];
 }
 
 void Room::move(int x, int y)

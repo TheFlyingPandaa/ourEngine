@@ -14,6 +14,10 @@ private:
 	Grid* grid;
 	Grid* grid2;
 
+	Mesh door;
+
+	Object3D d;
+
 	HUD m_gameHud;
 
 	int posX;

@@ -23,7 +23,8 @@ public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
 
-	Tile**	getGrid() const;
+	//Tile**	getGrid() const;
+	std::vector<std::vector<Tile *>> getGrid() const;
 	
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
 	void	Update(Camera * cam);

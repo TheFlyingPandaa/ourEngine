@@ -32,8 +32,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid = new Grid(0, 0, 16, 16, &rect);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
+	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	
+	grid->getRoomCtrl().setDoorMesh(&door);
+
 	posX = 1;
 	posY = 1;
 	grid->CreateWalls(&m);	
@@ -86,6 +88,22 @@ void GameState::Update(double deltaTime)
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
+		static Shape* firstHolder = nullptr;
+		static Shape* secondHolder = nullptr;
+		if (Input::isKeyPressed('G'))
+			firstHolder = obj;
+		if (Input::isKeyPressed('H'))
+			secondHolder = obj;
+
+		if (firstHolder && secondHolder)
+		{
+			grid->getRoomCtrl().CreateDoor(grid->getGrid()[static_cast<int>(firstHolder->getPosition().x + 0.5f)][static_cast<int>(firstHolder->getPosition().z + 0.5f)],
+				grid->getGrid()[static_cast<int>(secondHolder->getPosition().x + 0.5f)][static_cast<int>(secondHolder->getPosition().z + 0.5f)]);	
+			firstHolder = nullptr;
+			secondHolder = nullptr;
+					
+		}
+
 		//do Picking events here
 	}
 }
@@ -95,7 +113,6 @@ void GameState::Draw()
 	
 	this->grid->Draw();
 	m_gameHud.Draw();
-	
 
 	//TEST
 	c.Draw();
@@ -106,10 +123,13 @@ void GameState::_init()
 {
 	kitchenTile.MakeRectangle();
 	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	kitchenTile.setNormalTexture("trolls_inn/Resources/NormalMap.png");
+	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
 	rect.MakeRectangle();
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
-	rect.setNormalTexture("trolls_inn/Resources/NormalMap.png");
+	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+	door.LoadModel("trolls_inn/Resources/door/Door.obj");
+	door.setDiffuseTexture("trolls_inn/Resources/door/Texture.bmp");
+	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
@@ -208,6 +228,7 @@ void GameState::_checkCreationOfRoom()
 				
 				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
 				grid->CreateWalls();
+				grid->getRoomCtrl().CreateDoors();
 			}
 		}
 		m_firstPickedTile->setColor(1, 1, 1);

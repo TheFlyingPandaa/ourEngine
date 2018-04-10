@@ -65,10 +65,9 @@ Grid::~Grid()
 }
 
 
-Tile ** Grid::getGrid() const
+std::vector<std::vector<Tile*>> Grid::getGrid() const
 {
-	//TODO
-	return nullptr;	
+	return m_tiles;	
 }
 
 

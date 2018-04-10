@@ -20,7 +20,7 @@ private:
 	std::vector<Room*>	m_rooms;
 	std::vector<Wall*>	m_walls;
 	
-
+	Mesh*				m_doorMesh;
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 	
@@ -43,5 +43,9 @@ public:
 	//Be conservative when calling
 	void				CreateWalls();
 	void				CreateDoors();
+	void				setDoorMesh(Mesh * mesh);
+	void				CreateDoor(Tile * tile1, Tile * tile2);
+
+	Direction			getDirection(Tile*, Tile*);
 };
 

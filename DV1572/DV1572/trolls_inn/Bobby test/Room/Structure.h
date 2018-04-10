@@ -19,10 +19,15 @@ private:
 	Tile*				m_tile;
 
 	DirectX::XMINT2		position;
+
+	bool				isDoor = false;
 	
 public:
 	Wall(Tile* tile, Mesh * mesh = nullptr);
 	~Wall();
+
+	void	setIsDoor(bool value);
+	bool	getIsDoor() const;
 
 	void	Draw();
 
@@ -32,6 +37,8 @@ public:
 	void	setPosition(DirectX::XMFLOAT2 position);
 	void	setRotation(DirectX::XMFLOAT3 rotation);
 	void	setScale(float x, float y, float z);
+
+	void	setMesh(Mesh * mesh);
 
 	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
@@ -50,6 +57,7 @@ public:
 		quad.setRotation(90.0f, 0.0f, 0.0f);		
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
+	Room*	getRoom() const;
 	void	setRoom(Room * room);
 	void	setInside(bool value);
 	void	setIsWalkeble(bool value);

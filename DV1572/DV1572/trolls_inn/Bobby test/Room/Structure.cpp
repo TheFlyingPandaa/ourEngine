@@ -6,6 +6,11 @@ void Tile::setAdjacent(Tile * tile, Direction dir)
 	
 }
 
+Room * Tile::getRoom() const
+{
+	return this->m_room;
+}
+
 Tile * Tile::getAdjacent(Direction dir)
 {
 	return this->adjacent[dir];

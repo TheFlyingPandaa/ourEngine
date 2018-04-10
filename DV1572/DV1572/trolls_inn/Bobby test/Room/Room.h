@@ -23,6 +23,8 @@ protected:
 
 	std::vector<Room*> adjasent;
 	
+	bool				m_hasDoor[4]{ false };
+
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
 	Room(int posX, int posY , int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles);
@@ -42,8 +44,13 @@ public:
 	virtual void		addWall(Wall* wall, Direction dir);
 
 	virtual void		addAdjasentRoom(Room * room);
-	virtual std::vector<Room*>	getAdjasent() const;
-	virtual std::vector<Wall*>	getAllWalls() const;
+	virtual std::vector<Room*>*	getAdjasent();
+	virtual std::vector<Wall*>*	getAllWalls();
+	virtual std::vector<Wall*>*	getWall(Direction dir);
+	
+
+	virtual void		setHasDoor(Direction, bool);
+	virtual bool		getHasDoor(Direction) const;
 
 	virtual void		move(int x, int y);
 
