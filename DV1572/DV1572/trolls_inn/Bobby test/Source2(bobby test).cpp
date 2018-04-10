@@ -181,7 +181,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 		
-		wnd.Flush(cam, light);
+		wnd.Flush(cam);
 		/*
 		m_spriteBatch->Begin();
 

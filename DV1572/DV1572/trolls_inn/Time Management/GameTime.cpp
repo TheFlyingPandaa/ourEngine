@@ -64,7 +64,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	case MORNINGTONOON:
 		if (m_minutes <= 6) 
 		{
-			std::cout << "Morning to Noon" << std::endl;
+			//std::cout << "Morning to Noon" << std::endl;
 			m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f); 
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor); 
@@ -89,7 +89,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	case NOONTOEVENING:
 		if (m_minutes <= 12) 
 		{
-			std::cout << "Noon to Evening" << std::endl;
+			//std::cout << "Noon to Evening" << std::endl;
 
 			m_sunTargetInterpolate = DirectX::XMVECTOR{ 230.0f / m_divider,120.0f / m_divider, 120.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
@@ -115,7 +115,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	case EVENINGTONIGHT:
 		if (m_minutes <= 18) 
 		{
-			std::cout << "Evening to Night" << std::endl;
+			//std::cout << "Evening to Night" << std::endl;
 			m_sunTargetInterpolate = DirectX::XMVECTOR{ 90.0f / m_divider,70.0f / m_divider, 190.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
@@ -141,7 +141,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 
 		if (m_minutes <= 21)
 		{
-			std::cout << "Night to Mid" << std::endl;
+			//std::cout << "Night to Mid" << std::endl;
 			m_sunTargetInterpolate = DirectX::XMVECTOR{ 50.0f / m_divider,50.0f / m_divider, 220.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (3.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
@@ -168,7 +168,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 
 		if (m_minutes <= 24)
 		{
-			std::cout << "Night to Morning" << std::endl;
+			//std::cout << "Night to Morning" << std::endl;
 			m_sunTargetInterpolate = DirectX::XMVECTOR{ 30.0f / m_divider,30.0f / m_divider, 85.0f / m_divider };
 			m_colorScaleFactor = m_seconds / (3.0f * 60.0f);
 			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
