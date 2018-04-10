@@ -181,16 +181,20 @@ HRESULT Window::_initDirect3DContext()
 	return hr;
 }
 
+void Window::_initViewPort()
+{
+	m_viewport.Width = static_cast<float>(m_width);
+	m_viewport.Height = static_cast<float>(m_height);
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0;
+	m_viewport.TopLeftY = 0;
+}
+
 void Window::_setViewport()
 {
-	D3D11_VIEWPORT vp;
-	vp.Width = static_cast<float>(m_width);
-	vp.Height = static_cast<float>(m_height);
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	DX::g_deviceContext->RSSetViewports(1, &vp);
+	
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 void Window::_compileShaders()
@@ -866,6 +870,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 	m_fullscreen = fullscreen;
 	_initWindow();
 	HRESULT hr = _initDirect3DContext();
+	_initViewPort();
 	_setViewport();
 	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
 	std::thread t2(&Window::_initGBuffer, this);	//_initGBuffer();
@@ -937,6 +942,12 @@ void Window::Flush(Camera* c, Light& light)
 	_transparencyPass(*c);
 	_drawHUD();
 	_runComputeShader();
+}
+
+void Window::FullReset()
+{
+	DX::g_deviceContext->ClearState();
+	_setViewport();
 }
 
 Shape * Window::getPicked(Camera* c)

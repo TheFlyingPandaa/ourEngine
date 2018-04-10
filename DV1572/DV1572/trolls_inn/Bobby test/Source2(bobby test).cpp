@@ -188,7 +188,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		m_spriteBatch->Begin();
 
-		const wchar_t* output = L"Magnus Suger Kuk:D";
+		const wchar_t* output = L"Magnus Ar gullig #noHomo";
 
 		DirectX::XMVECTOR origin = m_font->MeasureString(output) / 2.f;
 
@@ -198,6 +198,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		m_spriteBatch->End();
 
   		wnd.Present();
+		wnd.FullReset();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
