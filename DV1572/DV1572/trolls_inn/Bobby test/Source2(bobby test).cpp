@@ -106,13 +106,29 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (Input::GetKeyIndex() != -1)
 			keyEvent.push(Input::GetKeyIndex());
 		
+		if (!gameStates.empty())
+		{
+			gameStates.top()->Update(1.0f / REFRESH_RATE);
+
+			if (gameStates.top()->Exit()) {
+				delete gameStates.top();
+				gameStates.pop();
+			}
+			else
+			{
+				State * ref = gameStates.top()->NewState();
+				if (ref)
+					gameStates.push(ref);
+
+			}
+		}
 
 		while (unprocessed > 1)
 		{
 			updates++;
 			unprocessed -= 1;
 
-			if (!gameStates.empty())
+			/*if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
 
@@ -127,7 +143,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 
 				}
-			}
+			}*/
 
 
 			if (Input::isKeyPressed('P') && !pressed)
@@ -178,7 +194,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		
 		wnd.Flush(cam, light);
-
+		/*
 		m_spriteBatch->Begin();
 
 		const wchar_t* output = L"Magnus Ar gullig #noHomo";
@@ -189,7 +205,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			m_fontPos, Colors::White, 0.f, origin);
 
 		m_spriteBatch->End();
-
+		*/
   		wnd.Present();
 		wnd.FullReset();
 

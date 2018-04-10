@@ -6,7 +6,18 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
+	
+	
 
+	for (unsigned short x = 0; x < m_tiles.size(); x++)
+	{
+		for (unsigned short y = 0; y < m_tiles[x].size(); y++)
+		{
+			//8D
+			//To scale
+			m_tiles[x][y]->setMesh(m);
+		}
+	}
 	//TODO: Dont forget to send the tiles you lil cunt :D
 }
 
@@ -23,8 +34,8 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	{
 		for (unsigned short y = 0; y < tiles[x].size(); y++)
 		{
-			tiles[x][y]->m_inside = true;
-			tiles[x][y]->m_isWalkeble = true;
+			tiles[x][y]->setInside(true);
+			tiles[x][y]->setIsWalkeble(true);
 			tiles[x][y]->setRoom(this);
 
 		}
@@ -49,6 +60,19 @@ Tile * Room::getTiles(int x, int y) const
 		return nullptr;
 }
 
+void Room::setTile(Mesh * mesh)
+{
+	for (int x = 0; x < m_tiles.size(); x++)
+	{
+		for (int y = 0; y < m_tiles[x].size(); y++)
+		{
+			m_tiles[x][y]->setMesh(mesh);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+		}
+	}
+}
+
 
 
 bool Room::Inside(int x, int y)
@@ -59,8 +83,8 @@ bool Room::Inside(int x, int y)
 
 bool Room::Inside(Tile * t)
 {
-	return	t->m_posX >= m_posX && t->m_posY < m_posX + m_sizeX &&
-			t->m_posY >= m_posY && t->m_posY < m_posY + m_sizeY;
+	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
+			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
 
 void Room::Update(Camera * cam)
@@ -209,6 +233,11 @@ int Room::getSizeY() const
 
 void Room::setWalls(std::vector<Wall*> walls, Direction dir)
 {
+	for (int i = 0; i < walls.size(); i++)
+	{
+		m_allWalls.push_back(walls[i]);
+	}
+
 	switch (dir)
 	{
 	case 0:
@@ -230,19 +259,24 @@ void Room::setWalls(std::vector<Wall*> walls, Direction dir)
 
 void Room::addWall(Wall * wall, Direction dir)
 {
+	m_allWalls.push_back(wall);
 	switch (dir)
 	{
-	case 0:
-		up.push_back(wall);
+	case 0:		
+		if (std::find(up.begin(), up.end(), wall) == up.end())
+			up.push_back(wall);
 		break;
 	case 1:
-		down.push_back(wall);
+		if (std::find(down.begin(), down.end(), wall) == down.end())
+			down.push_back(wall);
 		break;
 	case 2:
-		left.push_back(wall);
+		if (std::find(left.begin(), left.end(), wall) == left.end())
+			left.push_back(wall);
 		break;
 	case 3:
-		right.push_back(wall);
+		if (std::find(right.begin(), right.end(), wall) == right.end())
+			right.push_back(wall);
 		break;
 	default:
 		break;
@@ -254,62 +288,18 @@ void Room::addAdjasentRoom(Room * room)
 	adjasent.push_back(room);
 }
 
+std::vector<Room*> Room::getAdjasent() const
+{
+	return adjasent;
+}
+
+std::vector<Wall*> Room::getAllWalls() const
+{
+	return m_allWalls;
+}
+
 void Room::move(int x, int y)
 {
 	this->m_posX += x;
 	this->m_posY += y;
-
-	for (size_t i = 0; i < up.size(); i++)
-	{
-		
-	}
 }
-
-/*bool Room::getHasWalls() const
-{
-	return this->m_hasWalls;
-}*/
-/*
-void Room::CreateWalls(Mesh * mesh)
-{
-	this->m_wall = mesh;
-	this->m_hasWalls = true;
-
-	for (size_t x = 0; x < m_sizeX; x++)
-	{
-		Object3D * obj = new Object3D();
-		obj->setMesh(m_wall);
-
-		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY);
-		//obj->setScale(0.5f);
-		down.push_back(obj);
-
-		obj = new Object3D();
-		obj->setMesh(m_wall);
-
-		obj->setPos(static_cast<float>(this->m_posX + static_cast<int>(x)) + 0.5f, 0, this->m_posY + m_sizeY);
-		//obj->setScale(0.5f);
-		up.push_back(obj);
-	}
-
-	for (size_t y = 0; y < m_sizeY; y++)
-	{
-		Object3D * obj = new Object3D();
-		obj->setMesh(m_wall);
-
-		obj->setRotation(0, 90, 0);
-		obj->setPos(this->m_posX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		//obj->setScale(0.5f);
-		left.push_back(obj);
-
-		obj = new Object3D();
-		obj->setMesh(m_wall);
-
-
-		obj->setRotation(0, 90, 0);
-		obj->setPos(this->m_posX + this->m_sizeX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-		//obj->setScale(0.5f);
-		right.push_back(obj);
-	}
-}
-*/

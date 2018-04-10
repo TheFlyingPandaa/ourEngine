@@ -18,8 +18,8 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		for (int j = 0; j < sizeY; j++)
 		{
 			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
-			t->quad.setScale(2.0f);
-			t->quad.setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
+			t->getQuad().setScale(2.0f);
+			t->getQuad().setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
 			this->m_tiles[i][j] = t;
 		}
 	}
@@ -95,7 +95,7 @@ void Grid::Draw()
 	{
 		for (int j = 0; j < m_sizeY; j++)
 		{
-			m_tiles[i][j]->quad.Draw();
+			m_tiles[i][j]->getQuad().Draw();
 		}
 	}
 
@@ -103,13 +103,12 @@ void Grid::Draw()
 }
 void Grid::PickTiles()
 {
-	for (int i = 0; i < m_sizeX; i++)
+	for (int i = 0; i < m_tiles.size(); i++)
 	{
-		for (int j = 0; j < m_sizeY; j++)
-		{
-			
-			m_tiles[i][j]->quad.setColor(1.0f,1.0f,1.0f);
-			m_tiles[i][j]->quad.CheckPick();
+		for (int j = 0; j < m_tiles[i].size(); j++)
+		{			
+			m_tiles[i][j]->getQuad().setColor(1.0f,1.0f,1.0f);
+			m_tiles[i][j]->getQuad().CheckPick();
 		}
 	}
 }
@@ -141,7 +140,7 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	{
 		for (int j = start.y; j < end.y + 1; j++)
 		{
-			m_tiles[i][j]->quad.setColor(color.x, color.y, color.z);
+			m_tiles[i][j]->getQuad().setColor(color.x, color.y, color.z);
 		}
 	}
 	return placeable;
@@ -161,7 +160,7 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 	{
 		for (int j = pos.y; j < end.y + 1; j++)
 		{
-			m_tiles[i][j]->quad.setColor(1.0f, 1.0f, 1.0f);
+			m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }
@@ -169,6 +168,11 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 void Grid::DrawString()
 {
 	
+}
+
+RoomCtrl & Grid::getRoomCtrl()
+{
+	return m_roomCtrl;
 }
 
 void Grid::Update(Camera * cam) {
