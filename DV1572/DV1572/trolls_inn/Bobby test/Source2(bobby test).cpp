@@ -52,7 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 
 	Window wnd(hInstance);
-	wnd.Init(gameSettings.width, gameSettings.height, "Trolls_inn", gameSettings.fullscreen, working);
+	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -132,7 +132,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 
 				}
-			}
+			}	
 
 
 			if (Input::isKeyPressed('P') && !pressed)
@@ -156,6 +156,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				pressed = false;
 			}
+			Shape* picked = nullptr;
+			picked = wnd.getPicked(cam);
+
+			if (picked) {
+				pickingEvents.push(picked);
+
+			}
 
 		}
 
@@ -174,16 +181,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
 
-		Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);
 
-		if (picked) {
-			pickingEvents.push(picked);
-			
-		}
 		
 		wnd.Flush(cam, light);
-
+		/*
 		m_spriteBatch->Begin();
 
 		const wchar_t* output = L"Magnus Ar gullig #noHomo";
@@ -194,13 +195,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			m_fontPos, Colors::White, 0.f, origin);
 
 		m_spriteBatch->End();
-
+		*/
   		wnd.Present();
 		wnd.FullReset();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			std::string title;
+			title = "Fps ";
+			title += std::to_string(fpsCounter);
+			title += " Tick ";
+			title += std::to_string(updates);
+			wnd.setTitle(title.c_str());
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

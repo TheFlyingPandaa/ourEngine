@@ -15,6 +15,7 @@ protected:
 	std::stack<Shape *>*	p_pickingEvent;
 	std::stack<int>*		p_keyEvents;//TODO do this
 
+	
 
 public:
 	State(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent) : m_exitState(false), m_newState(nullptr), p_pickingEvent(nullptr), p_keyEvents(nullptr) {

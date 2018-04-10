@@ -14,6 +14,7 @@ protected:
 
 	bool	m_culledWalls[4] = { false };
 
+	std::vector<Wall*> m_allWalls;
 	//TODO
 	std::vector<Wall*> up;
 	std::vector<Wall*> down;
@@ -21,6 +22,8 @@ protected:
 	std::vector<Wall*> right;
 
 	std::vector<Room*> adjasent;
+	
+	bool				m_hasDoor[4]{ false };
 
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
@@ -31,7 +34,8 @@ public:
 	virtual std::vector<std::vector<Tile*>>		getTiles() const; 
 	virtual Tile*								getTiles(int x, int y) const;
 
-
+	virtual void		setTile(Mesh * mesh);
+	
 	virtual int			getX() const; 
 	virtual int			getY() const;
 	virtual int			getSizeX() const; 
@@ -40,6 +44,13 @@ public:
 	virtual void		addWall(Wall* wall, Direction dir);
 
 	virtual void		addAdjasentRoom(Room * room);
+	virtual std::vector<Room*>*	getAdjasent();
+	virtual std::vector<Wall*>*	getAllWalls();
+	virtual std::vector<Wall*>*	getWall(Direction dir);
+	
+
+	virtual void		setHasDoor(Direction, bool);
+	virtual bool		getHasDoor(Direction) const;
 
 	virtual void		move(int x, int y);
 
