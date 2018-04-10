@@ -39,10 +39,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	std::stack<Shape *> pickingEvents;
 	std::stack<int>		keyEvent;
 
-	Light light;
-	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
-	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
-
+	//Used to manage the time of day. 
 	GameTime gameTime;
 
 	Mesh test;
@@ -58,8 +55,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 	
 	while (wnd.isOpen())
-	{
-		
+	{	
 		wnd.Clear();
 		auto currentTime = steady_clock::now();
 		wnd.PollEvents();
@@ -77,8 +73,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 
-			gameTime.updateCurrentTime(REFRESH_RATE, light);
-
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -92,7 +86,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					State * ref = gameStates.top()->NewState();
 					if (ref)
 						gameStates.push(ref);
-
 				}
 			}
 
@@ -116,8 +109,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			std::cout << "LOLOOLOL\n";
 
 		HUD.DrawAsHud();
-		
-		wnd.Flush(cam, light);
+
+		wnd.Flush(cam);
 
 		wnd.Present();
 

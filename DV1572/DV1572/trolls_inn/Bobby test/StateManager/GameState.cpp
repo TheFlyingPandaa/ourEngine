@@ -15,7 +15,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	//grid->AddRoom(DirectX::XMINT2(2 * pos++, 0), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 
 	grid->CreateWalls(&m);
-
 	//std::cout << sizeof(int) << std::endl;
 	//std::cout << sizeof(short) << std::endl;
 	//std::cout << sizeof(int64_t) << std::endl;
@@ -33,7 +32,14 @@ void GameState::Update(double deltaTime)
 {
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-	
+
+	//Update current time and sun and moon values. 
+	gameTime.updateCurrentTime(deltaTime); 
+
+	//Check wether the sun and moon are active, if so, send their data to 
+	//the GPU
+
+
 
 	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
 	{

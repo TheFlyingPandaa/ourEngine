@@ -3,6 +3,9 @@
 #include <DirectXMath.h>
 #include "../../ourEngine/interface/light/Light.h"
 #include <cmath>
+#include <vector>
+#include "../../ourEngine/core/Dx.h"
+#include <d3d11.h>
 class GameTime
 {
 private:
@@ -11,10 +14,10 @@ private:
 		MORNINGTONOON,
 		NOONTOEVENING,
 		EVENINGTONIGHT,
+		NIGHTTOMID,
 		NIGHTTOMORNING
 	};
 
-	
 	TIMEOFDAY m_currentTime;
 	float m_currentClockValue;
 	float m_seconds; 
@@ -24,24 +27,57 @@ private:
 	float m_divider;
 	float m_colorScaleFactor;
 	float m_rotationFactor; 
- 
-	DirectX::XMVECTOR m_startInterpolate; 
-	DirectX::XMVECTOR m_targetInterpolate; 
-	DirectX::XMVECTOR m_currentFinalColor;
+	
+	DirectX::XMVECTOR m_moonStartInterpolate; 
+	DirectX::XMVECTOR m_moonTargetInterpolate;
+	
+	DirectX::XMVECTOR m_sunStartInterpolate; 
+	DirectX::XMVECTOR m_sunTargetInterpolate; 
+	
+	DirectX::XMVECTOR m_sunCurrentFinalColor;
+	DirectX::XMVECTOR m_moonCurrentFinalColor;
+
 	DirectX::XMVECTOR m_sunRotationStart;
 	DirectX::XMVECTOR m_sunRotationTarget;
-	DirectX::XMVECTOR m_finalRotation; 
+	DirectX::XMVECTOR m_moonRotationStart;
+	DirectX::XMVECTOR m_moonRotationTarget;
+
+	DirectX::XMVECTOR m_sunFinalRotation;
+	DirectX::XMVECTOR m_moonFinalRotation;
 
 	DirectX::XMFLOAT4A m_fFinalColor; 
 	DirectX::XMFLOAT4A m_fFinalRotation; 
+
+	DirectX::XMVECTOR m_vSunDir; 
+	DirectX::XMVECTOR m_vUp;
+
+	ID3D11Buffer* m_pSunBuffer; 
+	ID3D11Buffer* m_pMoonBuffer;
+
+	DIRECTIONAL_LIGHT_BUFFER m_sunBuffer; 
+	DIRECTIONAL_LIGHT_BUFFER m_moonBuffer; 
+
+	Light m_sun; 
+	Light m_moon;
+
+	std::vector<Light*> m_sunAndMoon;
+
+
+	void m_createSunAndMoonBuffers(); 
+
+	void m_cpyLightToGPU();
 
 public:
 	GameTime(); 
 	~GameTime(); 
 
-	void updateCurrentTime(float refreshRate, Light& light); 
+	void updateCurrentTime(float refreshRate); 
+	TIMEOFDAY getTimePeriod(); 
 
-	DirectX::XMFLOAT4A getFinalSunColor() const; 
+	Light& getSun(); 
+	Light& getMoon(); 
+	
+	std::vector<Light*>& getSunAndMoonVector(); 
 };
 
 #endif 

@@ -9,6 +9,7 @@
 #include "shape\Rectangle.h"
 #include "light\Light.h"
 #include "Input.h"
+#include "../../trolls_inn/Time Management/GameTime.h"
 
 const UINT GBUFFER_COUNT = 3;
 
@@ -105,7 +106,7 @@ private:
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);
 	void	_clearTargets();
-	void	_lightPass(Light& light, Camera& cam);
+	void	_lightPass(Camera& cam/*std::vector<Light*> lightQueue*/);
 	//Transparency
 	void	_transparencyPass(const Camera & cam);
 	void	_initTransparency();
@@ -133,11 +134,11 @@ public:
 	void PollEvents();
 	bool isOpen();
 	void Clear();
-	void Flush(Camera* c, Light& light);
+	void loadActiveLights(GameTime& gameTime); 
+	void Flush(Camera* c);
 
 	//Do this once per loop and if pressed
 	Shape* getPicked(Camera* c);
-
 
 	void Present();
 	LRESULT WndProc(UINT, WPARAM, LPARAM);

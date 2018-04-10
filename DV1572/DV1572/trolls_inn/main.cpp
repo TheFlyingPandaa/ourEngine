@@ -69,9 +69,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			
-			cam->update(wnd.getMousePos());
+			cam->update();
 			timeOfDay.updateCurrentTime(REFRESH_RATE,light);
-			light.setColor(timeOfDay.getFinalSunColor()); 
+ 
 		}
 
 		fpsCounter++;

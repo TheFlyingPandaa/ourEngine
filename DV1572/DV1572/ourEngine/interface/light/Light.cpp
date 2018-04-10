@@ -1,7 +1,7 @@
 #include "Light.h"
 #include "../../core/Dx.h"
 
-void Light::updateMatrix(const Camera& cam)
+void Light::updateMatrix()
 {
 	pos = XMFLOAT3(0, 0, 10);
 	DirectX::XMVECTOR vDir; 
@@ -13,13 +13,43 @@ void Light::updateMatrix(const Camera& cam)
 		XMLoadFloat3(&lookAt),
 		up
 	);
-	view = cam.getViewMatrix();
+	//view = cam.getViewMatrix();
 	//TODO: FIX THIS SHIT
 	//XMMATRIX projection = XMMatrixOrthographicLH(m_width, m_height, 0.1f, 200.0f);
 	XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(1280) / 720, 0.1f, 5.0f);
 	//Update light wvp space
 	XMStoreFloat4x4A(&m_lightBuffer.viewProjection, XMMatrixTranspose(view * projectionMatrix)); 
 
+}
+
+void Light::use(bool useLight)
+{
+	m_useLight = useLight; 
+}
+
+bool Light::getUseStatus() const
+{
+	return m_useLight; 
+}
+
+void Light::cpyData(bool isSun, DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer)
+{
+	if (isSun)
+	{
+		D3D11_MAPPED_SUBRESOURCE sunLightData;
+		DX::g_deviceContext->Map(bufferPointer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sunLightData);
+		memcpy(sunLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+		DX::g_deviceContext->Unmap(bufferPointer, 0);
+		DX::g_deviceContext->PSSetConstantBuffers(2, 1, &bufferPointer);
+	}
+	else
+	{
+		D3D11_MAPPED_SUBRESOURCE moonLightData; 
+		DX::g_deviceContext->Map(bufferPointer, 0, D3D11_MAP_WRITE_DISCARD, 0, &moonLightData);
+		memcpy(moonLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+		DX::g_deviceContext->Unmap(bufferPointer, 0);
+		DX::g_deviceContext->PSSetConstantBuffers(3, 1, &bufferPointer);
+	}
 }
 
 void Light::_createResources()
@@ -70,11 +100,6 @@ void Light::_createResources()
 	hr = DX::g_device->CreateBuffer(&lBdesc, nullptr, &m_pLightBuffer);
 }
 
-Light::Light()
-{
-	
-}
-
 void Light::Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height)
 {
 	//Setting the initial values for the light via its buffer. 
@@ -87,6 +112,11 @@ void Light::Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, flo
 	m_height = height;
 
 	_createResources();
+}
+
+Light::Light()
+{
+
 }
 
 Light::~Light()
@@ -128,13 +158,6 @@ void Light::setColor(XMFLOAT4A color)
 {
 	m_lightBuffer.color = color;
 	m_color = color; 
-}
-
-void Light::Move(XMFLOAT4A move)
-{
-	XMVECTOR newPos = XMLoadFloat4A(&m_pos) + XMLoadFloat4A(&move);
-	XMStoreFloat4A(&m_pos, newPos); 
-	//Rebuild matrixes here
 }
 
 ID3D11DepthStencilView *& Light::getDepthView() 

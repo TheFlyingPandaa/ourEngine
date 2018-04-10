@@ -14,6 +14,8 @@ private:
 	int posX;
 	int posY;
 
+	GameTime gameTime; 
+
 	int previousKey;
 
 	virtual void _init() override;
