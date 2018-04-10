@@ -9,7 +9,7 @@ void OrbitCamera::setMinTilt(float t)
 {
 	m_tiltCapDown = t;
 }
-OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
+OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim, DirectX::XMFLOAT3 pos) : Camera()
 {
 	m_distanceFromTarget = 10.0f;
 	m_windowDim = windowDim;
@@ -19,6 +19,7 @@ OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
 	m_tiltCapDown = 0.0f;
 	m_tiltCapUp = 0.5f;
 	m_zoomSensitivity = 0.5f;
+	m_pos = pos;
 
 }
 
@@ -32,8 +33,11 @@ void printVec3(const char* name , XMVECTOR vec)
 	XMStoreFloat3(&debugVec, vec);
 	std::cout << name << " (" <<debugVec.x << "," << debugVec.y << "," << debugVec.z <<")"<<std::endl;
 }
+
 void OrbitCamera::update()
 {
+	float cursorDetectProc = 0.5f;
+	float speed = 0.5f;
 	XMVECTOR xmMouse = XMLoadFloat2(&Input::getMousePosition());
 	XMVECTOR xmLastMouse = XMLoadFloat2(&m_lastMouse);
 	XMVECTOR xmDelta = xmMouse - xmLastMouse;
@@ -89,31 +93,31 @@ void OrbitCamera::update()
 	else if(Input::isMouseLeftPressed())
 	{
 		// If Mouse is 20% of the top
-		if (m_lastMouse.y < m_windowDim.y * 0.2)
+		if (m_lastMouse.y < m_windowDim.y * cursorDetectProc)
 		{
-			float acceleration = 1.0f - (m_lastMouse.y) / (m_windowDim.y * 0.2f);
+			float acceleration = 1.0f - (m_lastMouse.y) / (m_windowDim.y * cursorDetectProc);
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = -XMVector3Normalize(XMVector3Cross(up, front));
 			XMVECTOR newFront = XMVector3Normalize(XMVector3Cross(up, right));
 
-			xmCamPos += newFront * acceleration;
+			xmCamPos += newFront * acceleration * speed;
 
 			XMStoreFloat3(&m_pos, xmCamPos);
 
 		} // end if --- if mouse to 80% of the bottom
-		else if (m_lastMouse.y > m_windowDim.y * 0.8)
+		else if (m_lastMouse.y > m_windowDim.y * (1.0f - cursorDetectProc))
 		{
 
-			float distanceGap = m_windowDim.y - (m_windowDim.y * 0.8f);
-			float acceleration = (m_lastMouse.y - m_windowDim.y * 0.8f) / distanceGap;
+			float distanceGap = m_windowDim.y - (m_windowDim.y * (1.0f - cursorDetectProc));
+			float acceleration = (m_lastMouse.y - m_windowDim.y * (1.0f - cursorDetectProc)) / distanceGap;
 
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, front));
 			XMVECTOR newFront = XMVector3Normalize(XMVector3Cross(up, right));
 
-			xmCamPos += newFront * acceleration;
+			xmCamPos += newFront * acceleration * speed;
 
 
 			XMStoreFloat3(&m_pos, xmCamPos);
@@ -121,27 +125,27 @@ void OrbitCamera::update()
 		}
 
 		// If the mouse is 20% to the left of the screen
-		if (m_lastMouse.x < m_windowDim.x * 0.2f)
+		if (m_lastMouse.x < m_windowDim.x * (cursorDetectProc))
 		{
-			float acceleration = 1.0f - (m_lastMouse.x) / (m_windowDim.x * 0.2f);
+			float acceleration = 1.0f - (m_lastMouse.x) / (m_windowDim.x * (cursorDetectProc));
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = -XMVector3Normalize(XMVector3Cross(up, front));
 
-			xmCamPos += right * acceleration;
+			xmCamPos += right * acceleration * speed;
 
 			XMStoreFloat3(&m_pos, xmCamPos);
 
 		}//If the mouse is 80% to right of the screen
-		else if (m_lastMouse.x > m_windowDim.x * 0.8f)
+		else if (m_lastMouse.x > m_windowDim.x * (1.0f - cursorDetectProc))
 		{
-			float distanceGap = m_windowDim.x - (m_windowDim.x * 0.8f);
-			float accceleration = (m_lastMouse.x - m_windowDim.x * 0.8f) / distanceGap;
+			float distanceGap = m_windowDim.x - (m_windowDim.x * (1.0f - cursorDetectProc));
+			float accceleration = (m_lastMouse.x - m_windowDim.x * (1.0f - cursorDetectProc)) / distanceGap;
 			XMVECTOR front = xmLookAt;
 			XMVECTOR up = m_up;
 			XMVECTOR right = XMVector3Normalize(XMVector3Cross(up, front));
 
-			xmCamPos += right * accceleration;
+			xmCamPos += right * accceleration * speed;
 
 			XMStoreFloat3(&m_pos, xmCamPos);
 

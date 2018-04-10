@@ -17,6 +17,7 @@ std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
 std::vector<Shape*> DX::g_pickingQueue;
 std::vector<Shape*> DX::g_HUDQueue;
+std::vector<Light*> DX::g_lightQueue; 
 
 //Standard Tessellation
 ID3D11HullShader* DX::g_standardHullShader;
@@ -103,7 +104,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
-	long index = DX::g_pickingQueue.size() - 1;
+	long index =static_cast<long>(DX::g_pickingQueue.size() - 1);
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
@@ -708,7 +709,7 @@ void Window::_clearTargets()
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
 }
 
-void Window::_lightPass(Light& light, Camera& cam)
+void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DX::g_deviceContext->VSSetShader(m_deferredVertexShader, nullptr, 0);
@@ -723,15 +724,20 @@ void Window::_lightPass(Light& light, Camera& cam)
 	{
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
- 
-
+	
+	/*//Copy sun and moon values to GPU. 
 	D3D11_MAPPED_SUBRESOURCE lightData;
-	DX::g_deviceContext->Map(light.getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
-	memcpy(lightData.pData, &light.getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
-	DX::g_deviceContext->Unmap(light.getBufferPointer(), 0);
-	ID3D11Buffer* lightBufferPointer = light.getBufferPointer(); 
-	DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
+	for (int i = 0; i < 2; i++)
+	{
+		DX::g_deviceContext->Map(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
+		memcpy(lightData.pData, &gameTime.getSunAndMoonVector()[i].getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+		DX::g_deviceContext->Unmap(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0);
+		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndMoonVector()[i].getBufferPointer();
+		DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
+	}*/
 
+	//Copy to
+	
 	//Throw in camera values into buffer
 	CAMERA_POS_BUFFER cameraBuffer;
 	cameraBuffer.pos.x = cam.getPosition().x;
@@ -996,14 +1002,19 @@ void Window::Clear()
 	DX::g_deviceContext->PSSetShaderResources(0, GBUFFER_COUNT, renderTargets);
 }
 
-void Window::Flush(Camera* c, Light& light)
+void Window::loadActiveLights(GameTime& gameTime)
+{
+
+}
+
+void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
 	
 	_prepareGeometryPass();
 	_geometryPass(*c);
 	_clearTargets();
-	_lightPass(light,*c);
+	_lightPass(*c);
 	_transparencyPass(*c);
 	_drawHUD();
 	_runComputeShader();
@@ -1151,6 +1162,11 @@ void Window::setMouseMiddleScreen()
 	POINT pt = { (LONG)m_width / 2, (LONG)m_height / 2 };
 	ClientToScreen(m_hwnd, &pt);
 	SetCursorPos(pt.x, pt.y);
+}
+
+void Window::setTitle(LPCSTR string)
+{
+	SetWindowText(m_hwnd, string);
 }
 
 DirectX::XMFLOAT2 Window::getSize() const

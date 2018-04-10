@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <chrono>
+#include "../Time Management/GameTime.h"
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
@@ -40,6 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 {
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
+	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -51,7 +53,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 
 	Window wnd(hInstance);
-	wnd.Init(gameSettings.width, gameSettings.height, "Banan", gameSettings.fullscreen, working);
+	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -60,16 +62,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-	Camera* cam = new OrbitCamera(wnd.getSize());
+	Camera* cam = new OrbitCamera(wnd.getSize(), XMFLOAT3(gameLoadState.camX,gameLoadState.camY, gameLoadState.camZ));
 	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
 	std::stack<State *> gameStates;
 	std::stack<Shape *> pickingEvents;
 	std::stack<int>		keyEvent;
 
-	Light light;
-	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
-	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
+	//Used to manage the time of day. 
+	GameTime gameTime;
 
 	Mesh test;
 	test.MakeRectangle();
@@ -90,7 +91,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 	bool pressed = false;
 	bool play = false;
-
 	std::unique_ptr<DirectX::SpriteFont> m_font;
 	m_font = std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont");
 	DirectX::XMVECTOR m_fontPos = DirectX::XMVECTOR{1280/2,720/2,1,1};
@@ -98,8 +98,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	m_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
 
 	while (wnd.isOpen())
-	{
-		
+	{	
 		wnd.Clear();
 		auto currentTime = steady_clock::now();
 		wnd.PollEvents();
@@ -130,9 +129,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					State * ref = gameStates.top()->NewState();
 					if (ref)
 						gameStates.push(ref);
-
 				}
-			}
+			}	
 
 
 			if (Input::isKeyPressed('P') && !pressed)
@@ -156,6 +154,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				pressed = false;
 			}
+			Shape* picked = nullptr;
+			picked = wnd.getPicked(cam);
+
+			if (picked) {
+				pickingEvents.push(picked);
+
+			}
 
 		}
 
@@ -174,16 +179,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
 
-		Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);
 
-		if (picked) {
-			pickingEvents.push(picked);
-			
-		}
 		
-
-		wnd.Flush(cam, light);
+		wnd.Flush(cam);
+		/*
 		m_spriteBatch->Begin();
 
 		const wchar_t* output = L"Magnus Ar gullig #noHomo"; 
@@ -194,18 +193,30 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			m_fontPos, Colors::HotPink, 0.f, origin);
 
 		m_spriteBatch->End();
-
+		*/
   		wnd.Present();
 		wnd.FullReset();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			std::string title;
+			title = "Fps ";
+			title += std::to_string(fpsCounter);
+			title += " Tick ";
+			title += std::to_string(updates);
+			wnd.setTitle(title.c_str());
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);
 		}
-	}	
+	}
+	
+	XMFLOAT3 camPos = cam->getPosition();
+	gameLoadState.camX = camPos.x;
+	gameLoadState.camY = camPos.y;
+	gameLoadState.camZ = camPos.z;
+
+	//FileReader::StatesFileWrite(gameLoadState);
 
 	while (!gameStates.empty())
 	{

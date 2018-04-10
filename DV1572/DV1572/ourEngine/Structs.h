@@ -28,7 +28,7 @@ struct POINT_LIGHT_BUFFER
 struct DIRECTIONAL_LIGHT_BUFFER
 {
 	DirectX::XMFLOAT4A pos, dir, color;
-	DirectX::XMFLOAT4X4A viewProjection; 
+	DirectX::XMFLOAT4X4A viewProjection;
 };
 
 struct MESH_BUFFER

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include "Time Management/GameTime.h"
 
 const float REFRESH_RATE = 60.0f;
 
@@ -31,6 +32,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	int fpsCounter = 0;
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
+
+	GameTime timeOfDay; 
 
 	Camera* cam = new OrbitCamera(wnd.getSize());
 
@@ -67,7 +70,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			unprocessed -= 1;
 			
 			cam->update();
-			
+			timeOfDay.updateCurrentTime(REFRESH_RATE,light);
+ 
 		}
 
 		fpsCounter++;

@@ -19,7 +19,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	c.setModel(&box);
 	c.setPosition(0.5, 0.5);
-	c.setFloor(1);
+	c.setFloor(0);
 
 
 
@@ -28,23 +28,19 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 16, 16, &rect);	
+	grid = new Grid(0, 0, 32, 32, &rect);	
+	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
+	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	
+	grid->getRoomCtrl().setDoorMesh(&door);
+
 	posX = 1;
 	posY = 1;
-	//grid->AddRoom(DirectX::XMINT2(4, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
-	//grid->AddRoom(DirectX::XMINT2(3, 0), DirectX::XMINT2(2, 2), RoomType::kitchen);
-
-	grid->CreateWalls(&m);
-
-	//std::cout << sizeof(int) << std::endl;
-	//std::cout << sizeof(short) << std::endl;
-	//std::cout << sizeof(int64_t) << std::endl;
-	
+	grid->CreateWalls(&m);	
+	grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
-	//grid->CreateWalls(&m);
+	
 }
 
 GameState::~GameState()
@@ -52,13 +48,27 @@ GameState::~GameState()
 	delete grid;
 }
 
+// round float to n decimals precision
+float round_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 void GameState::Update(double deltaTime)
 {
-	//system("cls");
+
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
+
+	gameTime.updateCurrentTime(deltaTime); 
 	_checkCreationOfRoom();
+
 	c.Update();
+	
+
+	//std::cout << "Position: " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+	
 
 	if (Input::isKeyPressed('W') && !move)
 		c.Move(Character::WalkDirection::UP);
@@ -82,46 +92,10 @@ void GameState::Update(double deltaTime)
 		move = false;
 	}
 
-
-
-	while (!p_keyEvents->empty() /*&& /*p_keyEvents->top() != 0*/)
+	while (!p_keyEvents->empty())
 	{
-		//Do keypress events here
-		//std::cout << p_keyEvents->top() << std::endl;
-		/*
-		if (p_keyEvents->top() == 'W' && p_keyEvents->top() != previousKey)
-		{
-			
-			grid->AddRoom(DirectX::XMINT2(posX, posY++), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-			
-		}
-		if (p_keyEvents->top() == 'S' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX, posY--), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		if (p_keyEvents->top() == 'D' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX++, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		if (p_keyEvents->top() == 'A' && p_keyEvents->top() != previousKey)
-		{
-
-			grid->AddRoom(DirectX::XMINT2(posX--, posY), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-			grid->CreateWalls();
-
-		}
-		*/
 		previousKey = p_keyEvents->top();
-		p_keyEvents->pop();
-
-		
+		p_keyEvents->pop();		
 	}
 	if (p_keyEvents->empty() || p_keyEvents->top() == 0)
 		previousKey = -1;
@@ -130,7 +104,45 @@ void GameState::Update(double deltaTime)
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
+		static Shape* firstHolder = nullptr;
+		static Shape* secondHolder = nullptr;
+		if (Input::isKeyPressed('G'))
+			firstHolder = obj;
+		if (Input::isKeyPressed('H'))
+			secondHolder = obj;
+
+		if (firstHolder && secondHolder)
+		{
+			grid->getRoomCtrl().CreateDoor(grid->getGrid()[static_cast<int>(firstHolder->getPosition().x + 0.5f)][static_cast<int>(firstHolder->getPosition().z + 0.5f)],
+				grid->getGrid()[static_cast<int>(secondHolder->getPosition().x + 0.5f)][static_cast<int>(secondHolder->getPosition().z + 0.5f)]);	
+			firstHolder = nullptr;
+			secondHolder = nullptr;
+					
+		}
+
 		//do Picking events here
+		if (c.walkQueueDone() && Input::isMouseLeftPressed())
+		{
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+			
+			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+			for (int i = 0; i < path.size() - 1; i++)
+				c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+			
+			for (auto& p : path)
+				delete p;
+
+		}
+		
 	}
 }
 
@@ -138,8 +150,7 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
-	m_stateHUD.Draw();
-	
+	m_gameHud.Draw();
 
 	//TEST
 	c.Draw();
@@ -148,9 +159,15 @@ void GameState::Draw()
 
 void GameState::_init()
 {
+	kitchenTile.MakeRectangle();
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
 	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	rect.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
+	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+	door.LoadModel("trolls_inn/Resources/door/Door.obj");
+	door.setDiffuseTexture("trolls_inn/Resources/door/Texture.bmp");
+	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
@@ -227,7 +244,7 @@ void GameState::_checkCreationOfRoom()
 	{
 		if (m_firstPickedTile && m_lastPickedTile  && m_isPlaceable)
 		{
-			//TODO : CREATE ROOM
+
 			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
 			DirectX::XMFLOAT3 offsetF = m_lastPickedTile->getPosition();
 			DirectX::XMINT2 roomPos(static_cast<int>(posF.x + 0.5f), static_cast<int>(posF.z + 0.5f));
@@ -249,6 +266,7 @@ void GameState::_checkCreationOfRoom()
 				
 				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
 				grid->CreateWalls();
+				grid->getRoomCtrl().CreateDoors();
 			}
 		}
 		m_firstPickedTile->setColor(1, 1, 1);
