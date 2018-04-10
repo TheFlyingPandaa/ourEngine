@@ -101,7 +101,7 @@ void Character::Turn(WalkDirection dir)
 
 void Character::setPosition(float x, float z)
 {
-	m_model.setPos(x, 2 * m_floor, z);
+	m_model.setPos(x, 2.0f * m_floor, z);
 }
 
 void Character::setFloor(int floor)

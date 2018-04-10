@@ -36,6 +36,8 @@ public:
 
 	void	DrawString();
 
+	RoomCtrl&	getRoomCtrl();
+
 	void	CreateWalls(Mesh * mesh = nullptr);
 };
 

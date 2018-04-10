@@ -6,7 +6,18 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
+	
+	
 
+	for (unsigned short x = 0; x < m_tiles.size(); x++)
+	{
+		for (unsigned short y = 0; y < m_tiles[x].size(); y++)
+		{
+			//8D
+			//To scale
+			m_tiles[x][y]->setMesh(m);
+		}
+	}
 	//TODO: Dont forget to send the tiles you lil cunt :D
 }
 
@@ -23,8 +34,8 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	{
 		for (unsigned short y = 0; y < tiles[x].size(); y++)
 		{
-			tiles[x][y]->m_inside = true;
-			tiles[x][y]->m_isWalkeble = true;
+			tiles[x][y]->setInside(true);
+			tiles[x][y]->setIsWalkeble(true);
 			tiles[x][y]->setRoom(this);
 
 		}
@@ -49,6 +60,19 @@ Tile * Room::getTiles(int x, int y) const
 		return nullptr;
 }
 
+void Room::setTile(Mesh * mesh)
+{
+	for (int x = 0; x < m_tiles.size(); x++)
+	{
+		for (int y = 0; y < m_tiles[x].size(); y++)
+		{
+			m_tiles[x][y]->setMesh(mesh);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+			//m_tiles[x][y]->quad.setScale(1, 1, 1);
+		}
+	}
+}
+
 
 
 bool Room::Inside(int x, int y)
@@ -59,8 +83,8 @@ bool Room::Inside(int x, int y)
 
 bool Room::Inside(Tile * t)
 {
-	return	t->m_posX >= m_posX && t->m_posY < m_posX + m_sizeX &&
-			t->m_posY >= m_posY && t->m_posY < m_posY + m_sizeY;
+	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
+			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
 
 void Room::Update(Camera * cam)
