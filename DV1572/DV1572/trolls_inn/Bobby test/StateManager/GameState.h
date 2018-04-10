@@ -3,15 +3,22 @@
 #include "State.h"
 #include "MainMenu.h"
 #include "../Character.h"
+#include <vector>
+#include <algorithm>
 #include "HUD/HUD.h"
 
 
 class GameState : public State {
 private:
 	Mesh m;
+	Mesh kitchenTile;
 	Mesh rect;
 	Grid* grid;
 	Grid* grid2;
+
+	Mesh door;
+
+	Object3D d;
 
 	HUD m_gameHud;
 
@@ -38,7 +45,6 @@ private:
 
 	virtual void	_init() override;
 	void			_checkCreationOfRoom();
-
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);

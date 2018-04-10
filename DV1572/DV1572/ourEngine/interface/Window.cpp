@@ -103,7 +103,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
-	long index = DX::g_pickingQueue.size() - 1;
+	long index =static_cast<long>(DX::g_pickingQueue.size() - 1);
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
@@ -1150,6 +1150,11 @@ void Window::setMouseMiddleScreen()
 	POINT pt = { (LONG)m_width / 2, (LONG)m_height / 2 };
 	ClientToScreen(m_hwnd, &pt);
 	SetCursorPos(pt.x, pt.y);
+}
+
+void Window::setTitle(LPCSTR string)
+{
+	SetWindowText(m_hwnd, string);
 }
 
 DirectX::XMFLOAT2 Window::getSize() const

@@ -153,7 +153,7 @@ public:
 	LRESULT WndProc(UINT, WPARAM, LPARAM);
 	static LRESULT CALLBACK StaticWndProc(HWND, UINT, WPARAM, LPARAM);
 	void setMouseMiddleScreen();
-
+	void setTitle(LPCSTR string);
 	DirectX::XMFLOAT2 getSize() const;
 	DirectX::XMFLOAT2 getMousePos();
 };
