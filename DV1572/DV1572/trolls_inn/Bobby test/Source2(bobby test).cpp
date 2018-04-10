@@ -70,12 +70,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	test.MakeRectangle();
 	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
-	RectangleShape HUD;
-	HUD.setMesh(&test);
-	HUD.setHeight(250);
-	HUD.setWidth(250);
-	HUD.setScreenPos(0, 0);
-
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 
 	std::unique_ptr<AudioEngine> audEngine;
@@ -198,13 +192,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 			
 		}
-		HUD.DrawAsHud();
 		
 		wnd.Flush(cam, light);
 		/*
 		m_spriteBatch->Begin();
 
-		const wchar_t* output = L"Magnus Suger Kuk:D";
+		const wchar_t* output = L"Magnus Ar gullig #noHomo";
 
 		DirectX::XMVECTOR origin = m_font->MeasureString(output) / 2.f;
 
@@ -214,6 +207,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		m_spriteBatch->End();
 		*/
   		wnd.Present();
+		wnd.FullReset();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{

@@ -11,6 +11,9 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_lastPickedTile = nullptr;
 	m_isPlaceable = false;
 
+	m_gameHud.setWindowSize(1280, 720);
+	m_gameHud.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
+
 	box.LoadModel("trolls_inn/Resources/box.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
@@ -91,6 +94,10 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
+	m_gameHud.Draw();
+	
+
+	//TEST
 	c.Draw();
 	//this->grid2->Draw();
 }
@@ -98,10 +105,10 @@ void GameState::Draw()
 void GameState::_init()
 {
 	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	kitchenTile.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");

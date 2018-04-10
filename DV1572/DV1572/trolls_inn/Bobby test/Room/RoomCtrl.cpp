@@ -288,6 +288,7 @@ void RoomCtrl::CreateWalls()
 
 void RoomCtrl::CreateDoors()
 {
+	/*
 	unsigned int doubleWall = 0;
 	std::vector<Wall*> doubleWalls;
 	for (int i = 0; i < m_walls.size(); i++)
@@ -304,6 +305,7 @@ void RoomCtrl::CreateDoors()
 			//m_walls[i];
 		}
 	}
+	*/
 }
 
 
