@@ -7,16 +7,33 @@
 # tx path/path/path/picture.png
 # r 0 0 0.1 0.08 1 0
 # so: r startX startY sizeX sizeY pickable depth.
+# if sizeX or sizeY is 0, this is set as the screen res
 
-
-
-
-
-tx trolls_inn/Resources/HUD/Portrait.png
-r 0 0 100 100 1 0
-
+# Bar
 tx trolls_inn/Resources/HUD/Bar.png
-r 0 0 1280 50 0 0.1
+r 100 -25 0 158 0 0.2
 
-#tx trolls_inn/Resources/HUD/stats.png
-#r 1080 0.0 200 300 1 0
+# PortraitBackground
+tx trolls_inn/Resources/HUD/PortraitBackground.png
+r -50 -50 300 300 0 0.1
+
+# Portrait
+tx trolls_inn/Resources/HUD/Portrait.png
+r -15 -15 230 230 0 0
+
+# EventLog
+tx trolls_inn/Resources/HUD/EventLog.png
+r 349 -15 500 131 0 0
+
+# ButtonBackground
+tx trolls_inn/Resources/HUD/MenuBackground.png
+r 1088 -25 204 209 0 0.1
+
+# Button_Shop
+tx trolls_inn/Resources/HUD/Button1.png
+r 1165 100 49 49 1 0
+
+# Money
+tx trolls_inn/Resources/HUD/EventLog.png
+r 900 4 200 50 0 0
+

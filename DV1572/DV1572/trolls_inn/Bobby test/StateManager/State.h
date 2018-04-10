@@ -1,6 +1,8 @@
 #pragma once
 #include <stack>
 #include "../../../ourEngine/interface/Interface.h"
+#include "HUD/HUD.h"
+
 class State
 {
 private:
@@ -14,6 +16,7 @@ protected:
 
 	std::stack<Shape *>*	p_pickingEvent;
 	std::stack<int>*		p_keyEvents;//TODO do this
+	HUD						m_stateHUD;
 
 
 public:

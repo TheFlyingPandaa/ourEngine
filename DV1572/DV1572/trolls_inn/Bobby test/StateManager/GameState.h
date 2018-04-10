@@ -3,7 +3,7 @@
 #include "State.h"
 #include "MainMenu.h"
 #include "../Character.h"
-#include "HUD/HUD.h"
+
 
 
 class GameState : public State {
@@ -12,8 +12,6 @@ private:
 	Mesh rect;
 	Grid* grid;
 	Grid* grid2;
-
-	HUD m_gameHud;
 
 	int posX;
 	int posY;
@@ -38,6 +36,7 @@ private:
 
 	virtual void	_init() override;
 	void			_checkCreationOfRoom();
+	void			_setHud();
 
 
 public:

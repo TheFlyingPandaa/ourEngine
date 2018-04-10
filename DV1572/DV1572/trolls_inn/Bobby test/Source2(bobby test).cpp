@@ -177,16 +177,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			
 		}
 		
-		wnd.Flush(cam, light);
 
+		wnd.Flush(cam, light);
 		m_spriteBatch->Begin();
 
-		const wchar_t* output = L"Magnus Ar gullig #noHomo";
+		const wchar_t* output = L"Magnus Ar gullig #noHomo"; 
 
 		DirectX::XMVECTOR origin = m_font->MeasureString(output) / 2.f;
 
 		m_font->DrawString(m_spriteBatch.get(), output,
-			m_fontPos, Colors::White, 0.f, origin);
+			m_fontPos, Colors::HotPink, 0.f, origin);
 
 		m_spriteBatch->End();
 

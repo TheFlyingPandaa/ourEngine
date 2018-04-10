@@ -11,8 +11,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_lastPickedTile = nullptr;
 	m_isPlaceable = false;
 
-	m_gameHud.setWindowSize(1280, 720);
-	m_gameHud.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
+	_setHud();
 
 	box.LoadModel("trolls_inn/Resources/box.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
@@ -69,9 +68,12 @@ void GameState::Update(double deltaTime)
 		c.Move(Character::WalkDirection::RIGHT);
 	else if (Input::isKeyPressed('A') && !move)
 		c.Move(Character::WalkDirection::LEFT);
+	else if (Input::isKeyPressed('R'))
+		_setHud();
 
 	if (Input::isKeyPressed('W') || Input::isKeyPressed('A') ||
-		Input::isKeyPressed('S') || Input::isKeyPressed('D'))
+		Input::isKeyPressed('S') || Input::isKeyPressed('D') ||
+		Input::isKeyPressed('R'))
 	{
 		move = true;
 	}
@@ -136,7 +138,7 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
-	m_gameHud.Draw();
+	m_stateHUD.Draw();
 	
 
 	//TEST
@@ -276,4 +278,10 @@ void GameState::_checkCreationOfRoom()
 		m_firstPickedTile = m_lastPickedTile = nullptr;
 		m_lastPick = m_firstPick = false;
 	}
+}
+
+void GameState::_setHud()
+{
+	m_stateHUD.setWindowSize(1280, 720);
+	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
 }

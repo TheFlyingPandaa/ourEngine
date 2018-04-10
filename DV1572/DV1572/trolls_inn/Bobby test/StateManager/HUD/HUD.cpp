@@ -4,13 +4,13 @@ void HUD::_cleanUp()
 {
 	for (size_t i = 0; i < m_quadsNonClickAble.size(); i++)
 		delete m_quadsNonClickAble[i];
-	m_quadsNonClickAble.empty();
+	m_quadsNonClickAble.clear();
 	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
 		delete m_quadsClickAble[i];
-	m_quadsClickAble.empty();
+	m_quadsClickAble.clear();
 	for (size_t i = 0; i < m_mesh.size(); i++)
 		delete m_mesh[i];
-	m_mesh.empty();
+	m_mesh.clear();
 }
 
 HUD::HUD()
@@ -32,6 +32,8 @@ void HUD::setWindowSize(float x, float y)
 
 bool HUD::LoadHud(const std::string & path)
 {
+	_cleanUp();
+	
 	std::ifstream inputFile;
 	inputFile.open(path);
 	if (!inputFile)
@@ -71,6 +73,12 @@ bool HUD::LoadHud(const std::string & path)
 				d *= 0.00001f;
 
 				r->setScreenPos(pX, pY, d);
+
+				if (static_cast<int>(sX) == 0)
+					sX = m_windowX;
+				if (static_cast<int>(sY) == 0)
+					sY = m_windowY;
+
 				r->setWidth(sX);
 				r->setHeight(sY);
 				
@@ -82,7 +90,7 @@ bool HUD::LoadHud(const std::string & path)
 
 		}
 	}
-	
+	inputFile.close();
 
 
 	return true;
@@ -98,6 +106,7 @@ void HUD::CheckIfPicked()
 
 void HUD::Draw()
 {
+
 	for (auto& p : m_quadsClickAble)
 	{
 		p->DrawAsHud();
