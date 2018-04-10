@@ -127,7 +127,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 
 				}
-			}
+			}	
 
 
 			if (Input::isKeyPressed('P') && !pressed)
@@ -151,6 +151,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				pressed = false;
 			}
+			Shape* picked = nullptr;
+			picked = wnd.getPicked(cam);
+
+			if (picked) {
+				pickingEvents.push(picked);
+
+			}
 
 		}
 
@@ -169,16 +176,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
 
-		Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);
 
-		if (picked) {
-			pickingEvents.push(picked);
-			
-		}
 		
 		wnd.Flush(cam, light);
-
+		/*
 		m_spriteBatch->Begin();
 
 		const wchar_t* output = L"Magnus Ar gullig #noHomo";
@@ -189,7 +190,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			m_fontPos, Colors::White, 0.f, origin);
 
 		m_spriteBatch->End();
-
+		*/
   		wnd.Present();
 		wnd.FullReset();
 

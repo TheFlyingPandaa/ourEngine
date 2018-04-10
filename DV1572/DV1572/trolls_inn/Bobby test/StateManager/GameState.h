@@ -11,9 +11,14 @@
 class GameState : public State {
 private:
 	Mesh m;
+	Mesh kitchenTile;
 	Mesh rect;
 	Grid* grid;
 	Grid* grid2;
+
+	Mesh door;
+
+	Object3D d;
 
 	HUD m_gameHud;
 

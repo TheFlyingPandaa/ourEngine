@@ -24,9 +24,9 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		this->m_tiles[i] = std::vector<Tile*>(this->m_sizeY);
 		for (int j = 0; j < sizeY; j++)
 		{
-			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
-			t->quad.setScale(2.0f);
-			t->quad.setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
+			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
+			t->getQuad().setScale(2.0f);
+			t->getQuad().setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
 			this->m_tiles[i][j] = t;
 		}
 	}
@@ -111,10 +111,9 @@ Grid::~Grid()
 }
 
 
-Tile ** Grid::getGrid() const
+std::vector<std::vector<Tile*>> Grid::getGrid() const
 {
-	//TODO
-	return nullptr;	
+	return m_tiles;	
 }
 
 std::vector<std::vector<Tile*>> Grid::getTiles() const
@@ -146,7 +145,7 @@ void Grid::Draw()
 	{
 		for (int j = 0; j < m_sizeY; j++)
 		{
-			m_tiles[i][j]->quad.Draw();
+			m_tiles[i][j]->getQuad().Draw();
 		}
 	}
 
@@ -154,19 +153,18 @@ void Grid::Draw()
 }
 void Grid::PickTiles()
 {
-	for (int i = 0; i < m_sizeX; i++)
+	for (int i = 0; i < m_tiles.size(); i++)
 	{
-		for (int j = 0; j < m_sizeY; j++)
-		{
-			
-			m_tiles[i][j]->quad.setColor(1.0f,1.0f,1.0f);
-			m_tiles[i][j]->quad.CheckPick();
+		for (int j = 0; j < m_tiles[i].size(); j++)
+		{			
+			m_tiles[i][j]->getQuad().setColor(1.0f,1.0f,1.0f);
+			m_tiles[i][j]->getQuad().CheckPick();
 		}
 	}
 }
 bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 {
-	DirectX::XMFLOAT3 color(0.1f, 1.0f, .1f);
+	DirectX::XMFLOAT3 color(0.5f, 5.0f, 0.5f);
 		
 	if (end.x < start.x)
 	{
@@ -184,7 +182,7 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	roomOffset.y -= start.y - 1;
 	bool placeable = m_roomCtrl.isPlaceable(start, roomOffset);
 	if (!placeable)
-		color = XMFLOAT3(1.0f, 0.3f, 0.3f);
+		color = XMFLOAT3(5.0f, 0.5f, 0.5f);
 
 	
 
@@ -192,7 +190,7 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	{
 		for (int j = start.y; j < end.y + 1; j++)
 		{
-			m_tiles[i][j]->quad.setColor(color.x, color.y, color.z);
+			m_tiles[i][j]->getQuad().setColor(color.x, color.y, color.z);
 		}
 	}
 	return placeable;
@@ -212,7 +210,7 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 	{
 		for (int j = pos.y; j < end.y + 1; j++)
 		{
-			m_tiles[i][j]->quad.setColor(1.0f, 1.0f, 1.0f);
+			m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }
@@ -220,6 +218,11 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 void Grid::DrawString()
 {
 	
+}
+
+RoomCtrl & Grid::getRoomCtrl()
+{
+	return m_roomCtrl;
 }
 
 void Grid::Update(Camera * cam) {

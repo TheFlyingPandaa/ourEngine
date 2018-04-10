@@ -103,7 +103,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
-	long index = DX::g_pickingQueue.size() - 1;
+	long index =static_cast<long>(DX::g_pickingQueue.size() - 1);
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 

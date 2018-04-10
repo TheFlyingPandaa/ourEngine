@@ -48,9 +48,7 @@ public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
 
-	Tile**	getGrid() const;
-
-	std::vector<std::vector<Tile*>> getTiles() const;
+	std::vector<std::vector<Tile *>> getGrid() const;
 	
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
 	void	Update(Camera * cam);
@@ -63,6 +61,8 @@ public:
 	void	ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end);
 
 	void	DrawString();
+
+	RoomCtrl&	getRoomCtrl();
 
 	void	CreateWalls(Mesh * mesh = nullptr);
 

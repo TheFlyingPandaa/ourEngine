@@ -14,6 +14,16 @@ Wall::~Wall()
 {
 }
 
+void Wall::setIsDoor(bool value)
+{
+	this->isDoor = value;
+}
+
+bool Wall::getIsDoor() const
+{
+	return isDoor;
+}
+
 void Wall::Draw()
 {
 	//TODO: Remove Debug
@@ -44,6 +54,11 @@ void Wall::setRotation(DirectX::XMFLOAT3 rotation)
 void Wall::setScale(float x, float y, float z)
 {
 	this->m_wall.setScale(x, y, z);
+}
+
+void Wall::setMesh(Mesh * mesh)
+{
+	this->m_wall.setMesh(mesh);
 }
 
 Tile * Wall::getTile() const

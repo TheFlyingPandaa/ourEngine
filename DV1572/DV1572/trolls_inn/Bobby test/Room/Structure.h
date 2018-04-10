@@ -12,8 +12,6 @@ enum Direction {
 	downleft,
 	noneSpecial
 };
-//deferred context
-
 class Tile;
 class Room;
 
@@ -26,10 +24,15 @@ private:
 	Tile*				m_tile;
 
 	DirectX::XMINT2		position;
+
+	bool				isDoor = false;
 	
 public:
 	Wall(Tile* tile, Mesh * mesh = nullptr);
 	~Wall();
+
+	void	setIsDoor(bool value);
+	bool	getIsDoor() const;
 
 	void	Draw();
 
@@ -39,6 +42,8 @@ public:
 	void	setPosition(DirectX::XMFLOAT2 position);
 	void	setRotation(DirectX::XMFLOAT3 rotation);
 	void	setScale(float x, float y, float z);
+
+	void	setMesh(Mesh * mesh);
 
 	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
@@ -51,16 +56,33 @@ public:
 		m_door = false;
 		
 		quad.setMesh(mesh);
-		quad.setPos(static_cast<float>(0), 0.0f, static_cast<float>(0));
-		quad.Rotate(90.0f, 0.0f, 0.0f);		
+		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
+		quad.setRotation(90.0f, 0.0f, 0.0f);		
 		m_walkable = true;
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
-	void	setAdjacent(Tile * tile, int dir);
-	Tile*	getAdjacent(Direction dir);
-	Tile*	getAdjacent(int dir);
+	Room*	getRoom() const;
 	void	setRoom(Room * room);
+	void	setInside(bool value);
+	void	setIsWalkeble(bool value);
 
+	int		getPosX() const;
+	int		getPosY() const;
+
+	Tile*	getAdjacent(Direction dir);
+
+	bool	isWall(Direction dir) const { return m_walls[dir]; }
+	void	setTileWalls(Direction dir, Wall* value);
+	Wall*	getTileWalls(Direction dir) const;
+
+	void	setWallSpotPopulated(Direction dir, bool value);
+	bool	getWallSpotPopulated(Direction dir) const;
+
+	Object3D&	getQuad();
+	void	setMesh(Mesh * mesh);
+private:
+	int		m_posY;
+	int		m_posX;
 	bool	m_door;
 	Object3D quad;
 	bool m_walkable;
@@ -71,7 +93,6 @@ public:
 
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
-
 	Room *	m_room = nullptr;
 	/*
 	0 = up
@@ -85,10 +106,10 @@ public:
 	*/
 	Tile*	adjacent[8] = { nullptr };
 
+	Tile*	adjacent[4] = { nullptr };
 	Wall*	m_w[4] = { nullptr };
-
+	
 	bool	m_walls[4] = { false };
-	bool	isWall(Direction dir) const { return m_walls[dir]; }
 	XMFLOAT2 getPosition() const;
 	bool operator==(const Tile& other) const;
 };

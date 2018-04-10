@@ -6,20 +6,39 @@ void Tile::setAdjacent(Tile * tile, Direction dir)
 	
 }
 
+Room * Tile::getRoom() const
+{
+	return this->m_room;
+}
+
 Tile * Tile::getAdjacent(Direction dir)
 {
 	return this->adjacent[dir];
 }
 
-void Tile::setAdjacent(Tile * tile, int dir)
+void Tile::setTileWalls(Direction dir, Wall* value)
 {
-	this->adjacent[dir] = tile;
-
+	m_w[dir] = value;
 }
 
-Tile * Tile::getAdjacent(int dir)
+Wall* Tile::getTileWalls(Direction dir) const
 {
-	return this->adjacent[dir];
+	return m_w[dir];
+}
+
+bool Tile::getWallSpotPopulated(Direction dir) const
+{
+	return this->m_walls[dir];
+}
+
+Object3D & Tile::getQuad()
+{
+	return quad;
+}
+
+void Tile::setWallSpotPopulated(Direction dir, bool value)
+{
+	this->m_walls[dir] = value;
 }
 
 void Tile::setRoom(Room * room)
