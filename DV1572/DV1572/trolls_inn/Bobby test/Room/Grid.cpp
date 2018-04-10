@@ -255,7 +255,6 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 
 	while (openList.size() > 0)
 	{
-		std::cout << closedList.size() << std::endl;
 		std::sort(openList.begin(), openList.end(), [](Node* a1, Node* a2) {return a1->fCost < a2->fCost; });
 		current = openList.at(0);
 

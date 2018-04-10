@@ -10,7 +10,7 @@ RandomNumberGenerator::~RandomNumberGenerator()
 
 int RandomNumberGenerator::generateRandomNumber(int lowerBound, int upperBound)
 {
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	uint32_t seed = static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count());
 	int lower_bound = lowerBound;
 	int upper_bound = upperBound;
 	std::uniform_int_distribution<int> unif(lower_bound, upper_bound);
