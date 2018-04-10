@@ -122,13 +122,6 @@
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
-    <ClCompile Include="ourEngine\core\Font\BinaryReader.cpp" />
-    <ClCompile Include="ourEngine\core\Font\CommonStates.cpp" />
-    <ClCompile Include="ourEngine\core\Font\DDSTextureLoader.cpp" />
-    <ClCompile Include="ourEngine\core\Font\GraphicsMemory.cpp" />
-    <ClCompile Include="ourEngine\core\Font\SpriteBatch.cpp" />
-    <ClCompile Include="ourEngine\core\Font\SpriteFont.cpp" />
-    <ClCompile Include="ourEngine\core\Font\VertexTypes.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
@@ -154,22 +147,8 @@
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
-    <ClInclude Include="ourEngine\core\Font\AlignedNew.h" />
-    <ClInclude Include="ourEngine\core\Font\BinaryReader.h" />
-    <ClInclude Include="ourEngine\core\Font\CommonStates.h" />
-    <ClInclude Include="ourEngine\core\Font\ConstantBuffer.h" />
-    <ClInclude Include="ourEngine\core\Font\dds.h" />
-    <ClInclude Include="ourEngine\core\Font\DDSTextureLoader.h" />
-    <ClInclude Include="ourEngine\core\Font\DemandCreate.h" />
-    <ClInclude Include="ourEngine\core\Font\DirectXHelpers.h" />
-    <ClInclude Include="ourEngine\core\Font\GraphicsMemory.h" />
-    <ClInclude Include="ourEngine\core\Font\LoaderHelpers.h" />
-    <ClInclude Include="ourEngine\core\Font\pch.h" />
-    <ClInclude Include="ourEngine\core\Font\PlatformHelpers.h" />
-    <ClInclude Include="ourEngine\core\Font\SharedResourcePool.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
-    <ClInclude Include="ourEngine\core\Font\VertexTypes.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
@@ -316,10 +295,12 @@
     <Library Include="ourEngine\core\Audio\AudioLibxRL.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Library>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ourEngine\core\Font\Shaders\Compiled\SpriteEffect_SpritePixelShader.inc" />
-    <None Include="ourEngine\core\Font\Shaders\Compiled\SpriteEffect_SpriteVertexShader.inc" />
+    <Library Include="ourEngine\core\Font\FontLibxDB.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Font\FontLibxRL.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

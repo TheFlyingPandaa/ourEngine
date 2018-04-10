@@ -22,9 +22,11 @@
 
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
+	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
 #else
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxDB.lib")
-#endif // ENV64BIT
+	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
+#endif 
 
 
 const float REFRESH_RATE = 60.0f;
