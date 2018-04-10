@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
+    <ClCompile Include="ourEngine\core\FileReader.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\FileReader.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />

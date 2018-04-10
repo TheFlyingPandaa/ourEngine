@@ -923,13 +923,17 @@ Window::~Window()
 	
 }
 
-bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
+bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bool working)
 {
 	m_width = width;
 	m_height = height;
 	m_title = title;
 	m_fullscreen = fullscreen;
 	_initWindow();
+	if (working == false)
+	{
+		MessageBoxA(m_hwnd, "NO SETTINGS FILE WAS WOUND", "NO SETTINGS FILE FOUND", MB_ICONWARNING);
+	}
 	HRESULT hr = _initDirect3DContext();
 	_initViewPort();
 	_setViewport();
