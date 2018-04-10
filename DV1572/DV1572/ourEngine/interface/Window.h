@@ -137,7 +137,7 @@ public:
 	Window(HINSTANCE h);
 	~Window();
 
-	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0);
+	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0, const bool working = true);
 	void PollEvents();
 	bool isOpen();
 	void Clear();
