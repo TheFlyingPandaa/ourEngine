@@ -120,7 +120,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	{
 	case kitchen:
 		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);	
-		room->setTile(m_tileMesh[0]);
+		if (m_tileMesh[0] != nullptr)
+			room->setTile(m_tileMesh[0]);
 		break;
 	default:
 		break;
@@ -169,7 +170,7 @@ void RoomCtrl::CreateWalls()
 					if (t2->isWall(Direction::up))
 					{
 						createWall = false;
-						t2->getTileWalls(Direction::up)->setIsInner(true);
+						t2->getTileWalls(Direction::up)->setIsInner(true);						
 					}
 
 				if (createWall) // where we aculy create the walls
@@ -183,6 +184,9 @@ void RoomCtrl::CreateWalls()
 					this->m_walls.push_back(wall);
 				}
 			}
+			else
+				m_rooms[i]->addWall(t->getTileWalls(Direction::down), Direction::down);
+
 			t = m_rooms[i]->getTiles(x, m_rooms[i]->getSizeY() - 1);
 			if (!t->isWall(Direction::up))
 			{
@@ -207,6 +211,8 @@ void RoomCtrl::CreateWalls()
 					this->m_walls.push_back(wall);
 				}
 			}
+			else
+				m_rooms[i]->addWall(t->getTileWalls(Direction::up), Direction::up);
 		}
 
 
@@ -244,6 +250,9 @@ void RoomCtrl::CreateWalls()
 					this->m_walls.push_back(wall);
 				}
 			}
+			else
+				m_rooms[i]->addWall(t->getTileWalls(Direction::left), Direction::left);
+
 			t = m_rooms[i]->getTiles(m_rooms[i]->getSizeX() - 1, y);
 			if (!t->isWall(Direction::right))
 			{
@@ -271,8 +280,30 @@ void RoomCtrl::CreateWalls()
 					this->m_walls.push_back(wall);
 				}
 			}
+			else
+				m_rooms[i]->addWall(t->getTileWalls(Direction::right), Direction::right);
 		}
 	}	
+}
+
+void RoomCtrl::CreateDoors()
+{
+	unsigned int doubleWall = 0;
+	std::vector<Wall*> doubleWalls;
+	for (int i = 0; i < m_walls.size(); i++)
+	{
+		for (int h = 0; h < m_rooms.size() && doubleWall < 1; h++)
+		{
+			if (std::find(m_rooms[h]->getAllWalls().begin(), m_rooms[h]->getAllWalls().end(), m_walls[i]) !=
+				m_rooms[h]->getAllWalls().end())
+			{
+				doubleWall++;
+			}
+		}
+		if (doubleWall > 1) {
+			//m_walls[i];
+		}
+	}
 }
 
 

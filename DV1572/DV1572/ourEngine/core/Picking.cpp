@@ -110,7 +110,7 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		offsetBuffer.temp = counter;
+		offsetBuffer.temp = static_cast<float>(counter);
 
 		DX::g_deviceContext->Map(m_pickingOffsetBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &offsetBuffer, sizeof(OFFSETBUFFER));
@@ -141,7 +141,8 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
-		counter += instance.attribs.size();
+		counter;
+		counter += static_cast<int>(instance.attribs.size());
 		instanceBuffer->Release();
 	}
 

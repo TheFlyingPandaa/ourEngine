@@ -103,11 +103,10 @@ void Grid::Draw()
 }
 void Grid::PickTiles()
 {
-	for (int i = 0; i < m_sizeX; i++)
+	for (int i = 0; i < m_tiles.size(); i++)
 	{
-		for (int j = 0; j < m_sizeY; j++)
-		{
-			
+		for (int j = 0; j < m_tiles[i].size(); j++)
+		{			
 			m_tiles[i][j]->getQuad().setColor(1.0f,1.0f,1.0f);
 			m_tiles[i][j]->getQuad().CheckPick();
 		}
