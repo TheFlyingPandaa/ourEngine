@@ -229,13 +229,15 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		return nullptr;
 	index--;
 	long indexInPickingQueue = 0;
+	bool found = false;
 	
-	for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && indexInPickingQueue == 0; i++)
+	for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
 	{
 		long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
-		if (index < nrOfShapes)
+		if (index <= nrOfShapes)
 		{
 			indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
+			found = true;
 		}
 		else
 			index -= nrOfShapes;

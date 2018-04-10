@@ -52,7 +52,6 @@
     <ClCompile Include="trolls_inn\AI_Base\InnDummyFile.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
-    <ClCompile Include="trolls_inn\Room\Room.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
   </ItemGroup>
@@ -99,7 +98,6 @@
     <ClInclude Include="ourEngine\core\FileReader.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
-    <ClInclude Include="trolls_inn\Room\Room.h" />
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
   </ItemGroup>

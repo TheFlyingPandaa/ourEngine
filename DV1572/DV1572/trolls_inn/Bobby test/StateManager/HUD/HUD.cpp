@@ -11,6 +11,7 @@ void HUD::_cleanUp()
 	for (size_t i = 0; i < m_mesh.size(); i++)
 		delete m_mesh[i];
 	m_mesh.clear();
+	m_texts.clear();
 }
 
 HUD::HUD()

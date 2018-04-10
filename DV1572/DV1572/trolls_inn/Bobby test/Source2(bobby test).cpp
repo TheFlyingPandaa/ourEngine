@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <chrono>
-#include "../../ourEngine/core/Dx.h"
 
 #include "../Time Management/GameTime.h"
 //extern "C" {
