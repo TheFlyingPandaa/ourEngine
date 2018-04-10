@@ -44,6 +44,9 @@ float4 main(Input input) : SV_Target
 	float3 wordPos = tPosition.Sample(sampAni, input.tex).rgb;
 	float3 normal = tNormal.Sample(sampAni, input.tex).rgb;
 	float3 diffuseSample = tDiffuse.Sample(sampAni, input.tex).rgb;
+
+    return float4(diffuseSample, 1);
+
 	float3 ambient = diffuseSample * 0.2f;
 	float3 finalColor; 
 
