@@ -114,7 +114,7 @@ void Grid::PickTiles()
 }
 bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 {
-	DirectX::XMFLOAT3 color(0.1f, 1.0f, .1f);
+	DirectX::XMFLOAT3 color(0.5f, 5.0f, 0.5f);
 		
 	if (end.x < start.x)
 	{
@@ -132,7 +132,7 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	roomOffset.y -= start.y - 1;
 	bool placeable = m_roomCtrl.isPlaceable(start, roomOffset);
 	if (!placeable)
-		color = XMFLOAT3(1.0f, 0.3f, 0.3f);
+		color = XMFLOAT3(5.0f, 0.5f, 0.5f);
 
 	
 

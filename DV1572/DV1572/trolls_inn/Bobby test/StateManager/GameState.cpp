@@ -105,10 +105,10 @@ void GameState::Draw()
 void GameState::_init()
 {
 	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	kitchenTile.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
+	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
 	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
