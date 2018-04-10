@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <chrono>
+#include "../Time Management/GameTime.h"
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
@@ -68,9 +69,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	std::stack<Shape *> pickingEvents;
 	std::stack<int>		keyEvent;
 
-	Light light;
-	light.Init(DirectX::XMFLOAT4A(0, 100, 0, 0), DirectX::XMFLOAT4A(-1, -1, -1, 0), DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
-	//light.setDir(DirectX::XMFLOAT4A(0, -1, 0, 0));
+	//Used to manage the time of day. 
+	GameTime gameTime;
 
 	Mesh test;
 	test.MakeRectangle();
@@ -98,8 +98,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	m_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
 
 	while (wnd.isOpen())
-	{
-		
+	{	
 		wnd.Clear();
 		auto currentTime = steady_clock::now();
 		wnd.PollEvents();
@@ -130,7 +129,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					State * ref = gameStates.top()->NewState();
 					if (ref)
 						gameStates.push(ref);
-
 				}
 			}	
 

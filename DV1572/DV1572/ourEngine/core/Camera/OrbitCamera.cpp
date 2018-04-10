@@ -33,6 +33,7 @@ void printVec3(const char* name , XMVECTOR vec)
 	XMStoreFloat3(&debugVec, vec);
 	std::cout << name << " (" <<debugVec.x << "," << debugVec.y << "," << debugVec.z <<")"<<std::endl;
 }
+
 void OrbitCamera::update()
 {
 	float cursorDetectProc = 0.5f;
