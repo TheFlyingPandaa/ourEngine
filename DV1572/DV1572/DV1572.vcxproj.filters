@@ -37,7 +37,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />

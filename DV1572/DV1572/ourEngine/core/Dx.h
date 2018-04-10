@@ -42,6 +42,12 @@ namespace DX
 		std::vector<INSTANCE_ATTRIB> attribs;
 		Shape* shape;
 	};
+	struct INSTANCE_GROUP_INDEXED
+	{
+		std::vector<INSTANCE_ATTRIB> attribs;
+		Shape* shape;
+		std::vector<long> index;
+	};
 
 
 	extern ID3D11VertexShader* g_3DVertexShader;
@@ -51,10 +57,11 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
-	extern std::vector<INSTANCE_GROUP> g_instanceGroupsPicking;
+	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
 
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
+	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 
 
 	//Tesselltion
