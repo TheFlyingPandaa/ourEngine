@@ -9,6 +9,8 @@
 #include "../interface/light/Light.h" 
 #include <vector>
 #include "../Structs.h"
+#include "../../ourEngine/core/Font/SpriteBatch.h"
+#include "../../ourEngine/core/Font/SpriteFont.h"
 
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
@@ -61,7 +63,6 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
 	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
 
-
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 
@@ -69,6 +70,36 @@ namespace DX
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;
 	extern ID3D11DomainShader* g_standardDomainShader;
+
+	// Font
+	enum FONT_TYPE
+	{
+		Consolas,
+		Constantina,
+		Constantina_Big,
+		Arial_Black,
+	};
+	enum ALLIGN
+	{
+		Left,
+		Center,
+		Right
+	};
+	struct TEXT
+	{
+		FONT_TYPE type;
+		DirectX::XMVECTOR						textPosition;
+		DirectX::XMVECTOR						scale;
+		float									rotation;
+		DirectX::XMVECTORF32					color;
+		std::string								text;
+		ALLIGN									allignment;
+	};
+	extern std::vector<std::unique_ptr<DirectX::SpriteFont>> g_fonts;
+	extern std::vector<TEXT> g_textQueue;
+	extern std::unique_ptr<DirectX::SpriteBatch> g_spriteBatch;
+	
+
 
 	extern void CleanUp();
 	

@@ -133,6 +133,8 @@ private:
 	void	_runComputeShader();
 
 
+	void	_initFonts();
+	void	_drawText();
 
 public:
 	Window(HINSTANCE h);

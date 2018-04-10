@@ -150,7 +150,7 @@ void GameState::Draw()
 {
 	
 	this->grid->Draw();
-	m_gameHud.Draw();
+	m_stateHUD.Draw();
 
 	//TEST
 	c.Draw();

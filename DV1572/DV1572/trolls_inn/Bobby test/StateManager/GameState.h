@@ -21,8 +21,6 @@ private:
 
 	Object3D d;
 
-	HUD m_gameHud;
-
 	int posX;
 	int posY;
 
