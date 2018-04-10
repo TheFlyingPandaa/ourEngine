@@ -9,6 +9,7 @@ private:
 	std::vector<Mesh*>				m_mesh;
 	std::vector<RectangleShape*>	m_quadsNonClickAble;
 	std::vector<RectangleShape*>	m_quadsClickAble;
+	std::vector<Text>				m_texts;
 	float							m_windowX;
 	float							m_windowY;
 

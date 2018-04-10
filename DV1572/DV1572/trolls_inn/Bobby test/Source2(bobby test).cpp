@@ -93,25 +93,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	bool play = false;
 
 
-	DX::TEXT txtTest;
-	txtTest.type = DX::Consolas;
-	txtTest.textPosition = DirectX::XMVectorSet(1280.0f / 2, 0, 0, 1);
-	txtTest.scale = DirectX::XMVectorSet(1, 1, 1, 1);
-	txtTest.rotation = 0.0f;
-	txtTest.color = DirectX::Colors::BlueViolet;
-	txtTest.text = "This is test";
-	txtTest.allignment = DX::ALLIGN::Left;
-	
-	DX::TEXT txtTest2;
-	txtTest2.type = DX::Consolas;
-	txtTest2.textPosition = DirectX::XMVectorSet(1280.0f / 2, 720.0f / 2, 0, 1);
-	txtTest2.scale = DirectX::XMVectorSet(0.3, 0.3, 0.3, 1);
-	txtTest2.rotation = 0.0f;
-	txtTest2.color = DirectX::Colors::DarkGreen;
-	txtTest2.text = "CHEFEN IS GAY";
-	txtTest2.allignment = DX::ALLIGN::Center;
-
-
 	while (wnd.isOpen())
 	{	
 		wnd.Clear();
@@ -124,15 +105,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (Input::GetKeyIndex() != -1)
 			keyEvent.push(Input::GetKeyIndex());
-		
-		DX::g_textQueue.push_back(txtTest);
-		DX::g_textQueue.push_back(txtTest2);
 
 		while (unprocessed > 1)
 		{
 			updates++;
 			unprocessed -= 1;
-			txtTest2.rotation += 0.1;
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -195,8 +172,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		fpsCounter++;
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
-
-
 		
 		wnd.Flush(cam);
   		wnd.Present();

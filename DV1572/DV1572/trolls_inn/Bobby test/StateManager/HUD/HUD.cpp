@@ -87,6 +87,20 @@ bool HUD::LoadHud(const std::string & path)
 				else
 					m_quadsClickAble.push_back(r);
 			}
+			else if (type == "txt")
+			{
+				float x, y, scl, r, g, b, a, rot;
+				std::string text = "";
+				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %f %f %f %f", &x, &y, &scl, &r, &g, &b, &a, &rot);
+				std::getline(inputFile, text);
+				Text t;
+				t.setColor(r, g, b, a);
+				t.setPosition(x, y);
+				t.setScale(scl);
+				t.setRotation(rot);
+				t.setTextString(text);
+				m_texts.push_back(t);
+			}
 
 		}
 	}
@@ -106,7 +120,6 @@ void HUD::CheckIfPicked()
 
 void HUD::Draw()
 {
-
 	for (auto& p : m_quadsClickAble)
 	{
 		p->DrawAsHud();
@@ -114,5 +127,9 @@ void HUD::Draw()
 	for (auto& p : m_quadsNonClickAble)
 	{
 		p->DrawAsHud();
+	}
+	for (auto& t : m_texts)
+	{
+		t.Draw();
 	}
 }

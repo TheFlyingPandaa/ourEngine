@@ -2,7 +2,7 @@
 #include "ShaderCreator.h"
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include "../interface/Text.h"
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../interface/shape/Shape.h"
@@ -72,31 +72,9 @@ namespace DX
 	extern ID3D11DomainShader* g_standardDomainShader;
 
 	// Font
-	enum FONT_TYPE
-	{
-		Consolas,
-		Constantina,
-		Constantina_Big,
-		Arial_Black,
-	};
-	enum ALLIGN
-	{
-		Left,
-		Center,
-		Right
-	};
-	struct TEXT
-	{
-		FONT_TYPE type;
-		DirectX::XMVECTOR						textPosition;
-		DirectX::XMVECTOR						scale;
-		float									rotation;
-		DirectX::XMVECTORF32					color;
-		std::string								text;
-		ALLIGN									allignment;
-	};
+	
 	extern std::vector<std::unique_ptr<DirectX::SpriteFont>> g_fonts;
-	extern std::vector<TEXT> g_textQueue;
+	extern std::vector<Text*> g_textQueue;
 	extern std::unique_ptr<DirectX::SpriteBatch> g_spriteBatch;
 	
 

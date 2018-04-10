@@ -30,7 +30,7 @@ std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
-std::vector<DX::TEXT>								DX::g_textQueue;
+std::vector<Text*>									DX::g_textQueue;
 std::unique_ptr<DirectX::SpriteBatch>				DX::g_spriteBatch;
 
 
@@ -517,38 +517,38 @@ void Window::_drawText()
 
 	for (auto &t : DX::g_textQueue)
 	{
-		std::wstring widestr = std::wstring(t.text.begin(), t.text.end());
+		std::string str = t->getTextString();
+		std::wstring widestr = std::wstring(str.begin(), str.end());
 		const wchar_t* text = widestr.c_str();
 
-		DirectX::XMVECTOR origin = DX::g_fonts[t.type]->MeasureString(text);
-		//origin = XMVectorSetY(origin, XMVectorGetY(origin) * -1);
+		DirectX::XMVECTOR origin = DX::g_fonts[t->getFontType()]->MeasureString(text);
 
 		float x, y;
-		x = DirectX::XMVectorGetX(t.textPosition);
-		y = DirectX::XMVectorGetY(t.textPosition);
+		x = DirectX::XMVectorGetX(t->getPosition());
+		y = DirectX::XMVectorGetY(t->getPosition());
 
 		DirectX::XMVECTOR pos =
 			DirectX::XMVectorSet(x, (float)m_height - y, 0,1);
 
-		switch (t.allignment)
+		switch (t->getAllignment())
 		{
-		case DX::ALLIGN::Center:
+		case TXT::ALLIGN::Center:
 			origin /= 2;
 			break;
-		case DX::ALLIGN::Left:
+		case TXT::ALLIGN::Left:
 			origin = XMVectorSetX(origin, 0);
 			break;
 		}
 
 
-		DX::g_fonts[t.type]->DrawString(
+		DX::g_fonts[t->getFontType()]->DrawString(
 			DX::g_spriteBatch.get(),
 			text,
 			pos,
-			t.color,
-			t.rotation,
+			t->getColor(),
+			t->getRotation(),
 			origin,
-			t.scale
+			t->getScale()
 		);
 	}
 
