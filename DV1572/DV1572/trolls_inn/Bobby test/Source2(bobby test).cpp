@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <stack>
@@ -20,6 +19,8 @@
 #include "../../ourEngine/core/Font/SpriteFont.h"
 #include "../../ourEngine/core/Dx.h"
 
+#include "../../ourEngine/core/FileReader.h"
+
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
@@ -37,6 +38,9 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	bool working;
+	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
+
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
@@ -44,9 +48,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
 
-	Window wnd(hInstance);
-	wnd.Init(1280, 720, "Banan");
+	
 
+	Window wnd(hInstance);
+	wnd.Init(gameSettings.width, gameSettings.height, "Banan", gameSettings.fullscreen, working);
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();

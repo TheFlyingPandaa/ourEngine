@@ -39,6 +39,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
+    <ClCompile Include="ourEngine\core\FileReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -71,6 +72,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
+    <ClInclude Include="ourEngine\core\FileReader.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
