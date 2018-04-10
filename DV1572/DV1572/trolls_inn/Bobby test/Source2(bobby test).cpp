@@ -106,29 +106,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (Input::GetKeyIndex() != -1)
 			keyEvent.push(Input::GetKeyIndex());
 		
-		if (!gameStates.empty())
-		{
-			gameStates.top()->Update(1.0f / REFRESH_RATE);
-
-			if (gameStates.top()->Exit()) {
-				delete gameStates.top();
-				gameStates.pop();
-			}
-			else
-			{
-				State * ref = gameStates.top()->NewState();
-				if (ref)
-					gameStates.push(ref);
-
-			}
-		}
 
 		while (unprocessed > 1)
 		{
 			updates++;
 			unprocessed -= 1;
 
-			/*if (!gameStates.empty())
+			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
 
@@ -143,7 +127,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 
 				}
-			}*/
+			}	
 
 
 			if (Input::isKeyPressed('P') && !pressed)
@@ -167,6 +151,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				pressed = false;
 			}
+			Shape* picked = nullptr;
+			picked = wnd.getPicked(cam);
+
+			if (picked) {
+				pickingEvents.push(picked);
+
+			}
 
 		}
 
@@ -185,13 +176,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
 
-		Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);
 
-		if (picked) {
-			pickingEvents.push(picked);
-			
-		}
 		
 		wnd.Flush(cam, light);
 		/*
