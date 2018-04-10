@@ -40,13 +40,42 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	mBox2.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
 	mBox2.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
-	const long int NR = 2;
+	Mesh mBox3;
+	mBox3.LoadModel("trolls_inn/Resources/Box.obj");
+	mBox3.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
+	mBox3.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
-	Object3D box2;
-	Object3D box1;
-	box2.setMesh(&mBox);
-	box1.setMesh(&mBox2);
-	box1.setPos(1, 0, 0);
+	Mesh mBox4;
+	mBox4.LoadModel("trolls_inn/Resources/Box.obj");
+	mBox4.setNormalTexture("trolls_inn/Resources/NormalMap.jpg");
+	mBox4.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+
+
+	const long int NR = 600;
+
+	Object3D box[NR];
+
+	for (int i = 0; i < 150; i++)
+	{
+		box[i].setMesh(&mBox);
+		box[i].setPos(i, 0, 0);
+	}
+	for (int i = 150; i < 300; i++)
+	{
+		box[i].setMesh(&mBox2);
+		box[i].setPos(i - 150, 1, 0);
+	}
+	for (int i = 300; i < 450; i++)
+	{
+		box[i].setMesh(&mBox3);
+		box[i].setPos(i - 300, 2, 0);
+	}
+	for (int i = 450; i < 600; i++)
+	{
+		box[i].setMesh(&mBox4);
+		box[i].setPos(i - 450, 3, 0);
+	}
+
 
 
 	while (wnd.isOpen())
@@ -69,13 +98,27 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 		
-		box1.CheckPick();
-		box2.CheckPick();
-		box1.Draw();
-		box2.Draw();
+		if (Input::isMouseLeftPressed())
+		{
+			for (int i = NR - 1; i > 250; i--)
+			{
+				box[i].CheckPick();
+			}
+			for (int i = 0; i <= 250; i++)
+			{
+				box[i].CheckPick();
+			}
 
-		wnd.getPicked(cam);
 
+			Shape* p = wnd.getPicked(cam);
+			if (p)
+				p->Move(0, 0, 1);
+		}
+		
+		for(int i = 0; i < NR; i++)
+		{
+			box[i].Draw();
+		}
 
 		wnd.Flush(cam, light);
 		wnd.Present();
