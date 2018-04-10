@@ -9,7 +9,7 @@ void OrbitCamera::setMinTilt(float t)
 {
 	m_tiltCapDown = t;
 }
-OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
+OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim, DirectX::XMFLOAT3 pos) : Camera()
 {
 	m_distanceFromTarget = 10.0f;
 	m_windowDim = windowDim;
@@ -19,6 +19,7 @@ OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim) : Camera()
 	m_tiltCapDown = 0.0f;
 	m_tiltCapUp = 0.5f;
 	m_zoomSensitivity = 0.5f;
+	m_pos = pos;
 
 }
 

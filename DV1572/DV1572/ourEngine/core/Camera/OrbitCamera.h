@@ -21,7 +21,7 @@ public:
 	void setMaxTilt(float t);
 	void setMinTilt(float t);
 
-	OrbitCamera(DirectX::XMFLOAT2 windowDim);
+	OrbitCamera(DirectX::XMFLOAT2 windowDim, DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(0, 0, 5));
 	~OrbitCamera();
 
 	void update();
