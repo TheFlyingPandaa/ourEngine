@@ -12,5 +12,5 @@ struct INPUT
 
 float4 main(INPUT input) : SV_TARGET
 {
-	return float4(tDiffuse.Sample(sampAni, input.tex).rgb,1);
+	return float4(tDiffuse.Sample(sampAni, input.tex));
 }
