@@ -9,15 +9,15 @@
 
 #include <iostream>
 #include <chrono>
+#include "../../ourEngine/core/Dx.h"
+
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
 //#pragma warning(disable : 4061 4265 4365 4571 4623 4625 4626 4628 4668 4710 4711 4746 4774 4820 4987 5026 5027 5031 5032 5039)
 
 #include "../../ourEngine/core/Audio/Audio.h"
-#include "../../ourEngine/core/Font/SpriteBatch.h"
-#include "../../ourEngine/core/Font/SpriteFont.h"
-#include "../../ourEngine/core/Dx.h"
+
 
 #include "../../ourEngine/core/FileReader.h"
 
@@ -91,11 +91,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	bool pressed = false;
 	bool play = false;
 
-	std::unique_ptr<DirectX::SpriteFont> m_font;
-	m_font = std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont");
-	DirectX::XMVECTOR m_fontPos = DirectX::XMVECTOR{1280/2,720/2,1,1};
-	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-	m_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
+
+	DX::TEXT txtTest;
+	txtTest.type = DX::Consolas;
+	txtTest.textPosition = DirectX::XMVectorSet(1280.0f / 2, 0, 0, 1);
+	txtTest.scale = DirectX::XMVectorSet(1, 1, 1, 1);
+	txtTest.rotation = 0.0f;
+	txtTest.color = DirectX::Colors::BlueViolet;
+	txtTest.text = "This is test";
+	txtTest.allignment = DX::ALLIGN::Left;
+	
+	DX::TEXT txtTest2;
+	txtTest2.type = DX::Consolas;
+	txtTest2.textPosition = DirectX::XMVectorSet(1280.0f / 2, 720.0f / 2, 0, 1);
+	txtTest2.scale = DirectX::XMVectorSet(0.3, 0.3, 0.3, 1);
+	txtTest2.rotation = 0.0f;
+	txtTest2.color = DirectX::Colors::DarkGreen;
+	txtTest2.text = "CHEFEN IS GAY";
+	txtTest2.allignment = DX::ALLIGN::Center;
+
 
 	while (wnd.isOpen())
 	{
@@ -111,12 +125,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		if (Input::GetKeyIndex() != -1)
 			keyEvent.push(Input::GetKeyIndex());
 		
+		DX::g_textQueue.push_back(txtTest);
+		DX::g_textQueue.push_back(txtTest2);
 
 		while (unprocessed > 1)
 		{
 			updates++;
 			unprocessed -= 1;
-
+			txtTest2.rotation += 0.1;
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -184,17 +200,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		
 
 		wnd.Flush(cam, light);
-		m_spriteBatch->Begin();
-
-		const wchar_t* output = L"Magnus Ar gullig #noHomo"; 
-
-		DirectX::XMVECTOR origin = m_font->MeasureString(output) / 2.f;
-
-		m_font->DrawString(m_spriteBatch.get(), output,
-			m_fontPos, Colors::HotPink, 0.f, origin);
-
-		m_spriteBatch->End();
-
   		wnd.Present();
 		wnd.FullReset();
 

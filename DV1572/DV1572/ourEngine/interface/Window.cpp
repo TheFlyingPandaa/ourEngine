@@ -27,6 +27,12 @@ std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 
+//TEXT
+std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
+std::vector<DX::TEXT>								DX::g_textQueue;
+std::unique_ptr<DirectX::SpriteBatch>				DX::g_spriteBatch;
+
+
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
 	
@@ -498,6 +504,56 @@ void Window::_runComputeShader() {
 	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
 }
 
+void Window::_initFonts()
+{
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont"));
+	DX::g_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
+}
+
+void Window::_drawText()
+{
+	DX::g_spriteBatch->Begin();
+
+	for (auto &t : DX::g_textQueue)
+	{
+		std::wstring widestr = std::wstring(t.text.begin(), t.text.end());
+		const wchar_t* text = widestr.c_str();
+
+		DirectX::XMVECTOR origin = DX::g_fonts[t.type]->MeasureString(text);
+		//origin = XMVectorSetY(origin, XMVectorGetY(origin) * -1);
+
+		float x, y;
+		x = DirectX::XMVectorGetX(t.textPosition);
+		y = DirectX::XMVectorGetY(t.textPosition);
+
+		DirectX::XMVECTOR pos =
+			DirectX::XMVectorSet(x, (float)m_height - y, 0,1);
+
+		switch (t.allignment)
+		{
+		case DX::ALLIGN::Center:
+			origin /= 2;
+			break;
+		case DX::ALLIGN::Left:
+			origin = XMVectorSetX(origin, 0);
+			break;
+		}
+
+
+		DX::g_fonts[t.type]->DrawString(
+			DX::g_spriteBatch.get(),
+			text,
+			pos,
+			t.color,
+			t.rotation,
+			origin,
+			t.scale
+		);
+	}
+
+	DX::g_spriteBatch->End();
+}
+
 void Window::_setSamplerState()
 {
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -935,6 +991,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 		MessageBoxA(m_hwnd, "NO SETTINGS FILE WAS WOUND", "NO SETTINGS FILE FOUND", MB_ICONWARNING);
 	}
 	HRESULT hr = _initDirect3DContext();
+	_initFonts();
 	_initViewPort();
 	_setViewport();
 	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
@@ -984,6 +1041,7 @@ void Window::Clear()
 	DX::g_instanceGroupsHUD.clear();
 	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
+	DX::g_textQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
@@ -1007,6 +1065,7 @@ void Window::Flush(Camera* c, Light& light)
 	_transparencyPass(*c);
 	_drawHUD();
 	_runComputeShader();
+	_drawText();
 }
 
 void Window::FullReset()
