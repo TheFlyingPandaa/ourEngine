@@ -25,6 +25,8 @@ private:
 
 	ID3D11Buffer*				m_pLightBuffer;
 
+	bool m_useLight; 
+
 	void _createResources(); 
 
 public:
@@ -41,9 +43,12 @@ public:
 	void setDir(XMFLOAT4A dir); 
 	void setColor(XMFLOAT4A color); 
 
-	void Move(XMFLOAT4A move); 
+	void updateMatrix();
+	void use(bool useLight); 
 
-	void updateMatrix(const Camera& cam); 
+	bool getUseStatus() const; 
+
+	void cpyData(bool isSun, DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer);
 
 	ID3D11DepthStencilView*& getDepthView(); 
 	DIRECTIONAL_LIGHT_BUFFER& getBuffer(); 

@@ -25,6 +25,8 @@ private:
 	int posX;
 	int posY;
 
+	GameTime gameTime; 
+
 	int previousKey;
 
 	bool m_firstPick;

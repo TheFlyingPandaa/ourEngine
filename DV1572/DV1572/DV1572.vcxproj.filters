@@ -11,6 +11,9 @@
     <FxCompile Include="ourEngine\shaders\standardHullShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transVertexShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\hudPixelShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\hudVertexShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
@@ -48,6 +51,9 @@
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\InnDummyFile.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
+    <ClCompile Include="trolls_inn\Room\Room.cpp" />
+    <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -85,13 +91,15 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
-    <ClInclude Include="ourEngine\core\Audio\Audio.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\FileReader.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
+    <ClInclude Include="ourEngine\core\Audio\Audio.h" />
+    <ClInclude Include="trolls_inn\Room\Room.h" />
+    <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -100,5 +108,11 @@
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
+    <Library Include="ourEngine\core\Audio\AudioLibxRL.lib" />
+    <Library Include="ourEngine\core\Font\FontLibxRL.lib" />
+    <Library Include="ourEngine\core\Font\FontLibxDB.lib" />
   </ItemGroup>
 </Project>
