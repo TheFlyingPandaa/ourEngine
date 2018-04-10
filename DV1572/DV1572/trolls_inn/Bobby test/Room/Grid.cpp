@@ -1,7 +1,6 @@
 #include "Grid.h"
 #include <math.h>
 
-
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
 	this->m_posX = posX;
@@ -33,6 +32,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			int upleft = 0;
 			int downright = 0;
 			int downleft = 0;
+
 			for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 			{
 				
@@ -232,11 +232,12 @@ float Grid::getDistance(const Tile* t1, const Tile* t2) const
 	XMVECTOR xmGoal = XMLoadFloat2(&t2->getPosition());
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
-bool compare(Node* a, Node* b) { return (*a < *b); }
+
 std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 {
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
+
 	std::vector<Node*> pointerBank;
 
 	Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
@@ -244,20 +245,11 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 
 	pointerBank.push_back(current);
 
-
-	std::cout << "Start Tile: (" << startTile->quad.getPosition().x << "," << startTile->quad.getPosition().z << ")" << std::endl;
-	std::cout << "End Tile: (" << endTile->quad.getPosition().x << "," << endTile->quad.getPosition().z << ")" << std::endl;
-	int i = 0;
 	while (openList.size() > 0)
 	{
-		std::cout << "i " << i++ << std::endl;
-		current = *openList.begin();
-		for (auto node : openList) {
-			if (node->fCost <= current->fCost) {
-				current = node;
-			}
-		}
 
+		std::sort(openList.begin(), openList.end(), [](Node* a1, Node* a2) {return a1->fCost < a2->fCost; });
+		current = openList.at(0);
 
 		if (*current == *endTile)
 		{
@@ -275,7 +267,7 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 		}
 		
 		closedList.push_back(current);		// add the entry to the closed list
-		openList.erase(std::find(openList.begin(),openList.end(), current));   // Remove first entry
+		openList.erase(openList.begin());   // Remove the entry
 
 		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 		{
@@ -284,20 +276,23 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 
 			Tile* currentTile = current->tile->getAdjacent(dir);
 
+			// Rules here
 			if (currentTile == nullptr)
 				continue;
 			if (currentTile->m_room != nullptr)
 				continue; // Jump this one
 			if (!currentTile->isWalkbale())
 				continue;
+			//--Rules End Here--
 
 			float gCost = current->gCost + getDistance(current->tile, currentTile);
 
 			float hCost = getDistance(currentTile, endTile);
 			Node* newNode = new Node(currentTile, current, gCost, hCost);
 
-			if (std::find(closedList.begin(), closedList.end(), newNode) != closedList.end() && gCost >= newNode->gCost) continue;
-			if (std::find(openList.begin(), openList.end(), newNode) == openList.end() || gCost < newNode->gCost)
+			if (std::find(closedList.begin(), closedList.end(), newNode) != closedList.end()) 
+				continue;
+			if (std::find(openList.begin(), openList.end(), newNode) == openList.end())
 			{
 				openList.push_back(newNode);
 				pointerBank.push_back(newNode);

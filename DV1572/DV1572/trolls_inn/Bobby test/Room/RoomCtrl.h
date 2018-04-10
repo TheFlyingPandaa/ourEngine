@@ -16,7 +16,7 @@ class RoomCtrl
 private:
 	std::vector<Room*>	m_rooms;
 	std::vector<Wall*>	m_walls;
-	
+	std::vector<std::vector<int>> connections;
 
 	Mesh*				m_wall;
 public:

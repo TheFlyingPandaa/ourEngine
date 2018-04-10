@@ -1076,6 +1076,11 @@ void Window::setMouseMiddleScreen()
 	SetCursorPos(pt.x, pt.y);
 }
 
+void Window::setTitle(LPCSTR string)
+{
+	SetWindowText(m_hwnd, string);
+}
+
 DirectX::XMFLOAT2 Window::getSize() const
 {
 	DirectX::XMFLOAT2 sizeVec;

@@ -26,7 +26,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 16, 16, &rect);	
+	grid = new Grid(0, 0, 32, 32, &rect);	
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(4, 2), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	

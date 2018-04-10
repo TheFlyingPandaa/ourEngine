@@ -179,7 +179,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			//printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			std::string title;
+			title = "Fps ";
+			title += std::to_string(fpsCounter);
+			title += " Tick ";
+			title += std::to_string(updates);
+			wnd.setTitle(title.c_str());
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

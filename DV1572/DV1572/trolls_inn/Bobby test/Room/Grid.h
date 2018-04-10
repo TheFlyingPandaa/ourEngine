@@ -26,9 +26,10 @@ struct Node
 	{
 		return tile->getPosition().x == other.getPosition().x && tile->getPosition().y == other.getPosition().y;
 	}
+	
 	bool operator==(const Node& other) const
 	{
-		return tile == other.tile;
+		return tile->getPosition().x == other.tile->getPosition().x && tile->getPosition().y == other.tile->getPosition().y;
 	}
 };
 
