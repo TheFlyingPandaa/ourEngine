@@ -163,34 +163,34 @@ const char* printDir(Character::WalkDirection dir)
 	return "No movement";
 		
 }
-Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT2 oldPos, XMFLOAT2 newPos) const
+Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
 {
 
-	XMVECTOR oldPosWithoutOffset = XMLoadFloat2(&oldPos);
-	XMVECTOR xmNewPos = XMLoadFloat2(&newPos);
+	XMVECTOR oldPosWithoutOffset = XMLoadFloat3(&oldPos);
+	XMVECTOR xmNewPos = XMLoadFloat3(&newPos);
 	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
-	XMFLOAT2 result;
-	XMStoreFloat2(&result, xmDeltaPos);
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, xmDeltaPos);
 	WalkDirection dir;
 	
 	if (result.x > 0) 
 	{
 		dir = RIGHT;
-		if (result.y > 0)
+		if (result.z > 0)
 			dir = UPRIGHT;
-		else if (result.y < 0)
+		else if (result.z < 0)
 			dir = DOWNRIGHT;
 	}
 	else if (result.x < 0)
 	{
 		dir = LEFT;
-		if (result.y > 0)
+		if (result.z > 0)
 			dir = UPLEFT;
-		else if (result.y < 0)
+		else if (result.z < 0)
 			dir = DOWNLEFT;
 	}
-	else if (result.y > 0) dir = UP;
-	else if (result.y < 0) dir = DOWN;
+	else if (result.z > 0) dir = UP;
+	else if (result.z < 0) dir = DOWN;
 
 	//std::cout << printDir(dir) << std::endl;
 

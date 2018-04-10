@@ -56,9 +56,9 @@ public:
 		m_door = false;
 		
 		quad.setMesh(mesh);
-		quad.setPos(static_cast<float>(x), 0.0f, static_cast<float>(y));
+		quad.setPos(static_cast<float>(sizeX), 0.0f, static_cast<float>(sizeY));
 		quad.setRotation(90.0f, 0.0f, 0.0f);		
-		m_walkable = true;
+		m_isWalkeble = true;
 	}
 	void	setAdjacent(Tile* tile, Direction dir);
 	Room*	getRoom() const;
@@ -70,6 +70,8 @@ public:
 	int		getPosY() const;
 
 	Tile*	getAdjacent(Direction dir);
+
+	bool	getIsWalkeble() const;
 
 	bool	isWall(Direction dir) const { return m_walls[dir]; }
 	void	setTileWalls(Direction dir, Wall* value);
@@ -85,11 +87,7 @@ private:
 	int		m_posX;
 	bool	m_door;
 	Object3D quad;
-	bool m_walkable;
-	bool isWalkbale() const
-	{
-		return m_walkable;
-	}
+	bool isWalkbale() const;
 
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
@@ -106,7 +104,7 @@ private:
 	*/
 	Tile*	adjacent[8] = { nullptr };
 
-	Tile*	adjacent[4] = { nullptr };
+	//Tile*	adjacent[4] = { nullptr };
 	Wall*	m_w[4] = { nullptr };
 	
 	bool	m_walls[4] = { false };

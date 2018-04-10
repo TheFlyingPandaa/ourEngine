@@ -22,14 +22,14 @@ struct Node
 	{
 		return fCost < other.fCost;
 	}
-	bool operator==(const Tile& other) const
+	bool operator==(Tile& other) const
 	{
-		return tile->getPosition().x == other.getPosition().x && tile->getPosition().y == other.getPosition().y;
+		return tile->getQuad().getPosition().x == other.getQuad().getPosition().x && tile->getQuad().getPosition().z == other.getQuad().getPosition().z;
 	}
 	
-	bool operator==(const Node& other) const
+	bool operator==(Node& other) const
 	{
-		return tile->getPosition().x == other.tile->getPosition().x && tile->getPosition().y == other.tile->getPosition().y;
+		return tile->getQuad().getPosition().x == other.tile->getQuad().getPosition().x && tile->getQuad().getPosition().z == other.tile->getQuad().getPosition().z;
 	}
 };
 
@@ -66,8 +66,8 @@ public:
 
 	void	CreateWalls(Mesh * mesh = nullptr);
 
-	float getDistance(const Tile* t1, const Tile* t2) const;
-	std::vector<Node*> findPath(Tile* startTile, Tile* endTile) const;
+	float getDistance(Tile* t1, Tile* t2);
+	std::vector<Node*> findPath(Tile* startTile, Tile* endTile);
 	Tile* getTile(int x, int y) const;
 
 };

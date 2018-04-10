@@ -29,7 +29,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 16, 16, &rect);	
+	grid = new Grid(0, 0, 32, 32, &rect);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
@@ -47,13 +47,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 GameState::~GameState()
 {
 	delete grid;
-}
-void printPath(std::vector<Node*> path)
-{
-	int index = 0;
-	for (const auto& p : path)
-		std::cout << index++ << " [" << p->tile->getPosition().x << "," << p->tile->getPosition().y <<"] ";
-	std::cout << std::endl;
 }
 
 // round float to n decimals precision
@@ -135,12 +128,12 @@ void GameState::Update(double deltaTime)
 
 			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
-			XMFLOAT2 oldPos = { float(xTile), float(yTile) };
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 			
-			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getPosition()));
+			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 			for (int i = 0; i < path.size() - 1; i++)
-				c.Move(c.getDirectionFromPoint(path[i]->tile->getPosition(), path[i + 1]->tile->getPosition()));
+				c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 			
 			for (auto& p : path)
 				delete p;
@@ -248,7 +241,7 @@ void GameState::_checkCreationOfRoom()
 	{
 		if (m_firstPickedTile && m_lastPickedTile  && m_isPlaceable)
 		{
-			//TODO : CREATE ROOM
+
 			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
 			DirectX::XMFLOAT3 offsetF = m_lastPickedTile->getPosition();
 			DirectX::XMINT2 roomPos(static_cast<int>(posF.x + 0.5f), static_cast<int>(posF.z + 0.5f));

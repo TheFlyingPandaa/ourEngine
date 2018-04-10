@@ -24,7 +24,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		this->m_tiles[i] = std::vector<Tile*>(this->m_sizeY);
 		for (int j = 0; j < sizeY; j++)
 		{
-			Tile* t = new Tile(posX, posY, sizeX, sizeY, m_tileMesh);
+			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 			t->getQuad().setScale(2.0f);
 			t->getQuad().setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
 			this->m_tiles[i][j] = t;
@@ -45,6 +45,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			{
 				
 				Direction dir = static_cast<Direction>(dirIndex);
+
 				if (dir == Direction::up) {
 					if (j + 1 < sizeY) {
 						m_tiles[i][j]->setAdjacent(m_tiles[i][j + 1], dir);
@@ -76,22 +77,22 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 				if (upright == 2)
 				{
-					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j + 1], 4);
+					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j + 1], static_cast<Direction>(4));
 					upright = 0;
 				}
 				if (upleft == 2)
 				{
-					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j + 1], 5);
+					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j + 1], static_cast<Direction>(5));
 					upleft = 0;
 				}
 				if (downright == 2)
 				{
-					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j - 1], 6);
+					m_tiles[i][j]->setAdjacent(m_tiles[i + 1][j - 1], static_cast<Direction>(6));
 					downright = 0;
 				}
 				if (downleft == 2)
 				{
-					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j - 1], 7);
+					m_tiles[i][j]->setAdjacent(m_tiles[i - 1][j - 1], static_cast<Direction>(7));
 					downleft = 0;
 				}
 			}
@@ -116,10 +117,6 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
-std::vector<std::vector<Tile*>> Grid::getTiles() const
-{
-	return m_tiles;
-}
 
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
@@ -237,14 +234,14 @@ void Grid::CreateWalls(Mesh * mesh)
 	m_roomCtrl.CreateWalls();
 }
 
-float Grid::getDistance(const Tile* t1, const Tile* t2) const
+float Grid::getDistance(Tile* t1, Tile* t2)
 {
-	XMVECTOR xmTile = XMLoadFloat2(&t1->getPosition());
-	XMVECTOR xmGoal = XMLoadFloat2(&t2->getPosition());
+	XMVECTOR xmTile = XMLoadFloat3(&t1->getQuad().getPosition());
+	XMVECTOR xmGoal = XMLoadFloat3(&t2->getQuad().getPosition());
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
 
-std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
+std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 {
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
@@ -290,13 +287,13 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile) const
 			// Rules here
 			if (currentTile == nullptr)
 				continue;
-			if (currentTile->m_room != nullptr)
+			if (currentTile->getRoom() != nullptr)
 				continue; // Jump this one
-			if (!currentTile->isWalkbale())
+			if (!currentTile->getIsWalkeble())
 				continue;
 			//--Rules End Here--
 
-			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95);
+			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
 
 			float hCost = getDistance(currentTile, endTile);
 			Node* newNode = new Node(currentTile, current, gCost, hCost);
