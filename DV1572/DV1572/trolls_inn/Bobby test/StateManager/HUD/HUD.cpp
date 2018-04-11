@@ -91,8 +91,9 @@ bool HUD::LoadHud(const std::string & path)
 			else if (type == "txt")
 			{
 				float x, y, scl, r, g, b, a, rot;
+				char allignment;
 				std::string text = "";
-				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %f %f %f %f", &x, &y, &scl, &r, &g, &b, &a, &rot);
+				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %f %f %f %f %c", &x, &y, &scl, &r, &g, &b, &a, &rot, &allignment);
 				std::getline(inputFile, text);
 				Text t;
 				t.setColor(r, g, b, a);
@@ -100,6 +101,20 @@ bool HUD::LoadHud(const std::string & path)
 				t.setScale(scl);
 				t.setRotation(rot);
 				t.setTextString(text);
+
+				switch (allignment)
+				{
+				case 'R':
+					t.setAllignment(TXT::Right);
+					break;
+				case 'C':
+					t.setAllignment(TXT::Center);
+					break;
+				default:
+					t.setAllignment(TXT::Left);
+					break;
+				}
+
 				m_texts.push_back(t);
 			}
 
