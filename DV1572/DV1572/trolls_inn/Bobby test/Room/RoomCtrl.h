@@ -4,6 +4,7 @@
 #include "Room.h"
 #include "Structure.h"
 #include "Kitchen.h"
+#include "Bedroom.h"
 
 
 const unsigned short ROOM_TYPE_SIZE = 2;
@@ -23,6 +24,9 @@ private:
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 	
+	bool				_checkLegal(Room * room);
+	
+
 public:
 	RoomCtrl();
 	~RoomCtrl();
@@ -41,10 +45,12 @@ public:
 	//This is a expensiv function many many many for loops
 	//Be conservative when calling
 	void				CreateWalls();
-	void				CreateDoors();
+	void				CreateDoors(Room * room);
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(Tile * tile1, Tile * tile2);
 
+
 	Direction			getDirection(Tile*, Tile*);
+	Direction			getDirection(Room*, Room*);
 };
 

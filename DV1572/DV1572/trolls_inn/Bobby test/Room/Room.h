@@ -7,6 +7,7 @@
 class Room
 {
 protected:
+
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
 
@@ -42,6 +43,8 @@ public:
 	virtual int			getSizeY() const; 
 	virtual void		setWalls(std::vector<Wall*> walls, Direction dir);
 	virtual void		addWall(Wall* wall, Direction dir);
+
+	virtual DirectX::XMFLOAT3	getPosition() const;
 
 	virtual void		addAdjasentRoom(Room * room);
 	virtual std::vector<Room*>*	getAdjasent();

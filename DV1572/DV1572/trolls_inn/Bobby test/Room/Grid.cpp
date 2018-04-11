@@ -231,7 +231,7 @@ void Grid::CreateWalls(Mesh * mesh)
 {
 	if (mesh)
 		m_roomCtrl.setMesh(mesh);
-	m_roomCtrl.CreateWalls();
+	//m_roomCtrl.CreateWalls();
 }
 
 float Grid::getDistance(Tile* t1, Tile* t2)

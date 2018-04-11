@@ -43,6 +43,7 @@ void Wall::setIsInner(bool isInner)
 
 void Wall::setPosition(DirectX::XMFLOAT2 position)
 {
+	this->position = DirectX::XMINT2(static_cast<int>(position.x + 0.5f), static_cast<int>(position.y + 0.5f));
 	this->m_wall.setPos(position.x, 0, position.y);
 }
 
@@ -56,6 +57,11 @@ void Wall::setScale(float x, float y, float z)
 	this->m_wall.setScale(x, y, z);
 }
 
+DirectX::XMINT2 Wall::getPosition() const
+{
+	return position;
+}
+
 void Wall::setMesh(Mesh * mesh)
 {
 	this->m_wall.setMesh(mesh);
@@ -65,6 +71,15 @@ Tile * Wall::getTile() const
 {
 	return m_tile;
 }
+
+bool Wall::operator==(const Wall & other)
+{
+	return false;
+
+	
+}
+
+
 
 bool Wall::getDir(Direction dir) const
 {
