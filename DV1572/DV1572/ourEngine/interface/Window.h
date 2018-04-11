@@ -87,6 +87,9 @@ private:
 	ID3D11VertexShader*		m_hudVertexShader;
 	ID3D11PixelShader*		m_hudPixelShader;
 
+	//Shadow
+	ID3D11VertexShader*		m_shadowVertexShader;
+	ID3D11PixelShader*		m_shadowPixelShader;
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
@@ -134,6 +137,9 @@ private:
 	void	_initComputeShader();
 	void	_runComputeShader();
 
+	//ShadowPass
+	void	_prepareShadowPass();
+	void	_shadowPass();
 
 	void	_initFonts();
 	void	_drawText();

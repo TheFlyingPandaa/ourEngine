@@ -329,11 +329,15 @@ void Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_skyBoxPixelShader,
 		L"ourEngine/shaders/skyBoxPixelShader.hlsl", "main");
 
+	//Shadow
+	ShaderCreator::CreateVertexShader(DX::g_device, m_shadowVertexShader,
+		L"ourEngine/shaders/ShadowVertex.hlsl", "main");
+
+	ShaderCreator::CreatePixelShader(DX::g_device, m_shadowPixelShader,
+		L"ourEngine/shaders/ShadowPixel.hlsl", "main");
 
 	_initPickingShaders();
 	_initTessellationShaders();
-
-
 }
 
 void Window::_initPickingShaders()
@@ -526,6 +530,100 @@ void Window::_runComputeShader() {
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };	//NUll everything to please directx
 	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
+}
+
+void Window::_prepareShadowPass()
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	DX::g_deviceContext->VSSetShader(m_shadowVertexShader, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(m_shadowPixelShader, nullptr, 0);
+	//DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, nullptr);
+
+
+
+}
+
+struct MATRIX_SHADOW {
+	XMFLOAT4X4A view;
+	XMFLOAT4X4A projection;
+};
+
+void Window::_shadowPass()
+{
+	XMFLOAT4 position = XMFLOAT4(0, 10, 0, 1);
+	XMFLOAT4 focusPoint(0, 0, 0, 1);
+	XMFLOAT4 up(0, 1, 0, 1);
+	XMVECTOR p = XMLoadFloat4(&position);
+	XMVECTOR f = XMLoadFloat4(&focusPoint);
+	XMVECTOR u = XMLoadFloat4(&up);
+
+	
+
+	DirectX::XMMATRIX view = XMMatrixLookAtLH(p,f,u);	//Getting the view matrix from the camera.
+	DirectX::XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.5f, 16.0f / 9.0f, 0.5f, 20.0f);	//The smashing it with projection
+
+	MATRIX_SHADOW meshBuffer;
+
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+
+	for (auto& instance : DX::g_instanceGroups)
+	{
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+		//We copy the data into the attribute part of the layout.
+		//This is what makes instancing special
+
+		DirectX::XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));
+		DirectX::XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(proj));
+
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
+		//DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_meshConstantBuffer);
+
+		//instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
+
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
 }
 
 void Window::_initFonts()
@@ -1055,6 +1153,9 @@ Window::~Window()
 	m_transPixelShader->Release();
 	m_transBlendState->Release();
 
+	m_shadowVertexShader->Release();
+	m_shadowPixelShader->Release();
+
 	if(m_pickingTexture.SRV) m_pickingTexture.SRV->Release();
 	if(m_pickingTexture.RTV) m_pickingTexture.RTV->Release();
 	if(m_pickingTexture.TextureMap) m_pickingTexture.TextureMap->Release();
@@ -1167,8 +1268,9 @@ void Window::loadActiveLights(GameTime& gameTime)
 
 void Window::Flush(Camera* c)
 {
+	_prepareShadowPass();
+	_shadowPass();
 	//ReportLiveObjects();
-
 	_prepareGeometryPass();
 	_geometryPass(*c);
 	_clearTargets();
