@@ -5,12 +5,14 @@
 #include "Structure.h"
 #include "Kitchen.h"
 #include "Bedroom.h"
+#include "Reception.h"
 
 
 const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
-	bedroom
+	bedroom,
+	reception
 };
 
 const float WALLOFFSET = 0.5f;
