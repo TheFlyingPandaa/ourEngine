@@ -122,6 +122,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		if (!isPlaceable(pos, size))
 			return;
 	}
+
 	switch (roomType)
 	{
 	case kitchen:
@@ -129,7 +130,16 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 		if (m_tileMesh[0] != nullptr)
 			room->setTile(m_tileMesh[0]);
-		
+		break;
+	case bedroom:
+		break;
+	case reception:
+		room = new Reception(pos.x, pos.y, size.x, size.y, tiles);
+
+		if (m_tileMesh[2] != nullptr)
+			room->setTile(m_tileMesh[2]);
+
+
 		break;
 	default:
 		break;
