@@ -21,6 +21,12 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setPosition(0.5, 0.5);
 	c.setFloor(0);
 
+	int startSize = 32;
+	int firstRoomSizeX = 4;
+	int firstRoomSizeY = 3;
+
+	int secondRoomSizeX = 4;
+	int secondRoomSizeY = 2;
 
 
 	m_prevStart	  = XMINT2(0,0);
@@ -28,13 +34,13 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, 32, 32, &rect);	
+	grid = new Grid(0, 0, startSize, startSize, &rect);	
 	grid->CreateWalls(&m);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
-	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
-	
+	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, (startSize / 2) - firstRoomSizeY / 2), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, ((startSize / 2) - firstRoomSizeY / 2) + firstRoomSizeY / 2), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
+	grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][((startSize / 2) - ((firstRoomSizeY / 2)))], grid->getGrid()[(startSize / 2)][(startSize / 2) - ((firstRoomSizeY + 1) / 2)]);
 
 	posX = 1;
 	posY = 1;
