@@ -79,7 +79,6 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
-	attribDesc.inside = (shape->lol == 1) ? 1.0f : 0.0f;
 
 	
 	// Unique Mesh
