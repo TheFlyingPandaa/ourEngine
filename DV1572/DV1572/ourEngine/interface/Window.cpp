@@ -79,7 +79,6 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
-	attribDesc.inside = (shape->lol == 1) ? 1.0f : 0.0f;
 
 	
 	// Unique Mesh
@@ -175,12 +174,24 @@ void DX::CleanUp()
 
 bool Window::_initWindow()
 {
+	HICON hIicon = (HICON)LoadImage( // returns a HANDLE so we have to cast to HICON
+		NULL,             // hInstance must be NULL when loading from a file
+		"trolls_inn/Resources/favicon.ico",   // the icon file name
+		IMAGE_ICON,       // specifies that the file is an icon
+		0,                // width of the image (we'll specify default later on)
+		0,                // height of the image
+		LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
+		LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
+		LR_SHARED         // let the system release the handle when it's no longer used
+	);
+
 	WNDCLASSEX wcex = { 0 };
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = StaticWndProc;
 	wcex.hInstance = m_hInstance;
 	wcex.lpszClassName = "ourEngine";
+	wcex.hIcon = hIicon;
 	if (!RegisterClassEx(&wcex))
 	{
 		m_hwnd = false;
@@ -789,7 +800,7 @@ void Window::_skyBoxPass(const Camera& cam)
 
 	MESH_BUFFER meshBuffer;
 
-
+	
 	ID3D11Buffer* instanceBuffer = nullptr;
 
 	for (auto& instance : DX::g_instanceGroupsSkyBox)
@@ -869,18 +880,16 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	
-	/*//Copy sun and moon values to GPU. 
-	D3D11_MAPPED_SUBRESOURCE lightData;
+	/*D3D11_MAPPED_SUBRESOURCE lightData;
 	for (int i = 0; i < 2; i++)
 	{
 		DX::g_deviceContext->Map(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
 		memcpy(lightData.pData, &gameTime.getSunAndMoonVector()[i].getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
 		DX::g_deviceContext->Unmap(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0);
-		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndMoonVector()[i].getBufferPointer();
+		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndVector()[i].getBufferPointer();
 		DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
 	}*/
 
-	//Copy to
 	
 	//Throw in camera values into buffer
 	CAMERA_POS_BUFFER cameraBuffer;
@@ -1088,6 +1097,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 	_initFonts();
 	_initViewPort();
 	_setViewport();
+	
 	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
 	std::thread t2(&Window::_initGBuffer, this);	//_initGBuffer();
 	_createConstantBuffers(); 

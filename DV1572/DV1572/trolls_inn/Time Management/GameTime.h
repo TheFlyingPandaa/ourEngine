@@ -28,22 +28,16 @@ private:
 	float m_colorScaleFactor;
 	float m_rotationFactor; 
 	
-	DirectX::XMVECTOR m_moonStartInterpolate; 
-	DirectX::XMVECTOR m_moonTargetInterpolate;
-	
+
 	DirectX::XMVECTOR m_sunStartInterpolate; 
 	DirectX::XMVECTOR m_sunTargetInterpolate; 
 	
 	DirectX::XMVECTOR m_sunCurrentFinalColor;
-	DirectX::XMVECTOR m_moonCurrentFinalColor;
 
 	DirectX::XMVECTOR m_sunRotationStart;
 	DirectX::XMVECTOR m_sunRotationTarget;
-	DirectX::XMVECTOR m_moonRotationStart;
-	DirectX::XMVECTOR m_moonRotationTarget;
 
 	DirectX::XMVECTOR m_sunFinalRotation;
-	DirectX::XMVECTOR m_moonFinalRotation;
 
 	DirectX::XMFLOAT4A m_fFinalColor; 
 	DirectX::XMFLOAT4A m_fFinalRotation; 
@@ -57,18 +51,12 @@ private:
 	float m_sunAngleTarget;
 
 	ID3D11Buffer* m_pSunBuffer; 
-	ID3D11Buffer* m_pMoonBuffer;
 
 	DIRECTIONAL_LIGHT_BUFFER m_sunBuffer; 
-	DIRECTIONAL_LIGHT_BUFFER m_moonBuffer; 
 
 	Light m_sun; 
-	Light m_moon;
 
-	std::vector<Light*> m_sunAndMoon;
-
-
-	void m_createSunAndMoonBuffers(); 
+	void m_createSunBuffer(); 
 
 	void m_cpyLightToGPU();
 
@@ -80,9 +68,6 @@ public:
 	TIMEOFDAY getTimePeriod(); 
 
 	Light& getSun(); 
-	Light& getMoon(); 
-	
-	std::vector<Light*>& getSunAndMoonVector(); 
 };
 
 #endif 
