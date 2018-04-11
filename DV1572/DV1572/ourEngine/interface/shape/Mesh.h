@@ -9,15 +9,20 @@
 #include "../../Structs.h"
 #include "Material.h"
 
+struct Glass
+{
+	ID3D11Buffer* buffer;
+};
 class Mesh
 {
 private:
-	ID3D11Buffer*	m_vertexBuffer;
-	ID3D11Buffer*	m_indexBuffer;
-	Material		m_material;
-	int				m_nrOfVertices;
-	static int		m_idCounter;
-	int				m_uniqueID;
+	std::vector<Glass>						m_vertexBuffers;
+	std::vector<Glass>						m_indexBuffers;
+	std::vector<Material*>					m_materials;
+	std::vector<int>						m_nrOfVerticesPerMaterials;
+	int										m_nrOfVertices;
+	static int								m_idCounter;
+	int										m_uniqueID;
 public:
 	Mesh();
 	~Mesh();
@@ -29,9 +34,10 @@ public:
 	void setNormalTexture(const std::string &path);
 	void setHighlightTexture(const std::string &path);
 	
-	Material* getMaterial();
-	ID3D11Buffer* getVertices() const;
-	ID3D11Buffer* getIndicesBuffer() const;
-	int getNumberOfVertices() const;
+	Material* getMaterial(int i = 0);
+	ID3D11Buffer* getVertices(int i = 0) const;
+	ID3D11Buffer* getIndicesBuffer(int i = 0) const;
+	int getNrOfIndices(int i = 0) const;
+	int getNumberOfParts() const;
 	bool CheckID(const Mesh& other) const;
 };

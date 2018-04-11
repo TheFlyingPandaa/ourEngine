@@ -424,7 +424,7 @@ void Window::_drawHUD()
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -755,33 +755,37 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
-
+		
+		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
-		ID3D11Buffer * bufferPointers[2];
-		bufferPointers[0] = v;
-		bufferPointers[1] = instanceBuffer;
+		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		{
+			instance.shape->ApplyMaterials(i);
 
-		unsigned int strides[2];
-		strides[0] = sizeof(VERTEX);
-		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+			UINT32 vertexSize = sizeof(VERTEX);
+			UINT offset = 0;
+			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer * bufferPointers[2];
+			bufferPointers[0] = v;
+			bufferPointers[1] = instanceBuffer;
 
-		unsigned int offsets[2];
-		offsets[0] = 0;
-		offsets[1] = 0;
+			unsigned int strides[2];
+			strides[0] = sizeof(VERTEX);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
 
+			unsigned int offsets[2];
+			offsets[0] = 0;
+			offsets[1] = 0;
 
+			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
 
-		Mesh* mesh = instance.shape->getMesh();
-		ID3D11Buffer* indices = mesh->getIndicesBuffer();
-
-		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
-		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+																					//get number of vertices
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		}
+		
 		instanceBuffer->Release();
 	}
 	
@@ -852,7 +856,7 @@ void Window::_skyBoxPass(const Camera& cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -976,7 +980,7 @@ void Window::_transparencyPass(const Camera & cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -1249,7 +1253,8 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
-		
+		if(wParam == VK_CONTROL)
+
 		Input::m_keys[wParam] = true;
 		Input::lastPressed = static_cast<int>(wParam);
 		break;

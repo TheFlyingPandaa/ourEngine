@@ -244,6 +244,7 @@ float Grid::getDistance(Tile* t1, Tile* t2)
 
 std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 {
+	
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
 
@@ -285,6 +286,7 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 			Tile* currentTile = current->tile->getAdjacent(dir);
 
 			// Rules here
+			
 			if (currentTile == nullptr)
 				continue;
 			if (currentTile->getRoom() != nullptr)

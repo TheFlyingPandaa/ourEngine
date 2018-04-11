@@ -1,5 +1,8 @@
 #include "Material.h"
-Material::Material()
+#include "../../core/ObjLoader.h"
+
+Material::Material(std::string name)
+	: m_name(name)
 {
 	m_diffuseTexture = nullptr;
 	m_diffuseResource = nullptr;
@@ -35,10 +38,20 @@ void Material::setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 	m_diffuseResource = res;
 }
 
+void Material::setDiffuseMap(const std::string & path)
+{
+	DX::loadTexture(path, m_diffuseResource, m_diffuseTexture);
+}
+
 void Material::setNormalMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
 	m_normalTexture = srv;
 	m_normalResource = res;
+}
+
+void Material::setNormalMap(const std::string & path)
+{
+	DX::loadTexture(path, m_normalResource, m_normalTexture);
 }
 
 void Material::setHighlightMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
@@ -47,9 +60,24 @@ void Material::setHighlightMap(ID3D11ShaderResourceView* srv, ID3D11Resource* re
 	m_highlightResource = res;
 }
 
+void Material::setHighlightMap(const std::string & path)
+{
+	DX::loadTexture(path, m_highlightResource, m_highlightTexture);
+}
+
 void Material::setTransparency(float alpha)
 {
 	m_transparancy = alpha;
+}
+
+void Material::setSpecularExponent(float specular)
+{
+	m_specularExponent = specular;
+}
+
+const std::string & Material::getName() const
+{
+	return m_name;
 }
 
 ID3D11ShaderResourceView* Material::getDiffuseMap() const

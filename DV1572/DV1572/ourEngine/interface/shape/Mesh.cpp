@@ -4,51 +4,94 @@
 int Mesh::m_idCounter = 0;
 Mesh::Mesh()
 {
-	m_vertexBuffer = nullptr;
+	m_materials.push_back(new Material());
 	m_nrOfVertices = 0;
 	m_uniqueID = m_idCounter++;
 }
 
 Mesh::~Mesh()
 {	
-	if(m_vertexBuffer)
-		m_vertexBuffer->Release();
-	if (m_indexBuffer)
-		m_indexBuffer->Release();
+	for (auto& vBuffer : m_vertexBuffers)
+		vBuffer.buffer->Release();
+	for (auto& iBuffer : m_indexBuffers)
+		iBuffer.buffer->Release();
 }
 
 void Mesh::LoadModel(const std::string & path)
 {
+	std::vector<Material*> tempMaterials = DX::getMaterials(path);
+
 	std::vector<VERTEX> vertices;
-	std::vector<VERTEX> indexedVertices;
-	std::vector<unsigned int> indices;
-	DX::loadOBJ(path, vertices);
-	DX::CalculateTangents(vertices);
-	DX::indexVertices(vertices, indices, indexedVertices);
+	
 
-	// Vertex Buffer Indexed
-	D3D11_BUFFER_DESC vBufferDescIndexed;
-	memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
-	vBufferDescIndexed.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vBufferDescIndexed.Usage = D3D11_USAGE_DEFAULT;
-	vBufferDescIndexed.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(indexedVertices.size());
+	if (tempMaterials.size() > 1)
+	{
+		std::ifstream fptr;
+		fptr.open(path);
+		if (!fptr)
+		{
+			std::cout << "Can not open " << path << " dickhead!\n";
+		}
+		while (fptr)
+		{
+			std::vector<VERTEX> tempVertices;
+			std::vector<unsigned int> indices;
+			std::vector<VERTEX> tempIndexed;
+			std::string mttlibName;
 
-	D3D11_SUBRESOURCE_DATA vDataIndexed;
-	vDataIndexed.pSysMem = indexedVertices.data();
-	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffer);
+			DX::loadOBJContinue(fptr, tempVertices, vertices, mttlibName);
+			DX::CalculateTangents(tempVertices);
+			DX::indexVertices(tempVertices, indices, tempIndexed);
 
-	// Index buffer
-	D3D11_BUFFER_DESC vIndexBufferDesc;
-	memset(&vIndexBufferDesc, 0, sizeof(vIndexBufferDesc));
-	vIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	vIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vIndexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(indices.size());
+			for (auto& material : tempMaterials)
+				if (material->getName() == mttlibName)
+				{
+					m_materials.push_back(material);
+					break;
+				}
 
-	D3D11_SUBRESOURCE_DATA iData;
-	iData.pSysMem = indices.data();
-	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
+			m_vertexBuffers.push_back(Glass());
+			m_indexBuffers.push_back(Glass());
 
-	m_nrOfVertices = static_cast<int>(indices.size());
+			// Vertex Buffer Indexed
+			D3D11_BUFFER_DESC vBufferDescIndexed;
+			memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
+			vBufferDescIndexed.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			vBufferDescIndexed.Usage = D3D11_USAGE_DEFAULT;
+			vBufferDescIndexed.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(tempIndexed.size());
+
+			D3D11_SUBRESOURCE_DATA vDataIndexed;
+			vDataIndexed.pSysMem = tempIndexed.data();
+			HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffers.back().buffer);
+
+			// Index buffer
+			D3D11_BUFFER_DESC vIndexBufferDesc;
+			memset(&vIndexBufferDesc, 0, sizeof(vIndexBufferDesc));
+			vIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			vIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			vIndexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(indices.size());
+
+			D3D11_SUBRESOURCE_DATA iData;
+			iData.pSysMem = indices.data();
+			hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffers.back().buffer);
+			m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));
+		}
+		
+	}
+	else
+	{
+		std::vector<VERTEX> indexedVertices;
+		std::vector<unsigned int> indices;
+		DX::loadOBJ(path, vertices);
+		DX::CalculateTangents(vertices);
+		DX::indexVertices(vertices, indices, indexedVertices);
+
+	}
+
+
+	
+
+	//m_nrOfVertices = static_cast<int>(indices.size());
 }
 
 void Mesh::LoadModel(std::vector<VERTEX>& v)
@@ -58,6 +101,8 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 	DX::CalculateTangents(v);
 	DX::indexVertices(v, indices, indexedVertices);
 
+	m_vertexBuffers.push_back(Glass());
+	m_indexBuffers.push_back(Glass());
 	// Vertex Buffer Indexed
 	D3D11_BUFFER_DESC vBufferDescIndexed;
 	memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
@@ -67,7 +112,7 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 
 	D3D11_SUBRESOURCE_DATA vDataIndexed;
 	vDataIndexed.pSysMem = indexedVertices.data();
-	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffer);
+	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffers[0].buffer);
 
 	// Index buffer
 	D3D11_BUFFER_DESC vIndexBufferDesc;
@@ -78,7 +123,7 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 
 	D3D11_SUBRESOURCE_DATA iData;
 	iData.pSysMem = indices.data();
-	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
+	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffers[0].buffer);
 
 	m_nrOfVertices = static_cast<int>(indices.size());
 }
@@ -92,6 +137,8 @@ void Mesh::LoadModelInverted(const std::string & path)
 	DX::CalculateTangents(vertices);
 	DX::indexVertices(vertices, indices, indexedVertices);
 
+	m_vertexBuffers.push_back(Glass());
+	m_indexBuffers.push_back(Glass());
 	// Vertex Buffer Indexed
 	D3D11_BUFFER_DESC vBufferDescIndexed;
 	memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
@@ -101,7 +148,7 @@ void Mesh::LoadModelInverted(const std::string & path)
 
 	D3D11_SUBRESOURCE_DATA vDataIndexed;
 	vDataIndexed.pSysMem = indexedVertices.data();
-	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffer);
+	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffers[0].buffer);
 
 	// Index buffer
 	D3D11_BUFFER_DESC vIndexBufferDesc;
@@ -112,7 +159,7 @@ void Mesh::LoadModelInverted(const std::string & path)
 
 	D3D11_SUBRESOURCE_DATA iData;
 	iData.pSysMem = indices.data();
-	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
+	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffers[0].buffer);
 
 	m_nrOfVertices = static_cast<int>(indices.size());
 }
@@ -180,7 +227,7 @@ void Mesh::setDiffuseTexture(const std::string& path)
 	ID3D11Resource* texture;
 	ID3D11ShaderResourceView* textureView;
 	DX::loadTexture(path, texture, textureView);
-	m_material.setDiffuseMap(textureView, texture);
+	m_materials.back()->setDiffuseMap(textureView, texture);
 }
 
 void Mesh::setNormalTexture(const std::string & path)
@@ -188,7 +235,7 @@ void Mesh::setNormalTexture(const std::string & path)
 	ID3D11Resource* texture;
 	ID3D11ShaderResourceView* textureView;
 	DX::loadTexture(path, texture, textureView);
-	m_material.setNormalMap(textureView, texture);
+	m_materials.back()->setNormalMap(textureView, texture);
 }
 
 void Mesh::setHighlightTexture(const std::string & path)
@@ -196,28 +243,32 @@ void Mesh::setHighlightTexture(const std::string & path)
 	ID3D11Resource* texture;
 	ID3D11ShaderResourceView* textureView;
 	DX::loadTexture(path, texture, textureView);
-	m_material.setHighlightMap(textureView, texture);
+	m_materials.back()->setHighlightMap(textureView, texture);
 }
 
-Material* Mesh::getMaterial()
+Material* Mesh::getMaterial(int i)
 {
-	return &m_material;
+	return m_materials[i];
 }
 
-ID3D11Buffer * Mesh::getVertices() const
+ID3D11Buffer * Mesh::getVertices(int i) const
 {
-	return m_vertexBuffer;
+	return m_vertexBuffers[i].buffer;
 }
 
-
-ID3D11Buffer * Mesh::getIndicesBuffer() const
+ID3D11Buffer * Mesh::getIndicesBuffer(int i) const
 {
-	return m_indexBuffer;
+	return m_indexBuffers[i].buffer;
 }
 
-int Mesh::getNumberOfVertices() const
+int Mesh::getNrOfIndices(int i) const
 {
-	return m_nrOfVertices;
+	return m_nrOfVerticesPerMaterials[i];
+}
+
+int Mesh::getNumberOfParts() const
+{
+	return m_materials.size();
 }
 
 bool Mesh::CheckID(const Mesh& other) const

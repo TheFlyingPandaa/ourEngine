@@ -51,7 +51,7 @@ void Shape::noInside()
 }
 Shape::Shape()
 {
-	lol = 0.0f;
+	lol = 1.0f;
 
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
@@ -198,17 +198,9 @@ void Shape::ApplyShaders()
 	DX::g_deviceContext->GSSetShader(m_gs, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_ps, nullptr, 0);
 
-	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
-	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
-	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
-
-	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
-	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
-	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
-
 }
 
-void Shape::ApplyMaterials()
+void Shape::ApplyMaterials(int i)
 {
 	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
 	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();

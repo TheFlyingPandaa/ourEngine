@@ -7,10 +7,172 @@
 #include <sstream>
 #include "WICTextureLoader\WICTextureLoader.h"
 #include <map>
-
+#include "Dx.h"
+#include "../interface/shape/Material.h"
 
 namespace DX
 {
+	static std::vector<Material*> getMaterials(const std::string& path)
+	{
+		auto getMttlibPath = [&]() -> std::string
+		{
+			std::ifstream fptr;
+			fptr.open(path);
+			if (!fptr)
+			{
+				std::cout << "getMaterials(): Can not open obj file - " << path << std::endl;
+				return "";
+			}
+			std::string currentLine = "";
+			while (std::getline(fptr, currentLine))
+			{
+				if (currentLine[0] != '#' || currentLine != "")
+				{
+					std::istringstream stream(currentLine);
+					std::string type;
+					stream >> type;
+					if (type == "mtllib")
+					{
+						std::string mttlibName;
+						stream >> mttlibName;
+						fptr.close();
+						auto const pos = path.find_last_of('/');
+						std::string newPath = path.substr(0, pos + 1);
+						newPath += mttlibName;
+						return newPath;
+					}
+				}
+			}
+			fptr.close();
+			return "";
+		};
+		
+		std::string mttlibPath = getMttlibPath();
+		std::string originPath = mttlibPath.substr(0, mttlibPath.find_last_of('/') + 1);
+
+		std::ifstream fptr;
+		fptr.open(mttlibPath);
+		if (!fptr)
+		{
+			std::cout << "getMatrials() Can not open mttlib file - " << mttlibPath << std::endl;
+			return std::vector<Material*>();
+		}
+		
+		std::vector<Material*> materials;
+		std::string currentLine = "";
+		while (std::getline(fptr, currentLine))
+		{
+			if (currentLine[0] != '#' && currentLine != "")
+			{
+				std::istringstream stream(currentLine);
+				std::string type;
+				stream >> type;
+				
+				if (type == "newmtl")
+				{
+					std::string name = "";
+					stream >> name;
+					materials.push_back(new Material(name));
+				}
+				else if (type == "Ns")
+				{
+					float specularComp = 0.0f;
+					stream >> specularComp;
+					materials.back()->setSpecularExponent(specularComp);
+				}
+				else if (type == "map_Kd")
+				{
+					std::string file = "";
+					stream >> file;
+					materials.back()->setDiffuseMap(originPath + file);
+				}
+				else if (type == "map_Bump")
+				{
+					std::string file = "";
+					stream >> file;
+					materials.back()->setNormalMap(originPath + file);
+				}
+				else if (type == "map_Ks")
+				{
+					std::string file = "";
+					stream >> file;
+					materials.back()->setHighlightMap(originPath + file);
+				}
+			}
+		}
+		
+
+
+		return materials;
+	}
+
+	static void loadOBJContinue(std::ifstream& fptr, std::vector<VERTEX>& tempvertices, std::vector<VERTEX>& vertices, std::string& mttlibName)
+	{
+		std::vector<F> face;
+		std::string currentLine = "";
+		bool readFaces = false;
+		while (std::getline(fptr, currentLine))
+		{
+			if (currentLine[0] != '#')
+			{
+				std::istringstream stream(currentLine);
+				std::string type;
+
+				stream >> type;
+			
+				if (type == "v")
+				{
+					vertices.push_back(VERTEX());
+					stream >> vertices.back().x >> vertices.back().y >> vertices.back().z;
+				}
+				else if (type == "vt")
+				{
+					stream >> vertices.back().u >> vertices.back().v;
+				}
+				else if (type == "vn")
+				{
+					stream >> vertices.back().nx >> vertices.back().ny >> vertices.back().nz;
+				}
+				else if (type == "usemtl")
+				{
+					stream >> mttlibName;
+				}
+				else if (type == "f")
+				{
+					readFaces = true;
+					F fa[3];
+
+					sscanf_s(currentLine.c_str(), "%*s %d/%d/%d %d/%d/%d %d/%d/%d",
+						&fa[0].vIndex, &fa[0].vtIndex, &fa[0].vnIndex,
+						&fa[1].vIndex, &fa[1].vtIndex, &fa[1].vnIndex,
+						&fa[2].vIndex, &fa[2].vtIndex, &fa[2].vnIndex
+					);
+					for (int i = 0; i < 3; i++)
+					{
+						face.push_back(fa[i]);
+					}
+				}
+				else if(readFaces)
+					break;
+			}
+		}
+
+		for (size_t i = 0; i < face.size(); i++)
+		{
+			F f = face[i];
+			V v = { vertices[f.vIndex - 1].x, vertices[f.vIndex - 1].y, vertices[f.vIndex - 1].z };
+			VT vt = { vertices[f.vIndex - 1].u, vertices[f.vIndex - 1].v };
+			VN vn = { vertices[f.vIndex - 1].nx, vertices[f.vIndex - 1].ny, vertices[f.vIndex - 1].nz };
+			VERTEX vertex = {
+				v.x, v.y, v.z,
+				vt.u, vt.v,
+				vn.x, vn.y, vn.z
+			};
+			tempvertices.push_back(vertex);
+		}
+	}
+	
+
 	static void loadOBJ(const std::string & path, std::vector<VERTEX> &model)
 	{
 		std::ifstream fptr;
