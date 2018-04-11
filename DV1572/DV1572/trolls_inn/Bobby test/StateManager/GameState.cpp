@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include <iostream>
 #include <stdlib.h>
+#include "../../../ourEngine/interface/light/PointLight.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -46,7 +47,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
-	
 }
 
 GameState::~GameState()

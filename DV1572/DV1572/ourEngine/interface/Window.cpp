@@ -602,7 +602,8 @@ void Window::_createConstantBuffers()
 {
 	_createMeshConstantBuffer();
 	_createPickConstantBuffer();
-	_createCameraPosConstantBuffer(); 
+	_createCameraPosConstantBuffer();
+	_createPointLightCollectionBuffer(); 
 }
 
 void Window::_createMeshConstantBuffer()
@@ -642,6 +643,20 @@ void Window::_createCameraPosConstantBuffer()
 	bDesc.StructureByteStride = 0;
 
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_cameraPosConstantBuffer); 
+}
+
+void Window::_createPointLightCollectionBuffer()
+{
+	D3D11_BUFFER_DESC bufferDesc; 
+
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.ByteWidth = sizeof(POINT_LIGHT_COLLECTION);
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bufferDesc, nullptr, &m_pPointLightBuffer);
 }
 
 void Window::_createDepthBuffer()
@@ -880,15 +895,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	
-	/*D3D11_MAPPED_SUBRESOURCE lightData;
-	for (int i = 0; i < 2; i++)
-	{
-		DX::g_deviceContext->Map(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
-		memcpy(lightData.pData, &gameTime.getSunAndMoonVector()[i].getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
-		DX::g_deviceContext->Unmap(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0);
-		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndVector()[i].getBufferPointer();
-		DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
-	}*/
+	//Send lights to GPU
 
 	
 	//Throw in camera values into buffer

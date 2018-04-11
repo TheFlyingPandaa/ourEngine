@@ -53,6 +53,7 @@ private:
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
 	ID3D11Buffer*			m_lightBuffer; 
+	ID3D11Buffer*			m_pPointLightBuffer; 
 	
 
 	INT						m_sampleCount;
@@ -106,6 +107,7 @@ private:
 	void	_createMeshConstantBuffer();
 	void	_createPickConstantBuffer();
 	void	_createCameraPosConstantBuffer(); 
+	void	_createPointLightCollectionBuffer(); 
 
 
 	void	_createDepthBuffer();
