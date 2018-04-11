@@ -38,16 +38,16 @@ tx trolls_inn/Resources/HUD/EventLog.png
 r 900 4 200 50 0 0
 
 # Money text
-txt 901 4 0.5 0 0 1 1 0
-Money $
+txt 950 4 0.5 0 0 1 1 0
+Gold
 
 # Event text
-txt 349 0 0.5 1 0 0 1 0
-EVENTS =)
+txt 450 20 0.5 1 0 0 1 0
+New Events
 
 # Character Text
 txt 0 200 0.5 1 1 1 1 0
-LOLOLOL lol XD
+Character
 
 
 
