@@ -153,15 +153,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				pressed = false;
 			}
+
+
 			Shape* picked = nullptr;
 			picked = wnd.getPicked(cam);
 
 			if (picked) {
 				pickingEvents.push(picked);
 			}
-
 		}
-
 		if (!audEngine->Update())
 		{
 			// No audio device is active
