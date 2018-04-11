@@ -284,9 +284,15 @@ void Room::addWall(Wall * wall, Direction dir)
 	}
 }
 
+DirectX::XMFLOAT3 Room::getPosition() const
+{
+	return DirectX::XMFLOAT3(static_cast<float>(getX()), 0.0f, static_cast<float>(getY()));
+}
+
 void Room::addAdjasentRoom(Room * room)
 {
-	adjasent.push_back(room);
+	if (std::find(adjasent.begin(), adjasent.end(), room) == adjasent.end())
+		adjasent.push_back(room);
 }
 
 std::vector<Room*>* Room::getAdjasent()
