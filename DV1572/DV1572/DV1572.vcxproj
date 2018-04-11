@@ -132,6 +132,7 @@
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp">
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
+    <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
@@ -271,6 +273,20 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\skyBoxVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\standardDomainShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>

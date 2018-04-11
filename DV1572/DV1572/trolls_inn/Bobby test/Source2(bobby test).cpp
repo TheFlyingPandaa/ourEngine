@@ -20,6 +20,7 @@
 
 
 #include "../../ourEngine/core/FileReader.h"
+#include "../../ourEngine/interface/shape/SkyBoxObject.h"
 
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
@@ -74,6 +75,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Mesh test;
 	test.MakeRectangle();
 	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
+
+	Mesh box;
+	box.LoadModelInverted("trolls_inn/Resources/Box.obj");
+	box.setDiffuseTexture("trolls_inn/Resources/skybox.jpg");
+
+
+	SkyBoxObject boxy;
+	boxy.setMesh(&box);
+	
+	boxy.setScale(100, 100, 100);
+
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 
@@ -164,8 +176,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 			}
 		}
-
-		
+		//boxy.setPos(cam->getPosition());
+		boxy.Draw();
 
 
 		fpsCounter++;
