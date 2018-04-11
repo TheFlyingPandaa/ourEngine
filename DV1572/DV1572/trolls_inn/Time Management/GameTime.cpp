@@ -22,30 +22,21 @@ GameTime::GameTime()
 
 	m_sunRotationStart = DirectX::XMVECTOR{ 0,1,0 };
 	m_sunRotationTarget = DirectX::XMVECTOR{ 0,0,0 };
-	m_moonRotationStart = DirectX::XMVECTOR{ -1,0,0 }; 
-	m_moonRotationTarget = DirectX::XMVECTOR{ 0,0,0 }; 
 
-	m_createSunAndMoonBuffers(); 
 	DirectX::XMFLOAT3 tempPos = { 10.0f,0.0f,0.0 };
 	m_sunPos = XMLoadFloat3(&tempPos);
 	//DirectX::XMStoreFloat3(&tempPos, m_sunPos);
 	m_sunAngle = 0.0f;
 	
 	
-	m_sun.Init(
+	m_createSunBuffer(); 
+
+	m_sun.InitDirectional(
 		DirectX::XMFLOAT4A(0, 100, 0, 0), 
 		DirectX::XMFLOAT4A(-1, -1, -1, 0), 
 		DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
-	m_moon.Init(
-		DirectX::XMFLOAT4A(0, 100, 0, 0), 
-		DirectX::XMFLOAT4A{ 0.0f, 0.0f, 0.0f, 0.0f }, 
-		DirectX::XMFLOAT4A{ 50,50,190,1 }, 420, 420); 
-		
+
 	m_vUp = XMVECTOR{ 0,1,0 }; 
-
-	m_sunAndMoon.push_back(&m_sun); 
-	m_sunAndMoon.push_back(&m_moon); 
-
 }
 
 GameTime::~GameTime()
@@ -60,7 +51,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	
 	switch (m_currentTime)
 	{
-		//Från 06:00 -> 12:00
+		//Frï¿½n 06:00 -> 12:00
 	case MORNINGTONOON:
 		if (m_colorScaleFactor < 1.0f)
 		{
@@ -88,7 +79,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		}
 		break;
 
-		//Från 12:00 -> 17:00
+		//Frï¿½n 12:00 -> 17:00
 	case NOONTOEVENING:
 		if (m_colorScaleFactor < 1.0f)
 		{
@@ -116,7 +107,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 			m_colorScaleFactor = 0.0f;
 		}
 		break;
-		//Från 17:00 -> 21:00
+		//Frï¿½n 17:00 -> 21:00
 	case EVENINGTONIGHT:
 		if (m_colorScaleFactor < 1.0f)
 		{
@@ -151,7 +142,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 
 
 	m_cpyLightToGPU(); 
-	//std::cout << "( " << m_moon.getDir().x << "," << m_moon.getDir().y << "," << m_moon.getDir().z << ")" << std::endl; 
+	
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
@@ -164,24 +155,18 @@ Light & GameTime::getSun()
 	return m_sun; 
 }
 
-Light & GameTime::getMoon()
-{
-	return m_moon; 
-}
-
-void GameTime::m_createSunAndMoonBuffers()
+void GameTime::m_createSunBuffer()
 {
 	HRESULT hr; 
-	D3D11_BUFFER_DESC sunAndMoonBdesc;
-	sunAndMoonBdesc.Usage = D3D11_USAGE_DYNAMIC;
-	sunAndMoonBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
-	sunAndMoonBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	sunAndMoonBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	sunAndMoonBdesc.MiscFlags = 0;
-	sunAndMoonBdesc.StructureByteStride = 0;
+	D3D11_BUFFER_DESC sunBdesc;
+	sunBdesc.Usage = D3D11_USAGE_DYNAMIC;
+	sunBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
+	sunBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	sunBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	sunBdesc.MiscFlags = 0;
+	sunBdesc.StructureByteStride = 0;
 
-	hr = DX::g_device->CreateBuffer(&sunAndMoonBdesc, nullptr, &m_pSunBuffer); 
-	hr = DX::g_device->CreateBuffer(&sunAndMoonBdesc, nullptr, &m_pMoonBuffer);
+	hr = DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer); 
 }
 
 void GameTime::m_cpyLightToGPU()
@@ -210,12 +195,7 @@ void GameTime::m_cpyLightToGPU()
 	std::cout << "Direciton (" << m_sunBuffer.dir.x << "," << m_sunBuffer.dir.y << "," << m_sunBuffer.dir.z << ")\n\n";*/
 
 	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer); 
-	m_sun.cpyData(true,m_sunBuffer,m_pSunBuffer); 
 	
 
-}
-
-std::vector<Light*>& GameTime::getSunAndMoonVector()
-{
-	return m_sunAndMoon; 
+	m_sun.cpyDataDir(m_sunBuffer,m_pSunBuffer); 
 }

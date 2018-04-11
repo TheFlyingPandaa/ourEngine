@@ -62,29 +62,7 @@ float4 main(Input input) : SV_Target
 
 	//float distanceSquare = length(wordPos - sunLightPos.xyz) * length(wordPos - sunLightPos.xyz);
 
-	
-	finalColor = ambient + ((finalSpec + diffuse) * sunColor.xyz * 2.0f);
-	finalColor = saturate(finalColor);
-    //MOON//
-
-	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	/*float3 moonLightToObject = normalize(-moonDir.xyz);
-	//TODO:Hey Future me Remove this
-	//return float4(diffuseSample,1);
-	diffuse = diffuseSample * max(dot(normal, moonLightToObject), 0.0f);
-	////////////////////////////////////////////////////////////////////////////////////////////
-
-	//Specular calculation//////////////////////////////////////////////////////////////////////
-
-	/*WWWHOOOOOOOOO WE'RE...*/ /*halfWayDir = normalize(moonLightToObject + viewer);
-
-	//spec lowest value is 32.
-	spec = pow(max(dot(normal, halfWayDir), 0.0f), 32.0);
-
-	finalSpec = spec * specLevel;
-
-	finalColor += ambient + (finalSpec + diffuse) * moonColor.xyz;*/
-
+	finalColor = saturate(finalColor); 
 
 	return float4(finalColor, 1);
 }
