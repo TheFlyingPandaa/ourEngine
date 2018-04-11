@@ -29,16 +29,16 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 	this->_init();
 	grid = new Grid(0, 0, 32, 32, &rect);	
+	grid->CreateWalls(&m);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
+	grid->getRoomCtrl().setDoorMesh(&door);
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	
-	grid->getRoomCtrl().setDoorMesh(&door);
 
 	posX = 1;
 	posY = 1;
-	grid->CreateWalls(&m);	
-	grid->getRoomCtrl().CreateDoors();
+	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
 	
 }
@@ -265,8 +265,8 @@ void GameState::_checkCreationOfRoom()
 
 				
 				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
-				grid->CreateWalls();
-				grid->getRoomCtrl().CreateDoors();
+				//grid->CreateWalls();
+				//grid->getRoomCtrl().CreateDoors();
 			}
 		}
 		m_firstPickedTile->setColor(1, 1, 1);

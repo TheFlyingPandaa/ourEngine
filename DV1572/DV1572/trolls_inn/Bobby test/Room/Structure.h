@@ -43,10 +43,13 @@ public:
 	void	setRotation(DirectX::XMFLOAT3 rotation);
 	void	setScale(float x, float y, float z);
 
+	DirectX::XMINT2	getPosition() const;
+
 	void	setMesh(Mesh * mesh);
 
 	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
+	bool	operator==(const Wall& other);
 };
 
 class Tile {

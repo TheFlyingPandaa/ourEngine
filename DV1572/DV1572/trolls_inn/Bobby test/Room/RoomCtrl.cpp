@@ -51,7 +51,7 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	int x, mx;
 	int y, my;
 
-	bool isPlaceable = false;
+	bool isPlaceable = true;
 
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
@@ -66,7 +66,7 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY() &&
 			pos.y + size.y > m_rooms[i]->getY())
 			return false;
-		
+		/*
 		if ((pos.y == my || pos.y + size.y == y))
 		{	
 			if ((pos.x < mx && pos.x + size.x > x))
@@ -77,10 +77,16 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 			if ((pos.y < my && pos.y + size.y > y))
 				isPlaceable = true;
 		}
+		*/
 		
 	}
 
 	return isPlaceable;
+}
+
+bool RoomCtrl::_checkLegal(Room * room)
+{
+	return dynamic_cast<Bedroom*>(room) == nullptr;
 }
 
 RoomCtrl::RoomCtrl()
@@ -119,17 +125,20 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);	
-		
+		room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
+
 		if (m_tileMesh[0] != nullptr)
 			room->setTile(m_tileMesh[0]);
+		
 		break;
 	default:
 		break;
 	}
-
 	if (room)
 		m_rooms.push_back(room);
+	CreateWalls();
+	CreateDoors(room);
+	
 }
 
 void RoomCtrl::Update(Camera * cam)
@@ -174,6 +183,7 @@ void RoomCtrl::CreateWalls()
 						t2->getTileWalls(Direction::up)->setIsInner(true);		
 						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::down, t2->getTileWalls(Direction::up));
+						m_rooms[i]->addWall(t2->getTileWalls(Direction::up), Direction::down);
 					}
 
 				if (createWall) // where we aculy create the walls
@@ -203,6 +213,7 @@ void RoomCtrl::CreateWalls()
 						t2->getTileWalls(Direction::down)->setIsInner(true);
 						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::up, t2->getTileWalls(Direction::down));
+						m_rooms[i]->addWall(t2->getTileWalls(Direction::down), Direction::up);
 					}
 				if (createWall)
 				{
@@ -243,6 +254,7 @@ void RoomCtrl::CreateWalls()
 						t2->getTileWalls(Direction::right)->setIsInner(true);
 						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::left, t2->getTileWalls(Direction::right));
+						m_rooms[i]->addWall(t2->getTileWalls(Direction::right), Direction::left);
 					}
 				if (createWall)
 				{
@@ -274,6 +286,8 @@ void RoomCtrl::CreateWalls()
 						t2->getTileWalls(Direction::left)->setIsInner(true);
 						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::right, t2->getTileWalls(Direction::left));
+						m_rooms[i]->addWall(t2->getTileWalls(Direction::left), Direction::right);
+
 					}
 				if (createWall)
 				{
@@ -296,9 +310,62 @@ void RoomCtrl::CreateWalls()
 	}	
 }
 
-void RoomCtrl::CreateDoors()
+void RoomCtrl::CreateDoors(Room * room)
 {
-	
+	//get other room type 
+	for (Room * other : *room->getAdjasent()) {
+		if (_checkLegal(other)) {
+			/*Direction dir = getDirection(room, other);
+			Direction otherDir = getDirection(other, room);*/
+			std::vector<Wall*>* createdRoomWall = room->getAllWalls();
+			std::vector<Wall*>* otherRoomWall = other->getAllWalls();
+
+			std::vector<Wall*> intersectedWalls;
+
+			
+			for (int i = 0; i < createdRoomWall->size(); i++)
+			{
+				if(createdRoomWall->at(i)->getIsInner())
+					for (int j = 0; j < otherRoomWall->size(); j++)
+					{
+						if (otherRoomWall->at(j)->getIsInner())
+							if (createdRoomWall->at(i) == otherRoomWall->at(j))
+							{
+								intersectedWalls.push_back(createdRoomWall->at(i));
+								break;
+							}
+					}
+			}
+			if (intersectedWalls.size() <= 0)
+				return;
+			Wall* door = intersectedWalls[(intersectedWalls.size()  ) / 2];
+			Tile* t1 = door->getTile();
+			Direction dir;
+			for (int i = 0; i < 4; i++)
+			{
+				if (t1->getTileWalls(static_cast<Direction>(i)) == door)
+				{
+					dir = static_cast<Direction>(i);
+					break;
+				}
+			}
+
+			
+
+			DirectX::XMINT2 pos = door->getPosition();
+			pos.x -= static_cast<int>(room->getPosition().x);
+			pos.y -= static_cast<int>(room->getPosition().z);
+			
+			/*if (pos.x >= 1)
+				pos.x -= 1;*/
+
+			//Tile* t1 = room->getTiles()[pos.x - 1][pos.y];
+			Tile* t2 = t1->getAdjacent(dir);
+
+			CreateDoor(t1, t2);
+
+		}
+	}
 }
 
 void RoomCtrl::setDoorMesh(Mesh * mesh)
@@ -310,13 +377,12 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 {
 	Direction dir = this->getDirection(tile1, tile2);
 
-
-
 	Wall* w = tile1->getTileWalls(dir);
 	if (!w)
 		return;
 	w->setScale(1.0f,1.0f,1.0f);
 	w->setIsDoor(true);
+	//tile1->setWallSpotPopulated(dir, true);
 	w->setMesh(this->m_doorMesh);
 }
 
@@ -325,6 +391,51 @@ Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)
 	
 	XMVECTOR oldPosWithoutOffset = XMLoadFloat3(&t1->getQuad().getPosition());
 	XMVECTOR xmNewPos = XMLoadFloat3(&t2->getQuad().getPosition());
+	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, xmDeltaPos);
+	Direction dir;
+
+	if (result.x > 0)		dir = Direction::right;
+	else if (result.x < 0)	dir = Direction::left;
+	else if (result.z > 0)	dir = Direction::up;
+	else if (result.z < 0)	dir = Direction::down;
+
+	return dir;
+}
+
+Direction RoomCtrl::getDirection(Room * r1, Room * r2)
+{
+	XMVECTOR r1Pos = XMLoadFloat3(&r1->getPosition());
+
+	XMFLOAT3 r2PosLOL = r2->getPosition();
+	int r2SizeX = r2->getSizeX();
+	int r2SizeY = r2->getSizeY();
+
+	XMVECTOR r2Pos[4];
+	r2Pos[0] = r2Pos[1] = r2Pos[2] = r2Pos[3] = XMLoadFloat3(&r2PosLOL);
+	
+	r2Pos[1] = XMVectorSetX(r2Pos[1], XMVectorGetX(r2Pos[1]) + r2SizeX);
+		 
+	r2Pos[2] = XMVectorSetX(r2Pos[2], XMVectorGetX(r2Pos[2]) + r2SizeX);
+	r2Pos[2] = XMVectorSetZ(r2Pos[2], XMVectorGetZ(r2Pos[2]) + r2SizeY);
+		 
+	r2Pos[3] = XMVectorSetZ(r2Pos[3], XMVectorGetZ(r2Pos[3]) + r2SizeY);
+	
+	float distanceToR1 = 99999.0f;
+	int index = -1;
+	for (int i = 0; i < 4; i++)
+	{
+		float temp = XMVectorGetX(XMVector3Length(r2Pos[i] - r1Pos));
+		if (temp < distanceToR1)
+		{
+			distanceToR1 = temp;
+			index = i;
+		}
+	}
+
+	XMVECTOR oldPosWithoutOffset = r1Pos;
+	XMVECTOR xmNewPos = r2Pos[index];
 	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, xmDeltaPos);
