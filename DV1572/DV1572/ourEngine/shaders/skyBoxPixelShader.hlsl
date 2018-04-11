@@ -7,14 +7,15 @@ struct INPUT {
 	float2 tex : TEXCOORD;
 };
 
-struct OUTPUT
-{
-	float4 diffuse	: SV_Target0;
-};
+//struct OUTPUT
+//{
+//	float4 diffuse	: SV_Target0;
+//};
 
-OUTPUT main(INPUT input)// : SV_TARGET
+float4 main(INPUT input) : SV_TARGET
 {
-	OUTPUT o;
-	o.diffuse = tDiffuse.Sample(SampleType, input.tex);
-	return o;
+	//OUTPUT o;
+	//o.diffuse = tDiffuse.Sample(SampleType, input.tex);
+	//return o;
+	return tDiffuse.Sample(SampleType, input.tex);
 }

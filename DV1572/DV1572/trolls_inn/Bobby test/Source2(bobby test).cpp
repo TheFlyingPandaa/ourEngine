@@ -83,8 +83,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	SkyBoxObject boxy;
 	boxy.setMesh(&box);
-	
-	boxy.setScale(100, 100, 100);
 
 
 	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));

@@ -1161,10 +1161,10 @@ void Window::Flush(Camera* c)
 
 	_prepareGeometryPass();
 	_geometryPass(*c);
-	_skyBoxPass(*c);
 	_clearTargets();
 	_lightPass(*c);
 	_transparencyPass(*c);
+	_skyBoxPass(*c);
 	_drawHUD();
 	_runComputeShader();
 	_drawText();
