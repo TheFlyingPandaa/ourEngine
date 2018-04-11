@@ -41,8 +41,18 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 {
 	m_ps = s;
 }
+void Shape::setInside()
+{
+	lol = 1.0f;
+}
+void Shape::noInside()
+{
+	lol = 0.0f;
+}
 Shape::Shape()
 {
+	lol = 0.0f;
+
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
 	m_hs	= nullptr;

@@ -152,7 +152,8 @@ void RoomCtrl::Update(Camera * cam)
 void RoomCtrl::Draw()
 {
 	for (int i = 0; i < m_walls.size(); i++)
-	{				
+	{	
+		m_walls[i]->getObject3D().setInside();
 		m_walls[i]->Draw();
 	}
 }

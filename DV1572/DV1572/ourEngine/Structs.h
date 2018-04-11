@@ -17,7 +17,7 @@ struct CAMERA_BUFFER
 
 struct CAMERA_POS_BUFFER
 {
-	DirectX::XMFLOAT4A pos; 
+	DirectX::XMFLOAT4A pos;
 };
 
 struct POINT_LIGHT_BUFFER
@@ -34,6 +34,10 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
+	float inside;
+	float inside2;
+	float inside3;
+	float inside4;
 };
 
 struct PICK_BUFFER
