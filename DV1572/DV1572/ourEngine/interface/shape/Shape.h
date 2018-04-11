@@ -27,8 +27,12 @@ protected:
 	void setDomainShader(ID3D11DomainShader* s);
 	void setGeometryShader(ID3D11GeometryShader* s);
 	void setPixelShader(ID3D11PixelShader* s);
+	
 
 public:
+	float lol;
+	void setInside();
+	void noInside();
 	Shape();
 	~Shape();
 	void setMesh(Mesh* m);

@@ -66,6 +66,11 @@ Tile * Wall::getTile() const
 	return m_tile;
 }
 
+Object3D & Wall::getObject3D()
+{
+	return m_wall;
+}
+
 bool Wall::getDir(Direction dir) const
 {
 	return m_wallDir[dir];

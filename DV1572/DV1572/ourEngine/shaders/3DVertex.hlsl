@@ -1,6 +1,10 @@
 cbuffer MESH_BUFFER : register(b0)
 {
 	float4x4 vp; 
+	float inside;
+	float inside1;
+	float inside2;
+	float inside3;
 }
 
 struct INPUT
@@ -27,6 +31,7 @@ struct OUTPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
+	float inside : INSIDECHECK;
 };
 
 
@@ -40,5 +45,6 @@ OUTPUT main(INPUT input)
 	o.normal = input.normal;
 	o.tangent = input.tangent;
 	o.color = input.color;
+	o.inside = inside;
 	return o;
 }

@@ -47,6 +47,7 @@ public:
 
 	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
+	Object3D& getObject3D();
 };
 
 class Tile {

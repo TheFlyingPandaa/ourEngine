@@ -51,6 +51,11 @@ private:
 	DirectX::XMVECTOR m_vSunDir; 
 	DirectX::XMVECTOR m_vUp;
 
+	DirectX::XMVECTOR m_sunPos;
+	float m_sunAngle;
+	float m_currentAngle;
+	float m_sunAngleTarget;
+
 	ID3D11Buffer* m_pSunBuffer; 
 	ID3D11Buffer* m_pMoonBuffer;
 

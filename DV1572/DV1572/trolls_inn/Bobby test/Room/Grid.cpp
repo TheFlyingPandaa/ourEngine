@@ -142,6 +142,7 @@ void Grid::Draw()
 	{
 		for (int j = 0; j < m_sizeY; j++)
 		{
+			m_tiles[i][j]->getQuad().noInside();
 			m_tiles[i][j]->getQuad().Draw();
 		}
 	}
