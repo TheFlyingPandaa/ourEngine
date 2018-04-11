@@ -7,6 +7,7 @@ struct VS_CONTROL_POINT_INPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
+	float inside : INSIDECHECK;
 };
 
 // Output control point
@@ -18,6 +19,7 @@ struct HS_CONTROL_POINT_OUTPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
+	float inside : INSIDECHECK;
 };
 
 // Output patch constant data.
@@ -64,6 +66,7 @@ HS_CONTROL_POINT_OUTPUT main(
 	Output.tangent = ip[i].tangent;
 	Output.world = ip[i].world;
 	Output.color = ip[i].color;
+	Output.inside = ip[i].inside;
 	
 	return Output;
 }

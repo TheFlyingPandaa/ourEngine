@@ -79,6 +79,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
+	attribDesc.inside = (shape->lol == 1) ? 1.0f : 0.0f;
 
 	
 	// Unique Mesh
@@ -732,12 +733,17 @@ void Window::_geometryPass(const Camera &cam)
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
+		meshBuffer.inside = instance.shape->lol;
+		meshBuffer.inside2 = instance.shape->lol;
+		meshBuffer.inside3 = instance.shape->lol;
+		meshBuffer.inside4 = instance.shape->lol;
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
@@ -1152,7 +1158,7 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
-	
+
 	_prepareGeometryPass();
 	_geometryPass(*c);
 	_skyBoxPass(*c);

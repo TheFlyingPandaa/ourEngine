@@ -50,6 +50,7 @@ public:
 	bool	getDir(Direction dir) const;
 	Tile *	getTile() const;
 	bool	operator==(const Wall& other);
+	Object3D& getObject3D();
 };
 
 class Tile {
