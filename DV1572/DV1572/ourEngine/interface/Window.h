@@ -87,6 +87,7 @@ private:
 	ID3D11VertexShader*		m_hudVertexShader;
 	ID3D11PixelShader*		m_hudPixelShader;
 
+
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
 
@@ -113,6 +114,7 @@ private:
 	void	_initGBuffer();
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);
+	void	_skyBoxPass(const Camera & cam);
 	void	_clearTargets();
 	void	_lightPass(Camera& cam/*std::vector<Light*> lightQueue*/);
 	//Transparency

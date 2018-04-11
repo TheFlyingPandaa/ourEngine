@@ -83,6 +83,40 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 	m_nrOfVertices = static_cast<int>(indices.size());
 }
 
+void Mesh::LoadModelInverted(const std::string & path)
+{
+	std::vector<VERTEX> vertices;
+	std::vector<VERTEX> indexedVertices;
+	std::vector<unsigned int> indices;
+	DX::loadOBJInvert(path, vertices);
+	DX::CalculateTangents(vertices);
+	DX::indexVertices(vertices, indices, indexedVertices);
+
+	// Vertex Buffer Indexed
+	D3D11_BUFFER_DESC vBufferDescIndexed;
+	memset(&vBufferDescIndexed, 0, sizeof(vBufferDescIndexed));
+	vBufferDescIndexed.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vBufferDescIndexed.Usage = D3D11_USAGE_DEFAULT;
+	vBufferDescIndexed.ByteWidth = sizeof(VERTEX) * static_cast<UINT>(indexedVertices.size());
+
+	D3D11_SUBRESOURCE_DATA vDataIndexed;
+	vDataIndexed.pSysMem = indexedVertices.data();
+	HRESULT hr = DX::g_device->CreateBuffer(&vBufferDescIndexed, &vDataIndexed, &m_vertexBuffer);
+
+	// Index buffer
+	D3D11_BUFFER_DESC vIndexBufferDesc;
+	memset(&vIndexBufferDesc, 0, sizeof(vIndexBufferDesc));
+	vIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	vIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vIndexBufferDesc.ByteWidth = sizeof(unsigned int) * static_cast<UINT>(indices.size());
+
+	D3D11_SUBRESOURCE_DATA iData;
+	iData.pSysMem = indices.data();
+	hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffer);
+
+	m_nrOfVertices = static_cast<int>(indices.size());
+}
+
 void Mesh::MakeRectangle()
 {
 	std::vector<VERTEX> vertices;

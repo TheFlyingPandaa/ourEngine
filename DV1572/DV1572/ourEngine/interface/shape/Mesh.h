@@ -23,6 +23,7 @@ public:
 	~Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(std::vector<VERTEX> &v);
+	void LoadModelInverted(const std::string &path);
 	void MakeRectangle();
 	void setDiffuseTexture(const std::string &path);
 	void setNormalTexture(const std::string &path);
