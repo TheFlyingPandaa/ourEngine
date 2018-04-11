@@ -3,6 +3,7 @@
 #include <vector>
 #include "RoomCtrl.h"
 #include <algorithm>
+#include "../Objects/ObjectsCtrl.h"
 
 struct Node
 {
@@ -44,6 +45,8 @@ private:
 	RoomCtrl			m_roomCtrl;
 	std::vector<std::vector<Tile*>> m_tiles;
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
+
+	ObjectsCtrl			m_objCtrl;
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
@@ -63,6 +66,7 @@ public:
 	void	DrawString();
 
 	RoomCtrl&	getRoomCtrl();
+	ObjectsCtrl&	getObjectCtrl();
 
 	void	CreateWalls(Mesh * mesh = nullptr);
 

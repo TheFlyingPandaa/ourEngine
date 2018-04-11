@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="trolls_inn\Bobby test\Objects\ObjectsCtrl.cpp" />
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
     <ClCompile Include="ourEngine\core\FileReader.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="trolls_inn\Bobby test\Objects\ObjectsCtrl.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />

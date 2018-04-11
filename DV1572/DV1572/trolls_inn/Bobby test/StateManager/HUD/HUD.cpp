@@ -75,6 +75,7 @@ bool HUD::LoadHud(const std::string & path)
 
 				r->setScreenPos(pX, pY, d);
 
+
 				if (static_cast<int>(sX) == 0)
 					sX = m_windowX;
 				if (static_cast<int>(sY) == 0)
@@ -91,6 +92,7 @@ bool HUD::LoadHud(const std::string & path)
 			else if (type == "txt")
 			{
 				float x, y, scl, r, g, b, a, rot;
+
 				char allignment;
 				std::string text = "";
 				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %f %f %f %f %c", &x, &y, &scl, &r, &g, &b, &a, &rot, &allignment);

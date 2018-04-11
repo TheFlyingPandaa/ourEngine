@@ -11,6 +11,7 @@ bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
 
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
+	
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -98,7 +99,6 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			}
 		}
 	}
-
 }
 Grid::~Grid()
 {	
@@ -145,6 +145,7 @@ void Grid::Draw()
 			m_tiles[i][j]->getQuad().Draw();
 		}
 	}
+	m_objCtrl.draw();
 
 	m_roomCtrl.Draw();
 }
@@ -220,6 +221,11 @@ void Grid::DrawString()
 RoomCtrl & Grid::getRoomCtrl()
 {
 	return m_roomCtrl;
+}
+
+ObjectsCtrl & Grid::getObjectCtrl()
+{
+	return m_objCtrl;
 }
 
 void Grid::Update(Camera * cam) {

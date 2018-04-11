@@ -57,6 +57,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Objects\ObjectsCtrl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Objects\ObjectsCtrl.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

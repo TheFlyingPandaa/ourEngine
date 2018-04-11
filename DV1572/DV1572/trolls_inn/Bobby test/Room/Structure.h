@@ -72,6 +72,8 @@ public:
 	int		getPosX() const;
 	int		getPosY() const;
 
+	
+
 	Tile*	getAdjacent(Direction dir);
 
 	bool	getIsWalkeble() const;

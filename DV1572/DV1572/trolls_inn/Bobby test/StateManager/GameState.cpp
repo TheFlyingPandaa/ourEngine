@@ -21,7 +21,9 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setPosition(0.5, 0.5);
 	c.setFloor(0);
 
-
+	tmpMesh.LoadModel("trolls_inn/Resources/Stol.obj");
+	tmpMesh.setDiffuseTexture("trolls_inn/Resources/StolTexture.bmp");
+	tmpMesh.setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
 
 	m_prevStart	  = XMINT2(0,0);
 	m_prevEnd	  = XMINT2(0,0);
@@ -35,6 +37,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->AddRoom(DirectX::XMINT2(2, 2), DirectX::XMINT2(2, 2), RoomType::kitchen, true);
 	grid->AddRoom(DirectX::XMINT2(2, 4), DirectX::XMINT2(3, 2), RoomType::kitchen, false);
 	
+	grid->getObjectCtrl().addObject(&tmpMesh);
+	grid->getObjectCtrl().PlaceObject(grid->getGrid()[10][0], grid->getObjectCtrl().addObject(&tmpMesh));
 
 	posX = 1;
 	posY = 1;
@@ -61,7 +65,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
 	_checkCreationOfRoom();
 
 	c.Update();
@@ -160,8 +164,8 @@ void GameState::Draw()
 void GameState::_init()
 {
 	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
+	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Tile.bmp");
+	kitchenTile.setNormalTexture("trolls_inn/Resources/TileNormal.png");
 	rect.MakeRectangle();
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");

@@ -19,6 +19,8 @@ private:
 
 	Mesh door;
 
+	Mesh tmpMesh;//DELETE ME, PLEASE JUST MAKE IT END. END MY FUCKING LIFE PLEASE
+
 	Object3D d;
 
 	int posX;
