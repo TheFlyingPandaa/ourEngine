@@ -34,8 +34,7 @@ float4 main(Input input) : SV_Target
 	float3 ambient = diffuseSample * 0.2f;
 	float3 finalColor; 
 
-	if (inside )
-		return float4(ambient, 1);
+
 
 	//SUN//
 	
@@ -61,7 +60,7 @@ float4 main(Input input) : SV_Target
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 	//float distanceSquare = length(wordPos - sunLightPos.xyz) * length(wordPos - sunLightPos.xyz);
-	finalColor = ambient + (diffuse + finalSpec) * sunColor.xyz;
+	finalColor = ambient;
 	finalColor = saturate(finalColor); 
 
 	return float4(finalColor, 1);

@@ -202,9 +202,9 @@ void Shape::ApplyShaders()
 
 void Shape::ApplyMaterials(int i)
 {
-	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
-	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
-	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+	ID3D11ShaderResourceView* dif = m_mesh->getMaterial(i)->getDiffuseMap();
+	ID3D11ShaderResourceView* nor = m_mesh->getMaterial(i)->getNormalMap();
+	ID3D11ShaderResourceView* hi = m_mesh->getMaterial(i)->getHighlightMap();
 
 	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
 	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);

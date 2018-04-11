@@ -14,6 +14,7 @@ namespace DX
 {
 	static std::vector<Material*> getMaterials(const std::string& path)
 	{
+		bool printSuccess = true;
 		auto getMttlibPath = [&]() -> std::string
 		{
 			std::ifstream fptr;
@@ -23,6 +24,7 @@ namespace DX
 				std::cout << "getMaterials(): Can not open obj file - " << path << std::endl;
 				return "";
 			}
+
 			std::string currentLine = "";
 			while (std::getline(fptr, currentLine))
 			{
@@ -39,6 +41,7 @@ namespace DX
 						auto const pos = path.find_last_of('/');
 						std::string newPath = path.substr(0, pos + 1);
 						newPath += mttlibName;
+						if(printSuccess)std::cout << "\nMaterial: Gathering materials from " << newPath << std::endl;
 						return newPath;
 					}
 				}
@@ -73,30 +76,35 @@ namespace DX
 					std::string name = "";
 					stream >> name;
 					materials.push_back(new Material(name));
+					if (printSuccess) std::cout << "newmtl " << name << std::endl;
 				}
 				else if (type == "Ns")
 				{
 					float specularComp = 0.0f;
 					stream >> specularComp;
 					materials.back()->setSpecularExponent(specularComp);
+					if (printSuccess) std::cout << "\tNs " << specularComp << std::endl;
 				}
 				else if (type == "map_Kd")
 				{
 					std::string file = "";
 					stream >> file;
 					materials.back()->setDiffuseMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Kd " << file << std::endl;
 				}
 				else if (type == "map_Bump")
 				{
 					std::string file = "";
 					stream >> file;
 					materials.back()->setNormalMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Bump " << file << std::endl;
 				}
 				else if (type == "map_Ks")
 				{
 					std::string file = "";
 					stream >> file;
 					materials.back()->setHighlightMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Ks " << file << std::endl;
 				}
 			}
 		}
@@ -106,7 +114,7 @@ namespace DX
 		return materials;
 	}
 
-	static void loadOBJContinue(std::ifstream& fptr, std::vector<VERTEX>& tempvertices, std::vector<VERTEX>& vertices, std::string& mttlibName)
+	static void loadOBJContinue(std::ifstream& fptr, std::vector<VERTEX>& tempvertices, std::vector<V>& vertices, std::vector<VN>& normals, std::vector<VT>& texture, std::string& mttlibName)
 	{
 		std::vector<F> face;
 		std::string currentLine = "";
@@ -122,16 +130,19 @@ namespace DX
 			
 				if (type == "v")
 				{
-					vertices.push_back(VERTEX());
+					vertices.push_back(V());
 					stream >> vertices.back().x >> vertices.back().y >> vertices.back().z;
 				}
 				else if (type == "vt")
 				{
-					stream >> vertices.back().u >> vertices.back().v;
+					texture.push_back(VT());
+					stream >> texture.back().u >> texture.back().v;
 				}
 				else if (type == "vn")
 				{
-					stream >> vertices.back().nx >> vertices.back().ny >> vertices.back().nz;
+					normals.push_back(VN());
+
+					stream >> normals.back().x >> normals.back().y >> normals.back().z;
 				}
 				else if (type == "usemtl")
 				{
@@ -161,8 +172,8 @@ namespace DX
 		{
 			F f = face[i];
 			V v = { vertices[f.vIndex - 1].x, vertices[f.vIndex - 1].y, vertices[f.vIndex - 1].z };
-			VT vt = { vertices[f.vIndex - 1].u, vertices[f.vIndex - 1].v };
-			VN vn = { vertices[f.vIndex - 1].nx, vertices[f.vIndex - 1].ny, vertices[f.vIndex - 1].nz };
+			VT vt = { texture[f.vtIndex - 1].u, texture[f.vtIndex - 1].v };
+			VN vn = { normals[f.vnIndex - 1].x, normals[f.vnIndex - 1].y, normals[f.vnIndex - 1].z };
 			VERTEX vertex = {
 				v.x, v.y, v.z,
 				vt.u, vt.v,

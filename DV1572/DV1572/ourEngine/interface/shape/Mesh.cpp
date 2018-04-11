@@ -4,7 +4,6 @@
 int Mesh::m_idCounter = 0;
 Mesh::Mesh()
 {
-	m_materials.push_back(new Material());
 	m_nrOfVertices = 0;
 	m_uniqueID = m_idCounter++;
 }
@@ -21,10 +20,13 @@ void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<Material*> tempMaterials = DX::getMaterials(path);
 
-	std::vector<VERTEX> vertices;
+	std::vector<V> globalvertices;
+	std::vector<VT> globalUVs;
+	std::vector<VN> globalNormals;
+	
 	
 
-	if (tempMaterials.size() > 1)
+	if (tempMaterials.size() >= 1)
 	{
 		std::ifstream fptr;
 		fptr.open(path);
@@ -32,6 +34,7 @@ void Mesh::LoadModel(const std::string & path)
 		{
 			std::cout << "Can not open " << path << " dickhead!\n";
 		}
+		std::cout << "\nMesh: Reading OBJ: " << path << std::endl;
 		while (fptr)
 		{
 			std::vector<VERTEX> tempVertices;
@@ -39,10 +42,10 @@ void Mesh::LoadModel(const std::string & path)
 			std::vector<VERTEX> tempIndexed;
 			std::string mttlibName;
 
-			DX::loadOBJContinue(fptr, tempVertices, vertices, mttlibName);
+			DX::loadOBJContinue(fptr, tempVertices, globalvertices, globalNormals, globalUVs, mttlibName);
 			DX::CalculateTangents(tempVertices);
 			DX::indexVertices(tempVertices, indices, tempIndexed);
-
+			if (mttlibName == "") break;
 			for (auto& material : tempMaterials)
 				if (material->getName() == mttlibName)
 				{
@@ -74,19 +77,18 @@ void Mesh::LoadModel(const std::string & path)
 			D3D11_SUBRESOURCE_DATA iData;
 			iData.pSysMem = indices.data();
 			hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &m_indexBuffers.back().buffer);
+
 			m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));
+
+			std::cout << "MTL: " << mttlibName << std::endl;
+			std::cout << "\tVertices: " << tempVertices.size() << std::endl;
+			std::cout << "\tVertices(i): " << tempIndexed.size() << std::endl;
+			std::cout << "\tIndices(i): " << indices.size() << std::endl;
+			
 		}
 		
 	}
-	else
-	{
-		std::vector<VERTEX> indexedVertices;
-		std::vector<unsigned int> indices;
-		DX::loadOBJ(path, vertices);
-		DX::CalculateTangents(vertices);
-		DX::indexVertices(vertices, indices, indexedVertices);
 
-	}
 
 
 	

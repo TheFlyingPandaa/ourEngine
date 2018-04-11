@@ -782,8 +782,8 @@ void Window::_geometryPass(const Camera &cam)
 
 			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-																					//get number of vertices
-			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+																					
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
 		}
 		
 		instanceBuffer->Release();
