@@ -22,25 +22,15 @@ GameTime::GameTime()
 
 	m_sunRotationStart = DirectX::XMVECTOR{ 0,1,0 };
 	m_sunRotationTarget = DirectX::XMVECTOR{ 0,0,0 };
-	m_moonRotationStart = DirectX::XMVECTOR{ -1,0,0 }; 
-	m_moonRotationTarget = DirectX::XMVECTOR{ 0,0,0 }; 
 
-	m_createSunAndMoonBuffers(); 
+	m_createSunBuffer(); 
 
-	m_sun.Init(
+	m_sun.InitDirectional(
 		DirectX::XMFLOAT4A(0, 100, 0, 0), 
 		DirectX::XMFLOAT4A(-1, -1, -1, 0), 
 		DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
-	m_moon.Init(
-		DirectX::XMFLOAT4A(0, 100, 0, 0), 
-		DirectX::XMFLOAT4A{ 0.0f, 0.0f, 0.0f, 0.0f }, 
-		DirectX::XMFLOAT4A{ 50,50,190,1 }, 420, 420); 
-		
+
 	m_vUp = XMVECTOR{ 0,1,0 }; 
-
-	m_sunAndMoon.push_back(&m_sun); 
-	m_sunAndMoon.push_back(&m_moon); 
-
 }
 
 GameTime::~GameTime()
@@ -190,42 +180,12 @@ void GameTime::updateCurrentTime(float refreshRate)
 			m_minutes = 0; 
 		}
 	}
-	
-	//Both sun and moon are active. 
-	if (m_currentTime == EVENINGTONIGHT)
-	{
-		m_sun.setDir(m_fFinalRotation);
-		m_sun.setColor(m_fFinalColor);
+	m_sun.setDir(m_fFinalRotation);
+	m_sun.setColor(m_fFinalColor);
 
-		m_moon.use(false); 
-		m_sun.use(true); 
-	}
-	//Only the moon is active. 
-	else if (m_currentTime == NIGHTTOMID)
-	{
-		m_sun.use(true);
-		m_moon.use(false);
-	}
-	//Both sun and moon are active. 
-	else if (m_currentTime == NIGHTTOMORNING)
-	{
-		m_sun.setDir(m_fFinalRotation);
-		m_sun.setColor(m_fFinalColor);
-
-		m_moon.use(false);
-		m_sun.use(true);
-	}
-	//Only the sun is active.
-	else if (m_currentTime == MORNINGTONOON || m_currentTime == NOONTOEVENING)
-	{
-		m_sun.setDir(m_fFinalRotation);
-		m_sun.setColor(m_fFinalColor);
-		m_sun.use(true); 
-		m_moon.use(false); 
-	}
 
 	m_cpyLightToGPU(); 
-	//std::cout << "( " << m_moon.getDir().x << "," << m_moon.getDir().y << "," << m_moon.getDir().z << ")" << std::endl; 
+	
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
@@ -238,59 +198,24 @@ Light & GameTime::getSun()
 	return m_sun; 
 }
 
-Light & GameTime::getMoon()
-{
-	return m_moon; 
-}
-
-void GameTime::m_createSunAndMoonBuffers()
+void GameTime::m_createSunBuffer()
 {
 	HRESULT hr; 
-	D3D11_BUFFER_DESC sunAndMoonBdesc;
-	sunAndMoonBdesc.Usage = D3D11_USAGE_DYNAMIC;
-	sunAndMoonBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
-	sunAndMoonBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	sunAndMoonBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	sunAndMoonBdesc.MiscFlags = 0;
-	sunAndMoonBdesc.StructureByteStride = 0;
+	D3D11_BUFFER_DESC sunBdesc;
+	sunBdesc.Usage = D3D11_USAGE_DYNAMIC;
+	sunBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
+	sunBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	sunBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	sunBdesc.MiscFlags = 0;
+	sunBdesc.StructureByteStride = 0;
 
-	hr = DX::g_device->CreateBuffer(&sunAndMoonBdesc, nullptr, &m_pSunBuffer); 
-	hr = DX::g_device->CreateBuffer(&sunAndMoonBdesc, nullptr, &m_pMoonBuffer);
+	hr = DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer); 
 }
 
 void GameTime::m_cpyLightToGPU()
 {
-	if (m_sun.getUseStatus())
-	{
-		m_sunBuffer.color = m_sun.getColor(); 
-		m_sunBuffer.dir = m_sun.getDir(); 
-		DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer); 
-		m_sun.cpyData(true,m_sunBuffer,m_pSunBuffer); 
-	}
-	//If not used, do not let it emmit colors. 
-	else
-	{
-		m_sunBuffer.color = { 0,0,0,0 }; 
-		DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer);
-		m_sun.cpyData(true, m_sunBuffer, m_pSunBuffer);
-	}
-	
-	if (m_moon.getUseStatus())
-	{
-		m_moonBuffer.color = m_moon.getColor();
-		m_moonBuffer.dir = m_moon.getDir();
-		DX::g_deviceContext->PSSetConstantBuffers(3, 1, &m_pMoonBuffer);
-		m_moon.cpyData(false,m_moonBuffer,m_pMoonBuffer);
-	}
-	else
-	{
-		m_moonBuffer.color = { 0,0,0,0 }; 
-		DX::g_deviceContext->PSSetConstantBuffers(3, 1, &m_pMoonBuffer);
-		m_moon.cpyData(false, m_moonBuffer, m_pMoonBuffer);
-	}
-}
-
-std::vector<Light*>& GameTime::getSunAndMoonVector()
-{
-	return m_sunAndMoon; 
+	m_sunBuffer.color = m_sun.getColor(); 
+	m_sunBuffer.dir = m_sun.getDir(); 
+	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer); 
+	m_sun.cpyDataDir(m_sunBuffer,m_pSunBuffer); 
 }

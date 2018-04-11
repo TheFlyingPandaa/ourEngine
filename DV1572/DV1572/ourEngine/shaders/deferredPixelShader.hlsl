@@ -25,14 +25,6 @@ cbuffer SUN_BUFFER : register (b2)
 	float4x4 sunViewProjection;
 }
 
-cbuffer MOON_BUFFER : register (b3)
-{
-	float4 moonLightPos;
-	float4 moonDir;
-	float4 moonColor;
-	float4x4 moonViewProjection;
-}
-
 struct Input
 {
 	float4 pos : SV_POSITION;
@@ -73,26 +65,6 @@ float4 main(Input input) : SV_Target
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 	finalColor = ambient + (finalSpec + diffuse) * sunColor.xyz;
-
-    //MOON//
-
-	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	/*float3 moonLightToObject = normalize(-moonDir.xyz);
-	//TODO:Hey Future me Remove this
-	//return float4(diffuseSample,1);
-	diffuse = diffuseSample * max(dot(normal, moonLightToObject), 0.0f);
-	////////////////////////////////////////////////////////////////////////////////////////////
-
-	//Specular calculation//////////////////////////////////////////////////////////////////////
-
-	/*WWWHOOOOOOOOO WE'RE...*/ /*halfWayDir = normalize(moonLightToObject + viewer);
-
-	//spec lowest value is 32.
-	spec = pow(max(dot(normal, halfWayDir), 0.0f), 32.0);
-
-	finalSpec = spec * specLevel;
-
-	finalColor += ambient + (finalSpec + diffuse) * moonColor.xyz;*/
 
 	finalColor = saturate(finalColor); 
 

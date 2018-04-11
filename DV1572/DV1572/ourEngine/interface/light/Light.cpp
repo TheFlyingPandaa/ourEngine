@@ -22,34 +22,13 @@ void Light::updateMatrix()
 
 }
 
-void Light::use(bool useLight)
+void Light::cpyDataDir(DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer)
 {
-	m_useLight = useLight; 
-}
-
-bool Light::getUseStatus() const
-{
-	return m_useLight; 
-}
-
-void Light::cpyData(bool isSun, DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer)
-{
-	if (isSun)
-	{
-		D3D11_MAPPED_SUBRESOURCE sunLightData;
-		DX::g_deviceContext->Map(bufferPointer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sunLightData);
-		memcpy(sunLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
-		DX::g_deviceContext->Unmap(bufferPointer, 0);
-		DX::g_deviceContext->PSSetConstantBuffers(2, 1, &bufferPointer);
-	}
-	else
-	{
-		D3D11_MAPPED_SUBRESOURCE moonLightData; 
-		DX::g_deviceContext->Map(bufferPointer, 0, D3D11_MAP_WRITE_DISCARD, 0, &moonLightData);
-		memcpy(moonLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
-		DX::g_deviceContext->Unmap(bufferPointer, 0);
-		DX::g_deviceContext->PSSetConstantBuffers(3, 1, &bufferPointer);
-	}
+	D3D11_MAPPED_SUBRESOURCE sunLightData;
+	DX::g_deviceContext->Map(bufferPointer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sunLightData);
+	memcpy(sunLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+	DX::g_deviceContext->Unmap(bufferPointer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &bufferPointer);
 }
 
 void Light::_createResources()
@@ -100,7 +79,7 @@ void Light::_createResources()
 	hr = DX::g_device->CreateBuffer(&lBdesc, nullptr, &m_pLightBuffer);
 }
 
-void Light::Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height)
+void Light::InitDirectional(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height)
 {
 	//Setting the initial values for the light via its buffer. 
 	m_lightBuffer.pos = pos;
