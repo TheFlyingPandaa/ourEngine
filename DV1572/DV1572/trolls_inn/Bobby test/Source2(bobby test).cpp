@@ -77,8 +77,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 
 	Mesh box;
-	box.LoadModelInverted("trolls_inn/Resources/Box.obj");
-	box.setDiffuseTexture("trolls_inn/Resources/skybox.jpg");
+	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
+	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
 
 
 	SkyBoxObject boxy;
