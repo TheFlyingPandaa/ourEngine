@@ -774,7 +774,11 @@ void Window::_skyBoxPass(const Camera& cam)
 {
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	DirectX::XMMATRIX view = cam.getViewMatrix();			//Getting the view matrix from the camera.
+	DirectX::XMMATRIX view = XMMatrixLookToLH(
+		DirectX::XMVectorSet(0, 0, 0, 1),
+		DirectX::XMLoadFloat3(&cam.getLookAt()),
+		DirectX::XMVectorSet(0, 1, 0, 0)
+	);//Getting the view matrix from the camera.
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;	//The smashing it with projection
 
 	MESH_BUFFER meshBuffer;

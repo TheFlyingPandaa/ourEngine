@@ -32,7 +32,7 @@ OUTPUT main(INPUT input)
 	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
 	o.pos = mul(float4(input.pos,1), world);
 	o.pos = mul(o.pos, vp);
-	//o.pos.z = o.pos.w - 0.0000001f;
+	o.pos.z = o.pos.w - 0.00001f;
 	o.tex = input.tex;
 
 	return o;
