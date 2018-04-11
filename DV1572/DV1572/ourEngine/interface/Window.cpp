@@ -863,18 +863,16 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	
-	/*//Copy sun and moon values to GPU. 
-	D3D11_MAPPED_SUBRESOURCE lightData;
+	/*D3D11_MAPPED_SUBRESOURCE lightData;
 	for (int i = 0; i < 2; i++)
 	{
 		DX::g_deviceContext->Map(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
 		memcpy(lightData.pData, &gameTime.getSunAndMoonVector()[i].getBuffer(), sizeof(DIRECTIONAL_LIGHT_BUFFER));
 		DX::g_deviceContext->Unmap(gameTime.getSunAndMoonVector()[i].getBufferPointer(), 0);
-		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndMoonVector()[i].getBufferPointer();
+		ID3D11Buffer* lightBufferPointer = gameTime.getSunAndVector()[i].getBufferPointer();
 		DX::g_deviceContext->PSSetConstantBuffers(0, 1, &lightBufferPointer);
 	}*/
 
-	//Copy to
 	
 	//Throw in camera values into buffer
 	CAMERA_POS_BUFFER cameraBuffer;
