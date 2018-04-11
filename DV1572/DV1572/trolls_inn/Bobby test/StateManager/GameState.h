@@ -31,6 +31,12 @@ private:
 	bool m_firstPick;
 	bool m_lastPick;
 	bool m_isPlaceable;
+
+	bool m_buildWallsMode;
+	bool m_Rpressed;
+
+
+
 	Shape * m_firstPickedTile;
 	Shape * m_middlePickedTile;
 	Shape * m_lastPickedTile;
@@ -45,8 +51,10 @@ private:
 
 
 	virtual void	_init() override;
-	void			_checkCreationOfRoom();
+	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
+	void			_handlePicking();
+	void			_handleInput();
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
