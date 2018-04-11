@@ -37,18 +37,15 @@ public:
 	XMFLOAT4A getDir() const;
 	XMFLOAT4A getColor() const; 
 
-	void Init(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height); 
+	void InitDirectional(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float width, float height); 
 
 	void setPos(XMFLOAT4A pos); 
 	void setDir(XMFLOAT4A dir); 
 	void setColor(XMFLOAT4A color); 
 
 	void updateMatrix();
-	void use(bool useLight); 
 
-	bool getUseStatus() const; 
-
-	void cpyData(bool isSun, DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer);
+	void cpyDataDir(DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer);
 
 	ID3D11DepthStencilView*& getDepthView(); 
 	DIRECTIONAL_LIGHT_BUFFER& getBuffer(); 
