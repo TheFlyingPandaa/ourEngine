@@ -903,6 +903,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	{
 		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
 		pointLightCollectionBuffer.colorArray[i] = DX::g_lightQueue[i]->getColor(); 
+		pointLightCollectionBuffer.lightSetup[i].x = DX::g_lightQueue[i]->getLightSetup().x;
 		pointLightCollectionBuffer.lightSetup[i].y = DX::g_lightQueue[i]->getLightSetup().y;
 		pointLightCollectionBuffer.lightSetup[i].z = DX::g_lightQueue[i]->getLightSetup().z;
 		pointLightCollectionBuffer.lightSetup[i].w = DX::g_lightQueue[i]->getLightSetup().w;

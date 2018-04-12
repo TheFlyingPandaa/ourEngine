@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <chrono>
 #include "../../../ourEngine/interface/light/PointLight.h"
+#include "../../../ourEngine/core/Dx.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -78,13 +79,6 @@ void GameState::Update(double deltaTime)
 	
 	//<TEMP>
 	c.Update();
-	else if (Input::isKeyPressed('L'))
-	{
-		PointLight* pointLight = new PointLight(XMFLOAT4A(0,5,0,1), XMFLOAT4A(0,0,1,1),XMFLOAT4A(1.0f,0.0f, 0.05f, 0.0f)); 
-		DX::g_lightQueue.push_back(pointLight);
-		pointLight = new PointLight(XMFLOAT4A(16, 1, 16, 1), XMFLOAT4A(1, 1, 1, 1), XMFLOAT4A(1.0f, 0.0f, 0.5f, 0.0f));
-		DX::g_lightQueue.push_back(pointLight);
-	}
 	if (c.walkQueueDone())
 	{
 		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)

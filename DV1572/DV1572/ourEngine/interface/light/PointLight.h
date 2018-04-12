@@ -15,7 +15,7 @@ public:
 	PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color, DirectX::XMFLOAT4A lightSetup); 
 	~PointLight();  
 	
-	void addToLightQueue(std::vector<PointLight>& lightQueue); 
+	void addToLightQueue(); 
 
 	DirectX::XMFLOAT4A getPosition(); 
 	DirectX::XMFLOAT4A getColor();

@@ -1,4 +1,5 @@
 #include "PointLight.h"
+#include "../../core/Dx.h"
 
 
 PointLight::PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color, DirectX::XMFLOAT4A lightSetup)
@@ -12,9 +13,9 @@ PointLight::~PointLight()
 {
 }
 
-void PointLight::addToLightQueue(std::vector<PointLight>& lightQueue)
+void PointLight::addToLightQueue()
 {
-	lightQueue.push_back(*this); 
+	DX::g_lightQueue.push_back(this); 
 }
 
 DirectX::XMFLOAT4A PointLight::getPosition()

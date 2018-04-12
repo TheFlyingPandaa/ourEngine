@@ -43,8 +43,8 @@ float4 main(Input input) : SV_Target
 	float3 finalColorForSun; 
 	float mul = 1;
 
-	if (inside)
-		mul = 0;
+	/*if (inside)
+		mul = 0;*/
 
 	//SUN//
 	
@@ -78,9 +78,9 @@ float4 main(Input input) : SV_Target
 	float specPointLight = 0;
 	float3 finalSpecPointLight = float3(0,0,0);
 	float att = 0; 
-	float specLevelPointLight = 0.2f; 
+	float specLevelPointLight = 0.9f; 
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < nrOfLights.r; i++)
 	{
 		//Diffuse 
 		float3 pointLightToObject = normalize(pointLPos[i] - wordPos);
@@ -93,7 +93,7 @@ float4 main(Input input) : SV_Target
 		//PointLight Attenuation
 
 		float distanceFromPointLight = length(wordPos - pointLPos[i]);
-		att = 1.0f / (lightSetup[i].g + lightSetup[i].b * distanceFromPointLight + lightSetup[i].a * distanceFromPointLight);
+		att = lightSetup[i].r / (lightSetup[i].g + lightSetup[i].b * distanceFromPointLight + lightSetup[i].a * distanceFromPointLight);
 		
 		tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i];
 
