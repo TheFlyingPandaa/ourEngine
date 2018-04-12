@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <chrono>
+#include <thread>
+#include <future>
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -97,6 +99,8 @@ void GameState::Update(double deltaTime)
 	
 	
 
+	 // Get result.
+
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
 	/*auto time = std::chrono::high_resolution_clock::now();
@@ -170,38 +174,67 @@ void GameState::_handlePicking()
 		if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
 
-		if (m_stage == GameStage::Play)
+
+		using namespace std::chrono_literals;
+
+		// Create a promise and get its future.
+		if (m_i == 0)
 		{
-			if (c.walkQueueDone() && m_move)
+			m_i++;
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+		}
+
+
+		// Use wait_for() with zero milliseconds to check thread status.
+		auto status = future.wait_for(0ms);
+
+		// Print status. And start a new thread if the other thread was finnished
+		if (status == std::future_status::ready) {
+			std::cout << "Thread finished" << std::endl;
+			future.get();
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			
+		}
+		else {
+			std::cout << "Thread still running" << std::endl;
+		}
+
+		//_handlePickingAi(obj);
+		
+	}
+}
+
+void GameState::_handlePickingAi(Shape * obj)
+{
+
+	if (m_stage == GameStage::Play)
+	{
+		if (c.walkQueueDone() && m_move)
+		{
+			//Shape * obj = this->p_pickingEvent->top();
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+			std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+			if (path.size() != 0)
 			{
-				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-				std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
-
-				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-				if (path.size() == 0)
-				{
-					break;
-				}
-				else
-				{
-					m_justMoved = false;
-				}
+				m_justMoved = false;
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-
-
 			}
+
 		}
 	}
 }
+
 
 void GameState::_handleInput()
 {
