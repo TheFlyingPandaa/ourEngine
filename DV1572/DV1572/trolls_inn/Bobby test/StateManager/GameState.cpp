@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include <iostream>
 #include <stdlib.h>
+#include <chrono>
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -68,19 +69,29 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	//auto currentTime = std::chrono::high_resolution_clock::now();
+	
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	gameTime.updateCurrentTime(deltaTime); 
 
+	
 	//<TEMP>
 	c.Update();
 	//</TEMP>
 	if (c.walkQueueDone())
 	{
-		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y)
+		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
 		{
 			c.Move(Character::UP);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+			m_justMoved = true;
+		}
+		else if((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
+		{
+			c.Move(Character::DOWN);
+			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+			m_justMoved = true;
 		}
 	}
 	
@@ -88,6 +99,9 @@ void GameState::Update(double deltaTime)
 
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
+	/*auto time = std::chrono::high_resolution_clock::now();
+	auto dt = std::chrono::duration_cast<std::chrono::mi>(time - currentTime).count();
+	std::cout << " TIME: " << dt << std::endl;*/
 }
 
 void GameState::Draw()
@@ -172,6 +186,10 @@ void GameState::_handlePicking()
 				if (path.size() == 0)
 				{
 					break;
+				}
+				else
+				{
+					m_justMoved = false;
 				}
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
