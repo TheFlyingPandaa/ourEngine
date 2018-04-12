@@ -5,7 +5,7 @@
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	m_stage = GameStage::Play;
+	m_stage = GameStage::BuildRoom;
 	// Building
 	m_startTile = nullptr;
 	m_selectedTile = nullptr;

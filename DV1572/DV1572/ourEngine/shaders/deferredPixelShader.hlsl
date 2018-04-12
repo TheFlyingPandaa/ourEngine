@@ -58,7 +58,6 @@ float4 main(Input input) : SV_Target
 	float3 finalSpec = spec * specLevel;
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	float distanceSquare = length(wordPos - lightPos) * length(wordPos - lightPos);
 	finalColor = ambient + (diffuse + finalSpec) *sunColor;
 	finalColor = saturate(finalColor); 
 

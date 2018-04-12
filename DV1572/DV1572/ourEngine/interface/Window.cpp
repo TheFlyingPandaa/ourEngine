@@ -1265,7 +1265,6 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
-		if(wParam == VK_CONTROL)
 
 		Input::m_keys[wParam] = true;
 		Input::lastPressed = static_cast<int>(wParam);
