@@ -48,7 +48,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, 4), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
 	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	m_mainDoorPos = grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
-
+	
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
@@ -308,7 +308,7 @@ void GameState::_buildInput()
 		}
 		else if (m_buildStage == BuildStage::Selection)
 		{
-			this->grid->PickTiles();
+			this->grid->PickTiles(m_selectedTile);
 			if (m_startTile && m_selectedTile)
 			{
 				XMFLOAT3 s = m_startTile->getPosition();

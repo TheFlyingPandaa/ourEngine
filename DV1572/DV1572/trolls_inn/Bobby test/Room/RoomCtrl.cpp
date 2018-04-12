@@ -166,7 +166,6 @@ void RoomCtrl::Draw()
 {
 	for (int i = 0; i < m_walls.size(); i++)
 	{	
-		m_walls[i]->getObject3D().setInside();
 		m_walls[i]->Draw();
 	}
 }
@@ -455,6 +454,7 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 		return;
 	w->setScale(1.0f,1.0f,1.0f);
 	w->setIsDoor(true);
+	w->getTile()->getRoom()->addAdjasentRoom(tile2->getRoom());
 	//tile1->setWallSpotPopulated(dir, true);
 	w->setMesh(this->m_doorMesh);
 }

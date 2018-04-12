@@ -46,6 +46,8 @@ private:
 	int					m_sizeX, m_sizeY;
 	bool				m_walls[4] = { false };
 	Mesh*				m_tileMesh;
+	Mesh*				m_gridMesh;
+	Object3D			m_wholeGrid;
 	RoomCtrl			m_roomCtrl;
 	std::vector<std::vector<Tile*>> m_tiles;
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
@@ -61,7 +63,7 @@ public:
 
 	void	Draw();
 
-	void	PickTiles();
+	void	PickTiles(Shape* selectionTile = nullptr);
 	bool	CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end);
 
 	void	ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end);

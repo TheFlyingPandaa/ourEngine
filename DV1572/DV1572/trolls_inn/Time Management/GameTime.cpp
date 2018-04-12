@@ -7,7 +7,8 @@
 GameTime::GameTime()
 {
 	m_currentClockValue = 0.0f;
-	m_currentTime = MORNINGTONOON; 
+	m_currentTime = NOONTOEVENING;
+	m_currentAngle = 90.0f;
 	m_minutes = 0;
 	m_seconds = 0.0f; 
 	m_totalSeconds = 0; 
@@ -16,7 +17,7 @@ GameTime::GameTime()
 	m_colorScaleFactor = 0.0001f;
 	m_rotationFactor = 0.0001f;
 	
-	m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
+	m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
 	m_sunTargetInterpolate = DirectX::XMVECTOR{ 0,0,0 };
 	
 	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 }; 
@@ -47,7 +48,7 @@ GameTime::~GameTime()
 void GameTime::updateCurrentTime(float refreshRate)
 {
 	using namespace DirectX;
-	m_currentClockValue = 1.0f;// (1.0f / refreshRate);
+	m_currentClockValue = refreshRate;
 	m_seconds += m_currentClockValue; 
 	
 	switch (m_currentTime)
@@ -96,7 +97,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 			XMFLOAT3 targetAngle = { m_sunAngleTarget,m_sunAngleTarget ,m_sunAngleTarget };
 			m_currentAngle = XMVectorGetX(XMVectorLerp(XMLoadFloat3(&startAngle), XMLoadFloat3(&targetAngle), m_colorScaleFactor));
 
-
+			std::cout << m_currentAngle << std::endl;
 		}
 		else
 		{
