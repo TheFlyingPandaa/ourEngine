@@ -7,7 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
 #include "shape\Rectangle.h"
-#include "light\Light.h"
+#include "light\PointLight.h"
 #include "Input.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
@@ -53,6 +53,8 @@ private:
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
 	ID3D11Buffer*			m_lightBuffer; 
+	ID3D11Buffer*			m_pPointLightBuffer; 
+	
 
 	INT						m_sampleCount;
 
@@ -105,6 +107,7 @@ private:
 	void	_createMeshConstantBuffer();
 	void	_createPickConstantBuffer();
 	void	_createCameraPosConstantBuffer(); 
+	void	_createPointLightCollectionBuffer(); 
 
 
 	void	_createDepthBuffer();

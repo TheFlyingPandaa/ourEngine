@@ -127,6 +127,7 @@
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
+    <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
     <ClInclude Include="ourEngine\core\Picking.h" />
+    <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />

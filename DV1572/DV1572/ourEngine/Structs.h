@@ -46,7 +46,18 @@ struct PICK_BUFFER
 	DirectX::XMFLOAT4X4A MVP;
 };
 
-
+struct POINT_LIGHT_COLLECTION
+{
+	DirectX::XMFLOAT4A positionArray[100];
+	DirectX::XMFLOAT4A colorArray[100];
+	//Setup//
+	//r Range 
+	//g Constant Attenuation
+	//b Inverse Attenuation
+	//a Square Inverse Attenuation
+	DirectX::XMFLOAT4A lightSetup[100];
+	DirectX::XMFLOAT4A nrOfLights; 
+};
 
 struct V
 {

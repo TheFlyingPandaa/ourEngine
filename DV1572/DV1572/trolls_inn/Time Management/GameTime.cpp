@@ -135,15 +135,10 @@ void GameTime::updateCurrentTime(float refreshRate)
 			m_minutes = 0;
 			m_sunAngle = 0.0f;
 			m_colorScaleFactor = 0.0f;
-
 		}
 		break;
 	}
-	
-	m_currentAngle = 90;
-
-	m_cpyLightToGPU(); 
-	
+		
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
@@ -153,7 +148,7 @@ GameTime::TIMEOFDAY GameTime::getTimePeriod()
 
 Light & GameTime::getSun()
 {
-	return m_sun; 
+	return m_sun;
 }
 
 void GameTime::m_createSunBuffer()
@@ -194,9 +189,6 @@ void GameTime::m_cpyLightToGPU()
 	//std::cout << "\rAngle " << m_currentAngle << std::flush;
 	/*std::cout << "Position (" << m_sunBuffer.pos.x << "," << m_sunBuffer.pos.y << "," << m_sunBuffer.pos.z << ")\n";
 	std::cout << "Direciton (" << m_sunBuffer.dir.x << "," << m_sunBuffer.dir.y << "," << m_sunBuffer.dir.z << ")\n\n";*/
-
-	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer); 
-	
 
 	m_sun.cpyDataDir(m_sunBuffer,m_pSunBuffer); 
 }
