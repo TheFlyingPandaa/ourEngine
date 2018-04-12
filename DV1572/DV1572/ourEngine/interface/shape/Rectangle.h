@@ -6,6 +6,8 @@ class RectangleShape : public Shape
 private:
 	float m_width, m_height;
 	bool m_hud;
+	int m_index;
+
 
 private:
 	void _buildRectangle();
@@ -15,8 +17,10 @@ public:
 	~RectangleShape();
 	void setScreenPos(float x, float y, float depth = 0.0f);
 	void setScreenPos(DirectX::XMFLOAT3 pos);
+	DirectX::XMFLOAT3 getScreenPos() const;
 
-
+	int getIndex() const;
+	void setIndex(int index);
 	void setWidth(float w);
 	float getWidth() const;
 	void setHeight(float h);

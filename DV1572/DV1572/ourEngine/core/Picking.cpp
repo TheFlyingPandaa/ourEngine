@@ -13,6 +13,10 @@ struct OFFSETBUFFER {
 
 Picking::Picking()
 {
+
+
+
+
 }
 
 Picking::~Picking()
@@ -102,6 +106,9 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		if (dynamic_cast<RectangleShape*>(instance.shape) && dynamic_cast<RectangleShape*>(instance.shape)->isHud())
+			vp = DirectX::XMMatrixTranspose(m_HUDview);
+
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
@@ -175,7 +182,7 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
 		{
 			long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
-			if (index <= nrOfShapes)
+			if (index < nrOfShapes)
 			{
 				indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
 				found = true;
