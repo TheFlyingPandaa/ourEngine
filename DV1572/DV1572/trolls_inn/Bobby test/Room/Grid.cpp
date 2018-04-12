@@ -131,6 +131,7 @@ Grid::~Grid()
 			delete this->m_tiles[i][j];
 		}
 	}
+	delete m_gridMesh;
 }
 
 
@@ -180,13 +181,13 @@ void Grid::PickTiles(Shape* selectionTile)
 	{
 		int xPos = selectionTile->getPosition().x;
 		int yPos = selectionTile->getPosition().z;
-		for(int x = -1; x < 2; x++)
-			for (int y = -1; y < 2; y++)
+		for(int x = -2; x < 3; x++)
+			for (int y = -2; y < 3; y++)
 			{
 				int indexX = xPos + x;
 				int indexY = yPos + y;
 
-				if (indexX < 0 || indexX > m_sizeX || indexY < 0 || indexY > m_sizeY) continue;
+				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
 
 				m_tiles[indexX][indexY]->getQuad().CheckPick();
 			}
@@ -195,6 +196,7 @@ void Grid::PickTiles(Shape* selectionTile)
 			for (int j = 0; j < m_tiles[i].size(); j++)
 			{
 				m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+			
 			}
 		}
 
@@ -306,7 +308,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	//current->tile->
 
-	if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
+	/*if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
 	}
@@ -318,7 +320,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	{
 		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
 		
-	}
+	}*/
 
 	
 

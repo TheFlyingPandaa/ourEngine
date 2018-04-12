@@ -176,7 +176,34 @@ void GameState::_handlePicking()
 				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-				std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+				auto start = grid->getTile(xTile, yTile);
+				auto dest = grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z);
+				
+				// We are outside and want to get inside
+				// start -> door
+				// door -> dest
+				std::vector<std::shared_ptr<Node>> path;
+				if (start->getIsInside() == false && dest->getIsInside() == true)
+				{
+					auto StartToDoor = grid->findPath(start, grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y], m_mainDoorPos);
+					std::cout << "First path: " << StartToDoor.size();
+					auto DoorToDest = grid->findPath(grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y + 1], dest, m_mainDoorPos);
+					std::cout << "Second path: " << DoorToDest.size();
+					StartToDoor.insert(StartToDoor.end(), DoorToDest.begin(), DoorToDest.end());
+					path = StartToDoor;
+				}// We are inside and want to get out
+				else if (start->getIsInside() == true && dest->getIsInside() == false)
+				{
+					auto StartToDoor = grid->findPath(start, grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y + 1], m_mainDoorPos);
+					std::cout << "First path: " << StartToDoor.size();
+					auto DoorToDest = grid->findPath(grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y], dest, m_mainDoorPos);
+					std::cout << "Second path: " << DoorToDest.size();
+					StartToDoor.insert(StartToDoor.end(), DoorToDest.begin(), DoorToDest.end());
+					path = StartToDoor;
+				}
+				else
+					path = grid->findPath(start, dest, m_mainDoorPos);
+				
 
 				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 

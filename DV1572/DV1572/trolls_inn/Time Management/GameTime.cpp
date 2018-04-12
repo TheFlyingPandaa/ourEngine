@@ -97,7 +97,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 			XMFLOAT3 targetAngle = { m_sunAngleTarget,m_sunAngleTarget ,m_sunAngleTarget };
 			m_currentAngle = XMVectorGetX(XMVectorLerp(XMLoadFloat3(&startAngle), XMLoadFloat3(&targetAngle), m_colorScaleFactor));
 
-			std::cout << m_currentAngle << std::endl;
+			
 		}
 		else
 		{
