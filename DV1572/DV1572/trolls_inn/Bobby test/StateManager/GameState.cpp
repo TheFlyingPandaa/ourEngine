@@ -161,6 +161,12 @@ void GameState::Draw()
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
+	test.setScale(5);
+	test.setPos(16, 2.5f, 16);
+	test.setMesh(&box);
+	//test.TESTSHADOW();
+	//test.Draw();
+
 }
 
 void GameState::_init()

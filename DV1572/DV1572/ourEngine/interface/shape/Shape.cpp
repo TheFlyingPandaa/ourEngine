@@ -225,6 +225,12 @@ void Shape::CheckPick()
 	DX::submitToInstance(this, DX::g_instanceGroupsPicking);
 }
 
+void Shape::TESTSHADOW()
+{
+	//DX::g_shadowQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);
+}
+
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 

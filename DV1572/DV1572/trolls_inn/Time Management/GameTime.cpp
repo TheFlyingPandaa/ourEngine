@@ -11,6 +11,7 @@ GameTime::GameTime()
 	m_seconds = 0.0f; 
 	m_totalSeconds = 0; 
 	m_divider = 255.0f; 
+
 	
 	m_colorScaleFactor = 0.0001f;
 	m_rotationFactor = 0.0001f;
@@ -36,6 +37,7 @@ GameTime::GameTime()
 		DirectX::XMFLOAT4A(-1, -1, -1, 0), 
 		DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 
+	m_sun.CreatesShadows();
 	m_vUp = XMVECTOR{ 0,1,0 }; 
 }
 
@@ -48,7 +50,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	using namespace DirectX;
 	m_currentClockValue = 1.0f;// (1.0f / refreshRate);
 	m_seconds += m_currentClockValue; 
-	
+	m_sun.CreatesShadows();
 	switch (m_currentTime)
 	{
 		//Fr�n 06:00 -> 12:00
@@ -138,9 +140,6 @@ void GameTime::updateCurrentTime(float refreshRate)
 		}
 		break;
 	}
-	
-
-
 	m_cpyLightToGPU(); 
 	
 }
