@@ -319,8 +319,12 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				}
 			}
 			else {
-				if (currentTile->getRoom() != nullptr)
-					continue; // Jump this one
+				//if (currentTile->getRoom() != nullptr)
+				//	continue; // Jump this one
+				if (endTile->getIsInside() == true)
+				{
+					continue;
+				}
 			}
 			if (!currentTile->getIsWalkeble())
 				continue;
