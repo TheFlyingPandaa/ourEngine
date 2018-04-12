@@ -561,15 +561,17 @@ void Window::_shadowPass(Camera* c)
 	l = XMLoadFloat4(&lookAt);
 
 	//p = XMLoadFloat4(&DX::g_lightPos);
-	//l = XMLoadFloat4(&DX::g_lightDir);
+	l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
+	XMVECTOR look = XMLoadFloat4(&lookAt);
 
 	XMVECTOR u = XMLoadFloat4(&up);
-	
+	p =  look + (-l *20.0f);
+	p = XMVectorSetW(p, 1.0f);
 	
 
-	XMMATRIX view = XMMatrixLookAtLH(p, l, u);
+	XMMATRIX view = XMMatrixLookAtLH(p, look, u);
 	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
-	proj = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 5.0f, 50.0f);
+	proj = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
 	THIS_IS_A_TEXT_STRUCT meshBuffer;
 
 	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));

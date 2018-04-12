@@ -173,6 +173,7 @@ void GameTime::m_cpyLightToGPU()
 	
 	m_sun.setColor(m_fFinalColor);
 	m_sunBuffer.color = m_sun.getColor(); 
+
 		
 	XMMATRIX rot = XMMatrixRotationZ(XMConvertToRadians(m_currentAngle));
 		
@@ -189,6 +190,8 @@ void GameTime::m_cpyLightToGPU()
 	m_sunBuffer.dir.z = -m_sunBuffer.pos.z;
 	m_sunBuffer.dir.w = m_sunBuffer.pos.w;
 
+	m_sun.setPos(m_sunBuffer.pos);
+	m_sun.setDir(m_sunBuffer.dir);
 	std::cout << "\rAngle " << m_currentAngle << std::flush;
 	/*std::cout << "Position (" << m_sunBuffer.pos.x << "," << m_sunBuffer.pos.y << "," << m_sunBuffer.pos.z << ")\n";
 	std::cout << "Direciton (" << m_sunBuffer.dir.x << "," << m_sunBuffer.dir.y << "," << m_sunBuffer.dir.z << ")\n\n";*/
