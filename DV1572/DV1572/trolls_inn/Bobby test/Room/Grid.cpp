@@ -271,7 +271,14 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y + 1], mainDoor);
 	}
+	else if (startTile->getRoom() != endTile->getRoom())
+	{
+		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
+		
+	}
+
 	
+
 	openList.push_back(current);
 
 	//pointerBank.push_back(current); 
