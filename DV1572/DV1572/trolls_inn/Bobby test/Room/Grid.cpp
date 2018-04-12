@@ -261,12 +261,24 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 
 	//Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
+	//current->tile->
 
-	if (current->tile->getIsInside() == false && endTile != m_tiles[mainDoor.x][mainDoor.y])
+	if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
 	}
+	else if(current->tile->getIsInside() == true && endTile->getIsInside() == false)
+	{
+		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y + 1], mainDoor);
+	}
+	else if (startTile->getRoom() != endTile->getRoom())
+	{
+		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
+		
+	}
+
 	
+
 	openList.push_back(current);
 
 	//pointerBank.push_back(current); 
@@ -306,8 +318,21 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			// Rules here
 			if (currentTile == nullptr)
 				continue;
-			if (currentTile->getRoom() != nullptr)
-				continue; // Jump this one
+			if (current->tile->getIsInside())
+			{
+				if (endTile->getIsInside() == false)
+				{
+					continue;
+				}
+			}
+			else {
+				//if (currentTile->getRoom() != nullptr)
+				//	continue; // Jump this one
+				if (endTile->getIsInside() == true)
+				{
+					continue;
+				}
+			}
 			if (!currentTile->getIsWalkeble())
 				continue;
 			//--Rules End Here--

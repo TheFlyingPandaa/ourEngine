@@ -71,6 +71,7 @@ private:
 	Character c;
 	
 	bool m_move = false;
+	bool m_justMoved = false;
 
 
 	virtual void	_init() override;
