@@ -195,15 +195,6 @@ void GameState::_handleInput()
 					XMINT2 end;
 					end.x = static_cast<int>(e.x + 0.5f);
 					end.y = static_cast<int>(e.z + 0.5f);
-					
-					if (start.x > end.x)
-						std::swap(start.x, end.x);
-					if (start.y > end.y)
-						std::swap(start.y, end.y);
-
-					end.x -= start.x;
-					end.y -= start.y;
-
 
 					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
 				}
@@ -229,13 +220,16 @@ void GameState::_handleInput()
 				std::swap(start.x, end.x);
 			if (start.y > end.y)
 				std::swap(start.y, end.y);
+			this->grid->ResetTileColor(start, end);
+
+			end.x -= start.x - 1;
+			end.y -= start.y - 1;
 
 			m_buildStage = BuildStage::None;
 			m_startTile = nullptr;
 			m_selectedTile = nullptr;
 			m_roomPlaceable = false;
 			this->grid->AddRoom(start, end, m_selectedRoomType);
-			this->grid->ResetTileColor(start, end);
 		}
 	}
 
