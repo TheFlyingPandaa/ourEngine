@@ -48,7 +48,7 @@ GameTime::~GameTime()
 void GameTime::updateCurrentTime(float refreshRate)
 {
 	using namespace DirectX;
-	m_currentClockValue = refreshRate;
+	m_currentClockValue = 1.0f;//refreshRate;
 	m_seconds += m_currentClockValue; 
 	
 	switch (m_currentTime)
