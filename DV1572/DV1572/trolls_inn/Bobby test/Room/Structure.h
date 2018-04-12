@@ -72,6 +72,8 @@ public:
 
 	int		getPosX() const;
 	int		getPosY() const;
+	void	setPosX(const int x);
+	void	setPosY(const int x);
 
 	Tile*	getAdjacent(Direction dir);
 
@@ -83,6 +85,8 @@ public:
 
 	void	setWallSpotPopulated(Direction dir, bool value);
 	bool	getWallSpotPopulated(Direction dir) const;
+
+	bool	getIsInside();
 
 	Object3D&	getQuad();
 	void	setMesh(Mesh * mesh);

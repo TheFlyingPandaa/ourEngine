@@ -379,6 +379,65 @@ void RoomCtrl::CreateDoors(Room * room)
 	}
 }
 
+DirectX::XMINT2 RoomCtrl::CreateMainDoor(Room * room)
+{
+	for (Room * other : *room->getAdjasent()) {
+		if (_checkLegal(other)) {
+			/*Direction dir = getDirection(room, other);
+			Direction otherDir = getDirection(other, room);*/
+			std::vector<Wall*>* createdRoomWall = room->getAllWalls();
+			std::vector<Wall*>* otherRoomWall = other->getAllWalls();
+
+			std::vector<Wall*> intersectedWalls;
+
+
+			for (int i = 0; i < createdRoomWall->size(); i++)
+			{
+				if (createdRoomWall->at(i)->getIsInner())
+					for (int j = 0; j < otherRoomWall->size(); j++)
+					{
+						if (otherRoomWall->at(j)->getIsInner())
+							if (createdRoomWall->at(i) == otherRoomWall->at(j))
+							{
+								intersectedWalls.push_back(createdRoomWall->at(i));
+								break;
+							}
+					}
+			}
+			if (intersectedWalls.size() <= 0)
+				return DirectX::XMINT2(-1337,-1337);
+			Wall* door = intersectedWalls[(intersectedWalls.size()) / 2];
+			Tile* t1 = door->getTile();
+			Direction dir;
+			for (int i = 0; i < 4; i++)
+			{
+				if (t1->getTileWalls(static_cast<Direction>(i)) == door)
+				{
+					dir = static_cast<Direction>(i);
+					break;
+				}
+			}
+
+
+
+			DirectX::XMINT2 pos = door->getPosition();
+			pos.x -= static_cast<int>(room->getPosition().x);
+			pos.y -= static_cast<int>(room->getPosition().z);
+
+			/*if (pos.x >= 1)
+			pos.x -= 1;*/
+
+			//Tile* t1 = room->getTiles()[pos.x - 1][pos.y];
+			Tile* t2 = t1->getAdjacent(dir);
+
+			CreateDoor(t1, t2);
+			return pos;
+		}
+	}
+	std::cout << "CRASHH ROOM CTRL IN THE CREATE MAIN DOOR NO POS WAS RETURNED FUCKING SHIT" << std::endl;
+	return DirectX::XMINT2(-1337, -1337);
+}
+
 void RoomCtrl::setDoorMesh(Mesh * mesh)
 {
 	this->m_doorMesh = mesh;
@@ -395,6 +454,20 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 	w->setIsDoor(true);
 	//tile1->setWallSpotPopulated(dir, true);
 	w->setMesh(this->m_doorMesh);
+}
+
+DirectX::XMINT2 RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
+{
+	Direction dir = this->getDirection(tile1, tile2);
+
+	Wall* w = tile1->getTileWalls(dir);
+	if (!w)
+		return DirectX::XMINT2(-1337,-1337);
+	w->setScale(1.0f, 1.0f, 1.0f);
+	w->setIsDoor(true);
+	//tile1->setWallSpotPopulated(dir, true);
+	w->setMesh(this->m_doorMesh);
+	return DirectX::XMINT2(tile2->getPosX(),tile2->getPosY());
 }
 
 Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)

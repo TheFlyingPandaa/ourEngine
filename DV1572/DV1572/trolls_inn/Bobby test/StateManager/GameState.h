@@ -25,6 +25,8 @@ private:
 	Grid* grid;
 	Grid* grid2;
 
+	DirectX::XMINT2 m_mainDoorPos;
+
 	Mesh door;
 
 	Object3D d;

@@ -27,6 +27,8 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 			t->getQuad().setScale(2.0f);
 			t->getQuad().setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
+			t->setPosX(i);
+			t->setPosY(j);
 			this->m_tiles[i][j] = t;
 		}
 	}
@@ -242,7 +244,7 @@ float Grid::getDistance(Tile* t1, Tile* t2)
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
 
-std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
+std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT2 mainDoor)
 {
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
@@ -250,9 +252,15 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 	std::vector<Node*> pointerBank;
 
 	Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
+
+	if (current->tile->getIsInside() == false && endTile != m_tiles[mainDoor.x][mainDoor.y])
+	{
+		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
+	}
+
 	openList.push_back(current);
 
-	pointerBank.push_back(current);
+	pointerBank.push_back(current); 
 
 	while (openList.size() > 0)
 	{
@@ -310,8 +318,9 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile)
 			
 		}
 		
-
+		
 	}
+	
 	return std::vector<Node*>();
 }
 

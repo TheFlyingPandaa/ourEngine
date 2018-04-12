@@ -36,6 +36,11 @@ bool Tile::getWallSpotPopulated(Direction dir) const
 	return this->m_walls[dir];
 }
 
+bool Tile::getIsInside()
+{
+	return m_inside;
+}
+
 Object3D & Tile::getQuad()
 {
 	return quad;
@@ -68,13 +73,24 @@ void Tile::setIsWalkeble(bool value)
 
 int Tile::getPosX() const
 {
-	return 0;
+	return m_posX;
 }
 
 int Tile::getPosY() const
 {
-	return 0;
+	return m_posY;
 }
+
+void Tile::setPosX(const int x)
+{
+	m_posX = x;
+}
+void Tile::setPosY(const int x)
+{
+	m_posY = x;
+}
+
+
 
 XMFLOAT2 Tile::getPosition() const
 {
