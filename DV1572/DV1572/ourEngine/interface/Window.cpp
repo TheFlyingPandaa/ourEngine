@@ -1298,10 +1298,7 @@ bool Window::isOpen()
 void Window::Clear()
 {
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
-	DX::g_renderQueue.clear(); 
 	DX::g_pickingQueue.clear();
-	DX::g_HUDQueue.clear();
-	DX::g_transQueue.clear();
 	DX::g_skyBoxQueue.clear();
 	DX::g_instanceGroups.clear();
 	DX::g_instanceGroupsSkyBox.clear();

@@ -112,9 +112,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		unprocessed += dt / freq;
 
-		if (Input::GetKeyIndex() != -1)
-			keyEvent.push(Input::GetKeyIndex());
-
 		while (unprocessed > 1)
 		{
 			updates++;
@@ -138,7 +135,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 			if (Input::isKeyPressed('P') && !pressed)
 			{
-				if (!play)
+			/*	if (!play)
 				{
 					effect->Stop(false);
 					effect->Play(true);
@@ -151,22 +148,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					play = false;
 				}
 				
-				pressed = true;
+				pressed = true;*/
 			}
 			else if (!Input::isKeyPressed('P') && pressed)
 			{
 				pressed = false;
 			}
+
+
 			Shape* picked = nullptr;
 			picked = wnd.getPicked(cam);
 
 			if (picked) {
 				pickingEvents.push(picked);
-
 			}
-
 		}
-
 		if (!audEngine->Update())
 		{
 			// No audio device is active
