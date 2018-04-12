@@ -1100,6 +1100,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 {
 	m_width = width;
 	m_height = height;
+	Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
 	m_title = title;
 	m_fullscreen = fullscreen;
 	_initWindow();
@@ -1151,10 +1152,7 @@ bool Window::isOpen()
 void Window::Clear()
 {
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
-	DX::g_renderQueue.clear(); 
 	DX::g_pickingQueue.clear();
-	DX::g_HUDQueue.clear();
-	DX::g_transQueue.clear();
 	DX::g_skyBoxQueue.clear();
 	DX::g_instanceGroups.clear();
 	DX::g_instanceGroupsSkyBox.clear();
@@ -1228,10 +1226,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
-		//m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
-		//if (m_swapChain)
-		//{
-		//	DX::g_deviceContext->OMSetRenderTargets(0, 0, 0);
+		Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
 
 		//	// Release all outstanding references to the swap chain's buffers.
 		//	m_backBufferRTV->Release();

@@ -10,6 +10,7 @@ private:
 	static bool m_mouseKeys[3];
 	static DirectX::XMFLOAT2 m_mousePos;
 	static float m_scrollDelta;
+	static DirectX::XMINT2 m_windowSize;
 
 	static int lastPressed;
 
@@ -59,12 +60,21 @@ public:
 	static bool isMouseMiddlePressed();
 	/*
 		Gets the mouse position in screen space. This position is 
-		relative to the client window.
+		relative to the client window. And Origo is in the top left.
 		Returns:
 			XMFLOAT2.x, mouse x-coordinate
 			XMFLOAT2.y, mouse y-coordinate
 	*/
 	static DirectX::XMFLOAT2 getMousePosition();
+	/*
+		Gets the mouse position in screen space. This position is
+		relative to the client window. And Origo is in the bottom left.
+		Returns:
+			XMFLOAT2.x, mouse x-coordinate
+			XMFLOAT2.y, mouse y-coordinate
+	*/
+	static DirectX::XMFLOAT2 getMousePositionLH();
+
 	/*
 		!Exprimental!
 		Get the direction of the mouse scroll. Calling
@@ -72,7 +82,12 @@ public:
 		calls will result in zero scroll. 
 	*/
 	static float getMouseScroll();
-
+	/*
+		Gets the size of the window as a XMINT2 where x is the windowSizeX and y is the windowSizeY;
+	
+	*/
+	static DirectX::XMINT2 getWindowSize();
+	
 	static int GetKeyIndex();
 };
 #endif // !INPUT_H

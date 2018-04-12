@@ -3,13 +3,18 @@
 #include <vector>
 #include "RoomCtrl.h"
 #include <algorithm>
+#include <memory>
 
 struct Node
 {
 	Tile* tile;
-	Node* parent;
+	std::shared_ptr<Node> parent;
 	float fCost, gCost, hCost;
 	Node(Tile* tile, Node* parent, float gCost, float hCost)
+		:tile(tile), parent(parent), gCost(gCost), hCost(hCost) {
+		fCost = gCost + hCost;
+	}
+	Node(Tile* tile, std::shared_ptr<Node> parent, float gCost, float hCost)
 		:tile(tile), parent(parent), gCost(gCost), hCost(hCost) {
 		fCost = gCost + hCost;
 	}
@@ -44,6 +49,7 @@ private:
 	RoomCtrl			m_roomCtrl;
 	std::vector<std::vector<Tile*>> m_tiles;
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
+	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
@@ -67,7 +73,7 @@ public:
 	void	CreateWalls(Mesh * mesh = nullptr);
 
 	float getDistance(Tile* t1, Tile* t2);
-	std::vector<Node*> findPath(Tile* startTile, Tile* endTile);
+	std::vector<std::shared_ptr<Node>> findPath(Tile* startTile, Tile* endTile,DirectX::XMINT2 mainDoor);
 	Tile* getTile(int x, int y) const;
 
 };

@@ -6,13 +6,17 @@
 class HUD
 {
 private:
+	struct PotentialAreaCircle
+	{
+		int x, y, r;
+	};
+
+
 	std::vector<Mesh*>				m_mesh;
 	std::vector<RectangleShape*>	m_quadsNonClickAble;
 	std::vector<RectangleShape*>	m_quadsClickAble;
+	std::vector<PotentialAreaCircle>	m_potentialAreas;
 	std::vector<Text>				m_texts;
-	float							m_windowX;
-	float							m_windowY;
-
 
 private:
 	void _cleanUp();
@@ -20,8 +24,11 @@ private:
 public:
 	HUD();
 	~HUD();
-	void setWindowSize(float x, float y);
 	bool LoadHud(const std::string &path);
+	RectangleShape*	Pick(DirectX::XMFLOAT2 at);
+	bool			isMouseInsidePotentialArea(DirectX::XMFLOAT2 mousePos);
+	void	ResetColorsOnPickable();
+
 	void CheckIfPicked();
 	void Draw();
 };

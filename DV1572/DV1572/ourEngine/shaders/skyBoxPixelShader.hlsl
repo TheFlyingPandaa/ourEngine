@@ -1,5 +1,13 @@
 Texture2D tDiffuse : register(t0);
 
+cbuffer SUN_BUFFER : register (b2)
+{
+	float4 sunLightPos;
+	float4 sunDir;
+	float4 sunColor;
+	float4x4 sunViewProjection;
+}
+
 SamplerState SampleType;
 
 struct INPUT {
@@ -7,15 +15,15 @@ struct INPUT {
 	float2 tex : TEXCOORD;
 };
 
-//struct OUTPUT
-//{
-//	float4 diffuse	: SV_Target0;
-//};
-
 float4 main(INPUT input) : SV_TARGET
 {
-	//OUTPUT o;
-	//o.diffuse = tDiffuse.Sample(SampleType, input.tex);
-	//return o;
-	return tDiffuse.Sample(SampleType, input.tex);
+	float3 down = float3(0,-1.0f,0);
+	float angle = max(dot(down, normalize(sunDir.xyz)), 0.0f);
+	float4 diffuseTexture = tDiffuse.Sample(SampleType, input.tex);
+	float4 ambient = diffuseTexture * 0.1f;
+	ambient.a = 1.0f;
+			
+	float4 final = diffuseTexture * (sunColor * angle);
+
+	return ambient + final;
 }

@@ -1,5 +1,6 @@
 #include "Light.h"
 #include "../../core/Dx.h"
+#include "../Input.h"
 
 void Light::updateMatrix()
 {
@@ -16,7 +17,7 @@ void Light::updateMatrix()
 	//view = cam.getViewMatrix();
 	//TODO: FIX THIS SHIT
 	//XMMATRIX projection = XMMatrixOrthographicLH(m_width, m_height, 0.1f, 200.0f);
-	XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(1280) / 720, 0.1f, 5.0f);
+	XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(Input::getWindowSize().x) / Input::getWindowSize().y, 0.1f, 5.0f);
 	//Update light wvp space
 	XMStoreFloat4x4A(&m_lightBuffer.viewProjection, XMMatrixTranspose(view * projectionMatrix)); 
 
