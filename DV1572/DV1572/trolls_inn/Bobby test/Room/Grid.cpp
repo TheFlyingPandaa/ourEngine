@@ -1,7 +1,15 @@
 #include "Grid.h"
 #include <math.h>
+#include <memory>
 
 bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
+{
+	for (auto& cur : list)
+		if (*cur == *node)
+			return true;
+	return false;
+}
+bool Grid::_findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const
 {
 	for (auto& cur : list)
 		if (*cur == *node)
@@ -244,41 +252,43 @@ float Grid::getDistance(Tile* t1, Tile* t2)
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
 
-std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT2 mainDoor)
+std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT2 mainDoor)
 {
-	std::vector<Node*> openList;
-	std::vector<Node*> closedList;
+	std::vector<std::shared_ptr<Node>> openList;
+	std::vector<std::shared_ptr<Node>> closedList;
 
-	std::vector<Node*> pointerBank;
+	//std::vector<std::shared_ptr<Node>> pointerBank;
 
-	Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
-
+	//Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
+	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 
 	if (current->tile->getIsInside() == false && endTile != m_tiles[mainDoor.x][mainDoor.y])
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
 	}
-
+	
 	openList.push_back(current);
 
-	pointerBank.push_back(current); 
+	//pointerBank.push_back(current); 
 
 	while (openList.size() > 0)
 	{
-		std::sort(openList.begin(), openList.end(), [](Node* a1, Node* a2) {return a1->fCost < a2->fCost; });
+		std::sort(openList.begin(), openList.end(), [](std::shared_ptr<Node> a1, std::shared_ptr<Node> a2) {return a1->fCost < a2->fCost; });
 		current = openList.at(0);
 
 		if (*current == *endTile)
 		{
-			std::vector<Node*> path;
+			std::vector<std::shared_ptr<Node>> path;
 			while (current->parent != nullptr)
 			{
-				path.push_back(new Node(*current));
-				current = current->parent;
+				path.push_back(current);
+				std::shared_ptr<Node> t(current->parent);
+				current = t;
+				
 			}
 
-			for (auto& p : pointerBank)
-				delete p;
+			/*for (auto& p : pointerBank)
+				delete p;*/
 			std::reverse(path.begin(), path.end());
 			return path;
 		}
@@ -305,8 +315,8 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT
 			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
 
 			float hCost = getDistance(currentTile, endTile);
-			Node* newNode = new Node(currentTile, current, gCost, hCost);
-			pointerBank.push_back(newNode);
+			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
+			//pointerBank.push_back(newNode);
 
 			if (_findInVec(closedList,newNode) && gCost >= newNode->gCost)
 				continue;
@@ -322,7 +332,7 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT
 		
 	}
 	
-	return std::vector<Node*>();
+	return std::vector<std::shared_ptr<Node>>();
 }
 
 Tile* Grid::getTile(int x, int y) const

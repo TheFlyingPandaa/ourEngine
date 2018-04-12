@@ -165,7 +165,7 @@ void GameState::_handlePicking()
 				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+				std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
 
 				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 
@@ -179,8 +179,6 @@ void GameState::_handlePicking()
 				for (int i = 0; i < path.size() - 1; i++)
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 
-				for (auto& p : path)
-					delete p;
 
 			}
 		}
