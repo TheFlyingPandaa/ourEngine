@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\MasterAI.h" />

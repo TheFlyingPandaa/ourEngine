@@ -39,6 +39,7 @@
     <ClCompile Include="trolls_inn\main.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

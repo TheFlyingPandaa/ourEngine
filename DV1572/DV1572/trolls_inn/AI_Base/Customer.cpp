@@ -57,7 +57,17 @@ Action Customer::getAction() const
 	return action;
 }
 
-void Customer::getNextAction()
+int Customer::getQueueEmpty() const
+{
+	return this->stateQueue.empty();
+}
+
+CustomerState Customer::getState() const
+{
+	return this->stateQueue.front();
+}
+
+void Customer::popToNextState()
 {
 	this->stateQueue.pop();
 }

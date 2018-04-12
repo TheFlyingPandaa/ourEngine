@@ -45,6 +45,8 @@ private:
 	int tired;
 	int thirsty;
 
+	// Path pointer?
+
 public:
 	Customer();
 	Customer(Race race, int gold);
@@ -57,8 +59,11 @@ public:
 	const char* getRaceStr() const;
 
 	Action getAction() const;
-	void getNextAction();
 	void setAction(Action nextAction);
+
+	int getQueueEmpty() const;
+	CustomerState getState() const;
+	void popToNextState();
 
 	const char* getActionStr() const;
 
