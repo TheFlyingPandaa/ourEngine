@@ -13,8 +13,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_selectedRoomType = RoomType::kitchen;
 	m_buildStage = BuildStage::None;
 	m_roomPlaceable = false;
+	m_hasClicked = false;
+	m_colorButton = false;
+	m_hudPickStage = HudPickingStage::Miss;
 	// Building END
-	
+	m_lastPickedIndex = -1;
 	m_Rpressed = false;
 
 	_setHud();
@@ -33,10 +36,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	int secondRoomSizeX = 4;
 	int secondRoomSizeY = 2;
-
-
-	m_prevStart	  = XMINT2(0,0);
-	m_prevEnd	  = XMINT2(0,0);
 
 	this->m_cam = cam;
 	this->_init();
@@ -73,12 +72,12 @@ void GameState::Update(double deltaTime)
 	
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
+	m_colorButton = false;
 	gameTime.updateCurrentTime(deltaTime); 
 
 	
 	//<TEMP>
 	c.Update();
-	//</TEMP>
 	if (c.walkQueueDone())
 	{
 		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
@@ -87,15 +86,14 @@ void GameState::Update(double deltaTime)
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
-		else if((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
+		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
 		{
 			c.Move(Character::DOWN);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
 	}
-	
-	
+	//</TEMP>
 
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
@@ -150,13 +148,10 @@ void GameState::_handleBuildRoom(Shape* pickedShape)
 		break;
 	}
 
-
-
 }
 
 void GameState::_setHud()
 {
-	m_stateHUD.setWindowSize(1280, 720);
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
 }
 
@@ -167,10 +162,11 @@ void GameState::_handlePicking()
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
-		if (m_buildStage != BuildStage::None)
+		if (m_hudPickStage != HudPickingStage::Miss)
+			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
+		else if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
-
-		if (m_stage == GameStage::Play)
+		else if (m_stage == GameStage::Play)
 		{
 			if (c.walkQueueDone() && m_move)
 			{
@@ -203,79 +199,90 @@ void GameState::_handlePicking()
 	}
 }
 
+void GameState::_handleHUDPicking(RectangleShape * r)
+{
+	if (r)
+	{
+		switch (m_hudPickStage)
+		{
+		case HudPickingStage::Hover:
+			m_colorButton = true;
+			if (r->getIndex() != m_lastPickedIndex)
+			{
+				m_lastPickedIndex = r->getIndex();
+				m_stateHUD.ResetColorsOnPickable();
+			}
+			switch (r->getIndex())
+			{
+			case 0:
+				r->setColor(0.2f, 0.2f, 2.0f);
+				break;
+			case 1:
+				r->setColor(2.0f, 0.2f, 0.2f);
+				break;
+			case 2:
+				r->setColor(1.5f, 0.2f, 1.5f);
+				break;
+			case 3:
+				r->setColor(0.2f, 1.5f, 1.5f);
+				break;
+			}
+			break;
+		case HudPickingStage::Click:
+			m_colorButton = true;
+			//do something
+			std::cout << "Something Picked";
+			break;
+		}
+	}
+	else
+	{
+		m_hudPickStage = HudPickingStage::Miss;
+	}
+}
+
 void GameState::_handleInput()
 {
-	if (m_stage == GameStage::BuildRoom)
+	if (m_stateHUD.isMouseInsidePotentialArea(Input::getMousePositionLH()))
 	{
-		if (Input::isMouseLeftPressed())
+		m_stateHUD.CheckIfPicked();
+		m_hudPickStage = HudPickingStage::Hover;
+		if (Input::isMouseLeftPressed() && !m_hasClicked)
 		{
-			if (m_buildStage == BuildStage::None)
-			{
-				m_buildStage = BuildStage::Start;
-				this->grid->PickTiles();
-			}
-			else if (m_buildStage == BuildStage::Selection)
-			{
-				this->grid->PickTiles();
-				if (m_startTile && m_selectedTile)
-				{
-					XMFLOAT3 s = m_startTile->getPosition();
-					XMFLOAT3 e = m_selectedTile->getPosition();
-
-					XMINT2 start;
-					start.x = static_cast<int>(s.x + 0.5f);
-					start.y = static_cast<int>(s.z + 0.5f);
-					XMINT2 end;
-					end.x = static_cast<int>(e.x + 0.5f);
-					end.y = static_cast<int>(e.z + 0.5f);
-
-					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
-				}
-			}
+			m_hudPickStage = HudPickingStage::Click;
+			m_hasClicked = true;
 		}
-		else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
+		else if (!Input::isMouseLeftPressed() && m_hasClicked)
 		{
-			m_buildStage = BuildStage::End;
+			m_hasClicked = false;
 		}
-		else if (m_buildStage == BuildStage::End)
+		if (!m_colorButton)
+			m_stateHUD.ResetColorsOnPickable();
+	}
+	else
+	{
+		if (m_hudPickStage != HudPickingStage::Miss)
 		{
-			XMFLOAT3 s = m_startTile->getPosition();
-			XMFLOAT3 e = m_selectedTile->getPosition();
+			m_hudPickStage = HudPickingStage::Miss;
+			m_stateHUD.ResetColorsOnPickable();
+		}
 
-			XMINT2 start;
-			start.x = static_cast<int>(s.x + 0.5f);
-			start.y = static_cast<int>(s.z + 0.5f);
-			XMINT2 end;
-			end.x = static_cast<int>(e.x + 0.5f);
-			end.y = static_cast<int>(e.z + 0.5f);
 
-			if (start.x > end.x)
-				std::swap(start.x, end.x);
-			if (start.y > end.y)
-				std::swap(start.y, end.y);
-			this->grid->ResetTileColor(start, end);
-
-			end.x -= start.x - 1;
-			end.y -= start.y - 1;
-
-			m_buildStage = BuildStage::None;
-			m_startTile = nullptr;
-			m_selectedTile = nullptr;
-			m_roomPlaceable = false;
-			this->grid->AddRoom(start, end, m_selectedRoomType);
+		if (m_stage == GameStage::BuildRoom)
+		{
+			_buildInput();
+		}
+		else if (m_stage == GameStage::Play)
+		{
+			if (Input::isMouseLeftPressed())
+			{
+				this->grid->PickTiles();
+				m_move = true;
+			}
+			else
+				m_move = false;
 		}
 	}
-	else if (m_stage == GameStage::Play)
-	{
-		if (Input::isMouseLeftPressed())
-		{
-			this->grid->PickTiles();
-			m_move = true;
-		}
-		else
-			m_move = false;
-	}
-
 
 	if (Input::isKeyPressed('B'))
 		m_stage = GameStage::BuildRoom;
@@ -287,4 +294,65 @@ void GameState::_handleInput()
 		_setHud();
 	else if (!Input::isKeyPressed('R'))
 		m_Rpressed = false;
+}
+
+void GameState::_buildInput()
+{
+	if (Input::isMouseLeftPressed())
+	{
+		if (m_buildStage == BuildStage::None)
+		{
+			m_buildStage = BuildStage::Start;
+			this->grid->PickTiles();
+		}
+		else if (m_buildStage == BuildStage::Selection)
+		{
+			this->grid->PickTiles();
+			if (m_startTile && m_selectedTile)
+			{
+				XMFLOAT3 s = m_startTile->getPosition();
+				XMFLOAT3 e = m_selectedTile->getPosition();
+
+				XMINT2 start;
+				start.x = static_cast<int>(s.x + 0.5f);
+				start.y = static_cast<int>(s.z + 0.5f);
+				XMINT2 end;
+				end.x = static_cast<int>(e.x + 0.5f);
+				end.y = static_cast<int>(e.z + 0.5f);
+
+				m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
+			}
+		}
+	}
+	else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
+	{
+		m_buildStage = BuildStage::End;
+	}
+	else if (m_buildStage == BuildStage::End)
+	{
+		XMFLOAT3 s = m_startTile->getPosition();
+		XMFLOAT3 e = m_selectedTile->getPosition();
+
+		XMINT2 start;
+		start.x = static_cast<int>(s.x + 0.5f);
+		start.y = static_cast<int>(s.z + 0.5f);
+		XMINT2 end;
+		end.x = static_cast<int>(e.x + 0.5f);
+		end.y = static_cast<int>(e.z + 0.5f);
+
+		if (start.x > end.x)
+			std::swap(start.x, end.x);
+		if (start.y > end.y)
+			std::swap(start.y, end.y);
+		this->grid->ResetTileColor(start, end);
+
+		end.x -= start.x - 1;
+		end.y -= start.y - 1;
+
+		m_buildStage = BuildStage::None;
+		m_startTile = nullptr;
+		m_selectedTile = nullptr;
+		m_roomPlaceable = false;
+		this->grid->AddRoom(start, end, m_selectedRoomType);
+	}
 }

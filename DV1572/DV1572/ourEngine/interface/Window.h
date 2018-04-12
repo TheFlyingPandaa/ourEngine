@@ -53,7 +53,6 @@ private:
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
 	ID3D11Buffer*			m_lightBuffer; 
-	
 
 	INT						m_sampleCount;
 

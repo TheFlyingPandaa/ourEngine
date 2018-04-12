@@ -4,6 +4,7 @@
 void RectangleShape::_buildRectangle()
 {
 	m_hud = false;
+	m_index = -1;
 }
 
 RectangleShape::RectangleShape(float w, float h)
@@ -37,11 +38,31 @@ void RectangleShape::setScreenPos(DirectX::XMFLOAT3 pos)
 	start.y += (pos.y / 8625.0f);
 
 	Shape::setPos(start);
-
-
-
-
 }
+
+DirectX::XMFLOAT3 RectangleShape::getScreenPos() const
+{
+	DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(getPosition());
+	
+	pos.x += 0.0736f;
+	pos.x *= 8625.0f;
+	pos.y += 0.0414f;
+	pos.y *= 8625.0f;
+
+	return pos;
+}
+
+int RectangleShape::getIndex() const
+{
+	return m_index;
+}
+
+void RectangleShape::setIndex(int index)
+{
+	m_index = index;
+}
+
+
 
 void RectangleShape::setWidth(float w)
 {

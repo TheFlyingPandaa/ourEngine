@@ -1086,6 +1086,7 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 {
 	m_width = width;
 	m_height = height;
+	Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
 	m_title = title;
 	m_fullscreen = fullscreen;
 	_initWindow();
@@ -1204,6 +1205,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
+		Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
 		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
 		if (m_swapChain)
 		{

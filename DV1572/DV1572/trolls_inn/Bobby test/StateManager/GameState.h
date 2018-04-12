@@ -42,10 +42,6 @@ private:
 	bool m_Rpressed;
 
 
-
-
-
-
 	// Build Mode
 	enum BuildStage
 	{
@@ -62,9 +58,18 @@ private:
 	bool m_roomPlaceable;
 	// Build Mode END
 
+	// HUD
+	enum HudPickingStage
+	{
+		Miss,
+		Hover,
+		Click
 
-	DirectX::XMINT2 m_prevStart;
-	DirectX::XMINT2 m_prevEnd;
+	};
+	HudPickingStage m_hudPickStage;
+	bool m_colorButton;
+	bool m_hasClicked;
+	int m_lastPickedIndex;
 
 	//TEST
 	Mesh box;
@@ -78,7 +83,9 @@ private:
 	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
 	void			_handlePicking();
+	void			_handleHUDPicking(RectangleShape* r);
 	void			_handleInput();
+	void			_buildInput();
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);

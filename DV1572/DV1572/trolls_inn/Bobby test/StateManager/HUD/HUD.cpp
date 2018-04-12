@@ -16,19 +16,12 @@ void HUD::_cleanUp()
 
 HUD::HUD()
 {
-	m_windowX = 1280.0f;
-	m_windowY = 720.0f;
+
 }
 
 HUD::~HUD()
 {
 	_cleanUp();
-}
-
-void HUD::setWindowSize(float x, float y)
-{
-	m_windowX = x;
-	m_windowY = y;
 }
 
 bool HUD::LoadHud(const std::string & path)
@@ -67,26 +60,29 @@ bool HUD::LoadHud(const std::string & path)
 				r->setMesh(m_mesh[m_mesh.size() - 1]);
 				
 				float pX, pY, sX, sY = 0.0f;
-				int p = 0;
+				int index = 0;
 				float d = 0;
-				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %d %f", &pX, &pY, &sX, &sY, &p, &d);
+				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %d %f", &pX, &pY, &sX, &sY, &index, &d);
 
 				d *= 0.00001f;
 
 				r->setScreenPos(pX, pY, d);
 
 				if (static_cast<int>(sX) == 0)
-					sX = m_windowX;
+					sX = static_cast<float>(Input::getWindowSize().x);
 				if (static_cast<int>(sY) == 0)
-					sY = m_windowY;
+					sY = static_cast<float>(Input::getWindowSize().y);
 
 				r->setWidth(sX);
 				r->setHeight(sY);
 				
-				if (p != 0)
+				if (index < 0)
 					m_quadsNonClickAble.push_back(r);
 				else
+				{
+					r->setIndex(index);
 					m_quadsClickAble.push_back(r);
+				}
 			}
 			else if (type == "txt")
 			{
@@ -117,6 +113,12 @@ bool HUD::LoadHud(const std::string & path)
 
 				m_texts.push_back(t);
 			}
+			else if (type == "hc")
+			{
+				int x, y, r;
+				sscanf_s(currentLine.c_str(), "%*s %d %d %d", &x, &y, &r);
+				m_potentialAreas.push_back(HUD::PotentialAreaCircle{ x, y, r });
+			}
 
 		}
 	}
@@ -124,6 +126,43 @@ bool HUD::LoadHud(const std::string & path)
 
 
 	return true;
+}
+
+RectangleShape * HUD::Pick(DirectX::XMFLOAT2 at)
+{
+	for (RectangleShape * s : m_quadsClickAble)
+	{
+		DirectX::XMFLOAT3 scrnPosXYZ = s->getScreenPos();
+		DirectX::XMFLOAT2 scrnPos(scrnPosXYZ.x, scrnPosXYZ.y);
+		float w = s->getWidth();
+		float h = s->getHeight();
+		
+		if (at.x > scrnPos.x && at.x < scrnPos.x + w &&
+			at.y > scrnPos.y && at.y < scrnPos.y + h)
+			return s;
+	}
+	return nullptr;
+}
+
+bool HUD::isMouseInsidePotentialArea(DirectX::XMFLOAT2 mousePos)
+{
+	for (auto pa : m_potentialAreas)
+	{
+		int dist = static_cast<int>(DirectX::XMVectorGetX(DirectX::XMVector2Length((XMVectorSet(pa.x, pa.y, 0.0f, 0.0f) - XMLoadFloat2(&mousePos)))) + 0.5f);
+		if (dist < pa.r)
+			return true;
+	}
+
+	return false;
+}
+
+
+void HUD::ResetColorsOnPickable()
+{
+	for (RectangleShape * s : m_quadsClickAble)
+	{
+		s->setColor(1.0f, 1.0f, 1.0f);
+	}
 }
 
 void HUD::CheckIfPicked()
@@ -136,14 +175,16 @@ void HUD::CheckIfPicked()
 
 void HUD::Draw()
 {
-	for (auto& p : m_quadsClickAble)
-	{
-		p->DrawAsHud();
-	}
 	for (auto& p : m_quadsNonClickAble)
 	{
 		p->DrawAsHud();
 	}
+
+	for (auto& p : m_quadsClickAble)
+	{
+		p->DrawAsHud();
+	}
+	
 	for (auto& t : m_texts)
 	{
 		t.Draw();
