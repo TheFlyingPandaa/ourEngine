@@ -66,7 +66,7 @@ void OrbitCamera::update()
 	
 	XMStoreFloat3(&m_pos, xmCamPos);
 	// --- ZOOM ----
-	if (Input::isMouseRightPressed())
+	if (Input::isMouseMiddlePressed())
 	{
 		XMVECTOR rotVector = (xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget));
 		XMVECTOR startLA = XMVectorSet(0, 0, -1, 0);
@@ -90,7 +90,7 @@ void OrbitCamera::update()
 		XMStoreFloat3(&m_lookAt, xmLookAt);
 		XMStoreFloat3(&m_pos, xmCamPos);
 	}
-	else if(Input::isMouseLeftPressed())
+	else if(Input::isMouseRightPressed())
 	{
 		// If Mouse is 20% of the top
 		if (m_lastMouse.y < m_windowDim.y * cursorDetectProc)

@@ -13,6 +13,10 @@ struct OFFSETBUFFER {
 
 Picking::Picking()
 {
+
+
+
+
 }
 
 Picking::~Picking()
@@ -102,6 +106,9 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+		if (dynamic_cast<RectangleShape*>(instance.shape) && dynamic_cast<RectangleShape*>(instance.shape)->isHud())
+			vp = DirectX::XMMatrixTranspose(m_HUDview);
+
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
@@ -146,63 +153,8 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 	}
 
 
-
-
-	//PICK_BUFFER pb;
-	//DirectX::XMMATRIX vp = c->getViewMatrix() * m_projectionMatrix;
-	//DirectX::XMFLOAT4A counter = { 0.0f, 0.0f, 0.0f, 0.0f };
-	//pb.index = DirectX::XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
-	//for (auto s : DX::g_pickingQueue)
-	//{
-	//	if (++counter.x > 255)
-	//	{
-	//		counter.x = 0;
-	//		counter.y++;
-	//	}
-	//	if (counter.y > 255)
-	//	{
-	//		counter.y = 0;
-	//		counter.z++;
-	//	}
-	//	if (counter.z > 255)
-	//	{
-	//		exit(0);
-	//	}
-	//	//counter.x = 120;
-	//	DirectX::XMMATRIX mvp;
-
-	//	RectangleShape* isRectangle = dynamic_cast<RectangleShape*>(s);
-	//	if (isRectangle && isRectangle->isHud())
-	//		mvp = DirectX::XMMatrixTranspose(s->getWorld() * m_HUDview);
-	//	else
-	//		mvp = DirectX::XMMatrixTranspose(s->getWorld() * vp);
-
-	//	DirectX::XMStoreFloat4x4A(&pb.MVP, mvp);
-	//	pb.index = counter;
-	//	D3D11_MAPPED_SUBRESOURCE dataPtr;
-	//	DX::g_deviceContext->Map(m_pickingBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-	//	memcpy(dataPtr.pData, &pb, sizeof(PICK_BUFFER));
-	//	DX::g_deviceContext->Unmap(m_pickingBuffer, 0);
-	//	DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_pickingBuffer);
-
-	//	DX::g_deviceContext->VSSetShader(m_pickingVertexShader, nullptr, 0);
-	//	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
-	//	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
-	//	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
-	//	DX::g_deviceContext->PSSetShader(m_pickingPixelShader, nullptr, 0);
-
-	//	UINT32 vertexSize = sizeof(VERTEX);
-	//	UINT offset = 0;
-
-	//	ID3D11Buffer* v = s->getMesh()->getVertices();
-	//	DX::g_deviceContext->IASetVertexBuffers(0, 1, &v, &vertexSize, &offset);
-	//	DX::g_deviceContext->Draw(s->getMesh()->getNumberOfVertices(), 0);
-	//}
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	//gDeviceContext->CopyResource(computeReadWriteBuffer, computeOutputBuffer);
-
-
+	
 	D3D11_BOX srcBox;
 	srcBox.left = static_cast<UINT>(Input::getMousePosition().x);
 	srcBox.right = srcBox.left + 1;
@@ -213,35 +165,36 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 
 	DX::g_deviceContext->CopySubresourceRegion(m_pickingReadBuffer, 0, 0, 0, 0, TextureMap, 0, &srcBox);
-	//DX::g_deviceContext->CopyResource(cpuAccess, m_pickingTexture.TextureMap);
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//HRESULT hr = gDeviceContext->Map(computeReadWriteBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
 	HRESULT hr = DX::g_deviceContext->Map(m_pickingReadBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
-
-	//computeShader* dataView = reinterpret_cast<computeShader*>(mappedResource.pData);
-	//DirectX::XMFLOAT4A ** dataView = reinterpret_cast<DirectX::XMFLOAT4A**>(mappedResource.pData);
-
 	DirectX::XMFLOAT4A pixel = *((DirectX::XMFLOAT4A*)mappedResource.pData);
 	DX::g_deviceContext->Unmap(m_pickingReadBuffer, 0);
 
+	Shape * returnValue = nullptr;
+
 	long index = static_cast<int>(pixel.x + (pixel.y * 256) + (pixel.z * 256 * 256) + 0.5f);
-	if (index == 0)
-		return nullptr;
-	index--;
-	long indexInPickingQueue = 0;
-	bool found = false;
-	
-	for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
+	if (index != 0)
 	{
-		long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
-		if (index <= nrOfShapes)
+		index--;
+		long indexInPickingQueue = 0;
+		bool found = false;
+	
+		for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
 		{
-			indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
-			found = true;
+			long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
+			if (index < nrOfShapes)
+			{
+				indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
+				found = true;
+			}
+			else
+				index -= nrOfShapes;
 		}
-		else
-			index -= nrOfShapes;
+		returnValue = DX::g_pickingQueue[indexInPickingQueue];
 	}
 
-	return DX::g_pickingQueue[indexInPickingQueue];
+	DX::g_pickingQueue.clear();
+	DX::g_instanceGroupsPicking.clear();
+
+	return returnValue;
 }

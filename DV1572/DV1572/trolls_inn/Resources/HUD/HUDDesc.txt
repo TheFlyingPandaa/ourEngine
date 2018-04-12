@@ -8,37 +8,52 @@
 # r 0 0 0.1 0.08 1 0
 # txt 950 4 0.5 0 0 1 1 0 L
 # Gold
-# r startX startY sizeX sizeY pickable depth.
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index.
 # if sizeX or sizeY is 0, this is set as the screen res
 # txt posX posY Scl r g b a rotation allignment (L, C, R)
 
 # Bar
 tx trolls_inn/Resources/HUD/Bar.png
-r 100 -25 0 158 0 0.2
+r 100 -25 0 158 -1 0.2
 
 # PortraitBackground
 tx trolls_inn/Resources/HUD/PortraitBackground.png
-r -50 -50 300 300 0 0.1
+r -50 -50 300 300 -1 0.1
 
 # Portrait
 tx trolls_inn/Resources/HUD/Portrait.png
-r -15 -15 230 230 0 0
+r -15 -15 230 230 -1 0
 
 # EventLog
 tx trolls_inn/Resources/HUD/EventLog.png
-r 349 -15 500 131 0 0
+r 349 -15 500 131 -1 0
 
 # ButtonBackground
 tx trolls_inn/Resources/HUD/MenuBackground.png
-r 1088 -25 204 209 0 0.1
+r 1088 -20 204 204 -1 0.1
+
+# hitbox circle for buttonBackground
+hc 1190 82 144
 
 # Button_Shop
 tx trolls_inn/Resources/HUD/Button1.png
-r 1165 100 49 49 1 0
+r 1165 100 49 49 0 0
+
+# Button_Shop
+tx trolls_inn/Resources/HUD/Button1.png
+r 1115 50 49 49 1 0
+
+# Button_Shop
+tx trolls_inn/Resources/HUD/Button1.png
+r 1215 50 49 49 2 0
+
+# Button_Shop
+tx trolls_inn/Resources/HUD/Button1.png
+r 1165 2 49 49 3 0
 
 # Money
 tx trolls_inn/Resources/HUD/EventLog.png
-r 900 4 200 50 0 0
+r 900 4 200 50 -1 0
 
 # Money text
 txt 1100 4 0.5 0 0 1 1 0 R
@@ -50,7 +65,7 @@ New Events
 
 # Character Text
 txt 0 200 0.5 1 1 1 1 0 L
-Character
+Ofc
 
 
 

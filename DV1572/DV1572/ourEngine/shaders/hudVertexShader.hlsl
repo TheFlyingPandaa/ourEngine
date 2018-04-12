@@ -23,6 +23,7 @@ struct OUTPUT
 {
 	float4 worldPos : SV_POSITION;
 	float2 tex : TEXELS;
+	float4 color : HIGHLIGHTCOLOR;
 };
 
 
@@ -33,5 +34,6 @@ OUTPUT main(INPUT input)
 	o.worldPos = mul(float4(input.pos, 1), world);
 	o.tex = input.tex;
 	o.worldPos = mul(o.worldPos, vp);
+	o.color = input.color;
 	return o;
 }

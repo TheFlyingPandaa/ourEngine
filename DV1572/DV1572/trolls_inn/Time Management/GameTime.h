@@ -4,7 +4,6 @@
 #include "../../ourEngine/interface/light/Light.h"
 #include <cmath>
 #include <vector>
-#include "../../ourEngine/core/Dx.h"
 #include <d3d11.h>
 class GameTime
 {
