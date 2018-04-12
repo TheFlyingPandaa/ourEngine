@@ -46,7 +46,12 @@ struct PICK_BUFFER
 	DirectX::XMFLOAT4X4A MVP;
 };
 
-
+struct THIS_IS_A_TEXT_STRUCT
+{
+	DirectX::XMFLOAT4X4A world;
+	DirectX::XMFLOAT4X4A view;
+	DirectX::XMFLOAT4X4A projection;
+};
 
 struct V
 {
@@ -64,3 +69,4 @@ struct F
 {
 	int vIndex, vnIndex, vtIndex;
 };
+

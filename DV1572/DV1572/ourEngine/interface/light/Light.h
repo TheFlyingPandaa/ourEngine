@@ -14,7 +14,7 @@ private:
 	XMFLOAT4A m_color;
 
 	DirectX::XMFLOAT3 pos, lookAt;
-	const DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
 	float m_width; 
 	float m_height; 
@@ -46,6 +46,8 @@ public:
 	void updateMatrix();
 
 	void cpyDataDir(DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer* bufferPointer);
+
+	void CreatesShadows();
 
 	ID3D11DepthStencilView*& getDepthView(); 
 	DIRECTIONAL_LIGHT_BUFFER& getBuffer(); 

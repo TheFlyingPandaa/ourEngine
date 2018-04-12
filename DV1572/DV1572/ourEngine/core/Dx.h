@@ -64,10 +64,13 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
 	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
+	extern std::vector<INSTANCE_GROUP>	g_InstanceGroupsShadow;
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 
+	extern XMFLOAT4A g_lightPos;
+	extern XMFLOAT4A g_lightDir;
 
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;
