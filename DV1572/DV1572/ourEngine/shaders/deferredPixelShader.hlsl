@@ -35,7 +35,6 @@ float4 main(Input input) : SV_Target
 	float3 finalColor; 
 
 
-
 	//SUN//
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
@@ -59,8 +58,8 @@ float4 main(Input input) : SV_Target
 	float3 finalSpec = spec * specLevel;
 	///////////////////////////////////////////////////////////////////////////////////////////
 
-	//float distanceSquare = length(wordPos - sunLightPos.xyz) * length(wordPos - sunLightPos.xyz);
-	finalColor = ambient;
+	float distanceSquare = length(wordPos - lightPos) * length(wordPos - lightPos);
+	finalColor = ambient + (diffuse + finalSpec) *sunColor;
 	finalColor = saturate(finalColor); 
 
 	return float4(finalColor, 1);
