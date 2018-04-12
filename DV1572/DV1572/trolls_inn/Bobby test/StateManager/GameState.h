@@ -11,6 +11,14 @@
 
 class GameState : public State {
 private:
+	enum GameStage
+	{
+		Play,
+		BuildRoom
+	};
+
+
+private:
 	Mesh m;
 	Mesh kitchenTile;
 	Mesh rect;
@@ -25,15 +33,33 @@ private:
 	int posY;
 
 	GameTime gameTime; 
+	GameStage m_stage;
+
 
 	int previousKey;
+	bool m_Rpressed;
 
-	bool m_firstPick;
-	bool m_lastPick;
-	bool m_isPlaceable;
-	Shape * m_firstPickedTile;
-	Shape * m_middlePickedTile;
-	Shape * m_lastPickedTile;
+
+
+
+
+
+	// Build Mode
+	enum BuildStage
+	{
+		None,
+		Start,
+		Selection,
+		End
+	};
+	
+	RoomType m_selectedRoomType;
+	Shape * m_startTile;
+	Shape * m_selectedTile;
+	BuildStage m_buildStage;
+	bool m_roomPlaceable;
+	// Build Mode END
+
 
 	DirectX::XMINT2 m_prevStart;
 	DirectX::XMINT2 m_prevEnd;
@@ -45,8 +71,10 @@ private:
 
 
 	virtual void	_init() override;
-	void			_checkCreationOfRoom();
+	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
+	void			_handlePicking();
+	void			_handleInput();
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
