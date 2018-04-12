@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include <iostream>
 #include <stdlib.h>
+#include <chrono>
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -25,7 +26,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 
 	c.setModel(&box);
-	c.setPosition(0.5, 0.5);
+	c.setPosition( 10+0.5, 2+0.5);
 	c.setFloor(0);
 
 	int startSize = 32;
@@ -41,9 +42,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->CreateWalls(&m);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
-	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, (startSize / 2) - firstRoomSizeY / 2), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, ((startSize / 2) - firstRoomSizeY / 2) + firstRoomSizeY / 2), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
-	grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][((startSize / 2) - ((firstRoomSizeY / 2)))], grid->getGrid()[(startSize / 2)][(startSize / 2) - ((firstRoomSizeY + 1) / 2)]);
+	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
+	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, 4), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
+	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
+	m_mainDoorPos = grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 
 	posX = 1;
 	posY = 1;
@@ -66,17 +68,23 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	//auto currentTime = std::chrono::high_resolution_clock::now();
+	
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
 	gameTime.updateCurrentTime(deltaTime); 
 
+	
 	//<TEMP>
 	c.Update();
 	//</TEMP>
 
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
+	/*auto time = std::chrono::high_resolution_clock::now();
+	auto dt = std::chrono::duration_cast<std::chrono::mi>(time - currentTime).count();
+	std::cout << " TIME: " << dt << std::endl;*/
 }
 
 void GameState::Draw()
@@ -152,17 +160,24 @@ void GameState::_handlePicking()
 				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+				std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
 
 				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+				if (path.size() == 0)
+				{
+					break;
+				}
+				else
+				{
+					m_justMoved = false;
+				}
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 
-				for (auto& p : path)
-					delete p;
 
 			}
 		}

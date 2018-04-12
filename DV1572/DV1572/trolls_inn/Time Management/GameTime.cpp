@@ -140,7 +140,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		break;
 	}
 	
-
+	m_currentAngle = 90;
 
 	m_cpyLightToGPU(); 
 	

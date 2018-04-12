@@ -135,7 +135,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 			if (Input::isKeyPressed('P') && !pressed)
 			{
-				if (!play)
+			/*	if (!play)
 				{
 					effect->Stop(false);
 					effect->Play(true);
@@ -148,7 +148,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					play = false;
 				}
 				
-				pressed = true;
+				pressed = true;*/
 			}
 			else if (!Input::isKeyPressed('P') && pressed)
 			{

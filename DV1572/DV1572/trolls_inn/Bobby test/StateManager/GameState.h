@@ -25,6 +25,8 @@ private:
 	Grid* grid;
 	Grid* grid2;
 
+	DirectX::XMINT2 m_mainDoorPos;
+
 	Mesh door;
 
 	Object3D d;
@@ -74,6 +76,7 @@ private:
 	Character c;
 	
 	bool m_move = false;
+	bool m_justMoved = false;
 
 
 	virtual void	_init() override;
