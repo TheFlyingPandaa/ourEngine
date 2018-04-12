@@ -58,7 +58,6 @@ private:
 
 	void m_createSunBuffer(); 
 
-	void m_cpyLightToGPU();
 
 public:
 	GameTime(); 
@@ -67,6 +66,7 @@ public:
 	void updateCurrentTime(float refreshRate); 
 	TIMEOFDAY getTimePeriod(); 
 
+	void m_cpyLightToGPU();
 	Light& getSun(); 
 };
 

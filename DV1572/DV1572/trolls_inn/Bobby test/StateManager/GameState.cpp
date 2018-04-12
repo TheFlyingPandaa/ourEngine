@@ -64,6 +64,13 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 
+	for (int i = 0; i < 30000; i++)
+	{
+		int* lol = new int;
+		*lol = 1;
+		*lol = 1;
+		delete lol;
+	}
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 
@@ -154,7 +161,7 @@ void GameState::Update(double deltaTime)
 
 void GameState::Draw()
 {
-	
+	gameTime.m_cpyLightToGPU();
 	this->grid->Draw();
 	m_stateHUD.Draw();
 
