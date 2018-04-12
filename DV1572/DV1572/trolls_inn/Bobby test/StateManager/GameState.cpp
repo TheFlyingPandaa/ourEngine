@@ -72,11 +72,13 @@ void GameState::Update(double deltaTime)
 	gameTime.updateCurrentTime(deltaTime); 
 
 	//<TEMP>
-	//c.Update();
+	c.Update();
 	//</TEMP>
 
-	_handlePicking();
-	_handleInput();
+	
+
+	_handlePicking();	// It's important this is before handleInput();
+	_handleInput();		// It's important this is after handlePicking();
 }
 
 void GameState::Draw()
@@ -145,28 +147,30 @@ void GameState::_handlePicking()
 		if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
 
-		//if (c.walkQueueDone() && Input::isMouseLeftPressed())
-		//{
-		//	XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+		if (m_stage == GameStage::Play)
+		{
+			if (c.walkQueueDone() && Input::isMouseLeftPressed())
+			{
+				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
 
 
-		//	int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-		//	int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-		//	std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
-		//	XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 
-		//	c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
-		//	for (int i = 0; i < path.size() - 1; i++)
-		//		c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+				for (int i = 0; i < path.size() - 1; i++)
+					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 
-		//	for (auto& p : path)
-		//		delete p;
+				for (auto& p : path)
+					delete p;
 
-		//}
-
+			}
+		}
 	}
 }
 
