@@ -88,10 +88,10 @@ void GameState::Update(double deltaTime)
 		_setHud();
 	else if (Input::isKeyPressed('L'))
 	{
-		/*PointLight* pointLight = new PointLight(XMFLOAT4A(0,5,0,1), XMFLOAT4A(0,0,1,1),XMFLOAT4A(1.0f,0.0f, 0.05f, 0.0f)); 
+		PointLight* pointLight = new PointLight(XMFLOAT4A(0,5,0,1), XMFLOAT4A(0,0,1,1),XMFLOAT4A(1.0f,0.0f, 0.05f, 0.0f)); 
 		DX::g_lightQueue.push_back(pointLight);
 		pointLight = new PointLight(XMFLOAT4A(16, 1, 16, 1), XMFLOAT4A(1, 1, 1, 1), XMFLOAT4A(1.0f, 0.0f, 0.5f, 0.0f));
-		DX::g_lightQueue.push_back(pointLight);*/
+		DX::g_lightQueue.push_back(pointLight);
 	}
 
 	if (Input::isKeyPressed('W') || Input::isKeyPressed('A') ||
