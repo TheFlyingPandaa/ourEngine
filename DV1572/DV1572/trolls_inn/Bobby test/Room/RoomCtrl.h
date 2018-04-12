@@ -5,12 +5,14 @@
 #include "Structure.h"
 #include "Kitchen.h"
 #include "Bedroom.h"
+#include "Reception.h"
 
 
 const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
-	bedroom
+	bedroom,
+	reception
 };
 
 const float WALLOFFSET = 0.5f;
@@ -46,8 +48,10 @@ public:
 	//Be conservative when calling
 	void				CreateWalls();
 	void				CreateDoors(Room * room);
+	DirectX::XMINT2		CreateMainDoor(Room * room);
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(Tile * tile1, Tile * tile2);
+	DirectX::XMINT2		CreateMainDoor(Tile * tile1, Tile * tile2);
 
 
 	Direction			getDirection(Tile*, Tile*);

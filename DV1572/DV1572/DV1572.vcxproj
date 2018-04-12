@@ -135,6 +135,7 @@
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -173,6 +174,7 @@
     <ClInclude Include="ourEngine\core\Picking.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\MasterAI.h" />
