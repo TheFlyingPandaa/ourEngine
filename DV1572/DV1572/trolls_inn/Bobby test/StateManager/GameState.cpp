@@ -13,7 +13,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	_setHud();
 
-	box.LoadModel("trolls_inn/Resources/nanosuit/nanosuit.obj");
+	box.LoadModel("trolls_inn/Resources/box.obj");
 
 	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");

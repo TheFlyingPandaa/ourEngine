@@ -29,12 +29,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	
 	Mesh mBox;
-	mBox.LoadModel("trolls_inn/Resources/Donald/JapaneseCrash.obj");
+	mBox.LoadModel("trolls_inn/Resources/nanosuit/nanosuit.obj");
 	
-	Object3D box;
-	box.setMesh(&mBox);
-	box.setPos(0, 0, 0);
-	box.setScale(0.1f);
+	const int size = 50;
+	Object3D box[size];
+	for (int i = 0; i < size; i++)
+	{
+		box[i].setMesh(&mBox);
+		box[i].setPos(i *2, 0, 0);
+		box[i].setScale(0.1f);
+	}
 	
 
 
@@ -55,18 +59,27 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			cam->update();
+			for(auto& b : box)
+				b.Rotate(0, 1, 0);
 		}
 
 		fpsCounter++;
-		
-		box.Draw();
+
+		for (auto& b : box)
+			b.Draw();
 		
 		wnd.Flush(cam);
 		wnd.Present();
+		wnd.FullReset();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
-			printf("\rFPS: %d TICK: %d", fpsCounter, updates);
+			std::string title;
+			title = "Fps ";
+			title += std::to_string(fpsCounter);
+			title += " Tick ";
+			title += std::to_string(updates);
+			wnd.setTitle(title.c_str());
 			updates = 0;
 			fpsCounter = 0;
 			timer += milliseconds(1000);

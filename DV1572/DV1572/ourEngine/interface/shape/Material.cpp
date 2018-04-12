@@ -19,11 +19,21 @@ Material::Material(std::string name)
 Material::~Material()
 {
 	if (m_diffuseTexture)
+	{
 		m_diffuseTexture->Release();
+		m_diffuseTexture = nullptr;
+	}
 	if (m_diffuseResource)
+	{
 		m_diffuseResource->Release();
+		m_diffuseTexture = nullptr;
+	}
 	if (m_normalTexture)
+	{
 		m_normalTexture->Release();
+		m_normalTexture = nullptr;
+	}
+		
 	if (m_normalResource)
 		m_normalResource->Release();
 	if (m_highlightTexture)
@@ -103,4 +113,9 @@ float Material::getTransparency() const
 bool Material::isTransparent() const
 {
 	return m_transparancy < 1.0f;
+}
+
+bool Material::operator==(const Material & other) const
+{
+	return m_name == other.m_name;
 }

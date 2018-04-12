@@ -9,15 +9,11 @@
 #include "../../Structs.h"
 #include "Material.h"
 
-struct Glass
-{
-	ID3D11Buffer* buffer;
-};
 class Mesh
 {
 private:
-	std::vector<Glass>						m_vertexBuffers;
-	std::vector<Glass>						m_indexBuffers;
+	std::vector<ID3D11Buffer*>				m_vertexBuffers;
+	std::vector<ID3D11Buffer*>				m_indexBuffers;
 	std::vector<Material*>					m_materials;
 	std::vector<int>						m_nrOfVerticesPerMaterials;
 	int										m_nrOfVertices;

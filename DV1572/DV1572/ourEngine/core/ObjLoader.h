@@ -114,7 +114,7 @@ namespace DX
 		return materials;
 	}
 
-	static void loadOBJContinue(std::ifstream& fptr, std::vector<VERTEX>& tempvertices, std::vector<V>& vertices, std::vector<VN>& normals, std::vector<VT>& texture, std::string& mttlibName)
+	static void loadOBJContinue(std::ifstream& fptr, std::vector<VERTEX>& tempvertices, std::vector<V>& vertices, std::vector<VN>& normals, std::vector<VT>& texture, std::string& mttlibName, bool inverted = false)
 	{
 		std::vector<F> face;
 		std::string currentLine = "";
@@ -136,7 +136,12 @@ namespace DX
 				else if (type == "vt")
 				{
 					texture.push_back(VT());
-					stream >> texture.back().u >> texture.back().v;
+					float u = 0.0f;
+					float v = 0.0f;
+
+					stream >> u >> v;
+					texture.back().u = u;
+					texture.back().v = v;
 				}
 				else if (type == "vn")
 				{
@@ -175,7 +180,7 @@ namespace DX
 			VT vt = { texture[f.vtIndex - 1].u, texture[f.vtIndex - 1].v };
 			VN vn = { normals[f.vnIndex - 1].x, normals[f.vnIndex - 1].y, normals[f.vnIndex - 1].z };
 			VERTEX vertex = {
-				v.x, v.y, v.z,
+				inverted ? v.z : v.x , v.y, inverted ? v.x : v.z,
 				vt.u, vt.v,
 				vn.x, vn.y, vn.z
 			};

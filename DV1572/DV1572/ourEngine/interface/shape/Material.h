@@ -45,4 +45,5 @@ public:
 	float getTransparency() const;
 
 	bool isTransparent() const;
+	bool operator==(const Material& other) const;
 };

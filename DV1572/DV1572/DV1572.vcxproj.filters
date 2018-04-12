@@ -54,7 +54,6 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
-    <ClCompile Include="ourEngine\core\ObjLoader.cpp" />
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
   </ItemGroup>

@@ -123,7 +123,6 @@
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
     <ClCompile Include="ourEngine\core\FileReader.cpp" />
-    <ClCompile Include="ourEngine\core\ObjLoader.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
@@ -150,7 +149,7 @@
     <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
@@ -159,7 +158,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />

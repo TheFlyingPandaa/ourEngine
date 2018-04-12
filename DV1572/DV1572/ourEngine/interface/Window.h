@@ -114,8 +114,9 @@ private:
 	void	_initGBuffer();
 	void	_prepareGeometryPass();
 	void	_geometryPass(const Camera & cam);
-	void	_skyBoxPass(const Camera & cam);
 	void	_clearTargets();
+	void	_preparePostLight();
+	void	_skyBoxPass(const Camera & cam);
 	void	_lightPass(Camera& cam/*std::vector<Light*> lightQueue*/);
 	//Transparency
 	void	_transparencyPass(const Camera & cam);

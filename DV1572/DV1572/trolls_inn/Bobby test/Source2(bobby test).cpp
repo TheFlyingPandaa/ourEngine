@@ -72,10 +72,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//Used to manage the time of day. 
 	GameTime gameTime;
 
-	Mesh test;
-	test.MakeRectangle();
-	test.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
-
 	Mesh box;
 	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
