@@ -4,12 +4,16 @@
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	m_firstPick = false;
-	m_lastPick = false;
-	m_firstPickedTile = nullptr;
-	m_middlePickedTile = nullptr;
-	m_lastPickedTile = nullptr;
-	m_isPlaceable = false;
+	m_stage = GameStage::Play;
+	// Building
+	m_startTile = nullptr;
+	m_selectedTile = nullptr;
+	m_selectedRoomType = RoomType::kitchen;
+	m_buildStage = BuildStage::None;
+	m_roomPlaceable = false;
+	// Building END
+	
+	m_Rpressed = false;
 
 	_setHud();
 
@@ -63,93 +67,18 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
-
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-
 	gameTime.updateCurrentTime(deltaTime); 
-	_checkCreationOfRoom();
 
+	//<TEMP>
 	c.Update();
+	//</TEMP>
+
 	
 
-	//std::cout << "Position: " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-	
-
-	if (Input::isKeyPressed('W') && !move)
-		c.Move(Character::WalkDirection::UP);
-	else if (Input::isKeyPressed('S') && !move)
-		c.Move(Character::WalkDirection::DOWN);
-	else if (Input::isKeyPressed('D') && !move)
-		c.Move(Character::WalkDirection::RIGHT);
-	else if (Input::isKeyPressed('A') && !move)
-		c.Move(Character::WalkDirection::LEFT);
-	else if (Input::isKeyPressed('R'))
-		_setHud();
-
-	if (Input::isKeyPressed('W') || Input::isKeyPressed('A') ||
-		Input::isKeyPressed('S') || Input::isKeyPressed('D') ||
-		Input::isKeyPressed('R'))
-	{
-		move = true;
-	}
-	else
-	{
-		move = false;
-	}
-
-	while (!p_keyEvents->empty())
-	{
-		previousKey = p_keyEvents->top();
-		p_keyEvents->pop();		
-	}
-	if (p_keyEvents->empty() || p_keyEvents->top() == 0)
-		previousKey = -1;
-	while (!p_pickingEvent->empty())
-	{
-		Shape * obj = this->p_pickingEvent->top();
-		this->p_pickingEvent->pop();
-
-		static Shape* firstHolder = nullptr;
-		static Shape* secondHolder = nullptr;
-		if (Input::isKeyPressed('G'))
-			firstHolder = obj;
-		if (Input::isKeyPressed('H'))
-			secondHolder = obj;
-
-		if (firstHolder && secondHolder)
-		{
-			grid->getRoomCtrl().CreateDoor(grid->getGrid()[static_cast<int>(firstHolder->getPosition().x + 0.5f)][static_cast<int>(firstHolder->getPosition().z + 0.5f)],
-				grid->getGrid()[static_cast<int>(secondHolder->getPosition().x + 0.5f)][static_cast<int>(secondHolder->getPosition().z + 0.5f)]);	
-			firstHolder = nullptr;
-			secondHolder = nullptr;
-					
-		}
-
-		//do Picking events here
-		if (c.walkQueueDone() && Input::isMouseLeftPressed())
-		{
-			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-
-			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-			std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
-
-			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-			
-			c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-			for (int i = 0; i < path.size() - 1; i++)
-				c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-			
-			for (auto& p : path)
-				delete p;
-
-		}
-		
-	}
+	_handlePicking();	// It's important this is before handleInput();
+	_handleInput();		// It's important this is after handlePicking();
 }
 
 void GameState::Draw()
@@ -179,133 +108,153 @@ void GameState::_init()
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 
-void GameState::_checkCreationOfRoom()
+void GameState::_handleBuildRoom(Shape* pickedShape)
 {
-	
-	if (m_firstPick && !m_firstPickedTile)
+	switch (m_buildStage)
 	{
-		if (!p_pickingEvent->empty())
+	case BuildStage::Start:
+		if (pickedShape)
 		{
-			m_firstPickedTile = p_pickingEvent->top();
-			p_pickingEvent->pop();
+			m_startTile = pickedShape;
+			m_buildStage = BuildStage::Selection;
 		}
 		else
-		{
-			m_firstPick = false;
-		}
-	}
-	else if (m_firstPick && m_firstPickedTile && Input::isMouseMiddlePressed())
-	{
-		this->grid->PickTiles();
-		
-		if (!p_pickingEvent->empty())
-		{
-			m_middlePickedTile = p_pickingEvent->top();
-			p_pickingEvent->pop();
-
-			DirectX::XMINT2 start(
-				static_cast<int>(m_firstPickedTile->getPosition().x + 0.5f),
-				static_cast<int>(m_firstPickedTile->getPosition().z + 0.5f)
-			);
-
-			DirectX::XMINT2 end(
-				static_cast<int>(m_middlePickedTile->getPosition().x + 0.5f),
-				static_cast<int>(m_middlePickedTile->getPosition().z + 0.5f)
-			);
-			
-			//this->grid->ResetTileColor(XMINT2(0,0), m_prevEnd);
-			m_prevEnd = end;
-			m_prevStart = start;
-			m_isPlaceable = this->grid->CheckAndMarkTiles(start, end);
-			
-		}
+			m_buildStage = BuildStage::None;
+		break;
+	case BuildStage::Selection:
+		if (pickedShape)
+			m_selectedTile = pickedShape;
+		break;
 	}
 
-	if (m_lastPick && !m_lastPickedTile)
-	{
-		if (!p_pickingEvent->empty())
-		{
-			m_lastPickedTile = p_pickingEvent->top();
-			p_pickingEvent->pop();
-		}
-		else
-		{
-			m_lastPick = false;
-		}
-	}
 
-	if (Input::isMouseMiddlePressed() && !m_firstPick)
-	{
-		m_firstPick = true;
-	
-		this->grid->PickTiles();
-	}
-	else if (!Input::isMouseMiddlePressed() && m_firstPick && !m_lastPick && m_firstPickedTile)
-	{
-		m_lastPick = true;
 
-		this->grid->PickTiles();
-	}
-	else if (m_firstPick && m_lastPick)
-	{
-		if (m_firstPickedTile && m_lastPickedTile  && m_isPlaceable)
-		{
-
-			DirectX::XMFLOAT3 posF = m_firstPickedTile->getPosition();
-			DirectX::XMFLOAT3 offsetF = m_lastPickedTile->getPosition();
-			DirectX::XMINT2 roomPos(static_cast<int>(posF.x + 0.5f), static_cast<int>(posF.z + 0.5f));
-			DirectX::XMINT2 roomOffset(static_cast<int>(offsetF.x + 0.5f), static_cast<int>(offsetF.z + 0.5f));
-			if (roomPos.x >= 0 && roomPos.y >= 0 && roomOffset.x >= 0 && roomOffset.y >= 0)
-			{
-				if (roomOffset.x < roomPos.x)
-				{
-					std::swap(roomPos.x, roomOffset.x);
-				}
-				if (roomOffset.y < roomPos.y)
-				{
-					std::swap(roomPos.y, roomOffset.y);
-				}
-
-				roomOffset.x -= roomPos.x - 1;
-				roomOffset.y -= roomPos.y - 1;
-
-				
-				grid->AddRoom(roomPos, roomOffset, RoomType::kitchen, true);
-				//grid->CreateWalls();
-				//grid->getRoomCtrl().CreateDoors();
-			}
-		}
-		m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);
-		m_firstPickedTile = m_lastPickedTile = nullptr;
-
-		m_lastPick = m_firstPick = false;
-	}
-	else if (m_firstPick && m_lastPick && m_firstPickedTile && !m_lastPickedTile)
-	{
-		m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);
-		m_firstPickedTile = m_lastPickedTile = nullptr;
-		m_lastPick = m_firstPick = false;
-	}
-	else if (m_firstPick && m_lastPick && !m_firstPickedTile && m_lastPickedTile)
-	{
-		m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);
-		m_firstPickedTile = m_lastPickedTile = nullptr;
-		m_lastPick = m_firstPick = false;
-	}
-	else if (m_firstPick && m_lastPick && !m_firstPickedTile && !m_firstPickedTile)
-	{
-		m_firstPickedTile->setColor(1, 1, 1);
-		m_lastPickedTile->setColor(1, 1, 1);
-		m_firstPickedTile = m_lastPickedTile = nullptr;
-		m_lastPick = m_firstPick = false;
-	}
 }
 
 void GameState::_setHud()
 {
 	m_stateHUD.setWindowSize(1280, 720);
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
+}
+
+void GameState::_handlePicking()
+{
+	while (!p_pickingEvent->empty())
+	{
+		Shape * obj = this->p_pickingEvent->top();
+		this->p_pickingEvent->pop();
+
+		if (m_buildStage != BuildStage::None)
+			_handleBuildRoom(obj);
+
+		if (m_stage == GameStage::Play)
+		{
+			if (c.walkQueueDone() && m_move)
+			{
+				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+
+				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+				for (int i = 0; i < path.size() - 1; i++)
+					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+
+				for (auto& p : path)
+					delete p;
+
+			}
+		}
+	}
+}
+
+void GameState::_handleInput()
+{
+	if (m_stage == GameStage::BuildRoom)
+	{
+		if (Input::isMouseLeftPressed())
+		{
+			if (m_buildStage == BuildStage::None)
+			{
+				m_buildStage = BuildStage::Start;
+				this->grid->PickTiles();
+			}
+			else if (m_buildStage == BuildStage::Selection)
+			{
+				this->grid->PickTiles();
+				if (m_startTile && m_selectedTile)
+				{
+					XMFLOAT3 s = m_startTile->getPosition();
+					XMFLOAT3 e = m_selectedTile->getPosition();
+
+					XMINT2 start;
+					start.x = static_cast<int>(s.x + 0.5f);
+					start.y = static_cast<int>(s.z + 0.5f);
+					XMINT2 end;
+					end.x = static_cast<int>(e.x + 0.5f);
+					end.y = static_cast<int>(e.z + 0.5f);
+
+					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
+				}
+			}
+		}
+		else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
+		{
+			m_buildStage = BuildStage::End;
+		}
+		else if (m_buildStage == BuildStage::End)
+		{
+			XMFLOAT3 s = m_startTile->getPosition();
+			XMFLOAT3 e = m_selectedTile->getPosition();
+
+			XMINT2 start;
+			start.x = static_cast<int>(s.x + 0.5f);
+			start.y = static_cast<int>(s.z + 0.5f);
+			XMINT2 end;
+			end.x = static_cast<int>(e.x + 0.5f);
+			end.y = static_cast<int>(e.z + 0.5f);
+
+			if (start.x > end.x)
+				std::swap(start.x, end.x);
+			if (start.y > end.y)
+				std::swap(start.y, end.y);
+			this->grid->ResetTileColor(start, end);
+
+			end.x -= start.x - 1;
+			end.y -= start.y - 1;
+
+			m_buildStage = BuildStage::None;
+			m_startTile = nullptr;
+			m_selectedTile = nullptr;
+			m_roomPlaceable = false;
+			this->grid->AddRoom(start, end, m_selectedRoomType);
+		}
+	}
+	else if (m_stage == GameStage::Play)
+	{
+		if (Input::isMouseLeftPressed())
+		{
+			this->grid->PickTiles();
+			m_move = true;
+		}
+		else
+			m_move = false;
+	}
+
+
+	if (Input::isKeyPressed('B'))
+		m_stage = GameStage::BuildRoom;
+	else if (Input::isKeyPressed('P'))
+		m_stage = GameStage::Play;
+
+
+	if (Input::isKeyPressed('R') && !m_Rpressed)
+		_setHud();
+	else if (!Input::isKeyPressed('R'))
+		m_Rpressed = false;
 }

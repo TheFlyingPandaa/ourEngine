@@ -1,6 +1,7 @@
 #include "GameTime.h"
 #include <DirectXMath.h>
 #include <iostream>
+#include "../../ourEngine/core/Dx.h"
 #define PI 3.14159265358979323846f 
 
 GameTime::GameTime()
