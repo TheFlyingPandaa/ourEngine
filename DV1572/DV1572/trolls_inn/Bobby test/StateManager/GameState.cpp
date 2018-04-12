@@ -78,6 +78,21 @@ void GameState::Update(double deltaTime)
 	
 	//<TEMP>
 	c.Update();
+	if (c.walkQueueDone())
+	{
+		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
+		{
+			c.Move(Character::UP);
+			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+			m_justMoved = true;
+		}
+		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
+		{
+			c.Move(Character::DOWN);
+			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+			m_justMoved = true;
+		}
+	}
 	//</TEMP>
 
 	_handlePicking();	// It's important this is before handleInput();

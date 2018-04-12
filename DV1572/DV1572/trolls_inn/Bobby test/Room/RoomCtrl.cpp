@@ -86,6 +86,9 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 
 bool RoomCtrl::_checkLegal(Room * room)
 {
+
+
+
 	return dynamic_cast<Bedroom*>(room) == nullptr;
 }
 
