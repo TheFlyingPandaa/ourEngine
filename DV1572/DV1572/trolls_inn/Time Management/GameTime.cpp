@@ -134,7 +134,6 @@ void GameTime::updateCurrentTime(float refreshRate)
 			m_minutes = 0;
 			m_sunAngle = 0.0f;
 			m_colorScaleFactor = 0.0f;
-
 		}
 		break;
 	}
@@ -148,7 +147,7 @@ GameTime::TIMEOFDAY GameTime::getTimePeriod()
 
 Light & GameTime::getSun()
 {
-	return m_sun; 
+	return m_sun;
 }
 
 void GameTime::m_createSunBuffer()
@@ -186,7 +185,7 @@ void GameTime::m_cpyLightToGPU()
 	m_sunBuffer.dir.z = -m_sunBuffer.pos.z;
 	m_sunBuffer.dir.w = m_sunBuffer.pos.w;
 
-	std::cout << "\rAngle " << m_currentAngle << std::flush;
+	//std::cout << "\rAngle " << m_currentAngle << std::flush;
 	/*std::cout << "Position (" << m_sunBuffer.pos.x << "," << m_sunBuffer.pos.y << "," << m_sunBuffer.pos.z << ")\n";
 	std::cout << "Direciton (" << m_sunBuffer.dir.x << "," << m_sunBuffer.dir.y << "," << m_sunBuffer.dir.z << ")\n\n";*/
 

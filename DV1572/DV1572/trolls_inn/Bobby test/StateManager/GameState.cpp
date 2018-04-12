@@ -64,13 +64,6 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 
-	for (int i = 0; i < 30000; i++)
-	{
-		int* lol = new int;
-		*lol = 1;
-		*lol = 1;
-		delete lol;
-	}
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 
@@ -93,6 +86,13 @@ void GameState::Update(double deltaTime)
 		c.Move(Character::WalkDirection::LEFT);
 	else if (Input::isKeyPressed('R'))
 		_setHud();
+	else if (Input::isKeyPressed('L'))
+	{
+		/*PointLight* pointLight = new PointLight(XMFLOAT4A(0,5,0,1), XMFLOAT4A(0,0,1,1),XMFLOAT4A(1.0f,0.0f, 0.05f, 0.0f)); 
+		DX::g_lightQueue.push_back(pointLight);
+		pointLight = new PointLight(XMFLOAT4A(16, 1, 16, 1), XMFLOAT4A(1, 1, 1, 1), XMFLOAT4A(1.0f, 0.0f, 0.5f, 0.0f));
+		DX::g_lightQueue.push_back(pointLight);*/
+	}
 
 	if (Input::isKeyPressed('W') || Input::isKeyPressed('A') ||
 		Input::isKeyPressed('S') || Input::isKeyPressed('D') ||

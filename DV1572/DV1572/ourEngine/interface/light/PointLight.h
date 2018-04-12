@@ -7,11 +7,18 @@
 class PointLight
 {
 private:
-	POINT_LIGHT_BUFFER m_pointLightBuffer; 
+	DirectX::XMFLOAT4A m_position; 
+	DirectX::XMFLOAT4A m_color;
+	DirectX::XMFLOAT4A m_lightSetup; 
+
 public:
-	PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color); 
-	~PointLight(); 
-	POINT_LIGHT_BUFFER& getBuffer(); 
+	PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color, DirectX::XMFLOAT4A lightSetup); 
+	~PointLight();  
+	
 	void addToLightQueue(std::vector<PointLight>& lightQueue); 
+
+	DirectX::XMFLOAT4A getPosition(); 
+	DirectX::XMFLOAT4A getColor();
+	DirectX::XMFLOAT4A getLightSetup(); 
 };
 #endif

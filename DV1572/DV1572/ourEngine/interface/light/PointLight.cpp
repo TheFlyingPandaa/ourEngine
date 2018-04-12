@@ -1,22 +1,34 @@
 #include "PointLight.h"
 
 
-PointLight::PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color)
+PointLight::PointLight(DirectX::XMFLOAT4A position, DirectX::XMFLOAT4A color, DirectX::XMFLOAT4A lightSetup)
 {
-	m_pointLightBuffer.pos = position; 
-	m_pointLightBuffer.color = color; 
+	m_position = position; 
+	m_color = color; 
+	m_lightSetup = lightSetup; 
 }
 
 PointLight::~PointLight()
 {
 }
 
-POINT_LIGHT_BUFFER & PointLight::getBuffer()
-{
-	return m_pointLightBuffer; 
-}
-
 void PointLight::addToLightQueue(std::vector<PointLight>& lightQueue)
 {
 	lightQueue.push_back(*this); 
 }
+
+DirectX::XMFLOAT4A PointLight::getPosition()
+{
+	return m_position; 
+}
+
+DirectX::XMFLOAT4A PointLight::getColor()
+{
+	return m_color; 
+}
+
+DirectX::XMFLOAT4A PointLight::getLightSetup()
+{
+	return m_lightSetup; 
+}
+

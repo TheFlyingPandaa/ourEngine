@@ -18,7 +18,7 @@ std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
 std::vector<Shape*> DX::g_pickingQueue;
 std::vector<Shape*> DX::g_HUDQueue;
-std::vector<Light*> DX::g_lightQueue; 
+std::vector<PointLight*> DX::g_lightQueue; 
 
 //Standard Tessellation
 ID3D11HullShader* DX::g_standardHullShader;
@@ -896,7 +896,25 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	}
 	
 	//Send lights to GPU
+	POINT_LIGHT_COLLECTION pointLightCollectionBuffer; 
+	int nrOfLights = DX::g_lightQueue.size();
 
+	for (int i = 0; i < nrOfLights; i++)
+	{
+		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
+		pointLightCollectionBuffer.colorArray[i] = DX::g_lightQueue[i]->getColor(); 
+		pointLightCollectionBuffer.lightSetup[i].y = DX::g_lightQueue[i]->getLightSetup().y;
+		pointLightCollectionBuffer.lightSetup[i].z = DX::g_lightQueue[i]->getLightSetup().z;
+		pointLightCollectionBuffer.lightSetup[i].w = DX::g_lightQueue[i]->getLightSetup().w;
+
+	}
+	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(nrOfLights, nrOfLights, nrOfLights, nrOfLights); 
+
+	D3D11_MAPPED_SUBRESOURCE lightData;
+	DX::g_deviceContext->Map(m_pPointLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
+	memcpy(lightData.pData, &pointLightCollectionBuffer, sizeof(POINT_LIGHT_COLLECTION));
+	DX::g_deviceContext->Unmap(m_pPointLightBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(6, 1, &m_pPointLightBuffer);
 	
 	//Throw in camera values into buffer
 	CAMERA_POS_BUFFER cameraBuffer;

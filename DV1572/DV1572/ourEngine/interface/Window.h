@@ -7,7 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
 #include "shape\Rectangle.h"
-#include "light\Light.h"
+#include "light\PointLight.h"
 #include "Input.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
