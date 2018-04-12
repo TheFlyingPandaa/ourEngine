@@ -67,7 +67,8 @@ private:
 	//TEST
 	Mesh box;
 	Character c;
-	bool move = false;
+	
+	bool m_move = false;
 
 
 	virtual void	_init() override;

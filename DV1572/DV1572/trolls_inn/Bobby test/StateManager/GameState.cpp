@@ -149,10 +149,9 @@ void GameState::_handlePicking()
 
 		if (m_stage == GameStage::Play)
 		{
-			if (c.walkQueueDone() && Input::isMouseLeftPressed())
+			if (c.walkQueueDone() && m_move)
 			{
 				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
 
 				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
@@ -236,6 +235,17 @@ void GameState::_handleInput()
 			this->grid->AddRoom(start, end, m_selectedRoomType);
 		}
 	}
+	else if (m_stage == GameStage::Play)
+	{
+		if (Input::isMouseLeftPressed())
+		{
+			this->grid->PickTiles();
+			m_move = true;
+		}
+		else
+			m_move = false;
+	}
+
 
 	if (Input::isKeyPressed('B'))
 		m_stage = GameStage::BuildRoom;
