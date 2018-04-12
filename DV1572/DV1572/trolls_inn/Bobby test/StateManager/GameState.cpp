@@ -75,7 +75,15 @@ void GameState::Update(double deltaTime)
 	//<TEMP>
 	c.Update();
 	//</TEMP>
-
+	if (c.walkQueueDone())
+	{
+		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y)
+		{
+			c.Move(Character::UP);
+			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
+		}
+	}
+	
 	
 
 	_handlePicking();	// It's important this is before handleInput();
@@ -157,9 +165,14 @@ void GameState::_handlePicking()
 				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+				std::vector<Node*> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
 
 				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+				if (path.size() == 0)
+				{
+					break;
+				}
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 

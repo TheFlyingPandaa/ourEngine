@@ -253,6 +253,7 @@ std::vector<Node*> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT
 
 	Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
 
+
 	if (current->tile->getIsInside() == false && endTile != m_tiles[mainDoor.x][mainDoor.y])
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
