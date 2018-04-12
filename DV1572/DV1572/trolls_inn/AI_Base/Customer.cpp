@@ -8,8 +8,7 @@ Customer::Customer(Race race, int gold)
 {
 	this->race = race;
 	this->economy = Economy(gold);
-	this->setCustomerState(Walking);
-	this->leavingInn = false;
+	this->setAction(WalkAction);
 }
 
 Customer::~Customer()
@@ -58,19 +57,58 @@ Action Customer::getAction() const
 	return action;
 }
 
+void Customer::getNextAction()
+{
+	this->stateQueue.pop();
+}
+
+void Customer::setAction(Action nextAction)
+{
+	switch (nextAction)
+	{
+	case WalkAction:
+		this->stateQueue.push(Walking);
+		break;
+	case ThinkingAction:
+		this->stateQueue.push(Thinking);
+		break;
+	case DrinkAction:
+		this->stateQueue.push(Drinking);
+		break;
+	case EatAction:
+		this->stateQueue.push(Eating);
+		break;
+	case SleepAction:
+		this->stateQueue.push(Sleeping);
+		break;
+	case LeavingInnAction:
+		this->stateQueue.push(LeavingInn);
+		break;
+	}
+	// to return the customer to idle after it executed its action
+	this->stateQueue.push(Idle);
+}
+
 const char * Customer::getActionStr() const
 {
 	Action action = getAction();
 	switch (action)
 	{
+	case WalkAction:
+		return "Walking";
+	case ThinkingAction:
+		return "Thinking";
 	case DrinkAction:
 		return "Drink";
 	case EatAction:
 		return "Eat";
 	case SleepAction:
 		return "Sleep";
+	case LeavingInnAction:
+		return "Leaving Trolls Inn";
 	}
-	return "NO ACTION";
+	return "Idle"; // return thinking instead (?)
+	//return "NO ACTION";
 }
 
 int Customer::getPosX() const
@@ -108,21 +146,6 @@ int Customer::getThirsty() const
 	return this->thirsty;
 }
 
-CustomerState Customer::getCustomerState() const
-{
-	return this->stateQueue.front();
-}
-
-void Customer::getNextCustomerState()
-{
-	this->stateQueue.pop();
-}
-
-bool Customer::getLeavingInn() const
-{
-	return this->leavingInn;
-}
-
 void Customer::setHungry(int value)
 {
 	this->hungry = value;
@@ -136,16 +159,6 @@ void Customer::setTired(int value)
 void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
-}
-
-void Customer::setCustomerState(CustomerState newState)
-{
-	this->stateQueue.push(newState);
-}
-
-void Customer::setLeavingInn(bool isLeaving)
-{
-	this->leavingInn = isLeaving;
 }
 
 void Customer::move(int x, int y)

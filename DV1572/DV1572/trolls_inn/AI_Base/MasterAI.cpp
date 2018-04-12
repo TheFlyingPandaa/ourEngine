@@ -24,16 +24,23 @@ void MasterAI::update()
 		desiredAction = customer.getAction();
 		int price = 0;
 
-		if (desiredAction == EatAction)
+		switch (desiredAction)
+		{
+		case EatAction:
 			price = inn.getFoodPrice();
-		else if (desiredAction == DrinkAction)
+			break;
+		case DrinkAction:
 			price = inn.getDrinkPrice();
-		else
+			break;
+		case SleepAction:
 			price = inn.getSleepPrice();
+			break;
+		}
 
 		if (customer.getEconomy().getGold() < price)
 		{
 			// Customer leaves inn
+			customer.setAction(LeavingInnAction);
 			// Save id for leaving customers
 			leavingCustomersIDs.push_back(loopCounter);
 		}

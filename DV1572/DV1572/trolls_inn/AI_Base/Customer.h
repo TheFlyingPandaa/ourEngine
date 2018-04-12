@@ -13,18 +13,23 @@ enum Race
 
 enum Action
 {
+	WalkAction,
+	ThinkingAction,
 	DrinkAction,
 	EatAction,
-	SleepAction
+	SleepAction,
+	LeavingInnAction
 };
 
 enum CustomerState
 {
 	Idle,
+	Thinking,
 	Walking,
 	Drinking,
 	Eating,
-	Sleeping
+	Sleeping,
+	LeavingInn
 };
 
 class Customer
@@ -39,7 +44,6 @@ private:
 	int hungry;
 	int tired;
 	int thirsty;
-	bool leavingInn;
 
 public:
 	Customer();
@@ -53,6 +57,8 @@ public:
 	const char* getRaceStr() const;
 
 	Action getAction() const;
+	void getNextAction();
+	void setAction(Action nextAction);
 
 	const char* getActionStr() const;
 
@@ -65,15 +71,10 @@ public:
 	int getHungry() const;
 	int getTired() const;
 	int getThirsty() const;
-	CustomerState getCustomerState() const;
-	void getNextCustomerState();
-	bool getLeavingInn() const;
 
 	void setHungry(int value);
 	void setTired(int value);
 	void setThirsty(int value);
-	void setCustomerState(CustomerState newState);
-	void setLeavingInn(bool isLeaving);
 
 	void move(int x, int y);
 };
