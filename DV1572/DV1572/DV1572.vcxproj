@@ -177,6 +177,7 @@
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />

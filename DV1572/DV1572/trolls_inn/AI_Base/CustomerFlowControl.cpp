@@ -123,8 +123,6 @@ Customer CustomerFlowControl::update()
 	else
 		nextCustomer = this->generateRandomCustomer();
 
-	nextCustomer.setPosX(1);
-	nextCustomer.setPosY(-1);
 	std::cout << "A " << nextCustomer.getRaceStr()<< " has arrived!" << std::endl;
 	return nextCustomer;
 }

@@ -16,7 +16,6 @@ class Staff
 private:
 	LevelTracker level;
 	Professions profession;
-	int posX, posY;
 
 public:
 	Staff();
@@ -25,10 +24,5 @@ public:
 	~Staff();
 	
 	Professions getProfession() const;
-	int getPosX() const;
-	int getPosY() const;
 	LevelTracker& getLevelTracker();
-
-	// move by offset
-	void move(int x, int y);
 };

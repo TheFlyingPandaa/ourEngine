@@ -1,5 +1,6 @@
 #pragma once
 #include "Attributes.h"
+#include "../Bobby test/Character.h"
 #include "Economy.h"
 #include <queue>
 
@@ -32,20 +33,17 @@ enum CustomerState
 	LeavingInn
 };
 
-class Customer
+class Customer : public Character
 {
 private:
 	Attributes stats;
 	Economy economy;
 	Race race;
 	std::queue<CustomerState> stateQueue;
-	int posX, posY;
 
 	int hungry;
 	int tired;
 	int thirsty;
-
-	// Path pointer?
 
 public:
 	Customer();
@@ -60,18 +58,14 @@ public:
 
 	Action getAction() const;
 	void setAction(Action nextAction);
+	void gotPathSetNextAction(Action nextAction);
 
 	int getQueueEmpty() const;
 	CustomerState getState() const;
 	void popToNextState();
 
 	const char* getActionStr() const;
-
-	int getPosX() const;
-	int getPosY() const;
-
-	void setPosX(int x);
-	void setPosY(int y);
+	const char* getNextActionStr() const;
 
 	int getHungry() const;
 	int getTired() const;
@@ -80,6 +74,4 @@ public:
 	void setHungry(int value);
 	void setTired(int value);
 	void setThirsty(int value);
-
-	void move(int x, int y);
 };

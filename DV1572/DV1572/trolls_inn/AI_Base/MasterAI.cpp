@@ -44,45 +44,20 @@ void MasterAI::update()
 			if (customer.getEconomy().getGold() < price)
 			{
 				// Customer leaves inn
-				customer.setAction(LeavingInnAction);
 				// Save id for leaving customers
 				leavingCustomersIDs.push_back(loopCounter);
 			}
 			else
 			{
 				// Customer wants path to Action area
+				customer.setAction(ThinkingAction);
+				this->solver.update(customer, desiredAction);
 			}
 		}
 		else
 		{
 			// Execute the action queue
-			CustomerState currentState = customer.getState();
-
-			switch (currentState)
-			{
-			case Idle:
-
-				break;
-			case Thinking:
-
-				break;
-			case Walking:
-
-				break;
-			case Drinking:
-
-				break;
-			case Eating:
-
-				break;
-			case Sleeping:
-
-				break;
-			case LeavingInn:
-
-				break;
-			}
-
+			this->solver.update(customer);
 		}
 
 		loopCounter++;
@@ -99,13 +74,18 @@ void MasterAI::update()
 	// Iterate through leaving customers
 	for (auto leavingCustomer : this->leavingCustomers)
 	{
-		// Customer wants path to exit
+		if (leavingCustomer.getQueueEmpty())
+		{
+			// Customer wants path to exit
+			leavingCustomer.gotPathSetNextAction(LeavingInnAction);
+		}
+		else
+		{
+			// Send review to inn if customer reached end of path
+			//this->inn.customerReview(leavingCustomer.getAttributes());
+			// If customer sent review then delete
 
-		// Send review to inn if customer reached end of path
-		//this->inn.customerReview(leavingCustomer.getAttributes());
-
-		// If customer sent review then delete
-
+		}
 		loopCounter++;
 	}
 	

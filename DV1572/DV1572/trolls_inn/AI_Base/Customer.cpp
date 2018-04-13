@@ -30,7 +30,7 @@ Race Customer::getRace() const
 	return this->race;
 }
 
-const char * Customer::getRaceStr() const
+const char* Customer::getRaceStr() const
 {
 	switch (race)
 	{
@@ -43,17 +43,17 @@ const char * Customer::getRaceStr() const
 	case Dwarf:
 		return "Dwarf";
 	}
+
 	return "NO RACE!";
 }
 
 Action Customer::getAction() const
 {
-	// tired 1
-	// hungry 2
-	// thristy 5
 	Action action;
-	int value = std::max(std::max(tired, hungry), thirsty);
-	action = (value == tired) ? SleepAction : (value == hungry) ? EatAction : DrinkAction;
+	//std namespace max breaks code
+	int value = max(max(this->tired, this->hungry), this->thirsty);
+	action = (value == this->tired) ? SleepAction : (value == this->hungry) ? EatAction : DrinkAction;
+	
 	return action;
 }
 
@@ -99,9 +99,16 @@ void Customer::setAction(Action nextAction)
 	this->stateQueue.push(Idle);
 }
 
-const char * Customer::getActionStr() const
+void Customer::gotPathSetNextAction(Action nextAction)
+{
+	this->stateQueue.push(Walking);
+	this->setAction(nextAction);
+}
+
+const char* Customer::getActionStr() const
 {
 	Action action = getAction();
+
 	switch (action)
 	{
 	case WalkAction:
@@ -117,28 +124,32 @@ const char * Customer::getActionStr() const
 	case LeavingInnAction:
 		return "Leaving Trolls Inn";
 	}
-	return "Idle"; // return thinking instead (?)
-	//return "NO ACTION";
+
+	return "Idle";
 }
 
-int Customer::getPosX() const
+const char* Customer::getNextActionStr() const
 {
-	return this->posX;
-}
+	Action action = getAction();
 
-int Customer::getPosY() const
-{
-	return this->posY;
-}
+	switch (action)
+	{
+	case WalkAction:
+		return "Walking";
+	case ThinkingAction:
+		return "Thinking";
+	case DrinkAction:
+		return "Drink";
+	case EatAction:
+		return "Eat";
+	case SleepAction:
+		return "Sleep";
+	case LeavingInnAction:
+		return "Leaving Trolls Inn";
+	}
 
-void Customer::setPosX(int x)
-{
-	this->posX = x;
-}
-
-void Customer::setPosY(int y)
-{
-	this->posY = y;
+	//return "Idle";
+	return "Ero Sennin moving to do some dirty peeking. WEEBS ALIGN";
 }
 
 int Customer::getHungry() const
@@ -169,10 +180,4 @@ void Customer::setTired(int value)
 void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
-}
-
-void Customer::move(int x, int y)
-{
-	this->posX += x;
-	this->posY += y;
 }

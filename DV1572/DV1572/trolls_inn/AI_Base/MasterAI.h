@@ -1,4 +1,5 @@
 #pragma once
+#include "AISolver.h"
 #include "Customer.h"
 #include "Staff.h"
 #include "InnDummyFile.h"
@@ -7,6 +8,7 @@
 class MasterAI
 {
 private:
+	AISolver solver;
 	std::vector<Customer> customers;
 	std::vector<Customer> leavingCustomers;
 	std::vector<Staff> staff;

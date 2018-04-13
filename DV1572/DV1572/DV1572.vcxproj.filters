@@ -59,6 +59,7 @@
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
