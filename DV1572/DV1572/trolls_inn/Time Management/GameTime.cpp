@@ -3,7 +3,7 @@
 #include <iostream>
 #include "../../ourEngine/core/Dx.h"
 #define PI 3.14159265358979323846f 
-#define DEBUG 1 //DEBUG ON/OFF
+#define DEBUG 0 //DEBUG ON/OFF
 
 GameTime::GameTime()
 {
