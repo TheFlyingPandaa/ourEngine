@@ -120,6 +120,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
+
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -180,7 +181,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		fpsCounter++;
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
-		
 		wnd.Flush(cam);
   		wnd.Present();
 		wnd.FullReset();

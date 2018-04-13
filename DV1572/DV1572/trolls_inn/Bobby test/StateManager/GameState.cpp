@@ -76,7 +76,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
 
 	
 	//<TEMP>
@@ -116,6 +116,12 @@ void GameState::Draw()
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
+	test.setScale(5);
+	test.setPos(2.5f, 2.5f, 2.5f);
+	test.setMesh(&box);
+	test.TESTSHADOW();
+	test.Draw();
+
 }
 
 void GameState::_init()

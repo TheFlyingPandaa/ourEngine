@@ -13,6 +13,7 @@ GameTime::GameTime()
 	m_seconds = 0.0f; 
 	m_totalSeconds = 0; 
 	m_divider = 255.0f; 
+
 	
 	m_colorScaleFactor = 0.0001f;
 	m_rotationFactor = 0.0001f;
@@ -38,6 +39,7 @@ GameTime::GameTime()
 		DirectX::XMFLOAT4A(-1, -1, -1, 0), 
 		DirectX::XMFLOAT4A(1, 1, 1, 1), 420, 420);
 
+	m_sun.CreatesShadows();
 	m_vUp = XMVECTOR{ 0,1,0 }; 
 }
 
@@ -51,6 +53,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 	m_currentClockValue = 1.0f;// (1.0f / refreshRate);
 	m_seconds += m_currentClockValue; 
 	if (DEBUG == 0)
+	m_sun.CreatesShadows();
 	{
 		switch (m_currentTime)
 		{
@@ -147,6 +150,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		m_currentAngle = 90.0f; 
 		m_fFinalColor = XMFLOAT4A( 1.0f, 1.0f, 1.0f, 1.0f );
 	}	
+	m_cpyLightToGPU(); 
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
@@ -178,6 +182,7 @@ void GameTime::m_cpyLightToGPU()
 	
 	m_sun.setColor(m_fFinalColor);
 	m_sunBuffer.color = m_sun.getColor(); 
+
 		
 	XMMATRIX rot = XMMatrixRotationZ(XMConvertToRadians(m_currentAngle));
 		
@@ -195,6 +200,8 @@ void GameTime::m_cpyLightToGPU()
 	m_sunBuffer.dir.w = m_sunBuffer.pos.w;
 
 	//std::cout << "\rAngle " << m_currentAngle << std::flush;
+	m_sun.setPos(m_sunBuffer.pos);
+	m_sun.setDir(m_sunBuffer.dir);
 	/*std::cout << "Position (" << m_sunBuffer.pos.x << "," << m_sunBuffer.pos.y << "," << m_sunBuffer.pos.z << ")\n";
 	std::cout << "Direciton (" << m_sunBuffer.dir.x << "," << m_sunBuffer.dir.y << "," << m_sunBuffer.dir.z << ")\n\n";*/
 
