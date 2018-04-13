@@ -99,6 +99,7 @@ public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
 	~GameState();
 	// Inherited via State
-	void Update(double deltaTime) override;
-	void Draw() override;
+	virtual void Update(double deltaTime) override;
+	virtual void Draw() override;
+	virtual void DrawHUD() override;
 };

@@ -72,6 +72,10 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	//auto currentTime = std::chrono::high_resolution_clock::now();
+	if (Input::isKeyPressed('N')) {
+		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
+	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
 	this->m_cam->update();
@@ -82,6 +86,7 @@ void GameState::Update(double deltaTime)
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	//std::cout << " TIME: " << dt << std::endl;
 	
+
 	//<TEMP>
 	c.Update();
 	if (c.walkQueueDone())
@@ -129,7 +134,6 @@ void GameState::Draw()
 {
 	gameTime.m_cpyLightToGPU();
 	this->grid->Draw();
-	m_stateHUD.Draw();
 
 	//TEST
 	c.Draw();
@@ -140,6 +144,11 @@ void GameState::Draw()
 	test.TESTSHADOW();
 	test.Draw();
 
+}
+
+void GameState::DrawHUD()
+{
+	m_stateHUD.Draw();
 }
 
 void GameState::_init()

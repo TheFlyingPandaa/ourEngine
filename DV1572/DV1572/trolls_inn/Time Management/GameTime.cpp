@@ -3,7 +3,7 @@
 #include <iostream>
 #include "../../ourEngine/core/Dx.h"
 #define PI 3.14159265358979323846f 
-#define DEBUG 0 //DEBUG ON/OFF
+#define DEBUG 1 //DEBUG ON/OFF
 
 GameTime::GameTime()
 {
@@ -151,7 +151,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		m_currentAngle = 90.0f; 
 		m_fFinalColor = XMFLOAT4A( 1.0f, 1.0f, 1.0f, 1.0f );
 	}	
-	m_cpyLightToGPU(); 
+	//m_cpyLightToGPU(); 
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
