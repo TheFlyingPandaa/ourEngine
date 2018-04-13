@@ -34,7 +34,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 	m_wholeGrid.setMesh(m_gridMesh);
 	m_wholeGrid.setScale(sizeX *2.0f);
-	m_wholeGrid.setPos(posX, 0, posX);
+	m_wholeGrid.setPos(posX, -0.01f, posX);
 	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
 	m_wholeGrid.setGridScale(sizeX);
 
@@ -46,7 +46,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		{
 			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 			t->getQuad().setScale(2.0f);
-			t->getQuad().setPos(static_cast<float>(i + posX), 0.1f, static_cast<float>(j + posY));
+			t->getQuad().setPos(static_cast<float>(i + posX), 0, static_cast<float>(j + posY));
 			t->setPosX(i);
 			t->setPosY(j);
 			this->m_tiles[i][j] = t;
@@ -181,8 +181,8 @@ void Grid::PickTiles(Shape* selectionTile)
 	{
 		int xPos = selectionTile->getPosition().x;
 		int yPos = selectionTile->getPosition().z;
-		for(int x = -2; x < 3; x++)
-			for (int y = -2; y < 3; y++)
+		for(int x = -5; x < 5; x++)
+			for (int y = -5; y < 5; y++)
 			{
 				int indexX = xPos + x;
 				int indexY = yPos + y;
