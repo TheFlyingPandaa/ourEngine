@@ -5,7 +5,7 @@
 void PointLight::_init()
 {
 	m_position.w = 1.0f;
-	m_color.w = 1.0f;
+	m_color.w = -1.0f;
 }
 
 PointLight::PointLight()
@@ -26,19 +26,31 @@ void PointLight::addToLightQueue()
 	DX::g_lightQueue.push_back(this); 
 }
 
-DirectX::XMFLOAT4A PointLight::getPosition()
+DirectX::XMFLOAT4A PointLight::getPosition() const
 {
 	return m_position; 
 }
 
-DirectX::XMFLOAT4A PointLight::getColor()
+DirectX::XMFLOAT4A PointLight::getColor() const
 {
+	DirectX::XMFLOAT4A c = m_color;
+	c.w = 1.0f;
 	return m_color; 
 }
 
-DirectX::XMFLOAT4A PointLight::getLightSetup()
+DirectX::XMFLOAT4A PointLight::getLightSetup() const
 {
 	return m_lightSetup; 
+}
+
+int PointLight::getIndex() const
+{
+	return m_color.w;
+}
+
+void PointLight::setIndex(int index)
+{
+	m_color.w = index;
 }
 
 void PointLight::setPosition(float x, float y, float z)

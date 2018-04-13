@@ -902,11 +902,9 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
-		pointLightCollectionBuffer.colorArray[i] = DX::g_lightQueue[i]->getColor(); 
-		pointLightCollectionBuffer.lightSetup[i].x = DX::g_lightQueue[i]->getLightSetup().x;
-		pointLightCollectionBuffer.lightSetup[i].y = DX::g_lightQueue[i]->getLightSetup().y;
-		pointLightCollectionBuffer.lightSetup[i].z = DX::g_lightQueue[i]->getLightSetup().z;
-		pointLightCollectionBuffer.lightSetup[i].w = DX::g_lightQueue[i]->getLightSetup().w;
+		pointLightCollectionBuffer.colorArray[i] =	DX::g_lightQueue[i]->getColor(); 
+		pointLightCollectionBuffer.colorArray[i].w = DX::g_lightQueue[i]->getIndex();
+		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
 	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(nrOfLights, nrOfLights, nrOfLights, nrOfLights); 

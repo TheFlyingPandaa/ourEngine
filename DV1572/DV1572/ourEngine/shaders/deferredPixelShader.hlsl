@@ -78,10 +78,13 @@ float4 main(Input input) : SV_Target
 	float specPointLight = 0;
 	float3 finalSpecPointLight = float3(0,0,0);
 	float att = 0; 
-	float specLevelPointLight = 0.9f; 
+	float specLevelPointLight = specLevel * 0.2f;
 
 	for (int i = 0; i < nrOfLights.r; i++)
 	{
+		int index = static_cast<int>(pointLColor.a + 0.5f);
+
+
 		//Diffuse 
 		float3 pointLightToObject = normalize(pointLPos[i] - wordPos);
 		diffuseForPointLight = diffuseSample * max(dot(normal, pointLightToObject), 0.0f); 
