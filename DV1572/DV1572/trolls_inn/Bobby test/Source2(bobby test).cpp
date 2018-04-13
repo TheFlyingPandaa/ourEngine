@@ -82,7 +82,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
 
-	PointLight pointLight = PointLight(XMFLOAT4A(16, 5, 16, 1), XMFLOAT4A(0.5,0, 0.8, 1), XMFLOAT4A(1.0f, 0.0f, 0.2f, 0.0f)); 
+	PointLight pointLight; 
+	pointLight.setPosition(16, 1, 16);
 	pointLight.addToLightQueue(); 
 
 	SkyBoxObject boxy;
@@ -138,7 +139,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 			if (Input::isKeyPressed('P') && !pressed)
 			{
-			/*	if (!play)
+				/*if (!play)
 				{
 					effect->Stop(false);
 					effect->Play(true);
