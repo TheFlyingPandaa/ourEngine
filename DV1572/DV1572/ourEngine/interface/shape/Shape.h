@@ -17,6 +17,8 @@ private:
 	DirectX::XMMATRIX		m_worldMatrix;
 	DirectX::XMFLOAT4A		m_highLightColor;
 	int						m_gridscale;
+	int						m_lightIndex;
+
 
 private: 
 	void _buildMatrix();
@@ -54,6 +56,9 @@ public:
 	void setScale(float x, float y, float z);
 	void setScale(DirectX::XMFLOAT3 scl);
 	DirectX::XMFLOAT3 getScale() const;
+	
+	void setLightIndex(int index);
+	int getLightIndex() const;
 
 	void Scale(float scl);
 	void Scale(float x, float y, float z);
@@ -65,7 +70,7 @@ public:
 	void ApplyMaterials();
 
 	void CheckPick();
-	void	TESTSHADOW();
+	void	CastShadow();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;

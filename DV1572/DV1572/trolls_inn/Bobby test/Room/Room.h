@@ -3,10 +3,22 @@
 #include <vector>
 #include "../../../ourEngine/interface/Interface.h"
 #include "Structure.h"
+#include "../../../ourEngine/interface/light/PointLight.h"
 
 class Room
 {
+private:
+	static Mesh s_AABB;
+	static bool s_isLoaded;
+	static int s_index;
+	int	m_index;
+	Object3D m_AABB;
+	void _loadStatic();
+	void _initAABB(int x, int y, int sx, int sy, int level = 0);
+	void _createLight(int x, int y, int sx, int sy, int level = 0);
 protected:
+	std::vector<PointLight> m_lights;
+
 
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
@@ -63,6 +75,11 @@ public:
 	virtual void Update(Camera * cam);
 	virtual void Draw() = 0;
 	virtual std::string	toString() const = 0;
+	int getRoomIndex() const;
+
+	void ApplyIndexOnMesh();
+
+	void CastShadow();
 
 };
 

@@ -119,7 +119,7 @@ void GameState::Draw()
 	test.setScale(5);
 	test.setPos(2.5f, 2.5f, 2.5f);
 	test.setMesh(&box);
-	test.TESTSHADOW();
+	test.CastShadow();
 	test.Draw();
 
 }

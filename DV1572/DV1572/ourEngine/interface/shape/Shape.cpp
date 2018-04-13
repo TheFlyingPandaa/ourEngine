@@ -44,6 +44,7 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 
 Shape::Shape()
 {
+	m_lightIndex = 0;
 	m_gridscale = 1;
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
@@ -151,6 +152,16 @@ void Shape::setScale(DirectX::XMFLOAT3 scl)
 	_buildMatrix();
 }
 
+void Shape::setLightIndex(int index)
+{
+	m_lightIndex = index;
+}
+
+int Shape::getLightIndex() const
+{
+	return m_lightIndex;
+}
+
 DirectX::XMFLOAT3 Shape::getScale() const
 {
 	return m_scl;
@@ -217,7 +228,7 @@ void Shape::CheckPick()
 	DX::submitToInstance(this, DX::g_instanceGroupsPicking);
 }
 
-void Shape::TESTSHADOW()
+void Shape::CastShadow()
 {
 	//DX::g_shadowQueue.push_back(this);
 	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);

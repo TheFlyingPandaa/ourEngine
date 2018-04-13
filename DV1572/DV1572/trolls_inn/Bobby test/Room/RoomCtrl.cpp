@@ -151,6 +151,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		m_rooms.push_back(room);
 	CreateWalls();
 	CreateDoors(room);
+	room->ApplyIndexOnMesh();
 	
 }
 
@@ -167,8 +168,11 @@ void RoomCtrl::Draw()
 	for (int i = 0; i < m_walls.size(); i++)
 	{	
 		//m_walls[i]->getObject3D().setInside();
-		m_walls[i]->getObject3D().TESTSHADOW();
 		m_walls[i]->Draw();
+	}
+	for (Room* r : m_rooms)
+	{
+		r->CastShadow();
 	}
 }
 

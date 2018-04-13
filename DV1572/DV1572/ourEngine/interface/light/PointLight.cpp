@@ -5,7 +5,7 @@
 void PointLight::_init()
 {
 	m_position.w = 1.0f;
-	m_color.w = -1.0f;
+	m_color.w = 0.0f;
 }
 
 PointLight::PointLight()

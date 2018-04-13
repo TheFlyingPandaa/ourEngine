@@ -51,7 +51,7 @@ GameTime::~GameTime()
 void GameTime::updateCurrentTime(float refreshRate)
 {
 	using namespace DirectX;
-	m_currentClockValue = 1.0f;//refreshRate;
+	m_currentClockValue = 0.5f;//refreshRate;
 	m_seconds += m_currentClockValue; 
 	m_sun.CreatesShadows();
 	if (DEBUG == 0)

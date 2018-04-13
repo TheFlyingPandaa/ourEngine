@@ -11,7 +11,7 @@
 #include "Input.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
-const UINT GBUFFER_COUNT = 3;
+const UINT GBUFFER_COUNT = 4;
 
 class Window
 {

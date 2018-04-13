@@ -82,10 +82,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
 
-	PointLight pointLight; 
-	pointLight.setPosition(16, 1, 16);
-	pointLight.addToLightQueue(); 
-
 	SkyBoxObject boxy;
 	boxy.setMesh(&box);
 
