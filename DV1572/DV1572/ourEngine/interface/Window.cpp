@@ -771,10 +771,7 @@ void Window::_geometryPass(const Camera &cam)
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
-		meshBuffer.inside = instance.shape->lol;
-		meshBuffer.inside2 = instance.shape->lol;
-		meshBuffer.inside3 = instance.shape->lol;
-		meshBuffer.inside4 = instance.shape->lol;
+		meshBuffer.gridscale = instance.shape->getGridScale();
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);

@@ -34,10 +34,7 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
-	float inside;
-	float inside2;
-	float inside3;
-	float inside4;
+	float gridscale;
 };
 
 struct PICK_BUFFER

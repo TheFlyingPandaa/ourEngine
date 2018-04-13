@@ -41,18 +41,10 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 {
 	m_ps = s;
 }
-void Shape::setInside()
-{
-	lol = 1.0f;
-}
-void Shape::noInside()
-{
-	lol = 0.0f;
-}
+
 Shape::Shape()
 {
-	lol = 0.0f;
-
+	m_gridscale = 1;
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
 	m_hs	= nullptr;
@@ -255,6 +247,16 @@ void Shape::Draw()
 	{
 		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
+}
+
+void Shape::setGridScale(int scale)
+{
+	m_gridscale = scale;
+}
+
+int Shape::getGridScale() const
+{
+	return m_gridscale;
 }
 
 void Shape::TEMPTRANS()
