@@ -3,7 +3,6 @@
 
 class MainMenu : public State {
 private:
-
 	virtual void _init() override;
 
 public:
@@ -13,4 +12,7 @@ public:
 	// Inherited via State
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
+
+	// Inherited via State
+	virtual void DrawHUD() override;
 };

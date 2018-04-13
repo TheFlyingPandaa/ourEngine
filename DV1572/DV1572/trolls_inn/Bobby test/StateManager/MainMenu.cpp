@@ -14,12 +14,18 @@ MainMenu::~MainMenu()
 
 void MainMenu::Update(double deltaTime)
 {
-
+	if (Input::isKeyPressed('M'))
+		m_exitState = true;
+	m_cam->update();
 }
 
 void MainMenu::Draw()
 {
+}
 
+void MainMenu::DrawHUD()
+{
+	m_stateHUD.Draw();
 }
 
 void MainMenu::_init()

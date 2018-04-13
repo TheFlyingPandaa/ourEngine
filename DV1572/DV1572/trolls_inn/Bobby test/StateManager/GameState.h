@@ -101,4 +101,5 @@ public:
 	// Inherited via State
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
+	virtual void DrawHUD() override;
 };

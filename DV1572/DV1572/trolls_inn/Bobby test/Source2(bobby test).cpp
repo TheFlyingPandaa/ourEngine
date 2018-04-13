@@ -89,7 +89,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	boxy.setMesh(&box);
 
 
-	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
+	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 
 	std::unique_ptr<AudioEngine> audEngine;
 	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
@@ -106,6 +106,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	bool play = false;
 
 
+	State * gameState = new GameState(&pickingEvents, &keyEvent, cam);
+
 	while (wnd.isOpen())
 	{	
 		wnd.Clear();
@@ -121,6 +123,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 
+
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -135,7 +138,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					if (ref)
 						gameStates.push(ref);
 				}
-			}	
+			}
+			else {
+				gameState->Update(1.0 / REFRESH_RATE);
+				State * ref = gameState->NewState();
+				
+				if (ref)
+					gameStates.push(ref);
+			}
+			
 
 			if (Input::isKeyPressed('P') && !pressed)
 			{
@@ -179,8 +190,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 		fpsCounter++;
+		gameState->Draw();
 		if (!gameStates.empty())
+		{
 			gameStates.top()->Draw();
+		}
+		else
+		{
+			gameState->DrawHUD();
+		}
+
 		wnd.Flush(cam);
   		wnd.Present();
 		wnd.FullReset();
@@ -212,5 +231,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		gameStates.pop();
 	}
 	delete cam;
+	delete gameState;
 	return 0;
 }
