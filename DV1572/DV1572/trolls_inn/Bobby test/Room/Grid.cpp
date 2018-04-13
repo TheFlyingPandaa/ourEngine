@@ -319,8 +319,18 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	else if (startTile->getRoom() != endTile->getRoom())
 	{
 		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
-		
-	}*/
+		for (size_t i = 0; i < allWalls->size(); i++)
+		{
+			if (allWalls->at(i)->getIsDoor())
+			{
+				//allWalls->at(i)->getPosition()
+				//return findPath(startTile, m_tiles[allWalls->at(i)->getPosition().x ][allWalls->at(i)->getPosition().y + 1], mainDoor);
+				//allWalls->at(i)->setPosition(DirectX::XMFLOAT2(100, 100));
+				break;
+			}
+			
+		}
+	}
 
 	
 
