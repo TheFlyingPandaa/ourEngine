@@ -11,6 +11,7 @@ private:
 	std::vector<Customer> leavingCustomers;
 	std::vector<Staff> staff;
 	InnDummyFile inn;
+	// get day/night cycle to update customer needs
 
 public:
 	MasterAI();
