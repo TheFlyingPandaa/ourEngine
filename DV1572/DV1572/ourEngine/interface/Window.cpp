@@ -592,6 +592,7 @@ void Window::_prepareShadow()
 
 	//DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
@@ -674,7 +675,7 @@ void Window::_shadowPass(Camera* c)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 
