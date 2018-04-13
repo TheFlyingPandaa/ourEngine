@@ -16,6 +16,8 @@
     <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\skyBoxVertexShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />

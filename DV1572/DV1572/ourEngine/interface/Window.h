@@ -88,6 +88,18 @@ private:
 	ID3D11VertexShader*		m_hudVertexShader;
 	ID3D11PixelShader*		m_hudPixelShader;
 
+	//ShadowPass
+	ID3D11DepthStencilView* m_depthStencilViewShad;
+	ID3D11Texture2D*		m_depthBufferTexShad;
+	ID3D11VertexShader	*	m_shadowVertex;
+	ID3D11PixelShader	*	m_shadowPixel;
+	ID3D11Buffer		*	m_shadowBuffer;
+	ID3D11ShaderResourceView * m_shadowDepthTexture = nullptr;
+	XMMATRIX				m_shadowProjMatrix;
+	//DEBUG
+	ID3D11RasterizerState*	m_WireFrame;
+	bool					m_WireFrameDebug = false;;
+
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
@@ -136,6 +148,10 @@ private:
 	void	_initComputeShader();
 	void	_runComputeShader();
 
+	//Shadow
+	void	_loadShadowBuffers();
+	void	_prepareShadow();
+	void	_shadowPass(Camera* c);
 
 	void	_initFonts();
 	void	_drawText();

@@ -16,6 +16,7 @@ private:
 
 	DirectX::XMMATRIX		m_worldMatrix;
 	DirectX::XMFLOAT4A		m_highLightColor;
+	int						m_gridscale;
 
 private: 
 	void _buildMatrix();
@@ -30,9 +31,6 @@ protected:
 	
 
 public:
-	float lol;
-	void setInside();
-	void noInside();
 	Shape();
 	~Shape();
 	void setMesh(Mesh* m);
@@ -67,6 +65,7 @@ public:
 	void ApplyMaterials();
 
 	void CheckPick();
+	void	TESTSHADOW();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;
@@ -76,5 +75,7 @@ public:
 	void setColor(DirectX::XMFLOAT4A color);
 
 	virtual void Draw();
+	void setGridScale(int scale);
+	int getGridScale() const;
 	void TEMPTRANS();
 };
