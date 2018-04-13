@@ -6,6 +6,7 @@
 
 class Room
 {
+	friend class RoomCtrl;
 protected:
 
 	int		m_posX, m_posY;
@@ -23,6 +24,11 @@ protected:
 	std::vector<Wall*> right;
 
 	std::vector<Room*> adjasent;
+	// Eg.
+	/*
+		roomPathindex[0] = { 1 , 2 , 3, 0 } To get to room 0 we need the array path
+	*/
+	std::vector<std::vector<int>> roomPathIndexes;
 	
 	bool				m_hasDoor[4]{ false };
 
@@ -63,6 +69,8 @@ public:
 	virtual void Update(Camera * cam);
 	virtual void Draw() = 0;
 	virtual std::string	toString() const = 0;
+
+	bool operator==(const Room& other) const;
 
 };
 

@@ -31,6 +31,7 @@ OUTPUT main(INPUT input)// : SV_TARGET
 	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
 	output.diffuse = output.diffuse * input.color;
 	output.pos = input.worldPos;
+	output.pos.a = tHighlight.Sample(sampAni,input.tex).r;
 	
 	return output;
 }

@@ -25,9 +25,13 @@ private:
 	Mesh*				m_doorMesh;
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
+	std::vector<std::vector<int>> m_roomConnections;
 	
 	bool				_checkLegal(Room * room);
-	
+	void				_makeRoomConnection(int source, int destination);
+	void				_dijkstra(int src);
+	void				_getSolution(int dist[], int parent[], int src);
+	void				_traversalPath(int parent[], int j, int src, int dst);
 
 public:
 	RoomCtrl();

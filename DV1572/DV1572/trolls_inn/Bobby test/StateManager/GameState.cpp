@@ -27,9 +27,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	box.LoadModel("trolls_inn/Resources/box.obj");
 
-	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
-
 	c.setModel(&box);
 	c.setPosition( 10+0.5, 2+0.5);
 	c.setFloor(0);
@@ -78,7 +75,6 @@ void GameState::Update(double deltaTime)
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
-
 	
 	//<TEMP>
 	c.Update();
@@ -134,10 +130,8 @@ void GameState::_init()
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 	door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	door.setDiffuseTexture("trolls_inn/Resources/door/Texture.bmp");
 	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 

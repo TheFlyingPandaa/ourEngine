@@ -212,6 +212,11 @@ void Room::Update(Camera * cam)
 	}
 }
 
+bool Room::operator==(const Room & other) const
+{
+	return m_posX == other.m_posX && m_posY == other.m_posY;
+}
+
 int Room::getX() const
 {
 	return m_posX;

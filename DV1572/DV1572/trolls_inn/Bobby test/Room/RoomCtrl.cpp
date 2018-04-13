@@ -92,9 +92,102 @@ bool RoomCtrl::_checkLegal(Room * room)
 	return dynamic_cast<Bedroom*>(room) == nullptr;
 }
 
+void RoomCtrl::_makeRoomConnection(int source, int destination)
+{
+	m_roomConnections[source][destination] = 1;
+	m_roomConnections[destination][source] = 1;
+
+}
+
+void RoomCtrl::_dijkstra(int src)
+{
+	auto minDistance = [&](int dist[], bool sptSet[]) -> int
+	{
+		int min = INT_MAX, min_index;
+
+		for (int v = 0; v < m_roomConnections[0].size(); v++)
+			if (sptSet[v] == false && dist[v] <= min)
+				min = dist[v], min_index = v;
+
+		return min_index;
+	};
+
+	if (m_roomConnections[src].size() == 1) return;
+
+	int* dist = new int[m_roomConnections[src].size()];  // The output array. dist[i] will hold
+						  // the shortest distance from src to i
+
+						  // sptSet[i] will true if vertex i is included / in shortest
+						  // path tree or shortest distance from src to i is finalized
+	bool* sptSet = new bool[m_roomConnections[src].size()];
+
+	// Parent array to store shortest path tree
+	int* parent = new int[m_roomConnections[src].size()];
+
+	// Initialize all distances as INFINITE and stpSet[] as false
+	for (int i = 0; i < m_roomConnections[src].size(); i++)
+	{
+		parent[src] = -1;
+		dist[i] = INT_MAX;
+		sptSet[i] = false;
+	}
+
+	// Distance of source vertex from itself is always 0
+	dist[src] = 0;
+	// Find shortest path for all vertices
+	for (int count = 0; count < m_roomConnections[src].size() - 1; count++)
+	{
+		// Pick the minimum distance vertex from the set of
+		// vertices not yet processed. u is always equal to src
+		// in first iteration.
+		int u = minDistance(dist, sptSet);
+
+		// Mark the picked vertex as processed
+		sptSet[u] = true;
+
+		// Update dist value of the adjacent vertices of the
+		// picked vertex.
+		for (int v = 0; v < m_roomConnections[src].size(); v++)
+
+			// Update dist[v] only if is not in sptSet, there is
+			// an edge from u to v, and total weight of path from
+			// src to v through u is smaller than current value of
+			// dist[v]
+			if (!sptSet[v] && m_roomConnections[u][v] &&
+				dist[u] + m_roomConnections[u][v] < dist[v])
+			{
+				parent[v] = u;
+				dist[v] = dist[u] + m_roomConnections[u][v];
+			}
+
+	}
+
+
+	// print the constructed distance array
+	_getSolution(dist, parent, src);
+}
+
+void RoomCtrl::_getSolution(int dist[], int parent[], int src)
+{
+	for (int i = 0; i < m_roomConnections[src].size(); i++)
+	{
+		if (i != src)
+			_traversalPath(parent, i, src, i);
+	}
+}
+
+void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
+{
+	if (parent[j] == -1)
+		return;
+
+	_traversalPath(parent, parent[j], src, dst);
+	// Put path in room
+	m_rooms.at(src)->roomPathIndexes[dst].push_back(j + 1);
+}
+
 RoomCtrl::RoomCtrl()
 {
-
 }
 
 
@@ -149,13 +242,36 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 	if (room)
 		m_rooms.push_back(room);
+
 	CreateWalls();
 	CreateDoors(room);
+
+	if (m_roomConnections.size() < m_rooms.size())
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			m_roomConnections.push_back(std::vector<int>());
+			for (int j = 0; j < m_rooms.size(); j++)
+			{
+				if(*m_rooms[i] == *m_rooms[j])
+					m_roomConnections[i].push_back(1);
+				else 
+					m_roomConnections[i].push_back(0);
+			}
+		}
+
+	}
+	_dijkstra(m_rooms.size() - 1);
+
+	for (auto& vec : m_roomConnections)
+		vec.clear();
+	m_roomConnections.clear();
 	
 }
 
 void RoomCtrl::Update(Camera * cam)
 {
+	
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
 		m_rooms[i]->Update(cam);
@@ -371,10 +487,7 @@ void RoomCtrl::CreateDoors(Room * room)
 			pos.x -= static_cast<int>(room->getPosition().x);
 			pos.y -= static_cast<int>(room->getPosition().z);
 			
-			/*if (pos.x >= 1)
-				pos.x -= 1;*/
-
-			//Tile* t1 = room->getTiles()[pos.x - 1][pos.y];
+			
 			Tile* t2 = t1->getAdjacent(dir);
 
 			CreateDoor(t1, t2);
@@ -456,8 +569,31 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 		return;
 	w->setScale(1.0f,1.0f,1.0f);
 	w->setIsDoor(true);
-	w->getTile()->getRoom()->addAdjasentRoom(tile2->getRoom());
-	//tile1->setWallSpotPopulated(dir, true);
+	int indexes[2] = { -1 };
+	Room* firstRoom = w->getTile()->getRoom();
+	Room* secondRoom = tile2->getRoom();
+	/*int highestIndex = 0;
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		highestIndex = highestIndex < i ? i : highestIndex;
+		if (*firstRoom == *m_rooms[i])
+			indexes[0] = i;
+		if (*secondRoom == *m_rooms[i])
+			indexes[1] = i;
+	}
+	if (highestIndex >= m_roomConnections.size())
+	{
+		
+		m_roomConnections.push_back(std::vector<int>());
+
+		for(auto& vec : m_roomConnections)
+			vec.push_back(0);
+
+	}*/
+
+	firstRoom->addAdjasentRoom(secondRoom);
+	secondRoom->addAdjasentRoom(firstRoom);
+
 	w->setMesh(this->m_doorMesh);
 }
 
