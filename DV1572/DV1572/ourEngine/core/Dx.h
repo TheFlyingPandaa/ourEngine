@@ -69,8 +69,8 @@ namespace DX
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 
-	extern XMFLOAT4A g_lightPos;
-	extern XMFLOAT4A g_lightDir;
+	extern DirectX::XMFLOAT4A g_lightPos;
+	extern DirectX::XMFLOAT4A g_lightDir;
 
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;

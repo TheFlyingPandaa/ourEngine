@@ -49,7 +49,7 @@ float4 main(Input input) : SV_Target
 
 	float3 ambient = diffuseSample * 0.2f;
 	float3 finalColorForSun; 
-	float mul = 1;
+	float mul2 = 1;
 
 	/*if (inside)
 		mul = 0;*/
@@ -80,7 +80,7 @@ float4 main(Input input) : SV_Target
 
 	float3 finalSpec = spec * specLevel;
 	///////////////////////////////////////////////////////////////////////////////////////////
-	finalColorForSun = ambient + (diffuse + finalSpec) * sunColor * mul;
+    finalColorForSun = ambient + (diffuse + finalSpec) * sunColor.rgb * mul2;
 	
 
 	float3 finalColorForPointLights = float3(0,0,0);
@@ -115,7 +115,7 @@ float4 main(Input input) : SV_Target
 	float3 finalColor = saturate(finalColorForSun + finalColorForPointLights);
 
 
-    float4 lightPos = view[3];
+    //float4 lightPos = view[3];
 	float4 posLightH = mul(float4(wordPos,1.0f), mul(view, projection)); // Translate the world position into the view space of the light
 	//posLightH = mul(posLightH, lightProj);					// Translate the view position into the projection space of the light
 	posLightH.xy /= posLightH.w;							// Get the texture coords of the "object" in the shadow map
