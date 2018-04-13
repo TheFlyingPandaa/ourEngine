@@ -88,6 +88,9 @@ private:
 	ID3D11VertexShader*		m_hudVertexShader;
 	ID3D11PixelShader*		m_hudPixelShader;
 
+	//DEBUG
+	ID3D11RasterizerState*	m_WireFrame;
+	bool					m_WireFrameDebug = false;;
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
