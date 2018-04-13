@@ -214,6 +214,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\Menu\TopMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\AI_Base\Economy.h" />
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
@@ -349,6 +350,7 @@
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\Menus\TopMenu.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

@@ -130,6 +130,7 @@ void GameState::Draw()
 	gameTime.m_cpyLightToGPU();
 	this->grid->Draw();
 	m_stateHUD.Draw();
+	
 
 	//TEST
 	c.Draw();

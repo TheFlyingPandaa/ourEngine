@@ -1,4 +1,5 @@
 #include "HUD.h"
+#include <iostream>
 
 void HUD::_cleanUp()
 {
@@ -30,9 +31,10 @@ bool HUD::LoadHud(const std::string & path)
 	
 	std::ifstream inputFile;
 	inputFile.open(path);
-	if (!inputFile)
+	if (!inputFile) {
+		std::cout << "Faild to load HUD TextFile" << std::endl;
 		return false;
-
+	}
 	std::string currentLine = "";
 	while (std::getline(inputFile, currentLine))
 	{
@@ -163,6 +165,35 @@ void HUD::ResetColorsOnPickable()
 	{
 		s->setColor(1.0f, 1.0f, 1.0f);
 	}
+}
+
+void HUD::CreateRectangle(std::string path, float pX, float pY, float sX, float sY, float index)
+{
+	Mesh* m = new Mesh();
+	m->MakeRectangle();
+	m->setDiffuseTexture(path);
+	m_mesh.push_back(m);
+
+	RectangleShape* r;
+	r = new RectangleShape();
+	r->setMesh(m_mesh[m_mesh.size() - 1]);
+
+	float d = 0.1;
+
+	d *= 0.00001f;
+
+	r->setScreenPos(pX, pY, d);
+
+	if (static_cast<int>(sX) == 0)
+		sX = static_cast<float>(Input::getWindowSize().x);
+	if (static_cast<int>(sY) == 0)
+		sY = static_cast<float>(Input::getWindowSize().y);
+
+	r->setWidth(sX);
+	r->setHeight(sY);
+	r->setIndex(index);
+	m_quadsClickAble.push_back(r);
+
 }
 
 void HUD::CheckIfPicked()

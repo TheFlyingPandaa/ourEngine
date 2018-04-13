@@ -110,6 +110,7 @@
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\Menu\TopMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -118,6 +119,7 @@
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
+    <Text Include="trolls_inn\Resources\Menus\TopMenu.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />

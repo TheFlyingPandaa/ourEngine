@@ -1,0 +1,39 @@
+# This is a file which defines the HUD
+# use the 'tx' keyword to define a texture
+# use the 'r' keyword to define a rectangle to use the defined texture
+# all rectangles will share the texture until a new texture is defined
+
+# example:
+# tx path/path/path/picture.png
+# r 0 0 0.1 0.08 1 0
+# txt 950 4 0.5 0 0 1 1 0 L
+# Gold
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index.
+# if sizeX or sizeY is 0, this is set as the screen res
+# txt posX posY Scl r g b a rotation allignment (L, C, R)
+
+# hitbox circle for buttonBackground
+hc 500 500 1000
+
+# Button_Shop
+tx trolls_inn/Resources/Menus/bar.jpg
+r 520 650 200 50 0 0
+
+# Button_Shop
+tx trolls_inn/Resources/Menus/bar.jpg
+r 520 550 200 50 1 0
+
+# Button_Shop
+tx trolls_inn/Resources/Menus/bar.jpg
+r 520 450 200 50 2 0
+
+# Button_Shop
+tx trolls_inn/Resources/Menus/bar.jpg
+r 520 350 200 50 3 0
+
+
+
+
+
+
+

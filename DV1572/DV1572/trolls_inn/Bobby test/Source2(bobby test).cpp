@@ -85,7 +85,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	boxy.setMesh(&box);
 
 
-	gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
+	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
+	gameStates.push(new MainMenu(&pickingEvents, &keyEvent, cam));
 
 	std::unique_ptr<AudioEngine> audEngine;
 	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;

@@ -29,6 +29,9 @@ public:
 	bool			isMouseInsidePotentialArea(DirectX::XMFLOAT2 mousePos);
 	void	ResetColorsOnPickable();
 
+	//(Path to texture, pos X, pos Y, scale X, scale Y, PickIndex)
+	void	CreateRectangle(std::string path, float pX, float pY, float sX, float sY, float index);
+
 	void CheckIfPicked();
 	void Draw();
 };
