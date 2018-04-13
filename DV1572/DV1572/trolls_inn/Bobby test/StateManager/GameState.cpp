@@ -234,7 +234,7 @@ void GameState::_handlePickingAi(Shape * obj)
 }
 
 
-void GameState::_handleInput()
+void GameState::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
