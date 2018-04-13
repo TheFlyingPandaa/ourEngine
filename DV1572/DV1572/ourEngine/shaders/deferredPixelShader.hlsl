@@ -20,7 +20,6 @@ cbuffer SUN_BUFFER : register (b2)
 
 cbuffer LIGHTMATRIXBUFFER : register(b9)
 {
-	float4x4 worldMatrix;
 	float4x4 view;
 	float4x4 projection;
 };
@@ -47,9 +46,11 @@ float4 main(Input input) : SV_Target
 		return float4(ambient, 1);
 
 	//SUN//
+
+	
 	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	float3 sunLightToObject = normalize(-sunDir);
+    float3 sunLightToObject = normalize(-sunDir.xyz);
 	//TODO:Hey Future me Remove this
 	//return float4(diffuseSample,1);
 	float3 diffuse = diffuseSample * max(dot(normal, sunLightToObject), 0.0f);
@@ -75,6 +76,8 @@ float4 main(Input input) : SV_Target
 	finalColor = ambient + (diffuse + finalSpec) * sunColor.xyz;
 	finalColor = saturate(finalColor); 
 
+
+    float4 lightPos = view[3];
 	float4 posLightH = mul(float4(wordPos,1.0f), mul(view, projection)); // Translate the world position into the view space of the light
 	//posLightH = mul(posLightH, lightProj);					// Translate the view position into the projection space of the light
 	posLightH.xy /= posLightH.w;							// Get the texture coords of the "object" in the shadow map
@@ -85,7 +88,10 @@ float4 main(Input input) : SV_Target
 	float2 smTex = float2(0.5f * posLightH.x + 0.5f, -0.5f * posLightH.y + 0.5f);	// Texcoords are not [-1, 1], change the coords to [0, 1]
 	float depth = posLightH.z / posLightH.w;										// Get the actual depth (seen from the camera)
 	float SHADOW_EPSILON = 0.001f;													// Some small value
-	float shadowCoeff = (tShadow.Sample(sampAni, smTex).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;	// If the depth from camera is larger than depth from light,
+
+    float angle = max(dot(sunLightToObject, float3(0, 1, 0)), 0.1f) - 0.1f;
+
+	float shadowCoeff = (tShadow.Sample(sampAni, smTex).r + SHADOW_EPSILON < depth) ? angle : 1.0f;	// If the depth from camera is larger than depth from light,
 
 	finalColor *= shadowCoeff;
 

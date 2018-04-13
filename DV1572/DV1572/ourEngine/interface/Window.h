@@ -94,6 +94,7 @@ private:
 	ID3D11PixelShader	*	m_shadowPixel;
 	ID3D11Buffer		*	m_shadowBuffer;
 	ID3D11ShaderResourceView * m_shadowDepthTexture = nullptr;
+	XMMATRIX				m_shadowProjMatrix;
 
 
 	// Input
@@ -143,6 +144,7 @@ private:
 	void	_runComputeShader();
 
 	//Shadow
+	void	_loadShadowBuffers();
 	void	_prepareShadow();
 	void	_shadowPass(Camera* c);
 

@@ -263,6 +263,7 @@ HRESULT Window::_initDirect3DContext()
 		DX::g_device->CreateRenderTargetView(pBackBuffer, NULL, &m_backBufferRTV);
 		//we are creating the standard depth buffer here.
 		_createDepthBuffer();
+		_loadShadowBuffers();
 		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);	//As a standard we set the rendertarget. But it will be changed in the prepareGeoPass
 		pBackBuffer->Release();
 	}
@@ -536,6 +537,53 @@ void Window::_runComputeShader() {
 	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
 }
 
+void Window::_loadShadowBuffers()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(SHADOW_MATRIX_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = m_width;
+	texDesc.Height = m_height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_depthBufferTexShad);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = 0;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Texture2D.MipSlice = 0;
+
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
+
+	//m_shadowProjMatrix = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
+	m_shadowProjMatrix = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
+}
+
 void Window::_prepareShadow()
 {
 
@@ -557,8 +605,8 @@ void Window::_shadowPass(Camera* c)
 	XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
 	XMVECTOR p;
 	XMVECTOR l;
-	p = XMLoadFloat4(&pos);
-	l = XMLoadFloat4(&lookAt);
+	//p = XMLoadFloat4(&pos);
+	//l = XMLoadFloat4(&lookAt);
 
 	//p = XMLoadFloat4(&DX::g_lightPos);
 	l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
@@ -570,32 +618,12 @@ void Window::_shadowPass(Camera* c)
 	
 
 	XMMATRIX view = XMMatrixLookAtLH(p, look, u);
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
-	proj = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
-	THIS_IS_A_TEXT_STRUCT meshBuffer;
+	
+	SHADOW_MATRIX_BUFFER meshBuffer;
 
 	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));
-	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(proj));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(m_shadowProjMatrix));
 
-
-	//XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(c->getViewMatrix()));
-	//XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(proj));
-
-	D3D11_BUFFER_DESC bDesc;
-	bDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bDesc.ByteWidth = sizeof(THIS_IS_A_TEXT_STRUCT);
-	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bDesc.MiscFlags = 0;
-	bDesc.StructureByteStride = 0;
-
-	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
-
-
-
-
-	//The GBuffer Has 3 elements. A texture that we can write our output to, a rendertarget that has the texture maped to it
-	//And then a shaderResourceView to be able to access it at a later date
 	ID3D11Buffer* instanceBuffer = nullptr;
 	for (auto& instance : DX::g_InstanceGroupsShadow)
 	{
@@ -609,19 +637,16 @@ void Window::_shadowPass(Camera* c)
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
-		//We copy the data into the attribute part of the layout.
-		//This is what makes instancing special
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(THIS_IS_A_TEXT_STRUCT));
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
 		DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
 		
 		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
-		//for (int i = 0; i < 10; i++)
-		//	DX::g_deviceContext->PSSetConstantBuffers(i, 1, nullptr);
 
-		//instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
+
+	
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -790,36 +815,7 @@ void Window::_createDepthBuffer()
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTex, NULL, &m_depthStencilView);
 
 
-	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = m_width;
-	texDesc.Height = m_height;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
 
-	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_depthBufferTexShad);
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-	dsvDesc.Flags = 0;
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	dsvDesc.Texture2D.MipSlice = 0;
-
-	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-
-	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
 	//hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTexShad);
 	//hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, NULL, &m_depthStencilViewShad);
 }

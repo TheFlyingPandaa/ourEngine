@@ -1,6 +1,5 @@
 cbuffer MATRIX_BUFFER : register(b9)
 {
-	float4x4 worldMatrix;
 	float4x4 view;
 	float4x4 projection;
 };

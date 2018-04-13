@@ -73,7 +73,7 @@ void GameState::Update(double deltaTime)
 	
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
 
 	
 	//<TEMP>

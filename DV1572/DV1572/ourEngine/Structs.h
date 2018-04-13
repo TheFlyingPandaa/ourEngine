@@ -46,9 +46,8 @@ struct PICK_BUFFER
 	DirectX::XMFLOAT4X4A MVP;
 };
 
-struct THIS_IS_A_TEXT_STRUCT
+struct SHADOW_MATRIX_BUFFER
 {
-	DirectX::XMFLOAT4X4A world;
 	DirectX::XMFLOAT4X4A view;
 	DirectX::XMFLOAT4X4A projection;
 };
