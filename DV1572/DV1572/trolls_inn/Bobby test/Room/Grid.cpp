@@ -166,7 +166,7 @@ void Grid::Draw()
 		for (int j = 0; j < m_sizeY; j++)
 		{
 			
-			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f)
+			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
 				m_tiles[i][j]->getQuad().Draw();
 		}
 	}
