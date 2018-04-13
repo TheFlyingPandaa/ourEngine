@@ -2,6 +2,9 @@
 #include "../core/Dx.h"
 #include <thread>
 #include "../core/Picking.h"
+#include <chrono>
+
+#define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -738,7 +741,16 @@ void Window::_geometryPass(const Camera &cam)
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;	//The smashing it with projection
 
 	MESH_BUFFER meshBuffer;
-	
+
+	if (m_WireFrameDebug == true)
+	{
+		D3D11_RASTERIZER_DESC wfdesc;
+		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+		wfdesc.CullMode = D3D11_CULL_NONE;
+		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+		DX::g_deviceContext->RSSetState(m_WireFrame);
+	}
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
@@ -799,7 +811,17 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
-	
+
+	if (m_WireFrameDebug == true)
+	{
+		D3D11_RASTERIZER_DESC wfdesc;
+		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+		wfdesc.FillMode = D3D11_FILL_SOLID;
+		wfdesc.CullMode = D3D11_CULL_BACK;
+		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+		DX::g_deviceContext->RSSetState(m_WireFrame);
+	}
+
 }
 
 void Window::_skyBoxPass(const Camera& cam)
@@ -1192,6 +1214,18 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
+	if (DEBUG == 1)
+	{
+		if (Input::isKeyPressed('O'))
+		{
+			m_WireFrameDebug = true;
+		}
+		else if (Input::isKeyPressed('I'))
+		{
+			m_WireFrameDebug = false;
+		}
+	}
+	
 
 	_prepareGeometryPass();
 	_geometryPass(*c);
