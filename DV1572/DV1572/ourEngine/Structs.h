@@ -55,6 +55,11 @@ struct POINT_LIGHT_COLLECTION
 	DirectX::XMFLOAT4A lightSetup[100];
 	DirectX::XMFLOAT4A nrOfLights; 
 };
+struct SHADOW_MATRIX_BUFFER
+{
+	DirectX::XMFLOAT4X4A view;
+	DirectX::XMFLOAT4X4A projection;
+};
 
 struct V
 {
@@ -72,3 +77,4 @@ struct F
 {
 	int vIndex, vnIndex, vtIndex;
 };
+

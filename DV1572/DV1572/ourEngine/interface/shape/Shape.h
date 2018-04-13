@@ -65,6 +65,7 @@ public:
 	void ApplyMaterials();
 
 	void CheckPick();
+	void	TESTSHADOW();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;

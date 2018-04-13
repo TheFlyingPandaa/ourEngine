@@ -30,6 +30,8 @@ private:
 
 	Mesh door;
 
+	Object3D test;
+
 	Object3D d;
 
 	int posX;
