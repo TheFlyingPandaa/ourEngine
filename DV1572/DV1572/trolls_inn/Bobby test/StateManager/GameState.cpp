@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <chrono>
+#include <thread>
+#include <future>
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
 
@@ -96,6 +98,8 @@ void GameState::Update(double deltaTime)
 	}
 	//</TEMP>
 
+	 // Get result.
+
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
 	/*auto time = std::chrono::high_resolution_clock::now();
@@ -167,67 +171,64 @@ void GameState::_handlePicking()
 			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
 		else if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
-		else if (m_stage == GameStage::Play)
+
+
+		using namespace std::chrono_literals;
+
+		// Create a promise and get its future.
+		if (m_i == 0)
 		{
-			if (c.walkQueueDone() && m_move)
+			m_i++;
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+		}
+
+
+		// Use wait_for() with zero milliseconds to check thread status.
+		auto status = future.wait_for(0ms);
+
+		// Print status. And start a new thread if the other thread was finnished
+		if (status == std::future_status::ready) {
+			future.get();
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			
+		}
+		
+	}
+}
+
+void GameState::_handlePickingAi(Shape * obj)
+{
+
+	if (m_stage == GameStage::Play)
+	{
+		if (c.walkQueueDone() && m_move)
+		{
+			//Shape * obj = this->p_pickingEvent->top();
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+			std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+			if (path.size() != 0)
 			{
-				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-				auto start = grid->getTile(xTile, yTile);
-				auto dest = grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z);
-				
-				// We are outside and want to get inside
-				// start -> door
-				// door -> dest
-				std::vector<std::shared_ptr<Node>> path;
-				if (start->getIsInside() == false && dest->getIsInside() == true)
-				{
-					auto StartToDoor = grid->findPath(start, grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y], m_mainDoorPos);
-					std::cout << "First path: " << StartToDoor.size();
-					auto DoorToDest = grid->findPath(grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y + 1], dest, m_mainDoorPos);
-					std::cout << "Second path: " << DoorToDest.size();
-					StartToDoor.insert(StartToDoor.end(), DoorToDest.begin(), DoorToDest.end());
-					path = StartToDoor;
-				}// We are inside and want to get out
-				else if (start->getIsInside() == true && dest->getIsInside() == false)
-				{
-					auto StartToDoor = grid->findPath(start, grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y + 1], m_mainDoorPos);
-					std::cout << "First path: " << StartToDoor.size();
-					auto DoorToDest = grid->findPath(grid->getGrid()[m_mainDoorPos.x][m_mainDoorPos.y], dest, m_mainDoorPos);
-					std::cout << "Second path: " << DoorToDest.size();
-					StartToDoor.insert(StartToDoor.end(), DoorToDest.begin(), DoorToDest.end());
-					path = StartToDoor;
-				}
-				else
-					path = grid->findPath(start, dest, m_mainDoorPos);
-				
-
-				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-				if (path.size() == 0)
-				{
-					break;
-				}
-				else
-				{
-					m_justMoved = false;
-				}
+				m_justMoved = false;
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-
-
 			}
+
 		}
 	}
 }
 
-void GameState::_handleHUDPicking(RectangleShape * r)
+
+void GameState::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
