@@ -84,7 +84,7 @@ private:
 	
 
 
-	virtual void	_init() override;
+	void	_init() override;
 	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
 	void			_handlePicking();
@@ -97,6 +97,6 @@ public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
 	~GameState();
 	// Inherited via State
-	virtual void Update(double deltaTime) override;
-	virtual void Draw() override;
+	void Update(double deltaTime) override;
+	void Draw() override;
 };
