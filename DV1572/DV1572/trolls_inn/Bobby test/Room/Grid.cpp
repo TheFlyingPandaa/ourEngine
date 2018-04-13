@@ -304,11 +304,11 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 
 	//std::vector<std::shared_ptr<Node>> pointerBank;
 
-	//Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
+	//td::shared_ptr<Node> current = neNode(startTile, nullptr, 0, getDistance(startTile, endTile));
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	//current->tile->
 
-	/*if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
+	if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
 	}
@@ -331,8 +331,6 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			
 		}
 	}
-
-	
 
 	openList.push_back(current);
 
