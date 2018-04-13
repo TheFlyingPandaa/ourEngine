@@ -155,6 +155,28 @@ void GameState::_handleBuildRoom(Shape* pickedShape)
 
 }
 
+void GameState::_handleRoomDeletion(Shape * pickedShape)
+{
+	switch (m_roomDeletionStage)
+	{
+	case RoomDeletionStage::StartRoom:
+		if (pickedShape)
+		{
+			m_startTile = pickedShape;
+			m_roomDeletionStage = RoomDeletionStage::SelectionRoom;
+		}
+		else
+			m_roomDeletionStage = RoomDeletionStage::NoneRoom; 
+		break; 
+	case RoomDeletionStage::SelectionRoom:
+		if (pickedShape)
+		{
+			m_selectedTile = pickedShape; 
+		}
+		break; 
+	}
+}
+
 void GameState::_setHud()
 {
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
@@ -171,7 +193,8 @@ void GameState::_handlePicking()
 			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
 		else if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
-
+		else if (m_roomDeletionStage != RoomDeletionStage::NoneRoom)
+			_handleRoomDeletion(obj); 
 
 		using namespace std::chrono_literals;
 
@@ -190,7 +213,6 @@ void GameState::_handlePicking()
 		if (status == std::future_status::ready) {
 			future.get();
 			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			
 		}
 		
 	}
@@ -311,12 +333,19 @@ void GameState::_handleInput()
 			else
 				m_move = false;
 		}
+
+		if (m_stage == GameStage::DeleteRoom)
+		{
+			_roomDeletionInput(); 
+		}
 	}
 
 	if (Input::isKeyPressed('B'))
 		m_stage = GameStage::BuildRoom;
 	else if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
+	else if (Input::isKeyPressed('D'))
+		m_stage = GameStage::DeleteRoom; 
 
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
@@ -383,5 +412,56 @@ void GameState::_buildInput()
 		m_selectedTile = nullptr;
 		m_roomPlaceable = false;
 		this->grid->AddRoom(start, end, m_selectedRoomType);
+	}
+}
+
+void GameState::_roomDeletionInput()
+{
+	if (Input::isMouseLeftPressed)
+	{
+		if (m_roomDeletionStage == RoomDeletionStage::NoneRoom)
+		{
+			//If no tile is selected, reset tiles. 
+			m_roomDeletionStage = RoomDeletionStage::StartRoom; 
+			this->grid->PickTiles(); 
+		}
+		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom)
+		{
+			if (m_selectedTile)
+			{
+				Tile * t = grid->getTile(m_selectedTile->getPosition().x + 0.5f, m_selectedTile->getPosition().z + 0.5f); 
+					/*[static_cast<int>(m_selectedTile->getPosition().x  + 0.5f)][static_cast<int>(m_selectedTile->getPosition().z + 0.5f)];*/
+				std::vector<Wall*> tempVector = *t->getRoom()->getAllWalls(); 
+				for (int i = 0; i < tempVector.size(); i++)
+				{
+					if (!tempVector[i]->getIsInner())
+					{
+						grid->getRoomCtrl().removeWall(tempVector[i]); 
+					}
+					else
+					{
+						tempVector[i]->setIsInner(false); 
+					}
+				}
+				for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
+				{
+					for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
+					{
+						t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect); 
+					}
+				}
+			
+			}
+		}
+		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && !Input::isMouseLeftPressed)
+		{
+			m_roomDeletionStage = RoomDeletionStage::EndRoom; 
+		}
+		else if (m_roomDeletionStage == RoomDeletionStage::EndRoom)
+		{
+			m_buildStage = BuildStage::None;
+			m_startTile = nullptr;
+			m_selectedTile = nullptr;
+		}
 	}
 }

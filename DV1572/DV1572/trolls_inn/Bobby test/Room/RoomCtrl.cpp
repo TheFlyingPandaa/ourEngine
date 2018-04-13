@@ -459,6 +459,18 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 	w->setMesh(this->m_doorMesh);
 }
 
+void RoomCtrl::removeWall(Wall * wallToRemove)
+{
+	for (int i = 0; i < m_walls.size(); i++)
+	{
+		if (m_walls[i] == wallToRemove)
+		{
+			delete wallToRemove; 
+			m_walls.erase(m_walls.begin() + i, m_walls.begin() + i + 1); 
+		}
+	}
+}
+
 DirectX::XMINT2 RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
 {
 	Direction dir = this->getDirection(tile1, tile2);

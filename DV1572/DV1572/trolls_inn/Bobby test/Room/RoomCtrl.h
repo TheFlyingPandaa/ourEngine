@@ -25,6 +25,7 @@ private:
 	Mesh*				m_doorMesh;
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
+
 	
 	bool				_checkLegal(Room * room);
 	
@@ -51,6 +52,7 @@ public:
 	DirectX::XMINT2		CreateMainDoor(Room * room);
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(Tile * tile1, Tile * tile2);
+	void				removeWall(Wall* wallToRemove); 
 	DirectX::XMINT2		CreateMainDoor(Tile * tile1, Tile * tile2);
 
 

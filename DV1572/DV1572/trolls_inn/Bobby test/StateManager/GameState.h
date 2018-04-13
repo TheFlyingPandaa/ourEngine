@@ -15,7 +15,8 @@ private:
 	enum GameStage
 	{
 		Play,
-		BuildRoom
+		BuildRoom,
+		DeleteRoom
 	};
 
 
@@ -51,11 +52,21 @@ private:
 		Selection,
 		End
 	};
+
+	//Deletion Mode
+	enum RoomDeletionStage
+	{
+		NoneRoom, 
+		StartRoom, 
+		SelectionRoom,
+		EndRoom 
+	};
 	
 	RoomType m_selectedRoomType;
 	Shape * m_startTile;
 	Shape * m_selectedTile;
 	BuildStage m_buildStage;
+	RoomDeletionStage m_roomDeletionStage; 
 	bool m_roomPlaceable;
 	// Build Mode END
 
@@ -86,12 +97,14 @@ private:
 
 	virtual void	_init() override;
 	void			_handleBuildRoom(Shape * s);
+	void			_handleRoomDeletion(Shape * s); 
 	void			_setHud();
 	void			_handlePicking();
 	void			_handlePickingAi(Shape * obj);
 	void			_handleHUDPicking(RectangleShape* r);
 	void			_handleInput();
 	void			_buildInput();
+	void			_roomDeletionInput(); 
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
