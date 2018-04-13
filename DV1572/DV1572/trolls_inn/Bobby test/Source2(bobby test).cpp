@@ -82,7 +82,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
 
-	PointLight pointLight = PointLight(XMFLOAT4A(16, 5, 16, 1), XMFLOAT4A(0.5,0, 0.8, 1), XMFLOAT4A(1.0f, 0.0f, 0.2f, 0.0f)); 
+	PointLight pointLight = PointLight(XMFLOAT4A(16, 5, 16, 1), XMFLOAT4A(1.0f,0.2f,0.1f,1.0f), XMFLOAT4A(1.0f, 0.0f, 0.2f, 0.0f)); 
 	pointLight.addToLightQueue(); 
 
 	SkyBoxObject boxy;
