@@ -361,6 +361,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			Tile* currentTile = current->tile->getAdjacent(dir);
 
 			// Rules here
+			
 			if (currentTile == nullptr)
 				continue;
 			if (current->tile->getIsInside())

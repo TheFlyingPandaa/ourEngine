@@ -9,7 +9,7 @@
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	m_stage = GameStage::Play;
+	m_stage = GameStage::BuildRoom;
 	// Building
 	m_startTile = nullptr;
 	m_selectedTile = nullptr;
@@ -26,6 +26,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	_setHud();
 
 	box.LoadModel("trolls_inn/Resources/box.obj");
+
 	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
 	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
 

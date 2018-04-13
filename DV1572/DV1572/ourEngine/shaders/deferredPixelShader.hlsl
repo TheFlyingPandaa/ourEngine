@@ -51,8 +51,6 @@ float4 main(Input input) : SV_Target
 	float3 finalColorForSun; 
 	float mul2 = 1;
 
-	/*if (inside)
-		mul = 0;*/
 
 	//SUN//
 
