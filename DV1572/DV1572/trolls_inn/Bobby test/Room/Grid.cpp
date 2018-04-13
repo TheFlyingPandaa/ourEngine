@@ -23,8 +23,20 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
-
+	
+	
 	this->m_tileMesh = mesh;
+	this->m_gridMesh = new Mesh();
+
+	m_gridMesh->MakeRectangle();
+	m_gridMesh->setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	m_gridMesh->setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+
+	m_wholeGrid.setMesh(m_gridMesh);
+	m_wholeGrid.setScale(sizeX *2.0f);
+	m_wholeGrid.setPos(posX, -0.01f, posX);
+	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
+	m_wholeGrid.setGridScale(sizeX);
 
 	this->m_tiles = std::vector<std::vector<Tile*>>(this->m_sizeX);
 	for (int i = 0; i < sizeX; i++)
@@ -34,7 +46,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 		{
 			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 			t->getQuad().setScale(2.0f);
-			t->getQuad().setPos(static_cast<float>(i + posX), 0.0f, static_cast<float>(j + posY));
+			t->getQuad().setPos(static_cast<float>(i + posX), 0, static_cast<float>(j + posY));
 			t->setPosX(i);
 			t->setPosY(j);
 			this->m_tiles[i][j] = t;
@@ -119,6 +131,7 @@ Grid::~Grid()
 			delete this->m_tiles[i][j];
 		}
 	}
+	delete m_gridMesh;
 }
 
 
@@ -152,23 +165,55 @@ void Grid::Draw()
 	{
 		for (int j = 0; j < m_sizeY; j++)
 		{
-			m_tiles[i][j]->getQuad().noInside();
-			m_tiles[i][j]->getQuad().Draw();
+			
+			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+				m_tiles[i][j]->getQuad().Draw();
 		}
 	}
+	m_wholeGrid.Draw();
 
 	m_roomCtrl.Draw();
 }
-void Grid::PickTiles()
+
+void Grid::PickTiles(Shape* selectionTile)
 {
-	for (int i = 0; i < m_tiles.size(); i++)
+	if (selectionTile)
 	{
-		for (int j = 0; j < m_tiles[i].size(); j++)
-		{			
-			m_tiles[i][j]->getQuad().setColor(1.0f,1.0f,1.0f);
-			m_tiles[i][j]->getQuad().CheckPick();
+		int xPos = selectionTile->getPosition().x;
+		int yPos = selectionTile->getPosition().z;
+		for(int x = -5; x < 5; x++)
+			for (int y = -5; y < 5; y++)
+			{
+				int indexX = xPos + x;
+				int indexY = yPos + y;
+
+				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
+
+				m_tiles[indexX][indexY]->getQuad().CheckPick();
+			}
+		for (int i = 0; i < m_tiles.size(); i++)
+		{
+			for (int j = 0; j < m_tiles[i].size(); j++)
+			{
+				m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+			
+			}
+		}
+
+		
+	}
+	else
+	{
+		for (int i = 0; i < m_tiles.size(); i++)
+		{
+			for (int j = 0; j < m_tiles[i].size(); j++)
+			{
+				m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+				m_tiles[i][j]->getQuad().CheckPick();
+			}
 		}
 	}
+	
 }
 bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 {
@@ -263,7 +308,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	//current->tile->
 
-	if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
+	/*if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
 	{
 		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
 	}
@@ -275,7 +320,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	{
 		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
 		
-	}
+	}*/
 
 	
 

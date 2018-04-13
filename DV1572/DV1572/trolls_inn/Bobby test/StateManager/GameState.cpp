@@ -2,6 +2,10 @@
 #include <iostream>
 #include <stdlib.h>
 #include <chrono>
+#include <thread>
+#include <future>
+#include "../../../ourEngine/interface/light/PointLight.h"
+#include "../../../ourEngine/core/Dx.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -47,12 +51,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, 4), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
 	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	m_mainDoorPos = grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
-
+	
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
-	
 }
 
 GameState::~GameState()
@@ -74,7 +77,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
 
 	
 	//<TEMP>
@@ -96,6 +99,8 @@ void GameState::Update(double deltaTime)
 	}
 	//</TEMP>
 
+	 // Get result.
+
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
 	/*auto time = std::chrono::high_resolution_clock::now();
@@ -105,13 +110,19 @@ void GameState::Update(double deltaTime)
 
 void GameState::Draw()
 {
-	
+	gameTime.m_cpyLightToGPU();
 	this->grid->Draw();
 	m_stateHUD.Draw();
 
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
+	test.setScale(5);
+	test.setPos(2.5f, 2.5f, 2.5f);
+	test.setMesh(&box);
+	test.TESTSHADOW();
+	test.Draw();
+
 }
 
 void GameState::_init()
@@ -167,40 +178,64 @@ void GameState::_handlePicking()
 			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
 		else if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
-		else if (m_stage == GameStage::Play)
+
+
+		using namespace std::chrono_literals;
+
+		// Create a promise and get its future.
+		if (m_i == 0)
 		{
-			if (c.walkQueueDone() && m_move)
+			m_i++;
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+		}
+
+
+		// Use wait_for() with zero milliseconds to check thread status.
+		auto status = future.wait_for(0ms);
+
+		// Print status. And start a new thread if the other thread was finnished
+		if (status == std::future_status::ready) {
+			future.get();
+			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			
+		}
+		
+	}
+}
+
+void GameState::_handlePickingAi(Shape * obj)
+{
+
+	if (m_stage == GameStage::Play)
+	{
+		if (c.walkQueueDone() && m_move)
+		{
+			//Shape * obj = this->p_pickingEvent->top();
+			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+
+			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+			std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+			if (path.size() != 0)
 			{
-				XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-				int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-				int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-				std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
-
-				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-				if (path.size() == 0)
-				{
-					break;
-				}
-				else
-				{
-					m_justMoved = false;
-				}
+				m_justMoved = false;
 
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-
-
 			}
+
 		}
 	}
 }
 
-void GameState::_handleHUDPicking(RectangleShape * r)
+
+void GameState::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
@@ -308,7 +343,7 @@ void GameState::_buildInput()
 		}
 		else if (m_buildStage == BuildStage::Selection)
 		{
-			this->grid->PickTiles();
+			this->grid->PickTiles(m_selectedTile);
 			if (m_startTile && m_selectedTile)
 			{
 				XMFLOAT3 s = m_startTile->getPosition();

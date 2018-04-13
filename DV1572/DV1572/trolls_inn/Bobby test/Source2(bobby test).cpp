@@ -11,6 +11,7 @@
 #include <chrono>
 
 #include "../Time Management/GameTime.h"
+#include "../../ourEngine/interface/light/PointLight.h"
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
@@ -77,6 +78,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
 	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
 
+	PointLight pointLight = PointLight(XMFLOAT4A(16, 5, 16, 1), XMFLOAT4A(0.5,0, 0.8, 1), XMFLOAT4A(1.0f, 0.0f, 0.2f, 0.0f)); 
+	pointLight.addToLightQueue(); 
 
 	SkyBoxObject boxy;
 	boxy.setMesh(&box);
@@ -113,6 +116,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
+
 			if (!gameStates.empty())
 			{
 				gameStates.top()->Update(1.0f / REFRESH_RATE);
@@ -173,7 +177,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		fpsCounter++;
 		if (!gameStates.empty())
 			gameStates.top()->Draw();
-		
 		wnd.Flush(cam);
   		wnd.Present();
 		wnd.FullReset();

@@ -7,7 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../core/Camera/Camera.h"
 #include "shape\Rectangle.h"
-#include "light\Light.h"
+#include "light\PointLight.h"
 #include "Input.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
@@ -53,6 +53,8 @@ private:
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
 	ID3D11Buffer*			m_lightBuffer; 
+	ID3D11Buffer*			m_pPointLightBuffer; 
+	
 
 	INT						m_sampleCount;
 
@@ -86,6 +88,18 @@ private:
 	ID3D11VertexShader*		m_hudVertexShader;
 	ID3D11PixelShader*		m_hudPixelShader;
 
+	//ShadowPass
+	ID3D11DepthStencilView* m_depthStencilViewShad;
+	ID3D11Texture2D*		m_depthBufferTexShad;
+	ID3D11VertexShader	*	m_shadowVertex;
+	ID3D11PixelShader	*	m_shadowPixel;
+	ID3D11Buffer		*	m_shadowBuffer;
+	ID3D11ShaderResourceView * m_shadowDepthTexture = nullptr;
+	XMMATRIX				m_shadowProjMatrix;
+	//DEBUG
+	ID3D11RasterizerState*	m_WireFrame;
+	bool					m_WireFrameDebug = false;;
+
 
 	// Input
 	DirectX::XMFLOAT2 m_mousePos;
@@ -105,6 +119,7 @@ private:
 	void	_createMeshConstantBuffer();
 	void	_createPickConstantBuffer();
 	void	_createCameraPosConstantBuffer(); 
+	void	_createPointLightCollectionBuffer(); 
 
 
 	void	_createDepthBuffer();
@@ -134,6 +149,10 @@ private:
 	void	_initComputeShader();
 	void	_runComputeShader();
 
+	//Shadow
+	void	_loadShadowBuffers();
+	void	_prepareShadow();
+	void	_shadowPass(Camera* c);
 
 	void	_initFonts();
 	void	_drawText();

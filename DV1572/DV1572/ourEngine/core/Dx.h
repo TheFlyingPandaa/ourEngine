@@ -6,7 +6,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #include "../interface/shape/Shape.h"
-#include "../interface/light/Light.h" 
+#include "../interface/light/PointLight.h" 
 #include <vector>
 #include "../Structs.h"
 #include "../../ourEngine/core/Font/SpriteBatch.h"
@@ -29,7 +29,7 @@ namespace DX
 	extern std::vector<Shape*> g_transQueue;
 	extern std::vector<Shape*> g_pickingQueue;
 	extern std::vector<Shape*> g_HUDQueue;
-	extern std::vector<Light*> g_lightQueue; 
+	extern std::vector<PointLight*> g_lightQueue; 
 	
 	// InstanceRender
 	struct INSTANCE_ATTRIB
@@ -64,10 +64,13 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
 	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
+	extern std::vector<INSTANCE_GROUP>	g_InstanceGroupsShadow;
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 
+	extern DirectX::XMFLOAT4A g_lightPos;
+	extern DirectX::XMFLOAT4A g_lightDir;
 
 	//Tesselltion
 	extern ID3D11HullShader* g_standardHullShader;

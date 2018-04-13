@@ -14,6 +14,10 @@
     <FxCompile Include="ourEngine\shaders\hudPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\hudVertexShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\skyBoxVertexShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
@@ -55,6 +59,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
+    <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +108,7 @@
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
+    <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
   </ItemGroup>
   <ItemGroup>

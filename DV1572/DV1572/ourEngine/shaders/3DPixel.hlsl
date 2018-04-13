@@ -12,7 +12,6 @@ struct INPUT
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;
-	float inside : INSIDECHECK;
 };
 
 struct OUTPUT
@@ -28,7 +27,7 @@ OUTPUT main(INPUT input)// : SV_TARGET
 	
 	float3 normal = (2.0f * tNormal.Sample(sampAni, input.tex) - 1.0f).xyz;
 	normal = normalize(mul(normal, input.TBN));
-	output.normal = float4(normalize(input.normal + normal), input.inside);
+	output.normal = float4(normalize(input.normal + normal), 1.0f);
 	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
 	output.diffuse = output.diffuse * input.color;
 	output.pos = input.worldPos;

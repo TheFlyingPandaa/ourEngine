@@ -6,7 +6,8 @@
 #include <vector>
 #include <algorithm>
 #include "HUD/HUD.h"
-
+#include <thread>
+#include <future>
 
 
 class GameState : public State {
@@ -28,6 +29,8 @@ private:
 	DirectX::XMINT2 m_mainDoorPos;
 
 	Mesh door;
+
+	Object3D test;
 
 	Object3D d;
 
@@ -78,11 +81,16 @@ private:
 	bool m_move = false;
 	bool m_justMoved = false;
 
+	int m_i = 0;
+	std::future<void> future;
+	
+
 
 	virtual void	_init() override;
 	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
 	void			_handlePicking();
+	void			_handlePickingAi(Shape * obj);
 	void			_handleHUDPicking(RectangleShape* r);
 	void			_handleInput();
 	void			_buildInput();
@@ -90,7 +98,6 @@ private:
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
 	~GameState();
-
 	// Inherited via State
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;

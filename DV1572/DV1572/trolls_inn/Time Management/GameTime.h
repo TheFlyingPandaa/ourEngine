@@ -27,6 +27,7 @@ private:
 	float m_colorScaleFactor;
 	float m_rotationFactor; 
 	
+	Light m_sun; 
 
 	DirectX::XMVECTOR m_sunStartInterpolate; 
 	DirectX::XMVECTOR m_sunTargetInterpolate; 
@@ -53,11 +54,9 @@ private:
 
 	DIRECTIONAL_LIGHT_BUFFER m_sunBuffer; 
 
-	Light m_sun; 
 
 	void m_createSunBuffer(); 
 
-	void m_cpyLightToGPU();
 
 public:
 	GameTime(); 
@@ -66,6 +65,7 @@ public:
 	void updateCurrentTime(float refreshRate); 
 	TIMEOFDAY getTimePeriod(); 
 
+	void m_cpyLightToGPU();
 	Light& getSun(); 
 };
 

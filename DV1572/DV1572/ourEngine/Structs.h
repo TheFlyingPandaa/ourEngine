@@ -34,10 +34,7 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
-	float inside;
-	float inside2;
-	float inside3;
-	float inside4;
+	float gridscale;
 };
 
 struct PICK_BUFFER
@@ -46,7 +43,23 @@ struct PICK_BUFFER
 	DirectX::XMFLOAT4X4A MVP;
 };
 
-
+struct POINT_LIGHT_COLLECTION
+{
+	DirectX::XMFLOAT4A positionArray[100];
+	DirectX::XMFLOAT4A colorArray[100];
+	//Setup//
+	//r Range 
+	//g Constant Attenuation
+	//b Inverse Attenuation
+	//a Square Inverse Attenuation
+	DirectX::XMFLOAT4A lightSetup[100];
+	DirectX::XMFLOAT4A nrOfLights; 
+};
+struct SHADOW_MATRIX_BUFFER
+{
+	DirectX::XMFLOAT4X4A view;
+	DirectX::XMFLOAT4X4A projection;
+};
 
 struct V
 {
@@ -64,3 +77,4 @@ struct F
 {
 	int vIndex, vnIndex, vtIndex;
 };
+
