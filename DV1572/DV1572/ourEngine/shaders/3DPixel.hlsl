@@ -35,7 +35,7 @@ OUTPUT main(INPUT input)// : SV_TARGET
 	output.diffuse = output.diffuse * input.color;
 	output.pos = input.worldPos;
 
-	uint index = input.lIndex;
+    uint index = round(input.lIndex);
 	output.lIndex.a = 1.0f;
 
 	output.lIndex.r = index % 256;
