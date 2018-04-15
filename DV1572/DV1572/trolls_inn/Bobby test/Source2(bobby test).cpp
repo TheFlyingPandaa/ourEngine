@@ -104,7 +104,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 	while (wnd.isOpen())
-	{	
+	{
+		if (gameStates.empty())
+		{
+			gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
+		}
 		wnd.Clear();
 		auto currentTime = steady_clock::now();
 		wnd.PollEvents();
@@ -156,13 +160,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				pressed = false;
 			}
 
-
-			Shape* picked = nullptr;
-			picked = wnd.getPicked(cam);
-
-			if (picked) {
-				pickingEvents.push(picked);
+			if (!gameStates.empty())
+			{
+				Shape* picked = nullptr;
+				picked = wnd.getPicked(cam);
+				if (picked) {
+					pickingEvents.push(picked);
+				}
 			}
+			
 		}
 		if (!audEngine->Update())
 		{

@@ -52,7 +52,10 @@ void MainMenu::_handleHUDPicking(RectangleShape* r)
 			{
 			case 0:
 				r->setColor(0.2f, 0.2f, 2.0f);
-				m_exitState = true;
+				if (m_hasClicked)
+				{
+					m_exitState = true;
+				}
 				break;
 			case 1:
 				r->setColor(2.0f, 0.2f, 0.2f);
