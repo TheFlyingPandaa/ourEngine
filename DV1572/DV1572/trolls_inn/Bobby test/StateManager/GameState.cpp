@@ -69,12 +69,20 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 	//auto currentTime = std::chrono::high_resolution_clock::now();
-
+	if (Input::isKeyPressed('N')) {
+		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
+	}
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	
 	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
-	gameTime.updateCurrentTime(static_cast<float>(deltaTime)); 
+	gameTime.updateCurrentTime(deltaTime); 
+	auto time = std::chrono::high_resolution_clock::now();
+	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
+	//std::cout << " TIME: " << dt << std::endl;
 	
+
 	//<TEMP>
 	c.Update();
 	if (c.walkQueueDone())
@@ -92,22 +100,36 @@ void GameState::Update(double deltaTime)
 			m_justMoved = true;
 		}
 	}
+
+	//if (Input::isKeyPressed('A'))
+	//{
+	//	c.Move(Character::LEFT);
+	//}
+	//if (Input::isKeyPressed('W'))
+	//{
+	//	c.Move(Character::UP);
+	//}
+	//if (Input::isKeyPressed('S'))
+	//{
+	//	c.Move(Character::DOWN);
+	//}
+	//if (Input::isKeyPressed('D'))
+	//{
+	//	c.Move(Character::RIGHT);
+	//}
 	//</TEMP>
 
 	 // Get result.
 
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
-	/*auto time = std::chrono::high_resolution_clock::now();
-	auto dt = std::chrono::duration_cast<std::chrono::mi>(time - currentTime).count();
-	std::cout << " TIME: " << dt << std::endl;*/
+	
 }
 
 void GameState::Draw()
 {
 	gameTime.m_cpyLightToGPU();
 	this->grid->Draw();
-	m_stateHUD.Draw();
 
 	//TEST
 	c.Draw();
@@ -118,6 +140,11 @@ void GameState::Draw()
 	test.TESTSHADOW();
 	test.Draw();
 
+}
+
+void GameState::DrawHUD()
+{
+	m_stateHUD.Draw();
 }
 
 void GameState::_init()
@@ -188,10 +215,16 @@ void GameState::_handlePicking()
 
 		// Print status. And start a new thread if the other thread was finnished
 		if (status == std::future_status::ready) {
+			//std::cout << "Thread finished" << std::endl;
 			future.get();
 			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
 			
 		}
+		else {
+			//std::cout << "Thread still running" << std::endl;
+		}
+
+		//_handlePickingAi(obj);
 		
 	}
 }
