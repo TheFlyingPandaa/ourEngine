@@ -639,6 +639,7 @@ void RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
 
 std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 {
+	m_tempPath.clear();
 	int indexes[2] = { -1 };
 	for (int i = 0; i < m_rooms.size(); i++)
 	{

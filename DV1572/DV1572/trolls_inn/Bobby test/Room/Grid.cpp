@@ -318,7 +318,8 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 	if (0 == startTile->getIsInside() && 0 == endTile->getIsInside())
 	{
 		path = findPath(startTile, endTile, true);
-	} // Outside -> inside
+	} 
+	// Outside -> inside
 	else if (0 == startTile->getIsInside() && 1 == endTile->getIsInside())
 	{
 		// Now do we wanna walk to the entrance
@@ -366,6 +367,33 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 
 		}
 
+	}
+	// Inside -> Inside
+	else if (1 == startTile->getIsInside() && 1 == endTile->getIsInside())
+	{
+		std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, endTile);
+
+		Room* startRoom = startTile->getRoom();
+		roomIndexes.erase(roomIndexes.begin());
+		XMINT2 DoorLeavePos;
+		XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
+		for (auto index : roomIndexes)
+		{
+			// Between this rooms leave door and other rooms enter door
+			XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
+			auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
+			path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
+
+			// Smooth Entering
+			DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
+			auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
+			path.insert(path.end(), dontAsk.begin(), dontAsk.end());
+			startRoom = m_roomCtrl.getRoomAt(index);
+			startPosition = DoorLeavePos;
+
+		}
+		auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], endTile, false);
+		path.insert(path.end(), toTarget.begin(), toTarget.end());
 	}
 	return path;
 }
