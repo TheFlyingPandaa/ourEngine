@@ -313,6 +313,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 		the room doors. 
 		
 	*/
+
 	std::vector<std::shared_ptr<Node>> path;
 	// Outside -> OutSide
 	if (0 == startTile->getIsInside() && 0 == endTile->getIsInside())
@@ -322,6 +323,9 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 	// Outside -> inside
 	else if (0 == startTile->getIsInside() && 1 == endTile->getIsInside())
 	{
+		if (0 == endTile->getRoom()->hasConnectedRooms()) 
+			return std::vector<std::shared_ptr<Node>>();
+
 		// Now do we wanna walk to the entrance
 		path = findPath(startTile, m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], true);
 		
@@ -371,29 +375,41 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 	// Inside -> Inside
 	else if (1 == startTile->getIsInside() && 1 == endTile->getIsInside())
 	{
-		std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, endTile);
+		if (0 == endTile->getRoom()->hasConnectedRooms())
+			return std::vector<std::shared_ptr<Node>>();
 
-		Room* startRoom = startTile->getRoom();
-		roomIndexes.erase(roomIndexes.begin());
-		XMINT2 DoorLeavePos;
-		XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
-		for (auto index : roomIndexes)
+		if (*startTile->getRoom() == *endTile->getRoom())
 		{
-			// Between this rooms leave door and other rooms enter door
-			XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
-			auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
-			path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
-
-			// Smooth Entering
-			DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
-			auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
-			path.insert(path.end(), dontAsk.begin(), dontAsk.end());
-			startRoom = m_roomCtrl.getRoomAt(index);
-			startPosition = DoorLeavePos;
-
+			auto doorToEndTile = findPath(startTile, endTile, false);
+			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
 		}
-		auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], endTile, false);
-		path.insert(path.end(), toTarget.begin(), toTarget.end());
+		else
+		{
+			std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, endTile);
+
+			Room* startRoom = startTile->getRoom();
+			roomIndexes.erase(roomIndexes.begin());
+			XMINT2 DoorLeavePos;
+			XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
+			for (auto index : roomIndexes)
+			{
+				// Between this rooms leave door and other rooms enter door
+				XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
+				auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
+				path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
+
+				// Smooth Entering
+				DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
+				auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
+				path.insert(path.end(), dontAsk.begin(), dontAsk.end());
+				startRoom = m_roomCtrl.getRoomAt(index);
+				startPosition = DoorLeavePos;
+
+			}
+			auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], endTile, false);
+			path.insert(path.end(), toTarget.begin(), toTarget.end());
+		}
+		
 	}
 	//Inside to outside
 	else
@@ -491,14 +507,50 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			Direction dir = static_cast<Direction>(dirIndex);
 
 			Tile* currentTile = current->tile->getAdjacent(dir);
-
+			
 			// Rules here
+
 			if (currentTile == nullptr)
 				continue;
 			if (current->tile->getIsInside() && outside)
 				continue;
 			if (!currentTile->getIsWalkeble())
 				continue;
+			
+			if (outside)
+			{
+				if (dir == Direction::downleft)
+				{
+					if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+						continue;
+					if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+						continue;
+				}
+				else if (dir == Direction::downright)
+				{
+					if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+						continue;
+					if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+						continue;
+				}
+				else if (dir == Direction::upright)
+				{
+					if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+						continue;
+					if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+						continue;
+				}
+				else if (dir == Direction::upleft)
+				{
+					if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+						continue;
+					if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+						continue;
+				}
+			}
+			
+
+
 			//--Rules End Here--
 
 			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);

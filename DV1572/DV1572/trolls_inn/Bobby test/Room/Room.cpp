@@ -23,6 +23,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles)
 {
+	
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -287,6 +288,11 @@ void Room::addWall(Wall * wall, Direction dir)
 	default:
 		break;
 	}
+}
+
+bool Room::hasConnectedRooms() const
+{
+	return adjasentRoomDoors.size();
 }
 
 DirectX::XMFLOAT3 Room::getPosition() const

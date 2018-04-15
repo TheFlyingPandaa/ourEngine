@@ -79,6 +79,8 @@ public:
 	virtual void		setWalls(std::vector<Wall*> walls, Direction dir);
 	virtual void		addWall(Wall* wall, Direction dir);
 
+	bool hasConnectedRooms() const;
+
 	virtual DirectX::XMFLOAT3	getPosition() const;
 
 	virtual void		addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction);
