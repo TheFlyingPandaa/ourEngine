@@ -1,28 +1,31 @@
-#include "MainMenu.h"
+#include "SettingsMenu.h"
 #include <iostream>
 
-MainMenu::MainMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
+SettingsMenu::SettingsMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
 	this->m_cam = cam;
 	this->_init();
 
-	
 }
 
-MainMenu::~MainMenu()
+void SettingsMenu::_init()
+{
+}
+
+SettingsMenu::~SettingsMenu()
+{
+}
+
+void SettingsMenu::Update(double deltaTime)
 {
 
 }
 
-void MainMenu::Update(double deltaTime)
-{  
-	
-	_handlePicking();
-	_handleInput();
+void SettingsMenu::Draw()
+{
 
 }
-
-void MainMenu::_handlePicking()
+void SettingsMenu::_handlePicking()
 {
 	while (!p_pickingEvent->empty())
 	{
@@ -35,7 +38,7 @@ void MainMenu::_handlePicking()
 	}
 }
 
-void MainMenu::_handleHUDPicking(RectangleShape* r)
+void SettingsMenu::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
@@ -59,11 +62,6 @@ void MainMenu::_handleHUDPicking(RectangleShape* r)
 				break;
 			case 1:
 				r->setColor(2.0f, 0.2f, 0.2f);
-				if (m_hasClicked)
-				{
-					m_subMenus.push(new SettingsMenu(p_pickingEvent, p_keyEvents, m_cam));
-
-				}
 				break;
 			case 2:
 				r->setColor(1.5f, 0.2f, 1.5f);
@@ -86,7 +84,7 @@ void MainMenu::_handleHUDPicking(RectangleShape* r)
 	}
 }
 
-void MainMenu::_handleInput()
+void SettingsMenu::_handleInput()
 {
 	if (m_stateHUD.isMouseInsidePotentialArea(Input::getMousePositionLH()))
 	{
@@ -113,24 +111,5 @@ void MainMenu::_handleInput()
 		}
 
 	}
-
-}
-
-void MainMenu::Draw()
-{
-	if (m_subMenus.empty())
-	{
-		m_stateHUD.Draw();
-	}
-	else
-	{
-		m_subMenus.top()->Draw();
-	}
-	
-}
-
-void MainMenu::_init()
-{
-	m_stateHUD.LoadHud("trolls_inn/Resources/Menus/TopMenu.txt");
 
 }

@@ -1,11 +1,9 @@
 #pragma once
-#include "State.h"
-#include "Menu/SettingsMenu.h"
-class MainMenu : public State {
+#include "../State.h"
+class SettingsMenu : public State
+{
 private:
 
-	std::stack<State *> m_subMenus;
-	
 	void _handleInput();
 	void _handleHUDPicking(RectangleShape* r);
 	void _handlePicking();
@@ -25,12 +23,11 @@ private:
 	int m_lastPickedIndex;
 
 public:
-	MainMenu(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
-	~MainMenu();
+	SettingsMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam);
+	~SettingsMenu();
 
-	// Inherited via State
+
 	void Update(double deltaTime) override;
 	void Draw() override;
-
-
+	
 };
