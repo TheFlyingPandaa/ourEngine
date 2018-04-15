@@ -87,19 +87,18 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 bool RoomCtrl::_checkLegal(Room * room)
 {
 
-
-
 	return dynamic_cast<Bedroom*>(room) == nullptr;
 }
 
 void RoomCtrl::_makeRoomConnection(int source, int destination)
 {
+
 	m_roomConnections[source][destination] = 1;
 	m_roomConnections[destination][source] = 1;
 
 }
 
-void RoomCtrl::_dijkstra(int src)
+void RoomCtrl::_dijkstra(int src, int dst)
 {
 	auto minDistance = [&](int dist[], bool sptSet[]) -> int
 	{
@@ -164,16 +163,17 @@ void RoomCtrl::_dijkstra(int src)
 
 
 	// print the constructed distance array
-	_getSolution(dist, parent, src);
+	_getSolution(dist, parent, src, dst);
+	delete[] dist;
+	delete[] parent;
+	delete[] sptSet;
 }
 
-void RoomCtrl::_getSolution(int dist[], int parent[], int src)
+void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 {
-	for (int i = 0; i < m_roomConnections[src].size(); i++)
-	{
-		if (i != src)
-			_traversalPath(parent, i, src, i);
-	}
+	m_tempPath.push_back(src);
+	if (dst != src)
+		_traversalPath(parent, dst, src, dst);
 }
 
 void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
@@ -182,12 +182,39 @@ void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 		return;
 
 	_traversalPath(parent, parent[j], src, dst);
-	// Put path in room
-	m_rooms.at(src)->roomPathIndexes[dst].push_back(j + 1);
+	
+	m_tempPath.push_back(j);
+}
+
+void RoomCtrl::_printRoomConnections() const
+{
+	
+	std::cout << " ";
+	for (int i = 0; i < m_roomConnections.size(); i++)
+	{
+		std::cout << " " << i;
+	}
+	std::endl(std::cout);
+	for (int i = 0; i < m_roomConnections.size(); i++)
+	{
+		std::cout << i << " ";
+		for (int j = 0; j < m_roomConnections[i].size(); j++)
+		{
+			std::cout << m_roomConnections[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << "Room " << m_rooms.size() - 1 << "->" << 0 << ": ";
+	for (int i = 0; i < m_tempPath.size(); i++)
+		std::cout << m_tempPath[i] << " ";
+	std::cout << std::endl;
+
 }
 
 RoomCtrl::RoomCtrl()
 {
+	m_entrance = nullptr;
 }
 
 
@@ -244,28 +271,24 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		m_rooms.push_back(room);
 
 	CreateWalls();
-	CreateDoors(room);
+	
 
 	if (m_roomConnections.size() < m_rooms.size())
 	{
-		for (int i = 0; i < m_rooms.size(); i++)
+		m_roomConnections.push_back(std::vector<int>());
+		
+		for (int j = 0; j < m_roomConnections.size();)
 		{
-			m_roomConnections.push_back(std::vector<int>());
-			for (int j = 0; j < m_rooms.size(); j++)
-			{
-				if(*m_rooms[i] == *m_rooms[j])
-					m_roomConnections[i].push_back(1);
-				else 
-					m_roomConnections[i].push_back(0);
-			}
+			if (m_roomConnections[j].size() != m_roomConnections.size())
+				m_roomConnections[j].push_back(0);
+			else
+				j++;
 		}
-
 	}
-	_dijkstra(m_rooms.size() - 1);
 
-	for (auto& vec : m_roomConnections)
-		vec.clear();
-	m_roomConnections.clear();
+	CreateDoors(room);
+
+	if (!m_entrance) m_entrance = m_rooms.back();
 	
 }
 
@@ -312,8 +335,9 @@ void RoomCtrl::CreateWalls()
 					{
 						createWall = false;
 						t2->getTileWalls(Direction::up)->setIsInner(true);		
-						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::down, t2->getTileWalls(Direction::up));
+
+						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						m_rooms[i]->addWall(t2->getTileWalls(Direction::up), Direction::down);
 					}
 
@@ -342,8 +366,8 @@ void RoomCtrl::CreateWalls()
 					{
 						createWall = false;
 						t2->getTileWalls(Direction::down)->setIsInner(true);
-						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::up, t2->getTileWalls(Direction::down));
+						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						m_rooms[i]->addWall(t2->getTileWalls(Direction::down), Direction::up);
 					}
 				if (createWall)
@@ -383,8 +407,8 @@ void RoomCtrl::CreateWalls()
 					{
 						createWall = false;
 						t2->getTileWalls(Direction::right)->setIsInner(true);
-						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::left, t2->getTileWalls(Direction::right));
+						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						m_rooms[i]->addWall(t2->getTileWalls(Direction::right), Direction::left);
 					}
 				if (createWall)
@@ -415,8 +439,8 @@ void RoomCtrl::CreateWalls()
 					{
 						createWall = false;
 						t2->getTileWalls(Direction::left)->setIsInner(true);
-						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						t->setTileWalls(Direction::right, t2->getTileWalls(Direction::left));
+						m_rooms[i]->addAdjasentRoom(t2->getRoom());
 						m_rooms[i]->addWall(t2->getTileWalls(Direction::left), Direction::right);
 
 					}
@@ -444,7 +468,7 @@ void RoomCtrl::CreateWalls()
 void RoomCtrl::CreateDoors(Room * room)
 {
 	//get other room type 
-	for (Room * other : *room->getAdjasent()) {
+	for (auto& other : *room->getAdjasent()) {
 		if (_checkLegal(other)) {
 			/*Direction dir = getDirection(room, other);
 			Direction otherDir = getDirection(other, room);*/
@@ -496,9 +520,10 @@ void RoomCtrl::CreateDoors(Room * room)
 	}
 }
 
+// Not in use
 DirectX::XMINT2 RoomCtrl::CreateMainDoor(Room * room)
 {
-	for (Room * other : *room->getAdjasent()) {
+	for (auto& other : *room->getAdjasent()) {
 		if (_checkLegal(other)) {
 			/*Direction dir = getDirection(room, other);
 			Direction otherDir = getDirection(other, room);*/
@@ -572,43 +597,91 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 	int indexes[2] = { -1 };
 	Room* firstRoom = w->getTile()->getRoom();
 	Room* secondRoom = tile2->getRoom();
-	/*int highestIndex = 0;
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
-		highestIndex = highestIndex < i ? i : highestIndex;
 		if (*firstRoom == *m_rooms[i])
 			indexes[0] = i;
 		if (*secondRoom == *m_rooms[i])
 			indexes[1] = i;
 	}
-	if (highestIndex >= m_roomConnections.size())
-	{
-		
-		m_roomConnections.push_back(std::vector<int>());
+	
+	_makeRoomConnection(indexes[0], indexes[1]);
+	XMINT2 tilePosition = { tile1->getPosX(), tile1->getPosY() };
+	XMINT2 tilePosition2 = { tile2->getPosX(), tile2->getPosY() };
+	XMINT2 doorDir = getDirection2i(tile1, tile2);
+	XMINT2 doorDirInv = { -doorDir.x, -doorDir.y };
+	std::cout << "Door position1 (" << tilePosition.x << "," << tilePosition.y << ")\n";
+	std::cout << "Door direction1 (" << doorDir.x << "," << doorDir.y << ")\n";
 
-		for(auto& vec : m_roomConnections)
-			vec.push_back(0);
-
-	}*/
-
-	firstRoom->addAdjasentRoom(secondRoom);
-	secondRoom->addAdjasentRoom(firstRoom);
+	std::cout << "\nDoor position2 (" << tilePosition2.x << "," << tilePosition2.y << ")\n";
+	std::cout << "Door direction2 (" << doorDirInv.x << "," << doorDirInv.y << ")\n";
+	firstRoom->addAdjasentRoomDoor(secondRoom, tilePosition, doorDir);
+	secondRoom->addAdjasentRoomDoor(firstRoom, tilePosition2, doorDirInv);
 
 	w->setMesh(this->m_doorMesh);
 }
 
-DirectX::XMINT2 RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
+void RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
 {
 	Direction dir = this->getDirection(tile1, tile2);
 
 	Wall* w = tile1->getTileWalls(dir);
 	if (!w)
-		return DirectX::XMINT2(-1337,-1337);
+		return;
 	w->setScale(1.0f, 1.0f, 1.0f);
 	w->setIsDoor(true);
 	//tile1->setWallSpotPopulated(dir, true);
+	m_entrance = w->getTile()->getRoom();
+	std::cout << "MainDoor position (" << tile2->getPosX() << "," << tile2->getPosY() << ")\n";
+	m_entrance->addAdjasentRoomDoor(nullptr, { tile2->getPosX(), tile2->getPosY() }, getDirection2i(tile2, tile1));
 	w->setMesh(this->m_doorMesh);
-	return DirectX::XMINT2(tile2->getPosX(),tile2->getPosY());
+}
+
+std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
+{
+	int indexes[2] = { -1 };
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		if (*m_rooms[i] == *roomTile1->getRoom())
+			indexes[0] = i;
+		if (*m_rooms[i] == *roomTile2->getRoom())
+			indexes[1] = i;
+	}
+
+	_dijkstra(indexes[0], indexes[1]);
+		
+	return m_tempPath;
+}
+
+Room * RoomCtrl::getMainRoom() const
+{
+	return m_entrance;
+}
+
+
+XMINT2 RoomCtrl::getMainDoorPosEnter() const
+{
+	return m_entrance->getConnectingRoomDoorPositionPartOne(nullptr);
+}
+
+XMINT2 RoomCtrl::getMainDoorPosLeave() const
+{
+	return m_entrance->getConnectingRoomDoorPositionPartTwo(nullptr);
+}
+
+XMINT2 RoomCtrl::getRoomEnterPos(Room * startRoom, int roomDstIndex)
+{
+	return startRoom->getConnectingRoomDoorPositionPartOne(m_rooms[roomDstIndex]);
+}
+
+XMINT2 RoomCtrl::getRoomLeavePos(Room * startRoom, int roomDstIndex)
+{
+	return startRoom->getConnectingRoomDoorPositionPartTwo(m_rooms[roomDstIndex]);
+}
+
+Room * RoomCtrl::getRoomAt(int index)
+{
+	return m_rooms[index];
 }
 
 Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)
@@ -627,6 +700,19 @@ Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)
 	else if (result.z < 0)	dir = Direction::down;
 
 	return dir;
+}
+
+XMINT2 RoomCtrl::getDirection2i(Tile *t1, Tile *t2)
+{
+	XMVECTOR oldPosWithoutOffset = XMLoadFloat3(&t1->getQuad().getPosition());
+	XMVECTOR xmNewPos = XMLoadFloat3(&t2->getQuad().getPosition());
+	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
+	XMFLOAT3 resultFloat3;
+	XMStoreFloat3(&resultFloat3, xmDeltaPos);
+	
+	XMINT2 result = { static_cast<int>(resultFloat3.x), static_cast<int>(resultFloat3.z )};
+
+	return result;
 }
 
 Direction RoomCtrl::getDirection(Room * r1, Room * r2)

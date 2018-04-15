@@ -186,7 +186,8 @@ void Grid::PickTiles(Shape* selectionTile)
 			{
 				int indexX = xPos + x;
 				int indexY = yPos + y;
-
+				
+				// Boundcheck
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
 
 				m_tiles[indexX][indexY]->getQuad().CheckPick();
@@ -282,7 +283,6 @@ void Grid::Update(Camera * cam) {
 	m_roomCtrl.Update(cam);
 }
 
-
 void Grid::CreateWalls(Mesh * mesh)
 {
 	if (mesh)
@@ -297,36 +297,87 @@ float Grid::getDistance(Tile* t1, Tile* t2)
 	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
 }
 
-std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile, DirectX::XMINT2 mainDoor)
+std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Tile * endTile)
+{
+	/*
+		- If start and end tile is both outside then its easy just call find path
+
+		--- ROOM TO ROOM ---
+		room by room traversal is dividing into a two part path finding. First we find the quickest
+		room traversal then we perform A* star inside the rooms from door to door.
+
+		- If start is inside and end is outside then we need to find the path to the main door
+		by performing djiksta from the current room to the entrance and then A* Outside
+
+		- If both start and end is inside then we perform djikstra first with the rooms and A* between 
+		the room doors. 
+		
+	*/
+	std::vector<std::shared_ptr<Node>> path;
+	// Outside -> OutSide
+	if (0 == startTile->getIsInside() && 0 == endTile->getIsInside())
+	{
+		path = findPath(startTile, endTile, true);
+	} // Outside -> inside
+	else if (0 == startTile->getIsInside() && 1 == endTile->getIsInside())
+	{
+		// Now do we wanna walk to the entrance
+		path = findPath(startTile, m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], true);
+		
+		//Lets not talk about this one(This is so we walk straight through the door...)
+		auto walkThroughDoor = findPath(m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], false);
+		path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
+
+		// Easy check, if its the main room we are wanting then we only need to perform pathfinding inside that room
+		// and not start the higher level room path finding
+		if (*endTile->getRoom() == *m_roomCtrl.getMainRoom())
+		{
+			auto doorToEndTile = findPath(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], endTile, false);
+			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
+		}
+		// We want to be advanced :P
+		else
+		{
+			std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], endTile);
+
+			Room* startRoom = m_roomCtrl.getMainRoom();
+			roomIndexes.erase(roomIndexes.begin());
+			XMINT2 DoorLeavePos;
+			XMINT2 startPosition = m_roomCtrl.getMainDoorPosLeave();
+			for (auto index : roomIndexes)
+			{
+				// Between this rooms leave door and other rooms enter door
+				XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
+				auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
+				path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
+
+				// Smooth Entering
+				DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
+				auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x ][DoorLeavePos.y], false);
+				path.insert(path.end(), dontAsk.begin(), dontAsk.end());
+				startRoom = m_roomCtrl.getRoomAt(index);
+				startPosition = DoorLeavePos;
+
+			}
+			
+
+			auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y],endTile , false);
+			path.insert(path.end(), toTarget.begin(), toTarget.end());
+
+		}
+
+	}
+	return path;
+}
+
+std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile, bool outside)
 {
 	std::vector<std::shared_ptr<Node>> openList;
 	std::vector<std::shared_ptr<Node>> closedList;
 
-	//std::vector<std::shared_ptr<Node>> pointerBank;
-
-	//Node* current = new Node(startTile, nullptr, 0, getDistance(startTile, endTile));
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
-	//current->tile->
-
-	/*if (current->tile->getIsInside() == false && endTile->getIsInside() == true)
-	{
-		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y], mainDoor);
-	}
-	else if(current->tile->getIsInside() == true && endTile->getIsInside() == false)
-	{
-		return findPath(startTile, m_tiles[mainDoor.x][mainDoor.y + 1], mainDoor);
-	}
-	else if (startTile->getRoom() != endTile->getRoom())
-	{
-		std::vector<Wall*>* allWalls = startTile->getRoom()->getAllWalls();
-		
-	}*/
-
 	
-
 	openList.push_back(current);
-
-	//pointerBank.push_back(current); 
 
 	while (openList.size() > 0)
 	{
@@ -344,8 +395,6 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				
 			}
 
-			/*for (auto& p : pointerBank)
-				delete p;*/
 			std::reverse(path.begin(), path.end());
 			return path;
 		}
@@ -361,24 +410,10 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			Tile* currentTile = current->tile->getAdjacent(dir);
 
 			// Rules here
-			
 			if (currentTile == nullptr)
 				continue;
-			if (current->tile->getIsInside())
-			{
-				if (endTile->getIsInside() == false)
-				{
-					continue;
-				}
-			}
-			else {
-				//if (currentTile->getRoom() != nullptr)
-				//	continue; // Jump this one
-				if (endTile->getIsInside() == true)
-				{
-					continue;
-				}
-			}
+			if (current->tile->getIsInside() && outside)
+				continue;
 			if (!currentTile->getIsWalkeble())
 				continue;
 			//--Rules End Here--

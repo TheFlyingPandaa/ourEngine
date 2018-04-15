@@ -294,15 +294,52 @@ DirectX::XMFLOAT3 Room::getPosition() const
 	return DirectX::XMFLOAT3(static_cast<float>(getX()), 0.0f, static_cast<float>(getY()));
 }
 
+void Room::addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction)
+{
+	if (std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), room) == adjasentRoomDoors.end())
+	{
+		RoomConnection newConnection;
+		newConnection.otherRoom = room;
+		newConnection.connectingDoor = doorPos;
+		newConnection.direction = direction;
+		adjasentRoomDoors.push_back(newConnection);
+	}
+}
+
 void Room::addAdjasentRoom(Room * room)
 {
-	if (std::find(adjasent.begin(), adjasent.end(), room) == adjasent.end())
-		adjasent.push_back(room);
+	if (std::find(adjasentRooms.begin(), adjasentRooms.end(), room) == adjasentRooms.end())
+	{
+		adjasentRooms.push_back(room);
+	}
+}
+
+XMINT2 Room::getConnectingRoomDoorPositionPartOne(Room * otherroom)
+{
+	std::vector<RoomConnection>::iterator it =  std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+
+	if (it != adjasentRoomDoors.end())
+		return it->connectingDoor;
+	else
+		return XMINT2(-1, -1);
+}
+
+XMINT2 Room::getConnectingRoomDoorPositionPartTwo(Room * otherroom)
+{
+	std::vector<RoomConnection>::iterator it = std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+
+	if (it != adjasentRoomDoors.end())
+	{
+		XMINT2 doorPos = it->connectingDoor;
+		return { doorPos.x + it->direction.x, doorPos.y + it->direction.y };
+	}
+	else
+		return XMINT2(-1, -1);
 }
 
 std::vector<Room*>* Room::getAdjasent()
 {
-	return &adjasent;
+	return &adjasentRooms;
 }
 
 std::vector<Wall*>* Room::getAllWalls()
