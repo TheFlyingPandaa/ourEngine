@@ -86,7 +86,7 @@ private:
 	
 
 
-	virtual void	_init() override;
+	void	_init() override;
 	void			_handleBuildRoom(Shape * s);
 	void			_setHud();
 	void			_handlePicking();
@@ -101,4 +101,5 @@ public:
 	// Inherited via State
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
+	virtual void DrawHUD() override;
 };

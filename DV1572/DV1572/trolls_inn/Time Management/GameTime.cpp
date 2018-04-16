@@ -151,7 +151,7 @@ void GameTime::updateCurrentTime(float refreshRate)
 		m_currentAngle = 90.0f; 
 		m_fFinalColor = XMFLOAT4A( 1.0f, 1.0f, 1.0f, 1.0f );
 	}	
-	m_cpyLightToGPU(); 
+	//m_cpyLightToGPU(); 
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()

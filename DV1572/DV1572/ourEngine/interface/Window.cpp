@@ -437,7 +437,7 @@ void Window::_drawHUD()
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -676,7 +676,7 @@ void Window::_shadowPass(Camera* c)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 
@@ -913,6 +913,7 @@ void Window::_geometryPass(const Camera &cam)
 
 	for (auto& instance : DX::g_instanceGroups)
 	{
+		
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -925,6 +926,8 @@ void Window::_geometryPass(const Camera &cam)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 		//We copy the data into the attribute part of the layout.
 		//This is what makes instancing special
+		
+		
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
@@ -936,33 +939,37 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
-
+		
+		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
-		ID3D11Buffer * bufferPointers[2];
-		bufferPointers[0] = v;
-		bufferPointers[1] = instanceBuffer;
+		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		{
+			instance.shape->ApplyMaterials(i);
 
-		unsigned int strides[2];
-		strides[0] = sizeof(VERTEX);
-		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+			UINT32 vertexSize = sizeof(VERTEX);
+			UINT offset = 0;
+			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer * bufferPointers[2];
+			bufferPointers[0] = v;
+			bufferPointers[1] = instanceBuffer;
 
-		unsigned int offsets[2];
-		offsets[0] = 0;
-		offsets[1] = 0;
+			unsigned int strides[2];
+			strides[0] = sizeof(VERTEX);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
 
+			unsigned int offsets[2];
+			offsets[0] = 0;
+			offsets[1] = 0;
 
+			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
 
-		Mesh* mesh = instance.shape->getMesh();
-		ID3D11Buffer* indices = mesh->getIndicesBuffer();
-
-		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
-		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+																					
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
+		}
+		
 		instanceBuffer->Release();
 	}
 
@@ -980,6 +987,7 @@ void Window::_geometryPass(const Camera &cam)
 
 void Window::_skyBoxPass(const Camera& cam)
 {
+	
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	DirectX::XMMATRIX view = XMMatrixLookToLH(
@@ -1018,7 +1026,8 @@ void Window::_skyBoxPass(const Camera& cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
+		instance.shape->ApplyShaders(); 
+		instance.shape->ApplyMaterials();
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -1043,7 +1052,7 @@ void Window::_skyBoxPass(const Camera& cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -1053,6 +1062,13 @@ void Window::_clearTargets()
 {
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT] = { nullptr };
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
+}
+
+void Window::_preparePostLight()
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 }
 
 void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
@@ -1113,8 +1129,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 
 void Window::_transparencyPass(const Camera & cam)
 {
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	
 	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 
 	DX::g_deviceContext->VSSetShader(m_transVertexShader, nullptr, 0);
@@ -1122,7 +1137,6 @@ void Window::_transparencyPass(const Camera & cam)
 	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_transPixelShader, nullptr, 0);
-	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	DirectX::XMMATRIX view = cam.getViewMatrix();
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
@@ -1178,7 +1192,7 @@ void Window::_transparencyPass(const Camera & cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -1391,12 +1405,18 @@ void Window::Flush(Camera* c)
 	_geometryPass(*c);
 	_clearTargets();
 	_lightPass(*c);
+
+	_preparePostLight();
 	_transparencyPass(*c);
-	_skyBoxPass(*c);
-	_drawHUD();
-	_runComputeShader();
-	_drawText();
-	
+
+	if(DX::g_instanceGroupsSkyBox.size() > 0) 
+		_skyBoxPass(*c);
+	if(DX::g_instanceGroupsHUD.size() > 0)
+		_drawHUD();
+	if(m_computeShader != nullptr)
+		_runComputeShader();
+	if(DX::g_textQueue.size() > 0)
+		_drawText();
 }
 
 void Window::FullReset()
@@ -1427,41 +1447,37 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
 		Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
-		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
-		if (m_swapChain)
-		{
-			DX::g_deviceContext->OMSetRenderTargets(0, 0, 0);
 
-			// Release all outstanding references to the swap chain's buffers.
-			m_backBufferRTV->Release();
+		//	// Release all outstanding references to the swap chain's buffers.
+		//	m_backBufferRTV->Release();
 
-			HRESULT hr;
-			// Preserve the existing buffer count and format.
-			// Automatically choose the width and height to match the client rect for HWNDs.
-			hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		//	HRESULT hr;
+		//	// Preserve the existing buffer count and format.
+		//	// Automatically choose the width and height to match the client rect for HWNDs.
+		//	hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-			// Perform error handling here!
+		//	// Perform error handling here!
 
-			// Get buffer and create a render-target-view.
-			ID3D11Texture2D* pBuffer;
-			hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(void**)&pBuffer);
-			// Perform error handling here!
+		//	// Get buffer and create a render-target-view.
+		//	ID3D11Texture2D* pBuffer;
+		//	hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+		//		(void**)&pBuffer);
+		//	// Perform error handling here!
 
-			hr = DX::g_device->CreateRenderTargetView(pBuffer, NULL,
-				&m_backBufferRTV);
-			// Perform error handling here!
-			pBuffer->Release();
-			_initGBuffer();
-			_createDepthBuffer();
-			DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+		//	hr = DX::g_device->CreateRenderTargetView(pBuffer, NULL,
+		//		&m_backBufferRTV);
+		//	// Perform error handling here!
+		//	pBuffer->Release();
+		//	_initGBuffer();
+		//	_createDepthBuffer();
+		//	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
-			// Set up the viewport.
-			_setViewport();
+		//	// Set up the viewport.
+		//	_setViewport();
 
-			
-			
-		}
+		//	
+		//	
+		//}
 		break;
 	// ----- Keyboard Button -----
 	case WM_KEYDOWN:
@@ -1469,7 +1485,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
-		
+
 		Input::m_keys[wParam] = true;
 		Input::lastPressed = static_cast<int>(wParam);
 		break;

@@ -15,7 +15,7 @@ protected:
 	Camera * m_cam;
 
 	std::stack<Shape *>*	p_pickingEvent;
-	std::stack<int>*		p_keyEvents;//TODO do this
+	std::stack<int>*		p_keyEvents;
 	HUD						m_stateHUD;
 
 	
@@ -29,8 +29,14 @@ public:
 
 	virtual void Update(double deltaTime) = 0;
 	virtual void Draw() = 0;
+	virtual void DrawHUD() = 0;
 
-	virtual State * NewState() { return this->m_newState; }
+	virtual State * NewState() 
+	{ 
+		State * ret = this->m_newState;
+		this->m_newState = nullptr;
+		return ret;
+	}
 	virtual bool Exit() { return this->m_exitState; }
 
 	
