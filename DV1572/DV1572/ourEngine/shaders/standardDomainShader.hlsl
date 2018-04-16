@@ -11,6 +11,7 @@ struct DS_OUTPUT
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 
 	// TODO: change/add other stuff
 };
@@ -24,6 +25,7 @@ struct CONTROL_POINT_INPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 };
 
 // Output patch constant data.
@@ -60,6 +62,6 @@ DS_OUTPUT main(
 	Output.TBN[2] = Output.normal;
 
 	Output.color = patch[0].color * domain.x + patch[1].color * domain.y + patch[2].color * domain.z;
-
+	Output.lIndex = patch[0].lIndex;
 	return Output;
 }

@@ -1,7 +1,40 @@
 #include "Room.h"
 
+Mesh Room::s_AABB;
+bool Room::s_isLoaded = false;
+int Room::s_index = 1;
+
+void Room::_loadStatic()
+{
+	Room::s_AABB.LoadModel("trolls_inn/Resources/box.obj");
+}
+
+void Room::_initAABB(int x, int y, int sx, int sy, int level)
+{
+	m_AABB.setMesh(&s_AABB);
+	m_AABB.setPos(x + ((float)sx / 2.0f), (level * 2.0) + 1.0f, y + ((float)sy / 2.0f));
+	m_AABB.setScale(sx, 2.01f, sy);
+}
+
+void Room::_createLight(int x, int y, int sx, int sy, int level)
+{
+	PointLight l;
+	l.setPosition(x + ((float)sx / 2), level * 2 + 2, y + ((float)sy / 2));
+	l.setColor((rand() % 11) * 0.1, (rand() % 11) * 0.1, (rand() % 11) * 0.1);
+	l.setSettingsForLight(1, 0.8);
+	l.setIndex(m_index);
+	m_lights.push_back(l);
+	m_lights[0].addToLightQueue();
+}
+
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
+	if (!s_isLoaded)
+		_loadStatic();
+	m_index = s_index++;
+	_initAABB(posX, posY, sizeX, sizeY);
+	_createLight(posX, posY, sizeX, sizeY);
+
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -23,6 +56,12 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles)
 {
+	if (!s_isLoaded)
+		_loadStatic();
+	m_index = s_index++;
+	_initAABB(posX, posY, sizeX, sizeY);
+	_createLight(posX, posY, sizeX, sizeY);
+
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -96,22 +135,28 @@ void Room::Update(Camera * cam)
 		bool cullWalls[4] = { false, false, false, false };
 		DirectX::XMFLOAT3 camPos3D = cam->getPosition();
 		DirectX::XMFLOAT2 camPosition = { camPos3D.x, camPos3D.z };
+		DirectX::XMFLOAT2 roomCenter(m_AABB.getPosition().x, m_AABB.getPosition().z);
+		float distanceToCamera = DirectX::XMVectorGetX(DirectX::XMVector2Length(DirectX::XMLoadFloat2(&camPosition) - DirectX::XMLoadFloat2(&roomCenter)));
+		int cullDist = 15;
 
-		if (camPosition.x < m_posX)
+		if (distanceToCamera < cullDist)
 		{
-			cullWalls[Direction::left] = true;
-		}
-		else if (camPosition.x > m_posX + m_sizeX)
-		{
-			cullWalls[Direction::right] = true;
-		}
-		if (camPosition.y < m_posY)
-		{
-			cullWalls[Direction::down] = true;
-		}
-		else if (camPosition.y > m_posY + m_sizeY)
-		{
-			cullWalls[Direction::up] = true;
+			if (camPosition.x < m_posX)
+			{
+				cullWalls[Direction::left] = true;
+			}
+			else if (camPosition.x > m_posX + m_sizeX)
+			{
+				cullWalls[Direction::right] = true;
+			}
+			if (camPosition.y < m_posY)
+			{
+				cullWalls[Direction::down] = true;
+			}
+			else if (camPosition.y > m_posY + m_sizeY)
+			{
+				cullWalls[Direction::up] = true;
+			}
 		}
 
 		bool changeUp = false;
@@ -210,6 +255,32 @@ void Room::Update(Camera * cam)
 		if (right[i]->getIsInner() && !right[i]->getIsDoor())
 			right[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
+}
+
+int Room::getRoomIndex() const
+{
+	return m_index;
+}
+
+void Room::ApplyIndexOnMesh()
+{
+	for (Wall* w : m_allWalls)
+	{
+		w->getObject3D().setLightIndex(m_index);
+	}
+	for (int i = 0; i < m_sizeY; i++)
+	{
+		for (int j = 0; j < m_sizeX; j++)
+		{
+			m_tiles[j][i]->getQuad().setLightIndex(m_index);
+		}
+	}
+}
+
+void Room::CastShadow()
+{
+	m_AABB.CastShadow();
+	//m_AABB.Draw();
 }
 
 int Room::getX() const

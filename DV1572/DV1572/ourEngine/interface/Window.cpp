@@ -85,7 +85,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
-
+	attribDesc.lightIndex = shape->getLightIndex();
 	
 	// Unique Mesh
 	if (existingId == -1)
@@ -303,7 +303,8 @@ void Window::_compileShaders()
 		{ "INSTANCEWORLDTHREE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		//This is the attribute that allows the color change without constant buffer
-		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",
@@ -1095,11 +1096,9 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
-		pointLightCollectionBuffer.colorArray[i] = DX::g_lightQueue[i]->getColor(); 
-		pointLightCollectionBuffer.lightSetup[i].x = DX::g_lightQueue[i]->getLightSetup().x;
-		pointLightCollectionBuffer.lightSetup[i].y = DX::g_lightQueue[i]->getLightSetup().y;
-		pointLightCollectionBuffer.lightSetup[i].z = DX::g_lightQueue[i]->getLightSetup().z;
-		pointLightCollectionBuffer.lightSetup[i].w = DX::g_lightQueue[i]->getLightSetup().w;
+		pointLightCollectionBuffer.colorArray[i] =	DX::g_lightQueue[i]->getColor(); 
+		pointLightCollectionBuffer.colorArray[i].w = DX::g_lightQueue[i]->getIndex();
+		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
 	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(nrOfLights, nrOfLights, nrOfLights, nrOfLights); 

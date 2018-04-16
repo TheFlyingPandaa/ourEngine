@@ -24,6 +24,9 @@ struct INPUT
 	float4 w2 : INSTANCEWORLDTWO;
 	float4 w3 : INSTANCEWORLDTHREE;
 	float4 w4 : INSTANCEWORLDFOUR;
+
+	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 };
 
 struct OUTPUT
