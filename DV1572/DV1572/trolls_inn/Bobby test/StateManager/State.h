@@ -2,6 +2,7 @@
 #include <stack>
 #include "../../../ourEngine/interface/Interface.h"
 #include "HUD/HUD.h"
+#include "SubStates\SubState.h"
 
 class State
 {
@@ -18,7 +19,7 @@ protected:
 	std::stack<int>*		p_keyEvents;
 	HUD						m_stateHUD;
 
-	
+	std::stack<SubState*>	m_subStates;
 
 public:
 	State(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent) : m_exitState(false), m_newState(nullptr), p_pickingEvent(nullptr), p_keyEvents(nullptr) {

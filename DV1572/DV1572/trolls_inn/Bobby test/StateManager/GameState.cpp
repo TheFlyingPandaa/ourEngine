@@ -6,6 +6,7 @@
 #include <future>
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
+#include "../StateManager/SubStates/BuildState.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -51,12 +52,17 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
-	previousKey = -1;
+	previousKey = -1;	
 }
 
 GameState::~GameState()
 {
 	delete grid;
+	while (!m_subStates.empty())
+	{
+		delete m_subStates.top();
+		m_subStates.pop();
+	}
 }
 
 // round float to n decimals precision
@@ -68,16 +74,31 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	this->m_cam->update();
+	gameTime.updateCurrentTime(deltaTime); 
+	if (!m_subStates.empty())
+	{
+		m_subStates.top()->Update(deltaTime);
+		if (m_subStates.top()->exitState()) {
+			delete m_subStates.top();
+			m_subStates.pop();
+		}
+		else
+		{
+			SubState * ref = m_subStates.top()->newState();
+			if (ref)
+				m_subStates.push(ref);
+		}
+		return;
+	}
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
 		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
 	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
-	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
-	gameTime.updateCurrentTime(deltaTime); 
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	//std::cout << " TIME: " << dt << std::endl;
@@ -139,7 +160,8 @@ void GameState::Draw()
 	test.setMesh(&box);
 	test.CastShadow();
 	test.Draw();
-
+	if (!m_subStates.empty())
+		m_subStates.top()->Draw();
 }
 
 void GameState::DrawHUD()
