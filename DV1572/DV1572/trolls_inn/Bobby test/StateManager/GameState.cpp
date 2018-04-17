@@ -368,8 +368,10 @@ void GameState::_handleInput()
 		}
 	}
 
-	if (Input::isKeyPressed('B'))
+	if (Input::isKeyPressed('B')) {
 		m_stage = GameStage::BuildRoom;
+		m_doorBuild = false;
+	}
 	else if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
 
@@ -378,8 +380,12 @@ void GameState::_handleInput()
 		if (Input::isKeyPressed('V'))
 		{
 			m_doorBuild = true;
-			std::cout << "DOOR AKBAR" << std::endl;
 		}
+		
+	}
+	else
+	{
+		m_doorBuild = false;
 	}
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
