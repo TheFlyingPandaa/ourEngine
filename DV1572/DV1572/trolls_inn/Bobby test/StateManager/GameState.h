@@ -25,11 +25,13 @@ private:
 	Mesh kitchenTile;
 	Mesh rect;
 	Grid* grid;
-	Grid* grid2;
+
 
 	DirectX::XMINT2 m_mainDoorPos;
 
 	Mesh door;
+
+	Object3D test;
 
 	Object3D d;
 
@@ -93,10 +95,13 @@ private:
 
 	int m_i = 0;
 	std::future<void> future;
+
+	bool m_doorBuildRpressde = false;
+	bool m_doorBuild = false;
 	
 
 
-	virtual void	_init() override;
+	void	_init() override;
 	void			_handleBuildRoom(Shape * s);
 	void			_handleRoomDeletion(Shape * s); 
 	void			_setHud();
@@ -113,4 +118,5 @@ public:
 	// Inherited via State
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
+	virtual void DrawHUD() override;
 };

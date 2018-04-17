@@ -18,6 +18,7 @@ struct INPUT
 	float4 w4 : INSTANCEWORLDFOUR;
 
 	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 };
 
 struct OUTPUT
@@ -28,6 +29,7 @@ struct OUTPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 };
 
 
@@ -41,5 +43,6 @@ OUTPUT main(INPUT input)
 	o.normal = input.normal;
 	o.tangent = input.tangent;
 	o.color = input.color;
+	o.lIndex = input.lIndex;
 	return o;
 }

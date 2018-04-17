@@ -19,16 +19,26 @@ const float WALLOFFSET = 0.5f;
 
 class RoomCtrl
 {
+public:
+	
 private:
 	std::vector<Room*>	m_rooms;
+	Room*				m_entrance;
 	std::vector<Wall*>	m_walls;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
+	std::vector<std::vector<int>> m_roomConnections;
+	std::vector<int> m_tempPath;
 	
 	bool				_checkLegal(Room * room);
-	
+	void				_makeRoomConnection(int source, int destination);
+	void				_dijkstra(int src, int dst);
+	void				_getSolution(int dist[], int parent[], int src, int dst);
+	void				_traversalPath(int parent[], int j, int src, int dst);
+
+	void				_printRoomConnections() const;
 
 public:
 	RoomCtrl();
@@ -53,13 +63,24 @@ public:
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(Tile * tile1, Tile * tile2);
 	void				removeWall(Wall* wallToRemove); 
-	DirectX::XMINT2		CreateMainDoor(Tile * tile1, Tile * tile2);
+	void				CreateMainDoor(Tile * tile1, Tile * tile2);
 
+	std::vector<int>	roomTraversal(Tile* roomTile1, Tile * roomTile2);
 
 	int					getNrOfRooms() const; 
 
 
+	Room*				getMainRoom() const;
+	XMINT2				getMainDoorPosEnter() const;
+	XMINT2				getMainDoorPosLeave() const;
+
+	XMINT2				getRoomEnterPos(Room* startRoom, int roomDstIndex);
+	XMINT2				getRoomLeavePos(Room* startRoom, int roomDstIndex);
+
+	Room*				getRoomAt(int index);
+
 	Direction			getDirection(Tile*, Tile*);
+	XMINT2				getDirection2i(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
 
 	bool				removeRoom(Room* roomToRemove); 

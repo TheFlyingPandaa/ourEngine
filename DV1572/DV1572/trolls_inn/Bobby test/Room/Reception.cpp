@@ -13,6 +13,7 @@ Reception::Reception(int posX, int posY, int sizeX, int sizeY, std::vector<std::
 
 Reception::~Reception()
 {
+
 }
 
 void Reception::Draw()

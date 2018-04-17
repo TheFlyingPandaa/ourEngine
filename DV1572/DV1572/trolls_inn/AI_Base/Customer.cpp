@@ -8,7 +8,7 @@ Customer::Customer(Race race, int gold)
 {
 	this->race = race;
 	this->economy = Economy(gold);
-	this->leavingInn = false;
+	this->setAction(WalkAction);
 }
 
 Customer::~Customer()
@@ -30,7 +30,7 @@ Race Customer::getRace() const
 	return this->race;
 }
 
-const char * Customer::getRaceStr() const
+const char* Customer::getRaceStr() const
 {
 	switch (race)
 	{
@@ -43,53 +43,112 @@ const char * Customer::getRaceStr() const
 	case Dwarf:
 		return "Dwarf";
 	}
+
 	return "NO RACE!";
 }
 
 Action Customer::getAction() const
 {
-	// tired 1
-	// hungry 2
-	// thristy 5
 	Action action;
-	int value = std::max(std::max(tired, hungry), thirsty);
-	action = (value == tired) ? SleepAction : (value == hungry) ? EatAction : DrinkAction;
+	//std namespace max breaks code
+	int value = max(max(this->tired, this->hungry), this->thirsty);
+	action = (value == this->tired) ? SleepAction : (value == this->hungry) ? EatAction : DrinkAction;
+	
 	return action;
 }
 
-const char * Customer::getActionStr() const
+int Customer::getQueueEmpty() const
+{
+	return this->stateQueue.empty();
+}
+
+CustomerState Customer::getState() const
+{
+	return this->stateQueue.front();
+}
+
+void Customer::popToNextState()
+{
+	this->stateQueue.pop();
+}
+
+void Customer::setAction(Action nextAction)
+{
+	switch (nextAction)
+	{
+	case WalkAction:
+		this->stateQueue.push(Walking);
+		break;
+	case ThinkingAction:
+		this->stateQueue.push(Thinking);
+		break;
+	case DrinkAction:
+		this->stateQueue.push(Drinking);
+		break;
+	case EatAction:
+		this->stateQueue.push(Eating);
+		break;
+	case SleepAction:
+		this->stateQueue.push(Sleeping);
+		break;
+	case LeavingInnAction:
+		this->stateQueue.push(LeavingInn);
+		break;
+	}
+	// To return the customer to idle after it executed its action
+	this->stateQueue.push(Idle);
+}
+
+void Customer::gotPathSetNextAction(Action nextAction)
+{
+	this->stateQueue.push(Walking);
+	this->setAction(nextAction);
+}
+
+const char* Customer::getActionStr() const
 {
 	Action action = getAction();
+
 	switch (action)
 	{
+	case WalkAction:
+		return "Walking";
+	case ThinkingAction:
+		return "Thinking";
 	case DrinkAction:
 		return "Drink";
 	case EatAction:
 		return "Eat";
 	case SleepAction:
 		return "Sleep";
+	case LeavingInnAction:
+		return "Leaving Trolls Inn";
 	}
-	return "NO ACTION";
+
+	return "Idle";
 }
 
-int Customer::getPosX() const
+const char* Customer::getNextActionStr() const
 {
-	return this->posX;
-}
+	Action action = getAction();
 
-int Customer::getPosY() const
-{
-	return this->posY;
-}
+	switch (action)
+	{
+	case WalkAction:
+		return "Walking";
+	case ThinkingAction:
+		return "Thinking";
+	case DrinkAction:
+		return "Drink";
+	case EatAction:
+		return "Eat";
+	case SleepAction:
+		return "Sleep";
+	case LeavingInnAction:
+		return "Leaving Trolls Inn";
+	}
 
-void Customer::setPosX(int x)
-{
-	this->posX = x;
-}
-
-void Customer::setPosY(int y)
-{
-	this->posY = y;
+	return "Idle";
 }
 
 int Customer::getHungry() const
@@ -107,11 +166,6 @@ int Customer::getThirsty() const
 	return this->thirsty;
 }
 
-bool Customer::getLeavingInn() const
-{
-	return this->leavingInn;
-}
-
 void Customer::setHungry(int value)
 {
 	this->hungry = value;
@@ -125,15 +179,4 @@ void Customer::setTired(int value)
 void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
-}
-
-void Customer::setLeavingInn(bool isLeaving)
-{
-	this->leavingInn = isLeaving;
-}
-
-void Customer::move(int x, int y)
-{
-	this->posX += x;
-	this->posY += y;
 }

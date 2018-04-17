@@ -36,12 +36,15 @@ std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsSkyBox;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
+std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
 std::vector<Text*>									DX::g_textQueue;
 std::unique_ptr<DirectX::SpriteBatch>				DX::g_spriteBatch;
 
+XMFLOAT4A											DX::g_lightPos;
+XMFLOAT4A											DX::g_lightDir;
 
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 {
@@ -82,7 +85,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
-
+	attribDesc.lightIndex = static_cast<float>(shape->getLightIndex());
 	
 	// Unique Mesh
 	if (existingId == -1)
@@ -263,6 +266,7 @@ HRESULT Window::_initDirect3DContext()
 		DX::g_device->CreateRenderTargetView(pBackBuffer, NULL, &m_backBufferRTV);
 		//we are creating the standard depth buffer here.
 		_createDepthBuffer();
+		_loadShadowBuffers();
 		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);	//As a standard we set the rendertarget. But it will be changed in the prepareGeoPass
 		pBackBuffer->Release();
 	}
@@ -299,7 +303,8 @@ void Window::_compileShaders()
 		{ "INSTANCEWORLDTHREE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		//This is the attribute that allows the color change without constant buffer
-		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",
@@ -332,6 +337,11 @@ void Window::_compileShaders()
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_skyBoxPixelShader,
 		L"ourEngine/shaders/skyBoxPixelShader.hlsl", "main");
 
+	//Shadow
+	ShaderCreator::CreateVertexShader(DX::g_device, m_shadowVertex,
+		L"ourEngine/shaders/ShadowVertex.hlsl", "main");
+	ShaderCreator::CreatePixelShader(DX::g_device, m_shadowPixel,
+		L"ourEngine/shaders/ShadowPixel.hlsl", "main");
 
 	_initPickingShaders();
 	_initTessellationShaders();
@@ -427,7 +437,7 @@ void Window::_drawHUD()
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -529,6 +539,148 @@ void Window::_runComputeShader() {
 	ID3D11UnorderedAccessView* nullUAV[] = { NULL };	//NUll everything to please directx
 	DX::g_deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
 	DX::g_deviceContext->CSSetShader(NULL, NULL, 0);
+}
+
+void Window::_loadShadowBuffers()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(SHADOW_MATRIX_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = m_width;
+	texDesc.Height = m_height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_depthBufferTexShad);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = 0;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Texture2D.MipSlice = 0;
+
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
+
+	//m_shadowProjMatrix = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
+	m_shadowProjMatrix = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
+}
+
+void Window::_prepareShadow()
+{
+
+	//DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilViewShad);
+}
+
+void Window::_shadowPass(Camera* c)
+{
+
+	XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
+	XMFLOAT4 lookAt = XMFLOAT4(16, 0, 16, 1);
+	XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
+	XMVECTOR p;
+	XMVECTOR l;
+	//p = XMLoadFloat4(&pos);
+	//l = XMLoadFloat4(&lookAt);
+
+	//p = XMLoadFloat4(&DX::g_lightPos);
+	l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
+	XMVECTOR look = XMLoadFloat4(&lookAt);
+
+	XMVECTOR u = XMLoadFloat4(&up);
+	p =  look + (-l *20.0f);
+	p = XMVectorSetW(p, 1.0f);
+	
+
+	XMMATRIX view = XMMatrixLookAtLH(p, look, u);
+	
+	SHADOW_MATRIX_BUFFER meshBuffer;
+
+	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(m_shadowProjMatrix));
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+	for (auto& instance : DX::g_InstanceGroupsShadow)
+	{
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
+		DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
+		
+		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
+
+
+	
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
+
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+		
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
+
+	
 }
 
 void Window::_initFonts()
@@ -681,6 +833,11 @@ void Window::_createDepthBuffer()
 	//Create the Depth/Stencil View
 	HRESULT hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTex);
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTex, NULL, &m_depthStencilView);
+
+
+
+	//hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTexShad);
+	//hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, NULL, &m_depthStencilViewShad);
 }
 
 void Window::_initGBuffer()
@@ -756,6 +913,7 @@ void Window::_geometryPass(const Camera &cam)
 
 	for (auto& instance : DX::g_instanceGroups)
 	{
+		
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -768,10 +926,12 @@ void Window::_geometryPass(const Camera &cam)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 		//We copy the data into the attribute part of the layout.
 		//This is what makes instancing special
+		
+		
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
-		meshBuffer.gridscale = instance.shape->getGridScale();
+		meshBuffer.gridscale = static_cast<float>(instance.shape->getGridScale());
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -779,33 +939,37 @@ void Window::_geometryPass(const Camera &cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
-
+		
+		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
-		UINT32 vertexSize = sizeof(VERTEX);
-		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
-		ID3D11Buffer * bufferPointers[2];
-		bufferPointers[0] = v;
-		bufferPointers[1] = instanceBuffer;
+		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		{
+			instance.shape->ApplyMaterials(i);
 
-		unsigned int strides[2];
-		strides[0] = sizeof(VERTEX);
-		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+			UINT32 vertexSize = sizeof(VERTEX);
+			UINT offset = 0;
+			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer * bufferPointers[2];
+			bufferPointers[0] = v;
+			bufferPointers[1] = instanceBuffer;
 
-		unsigned int offsets[2];
-		offsets[0] = 0;
-		offsets[1] = 0;
+			unsigned int strides[2];
+			strides[0] = sizeof(VERTEX);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
 
+			unsigned int offsets[2];
+			offsets[0] = 0;
+			offsets[1] = 0;
 
+			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
 
-		Mesh* mesh = instance.shape->getMesh();
-		ID3D11Buffer* indices = mesh->getIndicesBuffer();
-
-		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
-		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+																					
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
+		}
+		
 		instanceBuffer->Release();
 	}
 
@@ -823,6 +987,7 @@ void Window::_geometryPass(const Camera &cam)
 
 void Window::_skyBoxPass(const Camera& cam)
 {
+	
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	DirectX::XMMATRIX view = XMMatrixLookToLH(
@@ -861,7 +1026,8 @@ void Window::_skyBoxPass(const Camera& cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
+		instance.shape->ApplyShaders(); 
+		instance.shape->ApplyMaterials();
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -886,7 +1052,7 @@ void Window::_skyBoxPass(const Camera& cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -896,6 +1062,13 @@ void Window::_clearTargets()
 {
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT] = { nullptr };
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
+}
+
+void Window::_preparePostLight()
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 }
 
 void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
@@ -913,22 +1086,22 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	{
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
+	DX::g_deviceContext->PSSetShaderResources(4, 1, &m_shadowDepthTexture);
+	DX::g_deviceContext->PSSetConstantBuffers(9, 1, &m_shadowBuffer);
 	
 	//Send lights to GPU
 	POINT_LIGHT_COLLECTION pointLightCollectionBuffer; 
-	int nrOfLights = DX::g_lightQueue.size();
+	int nrOfLights = static_cast<int>(DX::g_lightQueue.size());
 
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
-		pointLightCollectionBuffer.colorArray[i] = DX::g_lightQueue[i]->getColor(); 
-		pointLightCollectionBuffer.lightSetup[i].x = DX::g_lightQueue[i]->getLightSetup().x;
-		pointLightCollectionBuffer.lightSetup[i].y = DX::g_lightQueue[i]->getLightSetup().y;
-		pointLightCollectionBuffer.lightSetup[i].z = DX::g_lightQueue[i]->getLightSetup().z;
-		pointLightCollectionBuffer.lightSetup[i].w = DX::g_lightQueue[i]->getLightSetup().w;
+		pointLightCollectionBuffer.colorArray[i] =	DX::g_lightQueue[i]->getColor(); 
+		pointLightCollectionBuffer.colorArray[i].w = static_cast<float>(DX::g_lightQueue[i]->getIndex());
+		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
-	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(nrOfLights, nrOfLights, nrOfLights, nrOfLights); 
+	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
 	DX::g_deviceContext->Map(m_pPointLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
@@ -956,8 +1129,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 
 void Window::_transparencyPass(const Camera & cam)
 {
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	
 	DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 
 	DX::g_deviceContext->VSSetShader(m_transVertexShader, nullptr, 0);
@@ -965,7 +1137,6 @@ void Window::_transparencyPass(const Camera & cam)
 	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_transPixelShader, nullptr, 0);
-	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	DirectX::XMMATRIX view = cam.getViewMatrix();
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;
@@ -1021,7 +1192,7 @@ void Window::_transparencyPass(const Camera & cam)
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNumberOfVertices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 }
@@ -1190,10 +1361,14 @@ void Window::Clear()
 	DX::g_instanceGroupsHUD.clear();
 	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
+	DX::g_InstanceGroupsShadow.clear();
 	DX::g_textQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
-	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
+	//DX::g_lightsPos.clear();
+	//DX::g_lightsDir.clear();
 	for (int i = 0; i < GBUFFER_COUNT; i++)
 	{
 		DX::g_deviceContext->ClearRenderTargetView(m_gbuffer[i].RTV, c);
@@ -1211,6 +1386,8 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
+	_prepareShadow();
+	_shadowPass(c);
 	if (DEBUG == 1)
 	{
 		if (Input::isKeyPressed('O'))
@@ -1228,11 +1405,18 @@ void Window::Flush(Camera* c)
 	_geometryPass(*c);
 	_clearTargets();
 	_lightPass(*c);
+
+	_preparePostLight();
 	_transparencyPass(*c);
-	_skyBoxPass(*c);
-	_drawHUD();
-	_runComputeShader();
-	_drawText();
+
+	if(DX::g_instanceGroupsSkyBox.size() > 0) 
+		_skyBoxPass(*c);
+	if(DX::g_instanceGroupsHUD.size() > 0)
+		_drawHUD();
+	if(m_computeShader != nullptr)
+		_runComputeShader();
+	if(DX::g_textQueue.size() > 0)
+		_drawText();
 }
 
 void Window::FullReset()
@@ -1244,7 +1428,7 @@ void Window::FullReset()
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
 }
 
 void Window::Present()
@@ -1263,41 +1447,37 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_width = LOWORD(lParam);
 		m_height = HIWORD(lParam);
 		Input::m_windowSize = DirectX::XMINT2(m_width, m_height);
-		m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f);
-		if (m_swapChain)
-		{
-			DX::g_deviceContext->OMSetRenderTargets(0, 0, 0);
 
-			// Release all outstanding references to the swap chain's buffers.
-			m_backBufferRTV->Release();
+		//	// Release all outstanding references to the swap chain's buffers.
+		//	m_backBufferRTV->Release();
 
-			HRESULT hr;
-			// Preserve the existing buffer count and format.
-			// Automatically choose the width and height to match the client rect for HWNDs.
-			hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		//	HRESULT hr;
+		//	// Preserve the existing buffer count and format.
+		//	// Automatically choose the width and height to match the client rect for HWNDs.
+		//	hr = m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-			// Perform error handling here!
+		//	// Perform error handling here!
 
-			// Get buffer and create a render-target-view.
-			ID3D11Texture2D* pBuffer;
-			hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-				(void**)&pBuffer);
-			// Perform error handling here!
+		//	// Get buffer and create a render-target-view.
+		//	ID3D11Texture2D* pBuffer;
+		//	hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+		//		(void**)&pBuffer);
+		//	// Perform error handling here!
 
-			hr = DX::g_device->CreateRenderTargetView(pBuffer, NULL,
-				&m_backBufferRTV);
-			// Perform error handling here!
-			pBuffer->Release();
-			_initGBuffer();
-			_createDepthBuffer();
-			DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+		//	hr = DX::g_device->CreateRenderTargetView(pBuffer, NULL,
+		//		&m_backBufferRTV);
+		//	// Perform error handling here!
+		//	pBuffer->Release();
+		//	_initGBuffer();
+		//	_createDepthBuffer();
+		//	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
-			// Set up the viewport.
-			_setViewport();
+		//	// Set up the viewport.
+		//	_setViewport();
 
-			
-			
-		}
+		//	
+		//	
+		//}
 		break;
 	// ----- Keyboard Button -----
 	case WM_KEYDOWN:
@@ -1305,7 +1485,7 @@ LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		// --------------------------------Subject for change!--------------------------------
 		if (wParam == VK_ESCAPE)
 			PostQuitMessage(0);
-		
+
 		Input::m_keys[wParam] = true;
 		Input::lastPressed = static_cast<int>(wParam);
 		break;

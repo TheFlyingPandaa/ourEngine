@@ -4,14 +4,14 @@
 
 void Light::updateMatrix()
 {
-	pos = XMFLOAT3(0, 0, 10);
+	m_pos = XMFLOAT4A(0, 0, 10, 1);
 	DirectX::XMVECTOR vDir; 
 	vDir = DirectX::XMLoadFloat4A(&m_lightBuffer.dir); 
-	DirectX::XMStoreFloat3(&lookAt, vDir); 
+	DirectX::XMStoreFloat4A(&m_dir, vDir); 
 	
 	XMMATRIX view = XMMatrixLookAtLH(
-		XMLoadFloat3(&pos),
-		XMLoadFloat3(&lookAt),
+		XMLoadFloat4(&m_pos),
+		XMLoadFloat4(&m_dir),
 		up
 	);
 	//view = cam.getViewMatrix();
@@ -30,6 +30,12 @@ void Light::cpyDataDir(DIRECTIONAL_LIGHT_BUFFER& bufferToWriteFrom, ID3D11Buffer
 	memcpy(sunLightData.pData, &(bufferToWriteFrom), sizeof(DIRECTIONAL_LIGHT_BUFFER));
 	DX::g_deviceContext->Unmap(bufferPointer, 0);
 	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &bufferPointer);
+}
+
+void Light::CreatesShadows()
+{
+	DX::g_lightPos = m_pos;
+	DX::g_lightDir = m_dir;
 }
 
 void Light::_createResources()
@@ -86,6 +92,8 @@ void Light::InitDirectional(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float
 	m_lightBuffer.pos = pos;
 	m_lightBuffer.dir = dir;
 	m_lightBuffer.color = color;
+	m_pos = pos;
+	m_dir = dir;
 
 	//Setting width and height of 
 	m_width = width;
@@ -96,7 +104,7 @@ void Light::InitDirectional(XMFLOAT4A pos, XMFLOAT4A dir, XMFLOAT4A color, float
 
 Light::Light()
 {
-
+	
 }
 
 Light::~Light()
