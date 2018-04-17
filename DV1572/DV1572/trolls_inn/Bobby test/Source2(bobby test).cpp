@@ -31,7 +31,7 @@
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
 #endif 
 
-#include <vld.h>
+//#include <vld.h>
 
 
 
@@ -51,7 +51,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
 	AllocConsole();
 	FILE* fp;

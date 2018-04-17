@@ -56,8 +56,8 @@ DirectX::XMFLOAT3 RectangleShape::getScreenPos() const
 	DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(getPosition());
 
 	DirectX::XMINT2 s = Input::getWindowSize();
-	pos.x = 0.5 * (pos.x * s.x) + 1.0f;
-	pos.y = 0.5 * (pos.y * s.y) + 1.0f;
+	pos.x = 0.5f * (pos.x * s.x) + 1.0f;
+	pos.y = 0.5f * (pos.y * s.y) + 1.0f;
 
 	return pos;
 }
