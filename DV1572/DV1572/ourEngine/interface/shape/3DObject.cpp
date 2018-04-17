@@ -7,6 +7,7 @@ Object3D::Object3D()
 	setPixelShader(DX::g_3DPixelShader);
 	setHullShader(DX::g_standardHullShader);
 	setDomainShader(DX::g_standardDomainShader);
+	m_HENRIKTABORT = false;
 }
 
 std::string Object3D::toString() const

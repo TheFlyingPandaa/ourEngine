@@ -46,7 +46,6 @@ float4 main(Input input) : SV_Target
 	float3 normal = tNormal.Sample(sampAni, input.tex).rgb;
 	float3 diffuseSample = tDiffuse.Sample(sampAni, input.tex).rgb;
 	float inside = tNormal.Sample(sampAni, input.tex).a;
-
 	//return tShadow.Sample(sampAni, input.tex);
 
 	float3 ambient = diffuseSample * 0.2f;

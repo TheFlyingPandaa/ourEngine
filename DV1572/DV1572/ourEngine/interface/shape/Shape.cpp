@@ -248,14 +248,22 @@ void Shape::setColor(DirectX::XMFLOAT4A color)
 
 void Shape::Draw()
 {
-	if (m_mesh->getMaterial()->isTransparent())
+	if (m_HENRIKTABORT)
 	{
-		DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
+		DX::submitToInstance(this, DX::g_instanceGroupsBillboard);
 	}
-	else 
+	else
 	{
-		DX::submitToInstance(this, DX::g_instanceGroups);
+		if (m_mesh->getMaterial()->isTransparent())
+		{
+			DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
+		}
+		else
+		{
+			DX::submitToInstance(this, DX::g_instanceGroups);
+		}
 	}
+	
 }
 
 void Shape::setGridScale(int scale)

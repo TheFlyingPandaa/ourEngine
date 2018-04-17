@@ -60,10 +60,15 @@ namespace DX
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
 
+	//Billboard
+	extern ID3D11VertexShader* g_billboardVertexShader;
+	extern ID3D11PixelShader* g_billboardPixelShader;
+
 	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsSkyBox;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
 	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
+	extern std::vector<INSTANCE_GROUP> g_instanceGroupsBillboard;
 	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
 	extern std::vector<INSTANCE_GROUP>	g_InstanceGroupsShadow;
 
