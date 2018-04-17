@@ -328,6 +328,7 @@ void RoomCtrl::CreateDoors(Room * room)
 {
 	//get other room type 
 	for (Room * other : *room->getAdjasent()) {
+		if(other != nullptr)
 		if (_checkLegal(other)) {
 			/*Direction dir = getDirection(room, other);
 			Direction otherDir = getDirection(other, room);*/

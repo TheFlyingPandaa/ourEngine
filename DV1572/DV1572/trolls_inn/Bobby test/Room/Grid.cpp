@@ -129,6 +129,7 @@ Grid::~Grid()
 		for (int j = 0; j < this->m_tiles[i].size(); j++)
 		{
 			delete this->m_tiles[i][j];
+			this->m_tiles[i][j] = nullptr;
 		}
 	}
 	delete m_gridMesh;

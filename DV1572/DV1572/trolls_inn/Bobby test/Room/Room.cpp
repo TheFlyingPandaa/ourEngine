@@ -50,7 +50,8 @@ Room::~Room()
 	{
 		for (int k = 0; k < m_tiles[i].size(); k++)
 		{
-			m_tiles[i][k]->setRoom(nullptr); 
+			if(m_tiles[i][k] != nullptr)
+				m_tiles[i][k]->setRoom(nullptr); 
 		}
 	}
 }

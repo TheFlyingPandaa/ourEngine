@@ -452,6 +452,7 @@ void GameState::_roomDeletionInput()
 					}
 					grid->getRoomCtrl().removeRoom(tempRoom);
 				}
+				grid->getRoomCtrl().CreateWalls();  
 				m_hasBeenDeleted = true;
 			}
 		}
