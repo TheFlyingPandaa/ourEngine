@@ -16,11 +16,13 @@ class Inn
 {
 private:
 	Attributes innAttributes;
-	//Attributes innUpdateAttributes;
 	innUpdateAttributes iUA;
 	int foodPrice;
 	int sleepPrice;
 	int drinkPrice;
+
+	void addStatsToInn(Attributes type);
+	void checkInnStatUpdate();
 
 public:
 	Inn();
@@ -32,6 +34,9 @@ public:
 
 	Attributes getInnAttributes() const;
 
+	// Add a customers review to the inn stats
 	void customerReview(Attributes review);
+	// Add stats to the inn based on the furniture placed
+	void furnitureStatAdd(Attributes furnitureStats);
 
 };

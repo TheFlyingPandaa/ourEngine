@@ -1,43 +1,18 @@
 #include "Inn.h"
 
-Inn::Inn()
+void Inn::addStatsToInn(Attributes type)
 {
+	this->iUA.creepy += type.getCreepy();
+	this->iUA.drinkQuality += type.getDrinkQuality();
+	this->iUA.foodQuality += type.getFoodQuality();
+	this->iUA.prices += type.getPrices();
+	this->iUA.reputation += type.getReputation();
+	this->iUA.shady += type.getShady();
+	this->iUA.standard += type.getStandard();
 }
 
-Inn::~Inn()
+void Inn::checkInnStatUpdate()
 {
-}
-
-int Inn::getFoodPrice() const
-{
-	return this->foodPrice;
-}
-
-int Inn::getSleepPrice() const
-{
-	return this->sleepPrice;
-}
-
-int Inn::getDrinkPrice() const
-{
-	return this->drinkPrice;
-}
-
-Attributes Inn::getInnAttributes() const
-{
-	return this->innAttributes;
-}
-
-void Inn::customerReview(Attributes review)
-{
-	this->iUA.creepy += review.getCreepy();
-	this->iUA.drinkQuality += review.getDrinkQuality();
-	this->iUA.foodQuality += review.getFoodQuality();
-	this->iUA.prices += review.getPrices();
-	this->iUA.reputation += review.getReputation();
-	this->iUA.shady += review.getShady();
-	this->iUA.standard += review.getStandard();
-
 	if (this->iUA.creepy >= 10.0f)
 	{
 		this->innAttributes.setCreepy((int)(this->iUA.creepy * 0.1));
@@ -73,4 +48,45 @@ void Inn::customerReview(Attributes review)
 		this->innAttributes.setStandard((int)(this->iUA.standard * 0.1));
 		this->iUA.standard -= 10.0f;
 	}
+}
+
+Inn::Inn()
+{
+}
+
+Inn::~Inn()
+{
+}
+
+int Inn::getFoodPrice() const
+{
+	return this->foodPrice;
+}
+
+int Inn::getSleepPrice() const
+{
+	return this->sleepPrice;
+}
+
+int Inn::getDrinkPrice() const
+{
+	return this->drinkPrice;
+}
+
+Attributes Inn::getInnAttributes() const
+{
+	return this->innAttributes;
+}
+
+// Change to one standard function for all stat adds?
+void Inn::customerReview(Attributes review)
+{
+	this->addStatsToInn(review);
+	this->checkInnStatUpdate();
+}
+
+void Inn::furnitureStatAdd(Attributes furnitureStats)
+{
+	this->addStatsToInn(furnitureStats);
+	this->checkInnStatUpdate();
 }

@@ -1,5 +1,19 @@
 #include "AISolver.h"
 
+AISolver::AISolver()
+{
+}
+
+AISolver::AISolver(Grid* grid)
+{
+	this->map = grid;
+}
+
+AISolver::~AISolver()
+{
+	delete map;
+}
+
 void AISolver::update(Customer& customer)
 {
 	CustomerState currentState = customer.getState();
@@ -23,12 +37,13 @@ void AISolver::update(Customer& customer)
 			{
 				// Get a path to a new location
 				// Walk towards a room with the highest value (?) Tired, Hungry, Thirsty
-
+				// Go explore (?)
 			}
 			break;
+			// Update animations (?)
 		case Drinking:
 			// Get drink
-
+			
 			break;
 		case Eating:
 			// Get food
@@ -59,6 +74,10 @@ void AISolver::update(Customer& customer, Action desiredAction)
 		customer.gotPathSetNextAction(desiredAction);
 		break;
 	}
+}
+
+void AISolver::update(Staff& staff)
+{
 }
 
 void AISolver::update(Staff& staff, Action desiredAction)

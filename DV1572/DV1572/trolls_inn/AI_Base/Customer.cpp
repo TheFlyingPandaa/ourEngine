@@ -95,7 +95,7 @@ void Customer::setAction(Action nextAction)
 		this->stateQueue.push(LeavingInn);
 		break;
 	}
-	// to return the customer to idle after it executed its action
+	// To return the customer to idle after it executed its action
 	this->stateQueue.push(Idle);
 }
 
