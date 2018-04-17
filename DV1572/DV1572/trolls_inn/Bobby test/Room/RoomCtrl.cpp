@@ -272,7 +272,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	CreateWalls();
 	
-
+	_printRoomConnections();
 	if (m_roomConnections.size() < m_rooms.size())
 	{
 		m_roomConnections.push_back(std::vector<int>());
@@ -285,8 +285,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				j++;
 		}
 	}
-
-	//CreateDoors(room);
 
 	if (!m_entrance) m_entrance = m_rooms.back();
 	room->ApplyIndexOnMesh();
@@ -599,7 +597,7 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 	w->setScale(1.0f,1.0f,1.0f);
 	w->setIsDoor(true);
 	int indexes[2] = { -1 };
-	Room* firstRoom = w->getTile()->getRoom();
+	Room* firstRoom = tile1->getRoom();
 	Room* secondRoom = tile2->getRoom();
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
@@ -614,15 +612,17 @@ void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
 	XMINT2 tilePosition2 = { tile2->getPosX(), tile2->getPosY() };
 	XMINT2 doorDir = getDirection2i(tile1, tile2);
 	XMINT2 doorDirInv = { -doorDir.x, -doorDir.y };
-	std::cout << "Door position1 (" << tilePosition.x << "," << tilePosition.y << ")\n";
-	std::cout << "Door direction1 (" << doorDir.x << "," << doorDir.y << ")\n";
+	//std::cout << "Door position1 (" << tilePosition.x << "," << tilePosition.y << ")\n";
+	//std::cout << "Door direction1 (" << doorDir.x << "," << doorDir.y << ")\n";
 
-	std::cout << "\nDoor position2 (" << tilePosition2.x << "," << tilePosition2.y << ")\n";
-	std::cout << "Door direction2 (" << doorDirInv.x << "," << doorDirInv.y << ")\n";
+	//std::cout << "\nDoor position2 (" << tilePosition2.x << "," << tilePosition2.y << ")\n";
+	//std::cout << "Door direction2 (" << doorDirInv.x << "," << doorDirInv.y << ")\n";
 	firstRoom->addAdjasentRoomDoor(secondRoom, tilePosition, doorDir);
 	secondRoom->addAdjasentRoomDoor(firstRoom, tilePosition2, doorDirInv);
 
 	w->setMesh(this->m_doorMesh);
+	_printRoomConnections();
+
 }
 
 void RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
@@ -636,7 +636,7 @@ void RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
 	w->setIsDoor(true);
 	//tile1->setWallSpotPopulated(dir, true);
 	m_entrance = w->getTile()->getRoom();
-	std::cout << "MainDoor position (" << tile2->getPosX() << "," << tile2->getPosY() << ")\n";
+	
 	m_entrance->addAdjasentRoomDoor(nullptr, { tile2->getPosX(), tile2->getPosY() }, getDirection2i(tile2, tile1));
 	w->setMesh(this->m_doorMesh);
 }

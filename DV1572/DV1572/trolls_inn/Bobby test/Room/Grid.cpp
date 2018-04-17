@@ -173,6 +173,7 @@ void Grid::AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 si
 			m_roomCtrl.CreateDoor(t1, t2);
 		}
 	}
+	
 }
 
 void Grid::Draw()
