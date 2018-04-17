@@ -232,6 +232,16 @@ RoomCtrl::~RoomCtrl()
 	m_walls.clear();
 }
 
+void RoomCtrl::addRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+{
+	Object3D tempObj;
+	tempObj.setMesh(mesh);
+	tempObj.setPos(pos.x + 0.5f, 0, pos.y + 0.5f);
+	
+	m_roomObjects.push_back(tempObj);
+	
+}
+
 void RoomCtrl::setMesh(Mesh * mesh)
 {
 	this->m_wall = mesh;
@@ -312,6 +322,10 @@ void RoomCtrl::Draw()
 	for (Room* r : m_rooms)
 	{
 		r->CastShadow();
+	}
+	for (size_t i = 0; i < m_roomObjects.size(); i++)
+	{
+		m_roomObjects.at(i).Draw();
 	}
 }
 
@@ -589,7 +603,7 @@ void RoomCtrl::setDoorMesh(Mesh * mesh)
 	this->m_doorMesh = mesh;
 }
 
-void RoomCtrl::CreateDoor(Tile * tile1, Tile * tile2)
+void RoomCtrl:: CreateDoor(Tile * tile1, Tile * tile2)
 {
 	Direction dir = this->getDirection(tile1, tile2);
 

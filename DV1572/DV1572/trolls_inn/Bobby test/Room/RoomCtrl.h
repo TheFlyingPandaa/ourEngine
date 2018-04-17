@@ -29,6 +29,8 @@ private:
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
+	std::vector<Object3D> m_roomObjects;
+
 	std::vector<std::vector<int>> m_roomConnections;
 	std::vector<int> m_tempPath;
 	
@@ -44,6 +46,7 @@ public:
 	RoomCtrl();
 	~RoomCtrl();
 
+	void				addRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	bool				_intersect(Room * room);

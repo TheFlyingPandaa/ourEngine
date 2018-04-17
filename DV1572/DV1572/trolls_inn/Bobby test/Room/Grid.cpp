@@ -141,7 +141,13 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
+void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+{
+	m_tiles[pos.x][pos.y]->setIsWalkeble(false);
+	m_tiles[pos.x][pos.y]->setHasObject(true);
 
+	m_roomCtrl.addRoomObject(pos, mesh);
+}
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
@@ -183,7 +189,10 @@ void Grid::Draw()
 		{
 			
 			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+			{
 				m_tiles[i][j]->getQuad().Draw();
+			}
+				
 		}
 	}
 	m_wholeGrid.Draw();
