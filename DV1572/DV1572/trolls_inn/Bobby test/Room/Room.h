@@ -7,6 +7,39 @@
 
 class Room
 {
+public:
+	struct RoomConnection
+	{
+		Room* otherRoom; // if nullptr, then the connection is to the outside
+		XMINT2 connectingDoor;
+		XMINT2 direction;
+
+		bool operator==(const Room::RoomConnection& other)
+		{
+			return *otherRoom == *other.otherRoom;
+		}
+		bool operator==(const Room& other)
+		{
+			return *otherRoom == other;
+		}
+		bool operator==(const Room* other)
+		{
+			if (other == nullptr)
+			{
+				if(otherRoom == nullptr)
+					return true;
+				return false;
+			}
+			if (otherRoom == nullptr)
+				return false;
+
+			return *otherRoom == *other;
+		}
+	};
+
+private:
+	friend class RoomCtrl;
+	
 private:
 	static Mesh s_AABB;
 	static bool s_isLoaded;
@@ -34,7 +67,9 @@ protected:
 	std::vector<Wall*> left;
 	std::vector<Wall*> right;
 
-	std::vector<Room*> adjasent;
+	std::vector<Room*> adjasentRooms;
+	
+	std::vector<RoomConnection> adjasentRoomDoors;
 	
 	bool				m_hasDoor[4]{ false };
 
@@ -56,9 +91,16 @@ public:
 	virtual void		setWalls(std::vector<Wall*> walls, Direction dir);
 	virtual void		addWall(Wall* wall, Direction dir);
 
+	bool hasConnectedRooms() const;
+
 	virtual DirectX::XMFLOAT3	getPosition() const;
 
+	virtual void		addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction);
 	virtual void		addAdjasentRoom(Room * room);
+
+	virtual XMINT2 getConnectingRoomDoorPositionPartOne(Room* otherroom);
+	virtual XMINT2 getConnectingRoomDoorPositionPartTwo(Room* otherroom);
+
 	virtual std::vector<Room*>*	getAdjasent();
 	virtual std::vector<Wall*>*	getAllWalls();
 	virtual std::vector<Wall*>*	getWall(Direction dir);
@@ -76,6 +118,8 @@ public:
 	virtual void Draw() = 0;
 	virtual std::string	toString() const = 0;
 	int getRoomIndex() const;
+
+	bool operator==(const Room& other) const;
 
 	void ApplyIndexOnMesh();
 

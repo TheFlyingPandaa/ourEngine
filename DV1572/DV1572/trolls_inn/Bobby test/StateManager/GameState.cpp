@@ -6,6 +6,7 @@
 #include <future>
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
+#include "../StateManager/SubStates/BuildState.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -27,9 +28,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	box.LoadModel("trolls_inn/Resources/box.obj");
 
-	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
-
 	c.setModel(&box);
 	c.setPosition( 10+0.5, 2+0.5);
 	c.setFloor(0);
@@ -48,19 +46,23 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
 	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, 4), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
 	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
-	m_mainDoorPos = grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
+	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 	
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
-	previousKey = -1;
+	previousKey = -1;	
 }
 
 GameState::~GameState()
 {
 	delete grid;
+	while (!m_subStates.empty())
+	{
+		delete m_subStates.top();
+		m_subStates.pop();
+	}
 }
 
 // round float to n decimals precision
@@ -72,16 +74,31 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	this->m_cam->update();
+	gameTime.updateCurrentTime(deltaTime); 
+	if (!m_subStates.empty())
+	{
+		m_subStates.top()->Update(deltaTime);
+		if (m_subStates.top()->exitState()) {
+			delete m_subStates.top();
+			m_subStates.pop();
+		}
+		else
+		{
+			SubState * ref = m_subStates.top()->newState();
+			if (ref)
+				m_subStates.push(ref);
+		}
+		return;
+	}
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
 		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
 	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
-	this->m_cam->update();
 	this->grid->Update(this->m_cam);
 	m_colorButton = false;
-	gameTime.updateCurrentTime(deltaTime); 
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	//std::cout << " TIME: " << dt << std::endl;
@@ -143,7 +160,8 @@ void GameState::Draw()
 	test.setMesh(&box);
 	test.CastShadow();
 	test.Draw();
-
+	if (!m_subStates.empty())
+		m_subStates.top()->Draw();
 }
 
 void GameState::DrawHUD()
@@ -160,10 +178,8 @@ void GameState::_init()
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 	door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	door.setDiffuseTexture("trolls_inn/Resources/door/Texture.bmp");
 	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 
@@ -248,7 +264,7 @@ void GameState::_handlePickingAi(Shape * obj)
 			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-			std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+			std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
 			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 
@@ -357,6 +373,14 @@ void GameState::_handleInput()
 	else if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
 
+	if (m_stage == GameStage::BuildRoom)
+	{
+		if (Input::isKeyPressed('V'))
+		{
+			m_doorBuild = true;
+			std::cout << "DOOR AKBAR" << std::endl;
+		}
+	}
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
 		_setHud();
@@ -396,6 +420,37 @@ void GameState::_buildInput()
 	{
 		m_buildStage = BuildStage::End;
 	}
+	else if (m_buildStage == BuildStage::End && m_doorBuild){
+		XMFLOAT3 s = m_startTile->getPosition();
+		XMFLOAT3 e = m_selectedTile->getPosition();
+
+		XMINT2 start;
+		start.x = static_cast<int>(s.x + 0.5f);
+		start.y = static_cast<int>(s.z + 0.5f);
+		XMINT2 end;
+		end.x = static_cast<int>(e.x + 0.5f);
+		end.y = static_cast<int>(e.z + 0.5f);
+
+		if (start.x > end.x)
+			std::swap(start.x, end.x);
+		if (start.y > end.y)
+			std::swap(start.y, end.y);
+		this->grid->ResetTileColor(start, end);
+
+		XMINT2 size = end;
+		size.x -= start.x - 1;
+		size.y -= start.y - 1;
+
+		m_buildStage = BuildStage::None;
+		m_startTile = nullptr;
+		m_selectedTile = nullptr;
+		m_roomPlaceable = false;
+
+		//If debugging is needed you got the size
+		this->grid->AddDoor(start, end, size);
+		
+
+	}
 	else if (m_buildStage == BuildStage::End)
 	{
 		XMFLOAT3 s = m_startTile->getPosition();
@@ -414,6 +469,8 @@ void GameState::_buildInput()
 			std::swap(start.y, end.y);
 		this->grid->ResetTileColor(start, end);
 
+		//This makes it a size.
+		//this will change the end point
 		end.x -= start.x - 1;
 		end.y -= start.y - 1;
 

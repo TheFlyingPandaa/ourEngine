@@ -9,8 +9,6 @@ using namespace DirectX;
 
 const int roomCount = 5;
 
-
-
 int connections[roomCount][roomCount] = { 0 };
 
 struct Node

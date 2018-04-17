@@ -44,35 +44,41 @@ Material::~Material()
 
 void Material::setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_diffuseResource) std::cout << "Diffuse already set before!" << std::endl;
 	m_diffuseTexture = srv;
 	m_diffuseResource = res;
 }
 
-void Material::setDiffuseMap(const std::string & path)
+bool Material::setDiffuseMap(const std::string & path)
 {
-	DX::loadTexture(path, m_diffuseResource, m_diffuseTexture);
+	if (m_diffuseResource) std::cout << "Diffuse already set before!" << std::endl;
+	return DX::loadTexture(path, m_diffuseResource, m_diffuseTexture);
 }
 
 void Material::setNormalMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_normalResource) std::cout << "Normal already set before!" << std::endl;
 	m_normalTexture = srv;
 	m_normalResource = res;
 }
 
-void Material::setNormalMap(const std::string & path)
+bool Material::setNormalMap(const std::string & path)
 {
-	DX::loadTexture(path, m_normalResource, m_normalTexture);
+	if (m_normalResource) std::cout << "Normal already set before!" << std::endl;
+	return DX::loadTexture(path, m_normalResource, m_normalTexture);
 }
 
 void Material::setHighlightMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_highlightResource) std::cout << "Highlight already set before!" << std::endl;
 	m_highlightTexture = srv;
 	m_highlightResource = res;
 }
 
-void Material::setHighlightMap(const std::string & path)
+bool Material::setHighlightMap(const std::string & path)
 {
-	DX::loadTexture(path, m_highlightResource, m_highlightTexture);
+	if (m_highlightResource) std::cout << "Highlight already set before!" << std::endl;
+	return DX::loadTexture(path, m_highlightResource, m_highlightTexture);
 }
 
 void Material::setTransparency(float alpha)

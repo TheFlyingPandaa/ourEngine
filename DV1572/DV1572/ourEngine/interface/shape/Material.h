@@ -28,11 +28,11 @@ public:
 	Material(std::string name = "NoName");
 	~Material();
 	void setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource * res);
-	void setDiffuseMap(const std::string& path);
+	bool setDiffuseMap(const std::string& path);
 	void setNormalMap(ID3D11ShaderResourceView* srv, ID3D11Resource * res);
-	void setNormalMap(const std::string& path);
+	bool setNormalMap(const std::string& path);
 	void setHighlightMap(ID3D11ShaderResourceView* srv, ID3D11Resource * res);
-	void setHighlightMap(const std::string& path);
+	bool setHighlightMap(const std::string& path);
 
 	void setTransparency(float alpha);
 	void setSpecularExponent(float specular);
