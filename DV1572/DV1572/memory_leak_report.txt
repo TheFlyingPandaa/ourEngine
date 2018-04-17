@@ -1,0 +1,104 @@
+Visual Leak Detector Version 2.5.1 installed.
+    Outputting the report to the debugger and to C:\Users\Bhaabie\Documents\GitHub\ourEngine\DV1572\DV1572\memory_leak_report.txt
+WARNING: Visual Leak Detector detected memory leaks!
+---------- Block 10247 at 0x00000000F55FB3C0: 16 bytes ----------
+  Leak Hash: 0x58DC4EB6, Count: 1, Total 16 bytes
+  Call Stack (TID 16416):
+    ucrtbased.dll!malloc()
+    DV1572.exe!0x00007FF714C97273()
+    DV1572.exe!0x00007FF714B25736()
+    DV1572.exe!0x00007FF714B1FF5B()
+    DV1572.exe!0x00007FF714B277E3()
+    DV1572.exe!0x00007FF714B25601()
+    DV1572.exe!0x00007FF714B39BC9()
+    DV1572.exe!0x00007FF714B3BC84()
+    DV1572.exe!0x00007FF714B3BD24()
+    DV1572.exe!0x00007FF714B61C22()
+    DV1572.exe!0x00007FF714B51359()
+    DV1572.exe!0x00007FF714BC1CAC()
+    DV1572.exe!0x00007FF714BB9F37()
+    DV1572.exe!0x00007FF714BB2711()
+    DV1572.exe!0x00007FF714BC61FB()
+    DV1572.exe!0x00007FF714BA9CD7()
+    DV1572.exe!0x00007FF714BF28FC()
+    DV1572.exe!0x00007FF714BF302D()
+    DV1572.exe!0x00007FF714BE588C()
+    DV1572.exe!0x00007FF714C10EBF()
+    DV1572.exe!0x00007FF714C995AD()
+    DV1572.exe!0x00007FF714C99467()
+    DV1572.exe!0x00007FF714C9932E()
+    DV1572.exe!0x00007FF714C99639()
+    KERNEL32.DLL!BaseThreadInitThunk() + 0x14 bytes
+    ntdll.dll!RtlUserThreadStart() + 0x21 bytes
+  Data:
+    08 22 B9 FF    4F 01 00 00    00 00 00 00    00 00 00 00     ."..O... ........
+
+
+---------- Block 10244 at 0x00000000FFB921D0: 96 bytes ----------
+  Leak Hash: 0x6238118B, Count: 1, Total 96 bytes
+  Call Stack (TID 16416):
+    ucrtbased.dll!malloc()
+    DV1572.exe!0x00007FF714C97273()
+    DV1572.exe!0x00007FF714B61BC5()
+    DV1572.exe!0x00007FF714B51359()
+    DV1572.exe!0x00007FF714BC1CAC()
+    DV1572.exe!0x00007FF714BB9F37()
+    DV1572.exe!0x00007FF714BB2711()
+    DV1572.exe!0x00007FF714BC61FB()
+    DV1572.exe!0x00007FF714BA9CD7()
+    DV1572.exe!0x00007FF714BF28FC()
+    DV1572.exe!0x00007FF714BF302D()
+    DV1572.exe!0x00007FF714BE588C()
+    DV1572.exe!0x00007FF714C10EBF()
+    DV1572.exe!0x00007FF714C995AD()
+    DV1572.exe!0x00007FF714C99467()
+    DV1572.exe!0x00007FF714C9932E()
+    DV1572.exe!0x00007FF714C99639()
+    KERNEL32.DLL!BaseThreadInitThunk() + 0x14 bytes
+    ntdll.dll!RtlUserThreadStart() + 0x21 bytes
+  Data:
+    40 1E 60 F5    4F 01 00 00    30 96 BA FF    4F 01 00 00     @.`.O... 0...O...
+    60 25 60 F5    4F 01 00 00    F0 63 BA FF    4F 01 00 00     `%`.O... .c..O...
+    00 00 00 00    00 00 00 00    00 00 00 00    00 00 00 00     ........ ........
+    00 00 80 3F    00 00 00 00    C0 B3 5F F5    4F 01 00 00     ...?.... .._.O...
+    10 A5 BD FF    4F 01 00 00    00 00 00 00    00 00 00 00     ....O... ........
+    13 00 00 00    00 00 00 00    1F 00 00 00    00 00 00 00     ........ ........
+
+
+---------- Block 10248 at 0x00000000FFBDA510: 32 bytes ----------
+  Leak Hash: 0xAF333A5A, Count: 1, Total 32 bytes
+  Call Stack (TID 16416):
+    ucrtbased.dll!malloc()
+    DV1572.exe!0x00007FF714C97273()
+    DV1572.exe!0x00007FF714B25736()
+    DV1572.exe!0x00007FF714B1FF5B()
+    DV1572.exe!0x00007FF714B27783()
+    DV1572.exe!0x00007FF714B3CC32()
+    DV1572.exe!0x00007FF714B3BC98()
+    DV1572.exe!0x00007FF714B3BD24()
+    DV1572.exe!0x00007FF714B61C22()
+    DV1572.exe!0x00007FF714B51359()
+    DV1572.exe!0x00007FF714BC1CAC()
+    DV1572.exe!0x00007FF714BB9F37()
+    DV1572.exe!0x00007FF714BB2711()
+    DV1572.exe!0x00007FF714BC61FB()
+    DV1572.exe!0x00007FF714BA9CD7()
+    DV1572.exe!0x00007FF714BF28FC()
+    DV1572.exe!0x00007FF714BF302D()
+    DV1572.exe!0x00007FF714BE588C()
+    DV1572.exe!0x00007FF714C10EBF()
+    DV1572.exe!0x00007FF714C995AD()
+    DV1572.exe!0x00007FF714C99467()
+    DV1572.exe!0x00007FF714C9932E()
+    DV1572.exe!0x00007FF714C99639()
+    KERNEL32.DLL!BaseThreadInitThunk() + 0x14 bytes
+    ntdll.dll!RtlUserThreadStart() + 0x21 bytes
+  Data:
+    69 6E 69 74    69 61 6C 53    68 61 64 69    6E 67 47 72     initialS hadingGr
+    6F 75 70 00    CD CD CD CD    CD CD CD CD    CD CD CD CD     oup..... ........
+
+
+Visual Leak Detector detected 3 memory leaks (300 bytes).
+Largest number used: 50340619 bytes.
+Total allocations: 164965037 bytes.
+Visual Leak Detector is now exiting.

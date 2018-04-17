@@ -53,6 +53,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;	
+
+
 }
 
 GameState::~GameState()
@@ -75,7 +77,7 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 	this->m_cam->update();
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -93,7 +95,7 @@ void GameState::Update(double deltaTime)
 	}
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
-		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
+		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
 	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
@@ -368,8 +370,10 @@ void GameState::_handleInput()
 		}
 	}
 
-	if (Input::isKeyPressed('B'))
+	if (Input::isKeyPressed('B')) {
 		m_stage = GameStage::BuildRoom;
+		m_doorBuild = false;
+	}
 	else if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
 
@@ -378,8 +382,12 @@ void GameState::_handleInput()
 		if (Input::isKeyPressed('V'))
 		{
 			m_doorBuild = true;
-			std::cout << "DOOR AKBAR" << std::endl;
 		}
+		
+	}
+	else
+	{
+		m_doorBuild = false;
 	}
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)

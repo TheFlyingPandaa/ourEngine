@@ -12,16 +12,16 @@ void Room::_loadStatic()
 void Room::_initAABB(int x, int y, int sx, int sy, int level)
 {
 	m_AABB.setMesh(&s_AABB);
-	m_AABB.setPos(x + ((float)sx / 2.0f), (level * 2.0) + 1.0f, y + ((float)sy / 2.0f));
-	m_AABB.setScale(sx, 2.01f, sy);
+	m_AABB.setPos(x + ((float)sx / 2.0f), (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f));
+	m_AABB.setScale(static_cast<float>(sx), 2.01f, static_cast<float>(sy));
 }
 
 void Room::_createLight(int x, int y, int sx, int sy, int level)
 {
 	PointLight l;
-	l.setPosition(x + ((float)sx / 2), level * 2 + 2, y + ((float)sy / 2));
-	l.setColor((rand() % 11) * 0.1, (rand() % 11) * 0.1, (rand() % 11) * 0.1);
-	l.setSettingsForLight(1, 0.8);
+	l.setPosition(static_cast<float>(x) + ((float)sx / 2), static_cast<float>(level * 2 + 2), static_cast<float>(y) + ((float)sy / 2));
+	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
+	l.setSettingsForLight(1, 0.8f);
 	l.setIndex(m_index);
 	m_lights.push_back(l);
 	m_lights[0].addToLightQueue();
