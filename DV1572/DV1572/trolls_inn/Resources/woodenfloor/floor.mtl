@@ -8,4 +8,3 @@ newmtl wood
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
 	map_Kd wood.png
-	map_Bump NormalMap.png

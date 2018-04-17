@@ -11,6 +11,23 @@ const int roomCount = 5;
 
 int connections[roomCount][roomCount] = { 0 };
 
+struct Node
+{
+	XMFLOAT2 tile;
+	Node* parent;
+	float fCost, gCost, hCost;
+	Node(XMFLOAT2 tile, Node* parent, float gCost, float hCost)
+		:tile(tile), parent(parent), gCost(gCost), hCost(hCost) {}
+	bool operator>(const Node& other) const
+	{
+		return fCost > other.fCost;
+	}
+	bool operator==(const XMFLOAT2& other) const
+	{
+		return tile.x == other.x && tile.y == other.y;
+	}
+};
+
 
 enum RoomType
 {
@@ -150,6 +167,15 @@ void dijkstra(int graph[roomCount][roomCount], int src)
 	// print the constructed distance array
 	printSolution(dist, parent, src);
 }
+
+float getDistance(XMFLOAT2 tile, XMFLOAT2 goal)
+{
+	XMVECTOR xmTile = XMLoadFloat2(&tile);
+	XMVECTOR xmGoal = XMLoadFloat2(&goal);
+	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
+}
+
+
 
 int getEntrance()
 {

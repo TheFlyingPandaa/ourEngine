@@ -10,7 +10,6 @@ private:
 protected:
 	DirectX::XMVECTOR m_up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	DirectX::XMFLOAT3 m_pos, m_lookAt;
-	DirectX::XMFLOAT2 m_mousePos;
 	DirectX::XMFLOAT2 m_lastMouse;
 public:
 	Camera();
@@ -22,7 +21,7 @@ public:
 	void Move(float x, float y, float z);
 	void Move(DirectX::XMFLOAT3 direction);
 
-	virtual void update(DirectX::XMFLOAT2 mousePos) = 0; 
+	virtual void update() = 0;
 
 	void LookAt(float x, float y, float z);
 	void LookAt(DirectX::XMFLOAT3 target);

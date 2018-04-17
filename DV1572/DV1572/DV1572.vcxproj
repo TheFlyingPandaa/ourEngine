@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -43,6 +43,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -120,37 +121,69 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
     <ClCompile Include="ourEngine\core\Camera\OrbitCamera.cpp" />
+    <ClCompile Include="ourEngine\core\FileReader.cpp" />
+    <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
+    <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
+    <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\AITest.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AITest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="trolls_inn\AI_Base\Attributes.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\CustomerFlowControl.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\InnDummyFile.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\LevelTracker.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Grid.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Kitchen.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
+    <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
+    <ClInclude Include="ourEngine\core\Audio\Audio.h" />
+    <ClInclude Include="ourEngine\core\Picking.h" />
+    <ClInclude Include="ourEngine\interface\light\PointLight.h" />
+    <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
+    <ClInclude Include="ourEngine\interface\Text.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
@@ -161,6 +194,9 @@
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
     <ClInclude Include="ourEngine\core\Camera\OrbitCamera.h" />
     <ClInclude Include="ourEngine\core\Dx.h" />
+    <ClInclude Include="ourEngine\core\FileReader.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
+    <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\ObjLoader.h" />
     <ClInclude Include="ourEngine\core\ShaderCreator.h" />
     <ClInclude Include="ourEngine\core\WICTextureLoader\WICTextureLoader.h" />
@@ -176,16 +212,35 @@
     <ClInclude Include="ourEngine\Structs.h" />
     <ClInclude Include="trolls_inn\AI_Base\Attributes.h" />
     <ClInclude Include="trolls_inn\AI_Base\LevelTracker.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Bedroom.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Grid.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Kitchen.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Character.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\AI_Base\Economy.h" />
+    <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="ourEngine\shaders\billboardPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\billboardVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="ourEngine\shaders\deferredPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -221,6 +276,14 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="ourEngine\shaders\hudPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\hudVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="ourEngine\shaders\pickingPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -236,6 +299,34 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="ourEngine\shaders\skyBoxVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\standardDomainShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>
@@ -257,6 +348,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Hull</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="ourEngine\shaders\transPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -273,11 +368,26 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ourEngine\core\Audio\AudioLibxDB.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Audio\AudioLibxRL.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Font\FontLibxDB.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Library>
+    <Library Include="ourEngine\core\Font\FontLibxRL.lib">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

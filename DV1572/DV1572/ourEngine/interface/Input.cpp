@@ -6,6 +6,10 @@ bool Input::m_mouseKeys[3];
 DirectX::XMFLOAT2 Input::m_mousePos;
 float Input::m_scrollDelta;
 
+int Input::lastPressed;
+DirectX::XMINT2 Input::m_windowSize;
+
+
 Input::Input()
 {
 }
@@ -40,9 +44,28 @@ DirectX::XMFLOAT2 Input::getMousePosition()
 	return m_mousePos;
 }
 
+DirectX::XMFLOAT2 Input::getMousePositionLH()
+{
+	DirectX::XMFLOAT2 pos;
+
+	pos.x = m_mousePos.x;
+	pos.y = static_cast<float>(m_windowSize.y) - m_mousePos.y;
+	return pos;
+}
+
 float Input::getMouseScroll()
 {
 	float returnValue = m_scrollDelta;
 	m_scrollDelta = 0.0f;
 	return returnValue;
+}
+
+DirectX::XMINT2 Input::getWindowSize()
+{
+	return m_windowSize;
+}
+
+int Input::GetKeyIndex()
+{
+	return lastPressed;
 }

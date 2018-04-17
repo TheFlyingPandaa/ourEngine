@@ -9,6 +9,7 @@ void Shape::_buildMatrix()
 	XMMATRIX scale = XMMatrixScaling(m_scl.x, m_scl.y, m_scl.z); 
 
 	m_worldMatrix = rot * scale * trans; 
+
 }
 
 DirectX::XMFLOAT3 Shape::_convertToRad(DirectX::XMFLOAT3 deg)
@@ -40,8 +41,11 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 {
 	m_ps = s;
 }
+
 Shape::Shape()
 {
+	m_lightIndex = 0;
+	m_gridscale = 1;
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
 	m_hs	= nullptr;
@@ -52,7 +56,16 @@ Shape::Shape()
 	m_pos = { 0, 0, 0 };
 	m_rot = { 0,0,0 };
 	m_scl = XMFLOAT3{ 1,1,1 };
+
+	m_highLightColor = XMFLOAT4A{ 1.0f,1.0f,1.0f ,1.0f };
 	_buildMatrix();
+
+
+}
+
+Shape::~Shape()
+{
+
 }
 
 void Shape::setMesh(Mesh * m)
@@ -65,10 +78,6 @@ Mesh * Shape::getMesh() const
 	return m_mesh;
 }
 
-ID3D11Buffer * Shape::getVertices() const
-{
-	return m_mesh->getVertices();
-}
 
 void Shape::setPos(float x, float y, float z)
 {
@@ -78,7 +87,13 @@ void Shape::setPos(float x, float y, float z)
 void Shape::setPos(DirectX::XMFLOAT3 pos)
 {
 	m_pos = pos; 
+
 	_buildMatrix(); 
+}
+
+DirectX::XMFLOAT3 Shape::getPosition() const
+{
+	return m_pos;
 }
 
 void Shape::Move(float x, float y, float z)
@@ -102,6 +117,11 @@ void Shape::setRotation(DirectX::XMFLOAT3 rotation)
 {
 	m_rot = _convertToRad(rotation);
 	_buildMatrix();
+}
+
+DirectX::XMFLOAT3 Shape::getRotation() const
+{
+	return m_rot;
 }
 
 void Shape::Rotate(float x, float y, float z)
@@ -130,6 +150,21 @@ void Shape::setScale(DirectX::XMFLOAT3 scl)
 {
 	m_scl = scl;
 	_buildMatrix();
+}
+
+void Shape::setLightIndex(int index)
+{
+	m_lightIndex = index;
+}
+
+int Shape::getLightIndex() const
+{
+	return m_lightIndex;
+}
+
+DirectX::XMFLOAT3 Shape::getScale() const
+{
+	return m_scl;
 }
 
 void Shape::Scale(float scl)
@@ -166,18 +201,29 @@ void Shape::ApplyShaders()
 	DX::g_deviceContext->GSSetShader(m_gs, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_ps, nullptr, 0);
 
-	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
-	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
-	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+}
+
+void Shape::ApplyMaterials(int i)
+{
+	ID3D11ShaderResourceView* dif = m_mesh->getMaterial(i)->getDiffuseMap();
+	ID3D11ShaderResourceView* nor = m_mesh->getMaterial(i)->getNormalMap();
+	ID3D11ShaderResourceView* hi = m_mesh->getMaterial(i)->getHighlightMap();
+
 	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
 	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
 	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
-
 }
 
 void Shape::CheckPick()
 {
 	DX::g_pickingQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_instanceGroupsPicking);
+}
+
+void Shape::CastShadow()
+{
+	//DX::g_shadowQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);
 }
 
 const DirectX::XMMATRIX & Shape::getWorld() const
@@ -185,19 +231,44 @@ const DirectX::XMMATRIX & Shape::getWorld() const
 	return m_worldMatrix; 
 }
 
+DirectX::XMFLOAT4A Shape::getColor()
+{
+	return m_highLightColor;
+}
+
+void Shape::setColor(float r, float g, float b, float a)
+{
+	m_highLightColor = DirectX::XMFLOAT4A{ r,g,b,a };
+}
+
+void Shape::setColor(DirectX::XMFLOAT4A color)
+{
+	m_highLightColor = color;	//Fucking magnus wanted more functionality... erg erg passive argressive jocke :]
+}
+
 void Shape::Draw()
 {
 	if (m_mesh->getMaterial()->isTransparent())
 	{
-		DX::g_transQueue.push_back(this);
+		DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 	}
 	else 
 	{
-		DX::g_renderQueue.push_back(this);
+		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
+}
+
+void Shape::setGridScale(int scale)
+{
+	m_gridscale = scale;
+}
+
+int Shape::getGridScale() const
+{
+	return m_gridscale;
 }
 
 void Shape::TEMPTRANS()
 {
-	DX::g_transQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 }

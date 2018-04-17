@@ -4,4 +4,5 @@
 #include "shape\3DObject.h"
 #include "light\Light.h"
 #include "../core/Camera/OrbitCamera.h"
+#include "Text.h"
 

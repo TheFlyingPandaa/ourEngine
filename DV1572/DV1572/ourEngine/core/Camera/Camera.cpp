@@ -62,9 +62,9 @@ const DirectX::XMFLOAT3& Camera::getLookAt() const
 
 void Camera::setViewMatrix()
 {
-	m_viewMatrix = XMMatrixLookAtLH(
+	m_viewMatrix = XMMatrixLookToLH(
 		XMLoadFloat3(&m_pos),
-		XMLoadFloat3(&m_pos) + XMLoadFloat3(&m_lookAt),
+		XMLoadFloat3(&m_lookAt),
 		m_up);
 }
 
@@ -73,9 +73,4 @@ DirectX::XMMATRIX Camera::getViewMatrix() const
 
 	return m_viewMatrix;
 	
-}
-
-void Camera::setMousePos(XMFLOAT2 mousePos)
-{
-	m_mousePos = mousePos;
 }

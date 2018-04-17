@@ -9,7 +9,7 @@ struct OUTPUT
 	float4 diffuse	: SV_Target0;
 };
 
-OUTPUT main(INPUT input) : SV_TARGET
+OUTPUT main(INPUT input)// : SV_TARGET
 {
 	OUTPUT output = (OUTPUT)0;
 
