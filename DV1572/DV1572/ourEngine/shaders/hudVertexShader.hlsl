@@ -34,7 +34,7 @@ OUTPUT main(INPUT input)
 	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
 	o.worldPos = mul(float4(input.pos, 1), world);
 	o.tex = input.tex;
-	o.worldPos = mul(o.worldPos, vp);
+	//o.worldPos = mul(float4(input.pos, 1), vp);
 	o.color = input.color;
 	return o;
 }
