@@ -10,6 +10,8 @@ MasterAI::~MasterAI()
 
 void MasterAI::update()
 {
+	// Set spawn time limit (?)
+	this->customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
 	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers

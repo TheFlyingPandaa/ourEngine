@@ -2,6 +2,7 @@
 #include "AISolver.h"
 #include "Customer.h"
 #include "Staff.h"
+#include "CustomerFlowControl.h"
 #include "Inn.h"
 #include <vector>
 
@@ -12,6 +13,7 @@ private:
 	std::vector<Customer> customers;
 	std::vector<Customer> leavingCustomers;
 	std::vector<Staff> staff;
+	CustomerFlowControl cFL;
 	Inn inn;
 	// get day/night cycle to update customer needs
 
