@@ -1,11 +1,11 @@
 #include "Character.h" 
-#include <iostream>
+#include "../../ourEngine/core/Dx.h"
 Character::Character()
 {
 	m_floor = 0;
 	m_speed = 2.0f / 60;
-	m_currentDir = DOWN;
 	m_model.setPos(0.5, 0.5, 0.5);
+	m_model.m_currentDir = DOWN;
 }
 
 Character::~Character()
@@ -41,7 +41,7 @@ void Character::Update()
 		{
 			dir.stepsLeft -= m_speed;
 			m_goQueue[0] = dir;
-			if (dir.dir != m_currentDir)
+			if (dir.dir != m_model.m_currentDir)
 			{
 				this->Turn(dir.dir);
 			}
@@ -86,7 +86,7 @@ void Character::Move(WalkDirection dir)
 
 void Character::Turn(WalkDirection dir)
 {
-	m_currentDir = dir;
+	m_model.m_currentDir = dir;
 	switch (dir)
 	{
 	case UP:
@@ -134,6 +134,11 @@ void Character::setSpeed(float spd)
 	m_speed = spd;
 }
 
+void Character::castShadow()
+{
+	DX::submitToInstance(&m_model, DX::g_InstanceGroupsShadow);
+}
+
 const DirectX::XMFLOAT2 Character::getPosition() const
 {
 	DirectX::XMFLOAT3 p = m_model.getPosition();
@@ -143,27 +148,27 @@ const DirectX::XMFLOAT2 Character::getPosition() const
 	return position;
 }
 
-Character::WalkDirection Character::getDirection() const
+WalkDirection Character::getDirection() const
 {
-	return m_currentDir;
+	return m_model.m_currentDir;
 }
-const char* printDir(Character::WalkDirection dir)
+const char* printDir(WalkDirection dir)
 {
 	switch (dir)
 	{
-	case Character::UP:
+	case UP:
 		return "Up";
-	case Character::DOWN:
+	case DOWN:
 		return "Down";
-	case Character::RIGHT:
+	case RIGHT:
 		return "Right";
-	case Character::LEFT:
+	case LEFT:
 		return "Left";
 	}
 	return "No movement";
 		
 }
-Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
+WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
 {
 
 	XMVECTOR oldPosWithoutOffset = XMLoadFloat3(&oldPos);

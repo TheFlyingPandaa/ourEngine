@@ -7,17 +7,7 @@
 class Character
 {
 public:
-	enum WalkDirection
-	{
-		UP,
-		UPRIGHT,
-		UPLEFT,
-		DOWN,
-		DOWNRIGHT,
-		DOWNLEFT,
-		LEFT,
-		RIGHT
-	};
+
 
 private:
 	struct Go
@@ -30,7 +20,6 @@ private:
 	int				m_floor; //floor 0 is first floor 
 	std::deque<Go>  m_goQueue;
 	float			m_speed;
-	WalkDirection	m_currentDir;
 
 public:
 	Character();
@@ -42,6 +31,7 @@ public:
 	virtual void setPosition(float x, float z);
 	virtual void setFloor(int floor);
 	virtual void setSpeed(float spd);
+	virtual void castShadow();
 
 	virtual const DirectX::XMFLOAT2 getPosition() const;
 	virtual WalkDirection getDirection() const;

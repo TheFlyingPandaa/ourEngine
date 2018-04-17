@@ -2,6 +2,18 @@
 #include <DirectXMath.h>
 #include "Mesh.h"
 
+enum WalkDirection
+{
+	UP,
+	UPRIGHT,
+	UPLEFT,
+	DOWN,
+	DOWNRIGHT,
+	DOWNLEFT,
+	LEFT,
+	RIGHT
+};
+
 class Shape
 {
 private:
@@ -34,6 +46,7 @@ protected:
 	
 	bool					m_HENRIKTABORT;
 public:
+	WalkDirection	m_currentDir;
 	Shape();
 	~Shape();
 	void setMesh(Mesh* m);

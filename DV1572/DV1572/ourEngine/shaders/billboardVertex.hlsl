@@ -2,6 +2,9 @@ cbuffer BILLBOARD_MESH_BUFFER : register(b0)
 {
 	float4x4 View;
 	float4x4 Projection;
+	float4 direction;
+	float4 charDir;
+	float spriteIndex;
 }
 
 struct INPUT
@@ -42,12 +45,32 @@ OUTPUT main(INPUT input)
 	float3 cameraRightWorld = float3(View[0][0], View[1][0], View[2][0]);
 	float3 cameraUpWorld = float3(View[0][1], View[1][1], View[2][1]);
 
-	float3 rotatedAndLol = position.xyz + float3(0,1,0) * input.pos.y + cameraRightWorld * input.pos.x;
+	float3 rotatedAndLol = position.xyz + float3(0,1.5,0) * input.pos.y + (cameraRightWorld*1.5) * input.pos.x;
+	rotatedAndLol.y += 0.2f;
 	
 	float4x4 vp = mul(View, Projection);
-	o.pos = mul(float4(rotatedAndLol, 1.0f), vp);
+	o.pos = mul(float4(rotatedAndLol, 1.0f), View);
+	float3 billDireciton = normalize(direction.xyz);
+	float angle = dot(charDir.xyz, billDireciton);
+
+	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
+	if (angle < 0.0f)
+	{
+		o.tex.x = o.tex.x + 0.5;
+		o.tex.y = o.tex.y + 0.5;
+	}
+	else if (angle < 0.7)
+	{
+		o.tex.x = o.tex.x + 0.5;
+	}
+
+	
+	/*if (angle < 0.0f)
+	*/
+	
+	//o.tex.x = o.tex.y - 0.5;
 	o.normal = input.normal;
 
 	o.TBN[0] = normalize(mul(float4(input.tangent, 0), world)).xyz;

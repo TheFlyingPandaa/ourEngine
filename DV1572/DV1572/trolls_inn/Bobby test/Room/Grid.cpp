@@ -311,6 +311,12 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 
 		- If both start and end is inside then we perform djikstra first with the rooms and A* between 
 		the room doors. 
+
+		vt 1 1
+		vt 0 1
+		vt 0 0
+		vt 1 0
+
 		
 	*/
 

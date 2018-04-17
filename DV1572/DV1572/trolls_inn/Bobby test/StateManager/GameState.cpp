@@ -28,8 +28,9 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	box.LoadModel("trolls_inn/Resources/woodenfloor/floor.obj");
 	c.setModel(&box);
-	c.setPosition( 10+0.5, 2+0.5);
+	c.setPosition( 10+0.5, 5+0.5);
 	c.setFloor(0);
+	
 
 	int startSize = 32;
 	int firstRoomSizeX = 4;
@@ -109,13 +110,13 @@ void GameState::Update(double deltaTime)
 	{
 		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
 		{
-			c.Move(Character::UP);
+			c.Move(UP);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
 		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
 		{
-			c.Move(Character::DOWN);
+			c.Move(DOWN);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
@@ -152,6 +153,7 @@ void GameState::Draw()
 	this->grid->Draw();
 
 	//TEST
+	c.castShadow();
 	c.Draw();
 	//this->grid2->Draw();
 	test.setScale(5);

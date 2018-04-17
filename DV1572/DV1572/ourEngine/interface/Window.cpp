@@ -3,7 +3,7 @@
 #include <thread>
 #include "../core/Picking.h"
 #include <chrono>
-
+#include <iostream>
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
@@ -663,9 +663,6 @@ void Window::_shadowPass(Camera* c)
 		
 		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
-
-	
-
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
@@ -924,11 +921,25 @@ void Window::_billboardPass(const Camera & cam)
 	DirectX::XMMATRIX Proj = m_projectionMatrix;
 	View = XMMatrixTranspose(View);
 	Proj = XMMatrixTranspose(Proj);
+	static bool pressed = false;
+	static float index = 1;
 
+	if (Input::isKeyPressed('L'))
+	{
+		index = (int)index % 4;
+		index++;
+	}
+	
 
+	XMFLOAT4A lol(cam.getLookAt().x, cam.getLookAt().y, cam.getLookAt().z, 1.0f);
+	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
+	DirectX::XMStoreFloat4A(&buffer.direction, XMLoadFloat4A(&lol));
+	
+	
+	buffer.spriteIndex = index;
 	
 
 	if (m_WireFrameDebug == true)
@@ -945,12 +956,29 @@ void Window::_billboardPass(const Camera & cam)
 
 	for (auto& instance : DX::g_instanceGroupsBillboard)
 	{
-
+		XMFLOAT4A charDirection;
+		if (instance.shape->m_currentDir == UP)
+		{
+			std::cout << "UPP" << std::endl;
+			charDirection = XMFLOAT4A(0, 0, -1, 0.0f);
+		}
+		else if (instance.shape->m_currentDir == RIGHT || instance.shape->m_currentDir == LEFT)
+		{
+			charDirection = XMFLOAT4A(1, 0, 0, 0.0f);
+			std::cout << "Right/Left" << std::endl;
+		}
+		else if (instance.shape->m_currentDir == DOWN)
+		{
+			std::cout << "DOWN0" << std::endl;
+			charDirection = XMFLOAT4A(0, 0, 1, 0.0f);
+		}
+		DirectX::XMStoreFloat4A(&buffer.chardir, XMLoadFloat4A(&charDirection));
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
 		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
 		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
 
 		D3D11_SUBRESOURCE_DATA instData;
 		memset(&instData, 0, sizeof(instData));
@@ -958,6 +986,7 @@ void Window::_billboardPass(const Camera & cam)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 		//We copy the data into the attribute part of the layout.
 		//This is what makes instancing special
+
 		
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
