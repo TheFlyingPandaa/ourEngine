@@ -27,9 +27,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	box.LoadModel("trolls_inn/Resources/box.obj");
 
-	box.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	box.setNormalTexture("trolls_inn/Resources/NormalMap.png");
-
 	c.setModel(&box);
 	c.setPosition( 10+0.5, 2+0.5);
 	c.setFloor(0);
@@ -48,9 +45,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
 	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	grid->AddRoom(DirectX::XMINT2(((startSize / 2) - firstRoomSizeX / 2) + firstRoomSizeX, 4), DirectX::XMINT2(secondRoomSizeX, secondRoomSizeY), RoomType::kitchen, false);
 	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
-	m_mainDoorPos = grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
+	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 	
 	posX = 1;
 	posY = 1;
@@ -160,10 +156,8 @@ void GameState::_init()
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 	door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	door.setDiffuseTexture("trolls_inn/Resources/door/Texture.bmp");
 	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
-	this->m.setDiffuseTexture("trolls_inn/Resources/wood.jpg");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 
@@ -248,7 +242,7 @@ void GameState::_handlePickingAi(Shape * obj)
 			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-			std::vector<std::shared_ptr<Node>> path = grid->findPath(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z), m_mainDoorPos);
+			std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
 			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 

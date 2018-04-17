@@ -89,22 +89,23 @@ namespace DX
 				{
 					std::string file = "";
 					stream >> file;
-					materials.back()->setDiffuseMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Kd " << file << std::endl;
+					bool result = materials.back()->setDiffuseMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Kd " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+				
 				}
 				else if (type == "map_Bump")
 				{
 					std::string file = "";
 					stream >> file;
-					materials.back()->setNormalMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Bump " << file << std::endl;
+					bool result = materials.back()->setNormalMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Bump " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
 				}
 				else if (type == "map_Ks")
 				{
 					std::string file = "";
 					stream >> file;
-					materials.back()->setHighlightMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Ks " << file << std::endl;
+					bool result = materials.back()->setHighlightMap(originPath + file);
+					if (printSuccess) std::cout << "\tmap_Ks " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
 				}
 			}
 		}
@@ -341,12 +342,13 @@ namespace DX
 		}
 	}
 
-	static void loadTexture(const std::string & path, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
+	static bool loadTexture(const std::string & path, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
 	{
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
 
 		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
+		return hr == S_OK;
 	}
 
 	static void CalculateTangents(std::vector<VERTEX> &model)
