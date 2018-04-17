@@ -31,6 +31,10 @@
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
 #endif 
 
+#include <vld.h>
+
+
+
 
 const float REFRESH_RATE = 60.0f;
 
@@ -41,12 +45,13 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
 	AllocConsole();
 	FILE* fp;

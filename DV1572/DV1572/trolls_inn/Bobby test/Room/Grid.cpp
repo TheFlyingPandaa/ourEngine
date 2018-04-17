@@ -34,7 +34,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 	m_wholeGrid.setMesh(m_gridMesh);
 	m_wholeGrid.setScale(sizeX *2.0f);
-	m_wholeGrid.setPos(posX, -0.01f, posX);
+	m_wholeGrid.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posX));
 	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
 	m_wholeGrid.setGridScale(sizeX);
 
@@ -132,6 +132,7 @@ Grid::~Grid()
 		}
 	}
 	delete m_gridMesh;
+	
 }
 
 
@@ -194,8 +195,8 @@ void Grid::PickTiles(Shape* selectionTile)
 {
 	if (selectionTile)
 	{
-		int xPos = selectionTile->getPosition().x;
-		int yPos = selectionTile->getPosition().z;
+		int xPos = static_cast<int>(selectionTile->getPosition().x);
+		int yPos = static_cast<int>(selectionTile->getPosition().z);
 		for(int x = -5; x < 5; x++)
 			for (int y = -5; y < 5; y++)
 			{

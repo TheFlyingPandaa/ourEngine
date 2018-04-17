@@ -24,7 +24,7 @@ private:
 	Mesh kitchenTile;
 	Mesh rect;
 	Grid* grid;
-	Grid* grid2;
+
 
 	DirectX::XMINT2 m_mainDoorPos;
 

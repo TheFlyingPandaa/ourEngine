@@ -45,7 +45,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->CreateWalls(&m);	
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
-	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
+	//grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
 	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 	
@@ -53,6 +53,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;	
+
+
 }
 
 GameState::~GameState()
@@ -75,7 +77,7 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 	this->m_cam->update();
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -93,7 +95,7 @@ void GameState::Update(double deltaTime)
 	}
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
-		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
+		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
 	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
