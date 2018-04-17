@@ -56,7 +56,12 @@ public:
 	DirectX::XMINT2		CreateMainDoor(Tile * tile1, Tile * tile2);
 
 
+	int					getNrOfRooms() const; 
+
+
 	Direction			getDirection(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
+
+	bool				removeRoom(Room* roomToRemove); 
 };
 

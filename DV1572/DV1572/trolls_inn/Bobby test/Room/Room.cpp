@@ -46,7 +46,13 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 
 Room::~Room()
 {
-
+	for (int i = 0; i < m_tiles.size(); i++)
+	{
+		for (int k = 0; k < m_tiles[i].size(); k++)
+		{
+			m_tiles[i][k]->setRoom(nullptr); 
+		}
+	}
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const

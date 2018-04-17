@@ -68,6 +68,7 @@ private:
 	BuildStage m_buildStage;
 	RoomDeletionStage m_roomDeletionStage; 
 	bool m_roomPlaceable;
+	bool m_hasBeenDeleted; 
 	// Build Mode END
 
 	// HUD

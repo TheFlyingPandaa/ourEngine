@@ -55,6 +55,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;
+	m_hasBeenDeleted = false;
 }
 
 GameState::~GameState()
@@ -167,12 +168,6 @@ void GameState::_handleRoomDeletion(Shape * pickedShape)
 		}
 		else
 			m_roomDeletionStage = RoomDeletionStage::NoneRoom; 
-		break; 
-	case RoomDeletionStage::SelectionRoom:
-		if (pickedShape)
-		{
-			m_selectedTile = pickedShape; 
-		}
 		break; 
 	}
 }
@@ -417,7 +412,8 @@ void GameState::_buildInput()
 
 void GameState::_roomDeletionInput()
 {
-	if (Input::isMouseLeftPressed)
+	std::cout << m_roomDeletionStage << std::endl; 
+	if (Input::isMouseLeftPressed())
 	{
 		if (m_roomDeletionStage == RoomDeletionStage::NoneRoom)
 		{
@@ -425,43 +421,50 @@ void GameState::_roomDeletionInput()
 			m_roomDeletionStage = RoomDeletionStage::StartRoom; 
 			this->grid->PickTiles(); 
 		}
-		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom)
+		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && !m_hasBeenDeleted)
 		{
-			if (m_selectedTile)
+			//selected tile never assigned...
+			if (m_startTile)
 			{
-				Tile * t = grid->getTile(m_selectedTile->getPosition().x + 0.5f, m_selectedTile->getPosition().z + 0.5f); 
-					/*[static_cast<int>(m_selectedTile->getPosition().x  + 0.5f)][static_cast<int>(m_selectedTile->getPosition().z + 0.5f)];*/
-				std::vector<Wall*> tempVector = *t->getRoom()->getAllWalls(); 
-				for (int i = 0; i < tempVector.size(); i++)
+				Tile * t = grid->getTile(m_startTile->getPosition().x + 0.5f, m_startTile->getPosition().z + 0.5f);
+				Room* tempRoom = t->getRoom();
+
+				if (t->getRoom() != nullptr)
 				{
-					if (!tempVector[i]->getIsInner())
+					std::vector<Wall*>* tempVector = t->getRoom()->getAllWalls();
+					for (int i = 0; i < tempVector->size(); i++)
 					{
-						grid->getRoomCtrl().removeWall(tempVector[i]); 
+						if (!tempVector->at(i)->getIsInner())
+						{
+							grid->getRoomCtrl().removeWall(tempVector->at(i));
+						}
+						else
+						{
+							tempVector->at(i)->setIsInner(false);
+						}
 					}
-					else
+					for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
 					{
-						tempVector[i]->setIsInner(false); 
+						for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
+						{
+							t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect);
+						}
 					}
+					grid->getRoomCtrl().removeRoom(tempRoom);
 				}
-				for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
-				{
-					for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
-					{
-						t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect); 
-					}
-				}
-			
+				m_hasBeenDeleted = true;
 			}
 		}
-		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && !Input::isMouseLeftPressed)
+
+		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && m_hasBeenDeleted)
 		{
 			m_roomDeletionStage = RoomDeletionStage::EndRoom; 
+			m_hasBeenDeleted = false; 
 		}
 		else if (m_roomDeletionStage == RoomDeletionStage::EndRoom)
 		{
-			m_buildStage = BuildStage::None;
+			m_roomDeletionStage = RoomDeletionStage::NoneRoom;
 			m_startTile = nullptr;
-			m_selectedTile = nullptr;
 		}
 	}
 }

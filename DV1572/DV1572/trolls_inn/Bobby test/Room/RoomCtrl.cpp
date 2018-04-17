@@ -158,6 +158,7 @@ void RoomCtrl::Update(Camera * cam)
 {
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
+		if(m_rooms[i] != nullptr)
 		m_rooms[i]->Update(cam);
 	}
 }
@@ -485,6 +486,11 @@ DirectX::XMINT2 RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)
 	return DirectX::XMINT2(tile2->getPosX(),tile2->getPosY());
 }
 
+int RoomCtrl::getNrOfRooms() const
+{
+	return m_rooms.size(); 
+}
+
 Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)
 {
 	
@@ -546,6 +552,22 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 	else if (result.z < 0)	dir = Direction::down;
 
 	return dir;
+}
+
+bool RoomCtrl::removeRoom(Room * roomToRemove)
+{
+	bool removed = false; 
+	for (int i = 0; i < m_rooms.size() && !removed; i++)
+	{
+		if (roomToRemove == m_rooms[i])
+		{
+			delete m_rooms[i];
+			m_rooms[i] = nullptr; 
+			m_rooms.erase(m_rooms.begin() + i);  
+			removed = true; 
+		}
+	}
+	return removed; 
 }
 
 
