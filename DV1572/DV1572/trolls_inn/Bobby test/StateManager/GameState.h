@@ -84,6 +84,7 @@ private:
 	int m_i = 0;
 	std::future<void> future;
 
+	bool m_doorBuildRpressde = false;
 	bool m_doorBuild = false;
 	
 
