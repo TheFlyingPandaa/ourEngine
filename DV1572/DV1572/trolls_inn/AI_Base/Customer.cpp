@@ -148,8 +148,7 @@ const char* Customer::getNextActionStr() const
 		return "Leaving Trolls Inn";
 	}
 
-	//return "Idle";
-	return "Ero Sennin moving to do some dirty peeking. WEEBS ALIGN";
+	return "Idle";
 }
 
 int Customer::getHungry() const

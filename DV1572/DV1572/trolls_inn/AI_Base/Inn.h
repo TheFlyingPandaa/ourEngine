@@ -1,16 +1,20 @@
 #pragma once
 #include "Attributes.h"
-class InnDummyFile
+
+class Inn
 {
 private:
+	Attributes innAttributes;
+	Attributes innUpdateAttributes;
 
 public:
-	InnDummyFile();
-	~InnDummyFile();
+	Inn();
+	~Inn();
 
 	int getFoodPrice();
 	int getSleepPrice();
 	int getDrinkPrice();
 
 	void customerReview(Attributes review);
+
 };

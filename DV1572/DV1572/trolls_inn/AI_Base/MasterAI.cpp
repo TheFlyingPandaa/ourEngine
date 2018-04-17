@@ -82,7 +82,7 @@ void MasterAI::update()
 		else
 		{
 			// Send review to inn if customer reached end of path
-			//this->inn.customerReview(leavingCustomer.getAttributes());
+			this->inn.customerReview(leavingCustomer.getAttributes());
 			// If customer sent review then delete
 
 		}
