@@ -159,6 +159,21 @@ void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType,
 		m_roomCtrl.AddRoom(pos, size, roomType, tiles, force);
 	}
 }
+
+void Grid::AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size)
+{
+	Tile* t1 = m_tiles[pos.x][pos.y];
+	Tile* t2 = m_tiles[pos2.x][pos2.y];
+
+	if (t1->getIsInside() && t2->getIsInside())
+	{
+		if (t1 != t2)
+		{
+			m_roomCtrl.CreateDoor(t1, t2);
+		}
+	}
+}
+
 void Grid::Draw()
 {
 	for (int i = 0; i < m_sizeX; i++)

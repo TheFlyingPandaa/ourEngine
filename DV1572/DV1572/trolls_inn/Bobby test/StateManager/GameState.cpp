@@ -373,6 +373,14 @@ void GameState::_handleInput()
 	else if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
 
+	if (m_stage == GameStage::BuildRoom)
+	{
+		if (Input::isKeyPressed('V'))
+		{
+			m_doorBuild = true;
+			std::cout << "DOOR AKBAR" << std::endl;
+		}
+	}
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
 		_setHud();
@@ -412,6 +420,37 @@ void GameState::_buildInput()
 	{
 		m_buildStage = BuildStage::End;
 	}
+	else if (m_buildStage == BuildStage::End && m_doorBuild){
+		XMFLOAT3 s = m_startTile->getPosition();
+		XMFLOAT3 e = m_selectedTile->getPosition();
+
+		XMINT2 start;
+		start.x = static_cast<int>(s.x + 0.5f);
+		start.y = static_cast<int>(s.z + 0.5f);
+		XMINT2 end;
+		end.x = static_cast<int>(e.x + 0.5f);
+		end.y = static_cast<int>(e.z + 0.5f);
+
+		if (start.x > end.x)
+			std::swap(start.x, end.x);
+		if (start.y > end.y)
+			std::swap(start.y, end.y);
+		this->grid->ResetTileColor(start, end);
+
+		XMINT2 size = end;
+		size.x -= start.x - 1;
+		size.y -= start.y - 1;
+
+		m_buildStage = BuildStage::None;
+		m_startTile = nullptr;
+		m_selectedTile = nullptr;
+		m_roomPlaceable = false;
+
+		//If debugging is needed you got the size
+		this->grid->AddDoor(start, end, size);
+		
+
+	}
 	else if (m_buildStage == BuildStage::End)
 	{
 		XMFLOAT3 s = m_startTile->getPosition();
@@ -430,6 +469,8 @@ void GameState::_buildInput()
 			std::swap(start.y, end.y);
 		this->grid->ResetTileColor(start, end);
 
+		//This makes it a size.
+		//this will change the end point
 		end.x -= start.x - 1;
 		end.y -= start.y - 1;
 

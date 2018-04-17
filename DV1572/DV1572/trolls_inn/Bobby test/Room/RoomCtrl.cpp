@@ -286,7 +286,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		}
 	}
 
-	CreateDoors(room);
+	//CreateDoors(room);
 
 	if (!m_entrance) m_entrance = m_rooms.back();
 	room->ApplyIndexOnMesh();
