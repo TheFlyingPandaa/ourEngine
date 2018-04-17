@@ -1,5 +1,8 @@
 #include "Material.h"
-Material::Material()
+#include "../../core/ObjLoader.h"
+
+Material::Material(std::string name)
+	: m_name(name)
 {
 	m_diffuseTexture = nullptr;
 	m_diffuseResource = nullptr;
@@ -16,11 +19,21 @@ Material::Material()
 Material::~Material()
 {
 	if (m_diffuseTexture)
+	{
 		m_diffuseTexture->Release();
+		m_diffuseTexture = nullptr;
+	}
 	if (m_diffuseResource)
+	{
 		m_diffuseResource->Release();
+		m_diffuseTexture = nullptr;
+	}
 	if (m_normalTexture)
+	{
 		m_normalTexture->Release();
+		m_normalTexture = nullptr;
+	}
+		
 	if (m_normalResource)
 		m_normalResource->Release();
 	if (m_highlightTexture)
@@ -31,25 +44,56 @@ Material::~Material()
 
 void Material::setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_diffuseResource) std::cout << "Diffuse already set before!" << std::endl;
 	m_diffuseTexture = srv;
 	m_diffuseResource = res;
 }
 
+bool Material::setDiffuseMap(const std::string & path)
+{
+	if (m_diffuseResource) std::cout << "Diffuse already set before!" << std::endl;
+	return DX::loadTexture(path, m_diffuseResource, m_diffuseTexture);
+}
+
 void Material::setNormalMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_normalResource) std::cout << "Normal already set before!" << std::endl;
 	m_normalTexture = srv;
 	m_normalResource = res;
 }
 
+bool Material::setNormalMap(const std::string & path)
+{
+	if (m_normalResource) std::cout << "Normal already set before!" << std::endl;
+	return DX::loadTexture(path, m_normalResource, m_normalTexture);
+}
+
 void Material::setHighlightMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)
 {
+	if (m_highlightResource) std::cout << "Highlight already set before!" << std::endl;
 	m_highlightTexture = srv;
 	m_highlightResource = res;
+}
+
+bool Material::setHighlightMap(const std::string & path)
+{
+	if (m_highlightResource) std::cout << "Highlight already set before!" << std::endl;
+	return DX::loadTexture(path, m_highlightResource, m_highlightTexture);
 }
 
 void Material::setTransparency(float alpha)
 {
 	m_transparancy = alpha;
+}
+
+void Material::setSpecularExponent(float specular)
+{
+	m_specularExponent = specular;
+}
+
+const std::string & Material::getName() const
+{
+	return m_name;
 }
 
 ID3D11ShaderResourceView* Material::getDiffuseMap() const
@@ -75,4 +119,9 @@ float Material::getTransparency() const
 bool Material::isTransparent() const
 {
 	return m_transparancy < 1.0f;
+}
+
+bool Material::operator==(const Material & other) const
+{
+	return m_name == other.m_name;
 }

@@ -41,18 +41,11 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 {
 	m_ps = s;
 }
-void Shape::setInside()
-{
-	lol = 1.0f;
-}
-void Shape::noInside()
-{
-	lol = 0.0f;
-}
+
 Shape::Shape()
 {
-	lol = 0.0f;
-
+	m_lightIndex = 0;
+	m_gridscale = 1;
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
 	m_hs	= nullptr;
@@ -159,6 +152,16 @@ void Shape::setScale(DirectX::XMFLOAT3 scl)
 	_buildMatrix();
 }
 
+void Shape::setLightIndex(int index)
+{
+	m_lightIndex = index;
+}
+
+int Shape::getLightIndex() const
+{
+	return m_lightIndex;
+}
+
 DirectX::XMFLOAT3 Shape::getScale() const
 {
 	return m_scl;
@@ -198,21 +201,13 @@ void Shape::ApplyShaders()
 	DX::g_deviceContext->GSSetShader(m_gs, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(m_ps, nullptr, 0);
 
-	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
-	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
-	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
-
-	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
-	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
-	DX::g_deviceContext->PSSetShaderResources(2, 1, &hi);
-
 }
 
-void Shape::ApplyMaterials()
+void Shape::ApplyMaterials(int i)
 {
-	ID3D11ShaderResourceView* dif = m_mesh->getMaterial()->getDiffuseMap();
-	ID3D11ShaderResourceView* nor = m_mesh->getMaterial()->getNormalMap();
-	ID3D11ShaderResourceView* hi = m_mesh->getMaterial()->getHighlightMap();
+	ID3D11ShaderResourceView* dif = m_mesh->getMaterial(i)->getDiffuseMap();
+	ID3D11ShaderResourceView* nor = m_mesh->getMaterial(i)->getNormalMap();
+	ID3D11ShaderResourceView* hi = m_mesh->getMaterial(i)->getHighlightMap();
 
 	DX::g_deviceContext->PSSetShaderResources(0, 1, &dif);
 	DX::g_deviceContext->PSSetShaderResources(1, 1, &nor);
@@ -223,6 +218,12 @@ void Shape::CheckPick()
 {
 	DX::g_pickingQueue.push_back(this);
 	DX::submitToInstance(this, DX::g_instanceGroupsPicking);
+}
+
+void Shape::CastShadow()
+{
+	//DX::g_shadowQueue.push_back(this);
+	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);
 }
 
 const DirectX::XMMATRIX & Shape::getWorld() const
@@ -255,6 +256,16 @@ void Shape::Draw()
 	{
 		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
+}
+
+void Shape::setGridScale(int scale)
+{
+	m_gridscale = scale;
+}
+
+int Shape::getGridScale() const
+{
+	return m_gridscale;
 }
 
 void Shape::TEMPTRANS()

@@ -22,6 +22,20 @@ namespace TXT
 
 class Text
 {
+public:
+	enum RelativeTo
+	{
+		BL,		// Bottom Left
+		BR,		// Bottom Right
+		TR,		// Top Right
+		TL,		// Top Left
+		C,		// Center of the screen
+		BC,		// Bottom Center
+		TC,		// Top Center
+		LC,		// Left Center
+		RC		// Right Center
+	};
+
 private:
 	TXT::FONT_TYPE			m_type;
 	DirectX::XMVECTOR		m_textPosition;
@@ -30,6 +44,7 @@ private:
 	DirectX::XMVECTORF32	m_color;
 	std::string				m_text;
 	TXT::ALLIGN				m_allignment;
+	RelativeTo				m_rt;
 public:
 	Text();
 	TXT::FONT_TYPE			getFontType() const;
@@ -48,6 +63,8 @@ public:
 	void setColor(DirectX::XMVECTORF32 color);
 	void setTextString(const std::string& text);
 	void setAllignment(TXT::ALLIGN allignment);
+	void setRelative(Text::RelativeTo rt);
+	RelativeTo getRelative() const;
 
 	void Draw();
 

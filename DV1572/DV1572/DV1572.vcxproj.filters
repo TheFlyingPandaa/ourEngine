@@ -16,6 +16,8 @@
     <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\skyBoxVertexShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
@@ -60,6 +62,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -110,6 +113,8 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

@@ -11,7 +11,7 @@ struct DS_OUTPUT
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;
-	float inside : INSIDECHECK;
+	float lIndex : LIGHTINDEX;
 
 	// TODO: change/add other stuff
 };
@@ -25,7 +25,7 @@ struct CONTROL_POINT_INPUT
 	float3 tangent : TANGENT;
 	float4x4 world : WORLDMAT;
 	float4 color : HIGHLIGHTCOLOR;
-	float inside : INSIDECHECK;
+	float lIndex : LIGHTINDEX;
 };
 
 // Output patch constant data.
@@ -50,7 +50,6 @@ DS_OUTPUT main(
 	Output.worldPos = positions;
 	Output.pos = mul(positions, vp);
 	Output.tex = patch[0].Tex * domain.x + patch[1].Tex * domain.y + patch[2].Tex * domain.z;
-	Output.inside = patch[0].inside;
 
 	float3 n = patch[0].normal * domain.x + patch[1].normal * domain.y + patch[2].normal * domain.z;
 	Output.normal = normalize(mul(float4(n, 0), patch[0].world)).xyz;
@@ -63,6 +62,6 @@ DS_OUTPUT main(
 	Output.TBN[2] = Output.normal;
 
 	Output.color = patch[0].color * domain.x + patch[1].color * domain.y + patch[2].color * domain.z;
-
+	Output.lIndex = patch[0].lIndex;
 	return Output;
 }

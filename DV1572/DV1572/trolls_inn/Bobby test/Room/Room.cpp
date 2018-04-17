@@ -1,7 +1,40 @@
 #include "Room.h"
 
+Mesh Room::s_AABB;
+bool Room::s_isLoaded = false;
+int Room::s_index = 1;
+
+void Room::_loadStatic()
+{
+	Room::s_AABB.LoadModel("trolls_inn/Resources/box.obj");
+}
+
+void Room::_initAABB(int x, int y, int sx, int sy, int level)
+{
+	m_AABB.setMesh(&s_AABB);
+	m_AABB.setPos(x + ((float)sx / 2.0f), (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f));
+	m_AABB.setScale(static_cast<float>(sx), 2.01f, static_cast<float>(sy));
+}
+
+void Room::_createLight(int x, int y, int sx, int sy, int level)
+{
+	PointLight l;
+	l.setPosition(static_cast<float>(x) + ((float)sx / 2), static_cast<float>(level * 2 + 2), static_cast<float>(y) + ((float)sy / 2));
+	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
+	l.setSettingsForLight(1, 0.8f);
+	l.setIndex(m_index);
+	m_lights.push_back(l);
+	m_lights[0].addToLightQueue();
+}
+
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
+	if (!s_isLoaded)
+		_loadStatic();
+	m_index = s_index++;
+	_initAABB(posX, posY, sizeX, sizeY);
+	_createLight(posX, posY, sizeX, sizeY);
+
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -23,6 +56,12 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles)
 {
+	if (!s_isLoaded)
+		_loadStatic();
+	m_index = s_index++;
+	_initAABB(posX, posY, sizeX, sizeY);
+	_createLight(posX, posY, sizeX, sizeY);
+
 	this->m_posX = posX;
 	this->m_posY = posY;
 	this->m_sizeX = sizeX;
@@ -96,22 +135,28 @@ void Room::Update(Camera * cam)
 		bool cullWalls[4] = { false, false, false, false };
 		DirectX::XMFLOAT3 camPos3D = cam->getPosition();
 		DirectX::XMFLOAT2 camPosition = { camPos3D.x, camPos3D.z };
+		DirectX::XMFLOAT2 roomCenter(m_AABB.getPosition().x, m_AABB.getPosition().z);
+		float distanceToCamera = DirectX::XMVectorGetX(DirectX::XMVector2Length(DirectX::XMLoadFloat2(&camPosition) - DirectX::XMLoadFloat2(&roomCenter)));
+		int cullDist = 15;
 
-		if (camPosition.x < m_posX)
+		if (distanceToCamera < cullDist)
 		{
-			cullWalls[Direction::left] = true;
-		}
-		else if (camPosition.x > m_posX + m_sizeX)
-		{
-			cullWalls[Direction::right] = true;
-		}
-		if (camPosition.y < m_posY)
-		{
-			cullWalls[Direction::down] = true;
-		}
-		else if (camPosition.y > m_posY + m_sizeY)
-		{
-			cullWalls[Direction::up] = true;
+			if (camPosition.x < m_posX)
+			{
+				cullWalls[Direction::left] = true;
+			}
+			else if (camPosition.x > m_posX + m_sizeX)
+			{
+				cullWalls[Direction::right] = true;
+			}
+			if (camPosition.y < m_posY)
+			{
+				cullWalls[Direction::down] = true;
+			}
+			else if (camPosition.y > m_posY + m_sizeY)
+			{
+				cullWalls[Direction::up] = true;
+			}
 		}
 
 		bool changeUp = false;
@@ -212,6 +257,37 @@ void Room::Update(Camera * cam)
 	}
 }
 
+int Room::getRoomIndex() const
+{
+	return m_index;
+}
+
+void Room::ApplyIndexOnMesh()
+{
+	for (Wall* w : m_allWalls)
+	{
+		w->getObject3D().setLightIndex(m_index);
+	}
+	for (int i = 0; i < m_sizeY; i++)
+	{
+		for (int j = 0; j < m_sizeX; j++)
+		{
+			m_tiles[j][i]->getQuad().setLightIndex(m_index);
+		}
+	}
+}
+
+void Room::CastShadow()
+{
+	m_AABB.CastShadow();
+	//m_AABB.Draw();
+}
+
+bool Room::operator==(const Room & other) const
+{
+	return m_posX == other.m_posX && m_posY == other.m_posY;
+}
+
 int Room::getX() const
 {
 	return m_posX;
@@ -284,20 +360,62 @@ void Room::addWall(Wall * wall, Direction dir)
 	}
 }
 
+bool Room::hasConnectedRooms() const
+{
+	return adjasentRoomDoors.size();
+}
+
 DirectX::XMFLOAT3 Room::getPosition() const
 {
 	return DirectX::XMFLOAT3(static_cast<float>(getX()), 0.0f, static_cast<float>(getY()));
 }
 
+void Room::addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction)
+{
+	if (std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), room) == adjasentRoomDoors.end())
+	{
+		RoomConnection newConnection;
+		newConnection.otherRoom = room;
+		newConnection.connectingDoor = doorPos;
+		newConnection.direction = direction;
+		adjasentRoomDoors.push_back(newConnection);
+	}
+}
+
 void Room::addAdjasentRoom(Room * room)
 {
-	if (std::find(adjasent.begin(), adjasent.end(), room) == adjasent.end())
-		adjasent.push_back(room);
+	if (std::find(adjasentRooms.begin(), adjasentRooms.end(), room) == adjasentRooms.end())
+	{
+		adjasentRooms.push_back(room);
+	}
+}
+
+XMINT2 Room::getConnectingRoomDoorPositionPartOne(Room * otherroom)
+{
+	std::vector<RoomConnection>::iterator it =  std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+
+	if (it != adjasentRoomDoors.end())
+		return it->connectingDoor;
+	else
+		return XMINT2(-1, -1);
+}
+
+XMINT2 Room::getConnectingRoomDoorPositionPartTwo(Room * otherroom)
+{
+	std::vector<RoomConnection>::iterator it = std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+
+	if (it != adjasentRoomDoors.end())
+	{
+		XMINT2 doorPos = it->connectingDoor;
+		return { doorPos.x + it->direction.x, doorPos.y + it->direction.y };
+	}
+	else
+		return XMINT2(-1, -1);
 }
 
 std::vector<Room*>* Room::getAdjasent()
 {
-	return &adjasent;
+	return &adjasentRooms;
 }
 
 std::vector<Wall*>* Room::getAllWalls()

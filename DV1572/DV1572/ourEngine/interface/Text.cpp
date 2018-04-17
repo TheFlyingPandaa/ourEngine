@@ -1,5 +1,6 @@
 #include "Text.h"
 #include "../core/Dx.h"
+#include "Input.h"
 
 using namespace DirectX;
 Text::Text()
@@ -11,6 +12,7 @@ Text::Text()
 	m_color = DirectX::Colors::White;
 	m_text = "";
 	m_allignment = TXT::ALLIGN::Left;
+	m_rt = RelativeTo::BL;
 }
 
 TXT::FONT_TYPE Text::getFontType() const
@@ -55,7 +57,43 @@ void Text::setFontType(TXT::FONT_TYPE type)
 
 void Text::setPosition(float x, float y)
 {
-	m_textPosition = XMVectorSet(x, y, 0.0f, 1.0f);
+	DirectX::XMINT2 s = Input::getWindowSize();
+	DirectX::XMFLOAT2 pos(x, y);
+
+	switch (m_rt)
+	{
+	case Text::BR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		break;
+	case Text::TR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case Text::TL:
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case Text::C:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	case Text::BC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		break;
+	case Text::TC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case Text::LC:
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	case Text::RC:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	}
+
+
+	m_textPosition = XMVectorSet(pos.x, pos.y, 0.0f, 1.0f);
 }
 
 void Text::setScale(float scl)
@@ -86,6 +124,16 @@ void Text::setTextString(const std::string & text)
 void Text::setAllignment(TXT::ALLIGN allignment)
 {
 	m_allignment = allignment;
+}
+
+void Text::setRelative(Text::RelativeTo rt)
+{
+	m_rt = rt;
+}
+
+Text::RelativeTo Text::getRelative() const
+{
+	return m_rt;
 }
 
 void Text::Draw()
