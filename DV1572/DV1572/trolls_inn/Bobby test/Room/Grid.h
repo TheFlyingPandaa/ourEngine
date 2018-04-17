@@ -61,6 +61,7 @@ public:
 
 	std::vector<std::vector<Tile *>> getGrid() const;
 	
+	void	AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size);
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
 	void	Update(Camera * cam);
 
