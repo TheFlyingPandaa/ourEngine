@@ -1,7 +1,7 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
 
-Customer CustomerFlowControl::evaluate()
+Customer CustomerFlowControl::evaluate(Attributes innAttributes)
 {
 	// Update inn attributes
 	auto getPoints = [&](Race atri) 
@@ -90,53 +90,23 @@ Customer CustomerFlowControl::generateRandomCustomer()
 
 CustomerFlowControl::CustomerFlowControl()
 {
-	// For test purposes only
-	this->innAttributes.setCreepy(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setDrinkQuality(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setFoodQuality(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setPrices(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setReputation(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setShady(this->rNG.generateRandomNumber(-10, 10));
-	this->innAttributes.setStandard(this->rNG.generateRandomNumber(-10, 10));
 }
 
 CustomerFlowControl::~CustomerFlowControl()
 {
 }
 
-Customer CustomerFlowControl::update()
+Customer CustomerFlowControl::update(Attributes innAttributes)
 {
-	this->innAttributes.setCreepy(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setDrinkQuality(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setFoodQuality(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setPrices(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setReputation(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setShady(this->rNG.generateRandomNumber(-1, 1));
-	this->innAttributes.setStandard(this->rNG.generateRandomNumber(-1, 1));
-
 	Customer nextCustomer;
 
-	// evaluate what customer to spawn
-	
-	if (this->rNG.generateRandomNumber(0, 100) > 1)
-		nextCustomer = this->evaluate();
+	// Evaluate what customer to spawn next
+	if (this->rNG.generateRandomNumber(1, 100) > 1)
+		nextCustomer = this->evaluate(innAttributes);
 	else
 		nextCustomer = this->generateRandomCustomer();
 
-	nextCustomer.setPosX(1);
-	nextCustomer.setPosY(-1);
 	std::cout << "A " << nextCustomer.getRaceStr()<< " has arrived!" << std::endl;
-	return nextCustomer;
-}
 
-// For test purposes only
-void CustomerFlowControl::print()
-{
-	std::cout << "Creepy: " << this->innAttributes.getCreepy() << std::endl;
-	std::cout << "Drink: " << this->innAttributes.getDrinkQuality() << std::endl;
-	std::cout << "Food: " << this->innAttributes.getFoodQuality() << std::endl;
-	std::cout << "Price: " << this->innAttributes.getPrices() << std::endl;
-	std::cout << "Rep: " << this->innAttributes.getReputation() << std::endl;
-	std::cout << "Shady " << this->innAttributes.getShady() << std::endl;
-	std::cout << "Standard: " << this->innAttributes.getStandard() << std::endl << std::endl;
+	return nextCustomer;
 }

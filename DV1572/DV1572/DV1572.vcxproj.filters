@@ -53,7 +53,6 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\InnDummyFile.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
@@ -61,6 +60,8 @@
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +92,6 @@
     <ClInclude Include="trolls_inn\AI_Base\MasterAI.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />
-    <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
@@ -111,6 +111,8 @@
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
+    <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
   </ItemGroup>
