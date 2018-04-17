@@ -56,14 +56,17 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
-	previousKey = -1;
-
-	m_subStates.push(new BuildState(nullptr, pickingEvent, this->grid));
+	previousKey = -1;	
 }
 
 GameState::~GameState()
 {
 	delete grid;
+	while (!m_subStates.empty())
+	{
+		delete m_subStates.top();
+		m_subStates.pop();
+	}
 }
 
 // round float to n decimals precision

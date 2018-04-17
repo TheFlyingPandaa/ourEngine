@@ -3,6 +3,7 @@
 
 MainMenu::MainMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
+	std::cout << "hellp\n";
 	this->m_cam = cam;
 	this->_init();
 }
