@@ -52,18 +52,20 @@ void GameState::Update(double deltaTime)
 {
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
+	
 	static bool lol = false;
 	bool lol2 = Input::isKeyPressed('L');
 	if (lol2 && !lol)
 	{
-		this->m_mai.spawn();
-		
-	lol = lol2;
+		this->m_mai.spawn();	
 	}
+	lol = lol2;
 
 
 	this->m_cam->update();
-	m_mai.Update(this->m_cam);
+	
+
+
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -78,7 +80,9 @@ void GameState::Update(double deltaTime)
 				m_subStates.push(ref);
 		}
 		return;
+		
 	}
+	m_mai.Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
@@ -90,48 +94,6 @@ void GameState::Update(double deltaTime)
 	m_colorButton = false;
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
-	//std::cout << " TIME: " << dt << std::endl;
-	
-
-	
-	/*if (Input::isKeyPressed('G'))
-	{
-		this->m_mai.getGrid()->AddRoomObject(DirectX::XMINT2(6, 6), &box);
-	}*/
-
-	if (Input::isKeyPressed('G'))
-	{
-		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
-	}
-
-	//if (Input::isKeyPressed('A'))
-	//{
-	//	c.Move(Character::LEFT);
-	//}
-	//if (Input::isKeyPressed('W'))
-	//{
-	//	c.Move(Character::UP);
-	//}
-	//if (Input::isKeyPressed('S'))
-	//{
-	//	c.Move(Character::DOWN);
-	//}
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	c.Move(Character::RIGHT);
-	//}
-	//</TEMP>
-
-	 // Get result.
-
-	_handlePicking();	// It's important this is before handleInput();
-	_handleInput();		// It's important this is after handlePicking();
-	
-
-	if (Input::isKeyPressed('B'))
-	{
-		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
-	}
 }
 
 void GameState::Draw()
@@ -300,7 +262,7 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 				_resetHudButtonPressedExcept(index);
 				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
 				if (m_hudButtonsPressed[index])
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_mai.GetGrid()));
 					
 				break;
 			case 2:
