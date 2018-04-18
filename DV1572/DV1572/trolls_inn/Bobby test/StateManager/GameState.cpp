@@ -198,7 +198,7 @@ void GameState::_init()
 
 void GameState::_setHud()
 {
-	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
+	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/MainHud/MainHud.txt");
 }
 
 void GameState::_handlePicking()
@@ -278,36 +278,62 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
+			m_colorButton = true;
 		switch (m_hudPickStage)
 		{
 		case HudPickingStage::Hover:
-			m_colorButton = true;
-			if (r->getIndex() != m_lastPickedIndex)
+		{
+			int index = r->getIndex();
+			if (index != m_lastPickedIndex)
 			{
-				m_lastPickedIndex = r->getIndex();
+				m_lastPickedIndex = index;
 				m_stateHUD.ResetColorsOnPickable();
 			}
-			switch (r->getIndex())
+
+			switch (index)
 			{
 			case 0:
-				r->setColor(0.2f, 0.2f, 2.0f);
+				r->setColor(5, 2, 2);
 				break;
 			case 1:
-				r->setColor(2.0f, 0.2f, 0.2f);
+				r->setColor(2, 5, 2);
 				break;
 			case 2:
-				r->setColor(1.5f, 0.2f, 1.5f);
+				r->setColor(2, 2, 5);
 				break;
 			case 3:
-				r->setColor(0.2f, 1.5f, 1.5f);
+				r->setColor(5, 0.5, 5);
+				break;
+			default:
+				r->setColor(3, 3, 3);
 				break;
 			}
 			break;
+		}
 		case HudPickingStage::Click:
-			m_colorButton = true;
-			//do something
-			std::cout << "Something Picked";
+		{
+			int index = r->getIndex();
+			switch (index)
+			{
+			case 0:
+				std::cout << "Crew Button Pressed\n";
+				break;
+			case 1:
+				std::cout << "Build Button Pressed\n";
+				break;
+			case 2:
+				std::cout << "Event Button Pressed\n";
+				break;
+			case 3:
+				std::cout << "Stats Button Pressed\n";
+				break;
+			default:
+				std::cout << "Something Pressed\n";
+				break;
+			}
+			
 			break;
+		}
 		}
 	}
 	else
