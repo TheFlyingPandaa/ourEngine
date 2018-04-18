@@ -163,3 +163,7 @@ void BuildState::Draw()
 {
 	
 }
+
+void BuildState::DrawHUD()
+{
+}

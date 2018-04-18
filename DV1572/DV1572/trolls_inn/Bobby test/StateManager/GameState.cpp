@@ -179,6 +179,11 @@ void GameState::Draw()
 
 void GameState::DrawHUD()
 {
+	if (!m_subStates.empty())
+	{
+		m_subStates.top()->DrawHUD();
+		return;
+	}
 	m_stateHUD.Draw();
 }
 
