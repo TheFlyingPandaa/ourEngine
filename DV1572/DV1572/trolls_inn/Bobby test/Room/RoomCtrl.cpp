@@ -90,6 +90,20 @@ bool RoomCtrl::_checkLegal(Room * room)
 	return dynamic_cast<Bedroom*>(room) == nullptr;
 }
 
+bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
+{
+	switch (type)
+	{
+	case kitchen:
+		return dynamic_cast<Kitchen*>(room) == nullptr;
+	case bedroom:
+		return dynamic_cast<Bedroom*>(room) == nullptr;
+	case reception:
+		return dynamic_cast<Reception*>(room) == nullptr;
+	}
+	return false;
+}
+
 void RoomCtrl::_makeRoomConnection(int source, int destination)
 {
 
@@ -701,6 +715,37 @@ XMINT2 RoomCtrl::getRoomLeavePos(Room * startRoom, int roomDstIndex)
 Room * RoomCtrl::getRoomAt(int index)
 {
 	return m_rooms[index];
+}
+
+DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
+{
+	auto getLength = [&](XMFLOAT2 pos, XMFLOAT3 roomPos)->int {
+		XMFLOAT3 temp = { pos.x, 0, pos.y };
+		XMVECTOR first = XMLoadFloat3(&temp);
+		XMVECTOR second = XMLoadFloat3(&roomPos);
+
+	
+		return (int)XMVectorGetX(XMVector3Length(second - first));
+	};
+	Room* closestRoom = nullptr;
+	int closestDistance = 99999;
+	for (auto& room : m_rooms)
+	{
+		if (_checkRoomType(room, type))
+		{
+			int distance = getLength(position, room->getPosition());
+			if (closestDistance > distance)
+			{
+				closestRoom = room;
+				closestDistance = distance;
+			}
+				
+		}
+	}
+	if (closestRoom == nullptr)
+		return DirectX::XMFLOAT3(-1, -1,-1);
+	
+	return closestRoom->getPosition();
 }
 
 Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)

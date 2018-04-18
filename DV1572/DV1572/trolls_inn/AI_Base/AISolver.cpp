@@ -1,8 +1,8 @@
 #include "AISolver.h"
-
-AISolver::AISolver()
+#include "Inn.h"
+AISolver::AISolver(Grid* grid)
 {
-	
+	m_grid = grid;
 }
 
 AISolver::~AISolver()
@@ -12,7 +12,17 @@ AISolver::~AISolver()
 
 void AISolver::Update(Customer& customer)
 {
-	CustomerState currentState = customer.GetState();
+	CustomerState currentState = customer.getState();
+	customer.Update();
+	if (currentState == WalkingToInn)
+	{
+		if (customer.walkQueueDone())
+		{
+			m_grid->generatePath(customer, reception);
+			customer.popToNextState();
+			currentState = customer.getState();
+		}
+	}
 
 	if (currentState == Walking)
 	{

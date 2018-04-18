@@ -50,13 +50,13 @@ void GameState::Update(double deltaTime)
 	if (Input::isKeyPressed('L') && !lol)
 	{
 		this->m_mai.spawn();
-		lol = true;
+		
 	}
 
 
 	this->m_cam->update();
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	this->m_mai.GetGrid()->Update(this->m_cam);
+	m_mai.update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);

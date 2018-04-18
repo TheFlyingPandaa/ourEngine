@@ -83,7 +83,7 @@ Inn::Inn()
 
 Inn::~Inn()
 {
-	//delete this->m_grid;
+	delete m_grid;
 }
 
 int Inn::getFoodPrice() const

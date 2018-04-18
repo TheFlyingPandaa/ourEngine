@@ -35,6 +35,7 @@ private:
 	std::vector<int> m_tempPath;
 	
 	bool				_checkLegal(Room * room);
+	bool				_checkRoomType(Room* room, RoomType type);
 	void				_makeRoomConnection(int source, int destination);
 	void				_dijkstra(int src, int dst);
 	void				_getSolution(int dist[], int parent[], int src, int dst);
@@ -77,6 +78,8 @@ public:
 	XMINT2				getRoomLeavePos(Room* startRoom, int roomDstIndex);
 
 	Room*				getRoomAt(int index);
+
+	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 
 	Direction			getDirection(Tile*, Tile*);
 	XMINT2				getDirection2i(Tile*, Tile*);

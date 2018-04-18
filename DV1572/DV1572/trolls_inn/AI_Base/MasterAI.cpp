@@ -1,6 +1,7 @@
 #include "MasterAI.h"
 
 MasterAI::MasterAI()
+	: solver(inn.getGrid())
 {
 }
 
@@ -30,6 +31,8 @@ void MasterAI::Update(Camera* cam)
 	// Evaluate what actions customers should take
 	for (auto& customer : this->m_customers)
 	{
+		//solver.update(*customer);
+
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty())
 		{

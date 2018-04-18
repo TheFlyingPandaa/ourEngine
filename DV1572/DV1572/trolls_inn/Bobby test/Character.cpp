@@ -1,5 +1,6 @@
 #include "Character.h" 
 #include "../../ourEngine/core/Dx.h"
+
 Character::Character()
 {
 	m_floor = 0;
@@ -219,7 +220,6 @@ Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLO
 	else if (result.z > 0) dir = UP;
 	else if (result.z < 0) dir = DOWN;
 
-	//std::cout << printDir(dir) << std::endl;
 
 	return dir;
 }

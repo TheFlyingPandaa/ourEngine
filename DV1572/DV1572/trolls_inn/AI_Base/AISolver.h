@@ -6,11 +6,9 @@
 class AISolver
 {
 private:
-	bool _findPath();
-	// Add update for Inn
-
+	Grid * m_grid;
 public:
-	AISolver();
+	AISolver(Grid* grid);
 	~AISolver();
 
 	void Update(Customer& customer);

@@ -19,7 +19,8 @@ enum Action
 	DrinkAction,
 	EatAction,
 	SleepAction,
-	LeavingInnAction
+	LeavingInnAction,
+	WalkToInn
 };
 
 enum CustomerState
@@ -30,7 +31,9 @@ enum CustomerState
 	Drinking,
 	Eating,
 	Sleeping,
-	LeavingInn
+	LeavingInn,
+	WalkingToInn
+
 };
 
 class Customer : public Character
@@ -83,4 +86,5 @@ public:
 	void DoSleeping();
 	// Reduces thirsty by 1
 	void DoDrinking();
+	void Update();
 };
