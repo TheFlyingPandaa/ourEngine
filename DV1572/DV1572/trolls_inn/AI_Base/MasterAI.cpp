@@ -7,7 +7,7 @@ MasterAI::MasterAI()
 
 MasterAI::~MasterAI()
 {
-	for (auto& cust : customers)
+	for (auto& cust : m_customers)
 		delete cust;
 }
 
