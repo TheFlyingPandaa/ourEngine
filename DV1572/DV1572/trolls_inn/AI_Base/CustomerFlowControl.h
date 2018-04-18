@@ -12,6 +12,11 @@ private:
 	// Race models
 	// Box race
 	Mesh box;
+	// REAL_COOL_RACES_YES_YES_PLOX
+	Mesh human;
+	Mesh troll;
+	Mesh orc;
+	Mesh dwarf;
 
 	// Determine what customers the inn attract
 	Customer evaluate(Attributes innAttributes);
