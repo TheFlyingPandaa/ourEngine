@@ -82,6 +82,7 @@ Inn::Inn()
 
 Inn::~Inn()
 {
+	delete m_grid;
 }
 
 int Inn::getFoodPrice() const
