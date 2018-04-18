@@ -20,7 +20,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	_setHud();
 
-	box.LoadModel("trolls_inn/Resources/box.obj");
+	box.LoadModel("trolls_inn/Resources/Box.obj");
 
 	c.setModel(&box);
 	c.setPosition( 10+0.5, 2+0.5);
@@ -178,6 +178,11 @@ void GameState::Draw()
 
 void GameState::DrawHUD()
 {
+	if (!m_subStates.empty())
+	{
+		m_subStates.top()->DrawHUD();
+		return;
+	}
 	m_stateHUD.Draw();
 }
 

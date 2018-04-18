@@ -37,7 +37,7 @@ public:
 	virtual void _init() override;
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
-
+	virtual void DrawHUD() override;
 	
 };
 

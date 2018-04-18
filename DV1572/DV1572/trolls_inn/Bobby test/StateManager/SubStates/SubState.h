@@ -27,6 +27,7 @@ public:
 	virtual SubState*	newState() { return m_newState; }
 	
 	virtual void		Update(double deltaTime) = 0;
-	virtual void		Draw() = 0;;
+	virtual void		Draw() = 0;
+	virtual void		DrawHUD() = 0;
 };
 
