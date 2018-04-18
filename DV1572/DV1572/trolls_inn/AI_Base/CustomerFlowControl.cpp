@@ -90,6 +90,7 @@ Customer CustomerFlowControl::generateRandomCustomer()
 
 CustomerFlowControl::CustomerFlowControl()
 {
+	box.LoadModel("trolls_inn/Resources/box.obj");
 }
 
 CustomerFlowControl::~CustomerFlowControl()
@@ -107,6 +108,11 @@ Customer CustomerFlowControl::update(Attributes innAttributes)
 		nextCustomer = this->generateRandomCustomer();
 
 	std::cout << "A " << nextCustomer.getRaceStr()<< " has arrived!" << std::endl;
+
+	// Set this to path entrance
+	nextCustomer.setPosition(7 + 0.5f, 2 + 0.5f);
+	nextCustomer.setModel(&box);
+	nextCustomer.setFloor(0);
 
 	return nextCustomer;
 }
