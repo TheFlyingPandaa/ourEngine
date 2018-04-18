@@ -45,12 +45,12 @@ DirectX::XMFLOAT4A PointLight::getLightSetup() const
 
 int PointLight::getIndex() const
 {
-	return m_color.w;
+	return static_cast<int>(m_color.w);
 }
 
 void PointLight::setIndex(int index)
 {
-	m_color.w = index;
+	m_color.w = static_cast<float>(index);
 }
 
 void PointLight::setPosition(float x, float y, float z)

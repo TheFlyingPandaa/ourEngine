@@ -6,12 +6,11 @@
 class CustomerFlowControl
 {
 private:
-	Attributes innAttributes;
 	Customer nextCustomer;
 	RandomNumberGenerator rNG;
 
 	// Determine what customers the inn attract
-	Customer evaluate();
+	Customer evaluate(Attributes innAttributes);
 	Customer generateCustomer(Race race);
 	Customer generateRandomCustomer();
 
@@ -20,7 +19,6 @@ public:
 	CustomerFlowControl();
 	~CustomerFlowControl();
 
-	Customer update();
-	void print();
+	Customer update(Attributes innAttributes);
 
 };

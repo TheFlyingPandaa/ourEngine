@@ -34,7 +34,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 	m_wholeGrid.setMesh(m_gridMesh);
 	m_wholeGrid.setScale(sizeX *2.0f);
-	m_wholeGrid.setPos(posX, -0.01f, posX);
+	m_wholeGrid.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posX));
 	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
 	m_wholeGrid.setGridScale(sizeX);
 
@@ -132,6 +132,7 @@ Grid::~Grid()
 		}
 	}
 	delete m_gridMesh;
+	
 }
 
 
@@ -140,7 +141,13 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
+void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+{
+	m_tiles[pos.x][pos.y]->setIsWalkeble(false);
+	m_tiles[pos.x][pos.y]->setHasObject(true);
 
+	m_roomCtrl.addRoomObject(pos, mesh);
+}
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
@@ -159,6 +166,22 @@ void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType,
 		m_roomCtrl.AddRoom(pos, size, roomType, tiles, force);
 	}
 }
+
+void Grid::AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size)
+{
+	Tile* t1 = m_tiles[pos.x][pos.y];
+	Tile* t2 = m_tiles[pos2.x][pos2.y];
+
+	if (t1->getIsInside() && t2->getIsInside())
+	{
+		if (t1 != t2)
+		{
+			m_roomCtrl.CreateDoor(t1, t2);
+		}
+	}
+	
+}
+
 void Grid::Draw()
 {
 	for (int i = 0; i < m_sizeX; i++)
@@ -167,7 +190,10 @@ void Grid::Draw()
 		{
 			
 			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+			{
 				m_tiles[i][j]->getQuad().Draw();
+			}
+				
 		}
 	}
 	m_wholeGrid.Draw();
@@ -179,8 +205,8 @@ void Grid::PickTiles(Shape* selectionTile)
 {
 	if (selectionTile)
 	{
-		int xPos = selectionTile->getPosition().x;
-		int yPos = selectionTile->getPosition().z;
+		int xPos = static_cast<int>(selectionTile->getPosition().x);
+		int yPos = static_cast<int>(selectionTile->getPosition().z);
 		for(int x = -5; x < 5; x++)
 			for (int y = -5; y < 5; y++)
 			{

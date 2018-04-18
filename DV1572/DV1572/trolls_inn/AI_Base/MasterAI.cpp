@@ -10,6 +10,8 @@ MasterAI::~MasterAI()
 
 void MasterAI::update()
 {
+	// Set spawn time limit (?)
+	this->customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
 	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers
@@ -44,45 +46,20 @@ void MasterAI::update()
 			if (customer.getEconomy().getGold() < price)
 			{
 				// Customer leaves inn
-				customer.setAction(LeavingInnAction);
 				// Save id for leaving customers
 				leavingCustomersIDs.push_back(loopCounter);
 			}
 			else
 			{
 				// Customer wants path to Action area
+				customer.setAction(ThinkingAction);
+				this->solver.update(customer, desiredAction);
 			}
 		}
 		else
 		{
 			// Execute the action queue
-			CustomerState currentState = customer.getState();
-
-			switch (currentState)
-			{
-			case Idle:
-
-				break;
-			case Thinking:
-
-				break;
-			case Walking:
-
-				break;
-			case Drinking:
-
-				break;
-			case Eating:
-
-				break;
-			case Sleeping:
-
-				break;
-			case LeavingInn:
-
-				break;
-			}
-
+			this->solver.update(customer);
 		}
 
 		loopCounter++;
@@ -99,15 +76,27 @@ void MasterAI::update()
 	// Iterate through leaving customers
 	for (auto leavingCustomer : this->leavingCustomers)
 	{
-		// Customer wants path to exit
-
-		// Send review to inn if customer reached end of path
-		//this->inn.customerReview(leavingCustomer.getAttributes());
-
-		// If customer sent review then delete
-
+		if (leavingCustomer.getQueueEmpty())
+		{
+			// Customer wants path to exit
+			leavingCustomer.gotPathSetNextAction(LeavingInnAction);
+		}
+		else
+		{
+			// Send review to inn if customer reached end of path
+			if (leavingCustomer.walkQueueDone())
+				leavingCustomer.popToNextState();
+			if (leavingCustomer.getState() == LeavingInn)
+			{
+				this->inn.customerReview(leavingCustomer.getAttributes());
+				// If customer sent review then delete the customer
+				goneCustomers.push_back(loopCounter);
+			}
+		}
 		loopCounter++;
 	}
-	
-	
+	// Delete customers that left the inn area
+	for (int i = 0; i < goneCustomers.size(); i++)
+		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
+
 }

@@ -20,7 +20,7 @@ private:
 
 private:
 	void _cleanUp();
-
+	void _setupAPotentialAreaCircle(int x, int y, int r, int relative);
 public:
 	HUD();
 	~HUD();

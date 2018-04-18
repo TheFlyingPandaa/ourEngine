@@ -373,7 +373,7 @@ int Mesh::getNrOfIndices(int i) const
 
 int Mesh::getNumberOfParts() const
 {
-	return m_materials.size();
+	return static_cast<int>(m_materials.size());
 }
 
 bool Mesh::CheckID(const Mesh& other) const

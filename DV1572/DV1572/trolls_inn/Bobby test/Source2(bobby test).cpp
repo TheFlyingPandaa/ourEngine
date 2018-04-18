@@ -31,6 +31,10 @@
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
 #endif 
 
+//#include <vld.h>
+
+
+
 
 const float REFRESH_RATE = 60.0f;
 
@@ -41,6 +45,7 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
@@ -56,6 +61,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Window wnd(hInstance);
 	//wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
+	//wnd.Init(static_cast<int>(1920), static_cast<int>(1080), "Trolls_inn", gameSettings.fullscreen, working);
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();

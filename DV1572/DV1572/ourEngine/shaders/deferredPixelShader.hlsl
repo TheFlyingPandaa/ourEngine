@@ -119,7 +119,7 @@ float4 main(Input input) : SV_Target
 		if (index == fIndex)
 		{
 			//Diffuse 
-			float3 pointLightToObject = normalize(pointLPos[i] - wordPos);
+			float3 pointLightToObject = normalize(pointLPos[i].xyz - wordPos);
 			diffuseForPointLight = diffuseSample * max(dot(normal, pointLightToObject), 0.0f);
 			//Specular
 			halfWayDirPointLight = normalize(pointLightToObject + viewer);
@@ -128,7 +128,7 @@ float4 main(Input input) : SV_Target
 
 			//PointLight Attenuation
 
-			float distanceFromPointLight = length(wordPos - pointLPos[i]);
+			float distanceFromPointLight = length(wordPos - pointLPos[i].xyz);
 			att = lightSetup[i].r / (lightSetup[i].g + lightSetup[i].b * distanceFromPointLight + lightSetup[i].a * distanceFromPointLight);
 
 			tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i].xyz;

@@ -10,13 +10,7 @@
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
-	m_stage = GameStage::BuildRoom;
-	// Building
-	m_startTile = nullptr;
-	m_selectedTile = nullptr;
-	m_selectedRoomType = RoomType::kitchen;
-	m_buildStage = BuildStage::None;
-	m_roomPlaceable = false;
+	m_stage = GameStage::Play;
 	m_hasClicked = false;
 	m_colorButton = false;
 	m_hudPickStage = HudPickingStage::Miss;
@@ -46,13 +40,17 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
 	grid->getRoomCtrl().setDoorMesh(&door);
 	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	//grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
+	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 	
 	posX = 1;
 	posY = 1;
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;	
+
+
+	
+
 }
 
 GameState::~GameState()
@@ -74,8 +72,12 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	
+
+
 	this->m_cam->update();
-	gameTime.updateCurrentTime(deltaTime); 
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
+	this->grid->Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -93,11 +95,11 @@ void GameState::Update(double deltaTime)
 	}
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
-		m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
+		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
 	}
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
-	this->grid->Update(this->m_cam);
+	
 	m_colorButton = false;
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
@@ -120,6 +122,11 @@ void GameState::Update(double deltaTime)
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
+	}
+
+	if (Input::isKeyPressed('G'))
+	{
+		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
 	}
 
 	//if (Input::isKeyPressed('A'))
@@ -145,6 +152,11 @@ void GameState::Update(double deltaTime)
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
 	
+
+	if (Input::isKeyPressed('B'))
+	{
+		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+	}
 }
 
 void GameState::Draw()
@@ -184,27 +196,6 @@ void GameState::_init()
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 
-void GameState::_handleBuildRoom(Shape* pickedShape)
-{
-	switch (m_buildStage)
-	{
-	case BuildStage::Start:
-		if (pickedShape)
-		{
-			m_startTile = pickedShape;
-			m_buildStage = BuildStage::Selection;
-		}
-		else
-			m_buildStage = BuildStage::None;
-		break;
-	case BuildStage::Selection:
-		if (pickedShape)
-			m_selectedTile = pickedShape;
-		break;
-	}
-
-}
-
 void GameState::_setHud()
 {
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/HUDDesc.txt");
@@ -219,8 +210,7 @@ void GameState::_handlePicking()
 
 		if (m_hudPickStage != HudPickingStage::Miss)
 			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
-		else if (m_buildStage != BuildStage::None)
-			_handleBuildRoom(obj);
+		
 
 
 		using namespace std::chrono_literals;
@@ -244,7 +234,7 @@ void GameState::_handlePicking()
 			
 		}
 		else {
-			//std::cout << "Thread still running" << std::endl;
+			std::cout << "Thread still running" << std::endl;
 		}
 
 		//_handlePickingAi(obj);
@@ -353,11 +343,8 @@ void GameState::_handleInput()
 		}
 
 
-		if (m_stage == GameStage::BuildRoom)
-		{
-			_buildInput();
-		}
-		else if (m_stage == GameStage::Play)
+		
+		if (m_stage == GameStage::Play)
 		{
 			if (Input::isMouseLeftPressed())
 			{
@@ -369,11 +356,10 @@ void GameState::_handleInput()
 		}
 	}
 
-	if (Input::isKeyPressed('B'))
-		m_stage = GameStage::BuildRoom;
-	else if (Input::isKeyPressed('P'))
+	if (Input::isKeyPressed('P'))
 		m_stage = GameStage::Play;
 
+	
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
 		_setHud();
@@ -381,63 +367,3 @@ void GameState::_handleInput()
 		m_Rpressed = false;
 }
 
-void GameState::_buildInput()
-{
-	if (Input::isMouseLeftPressed())
-	{
-		if (m_buildStage == BuildStage::None)
-		{
-			m_buildStage = BuildStage::Start;
-			this->grid->PickTiles();
-		}
-		else if (m_buildStage == BuildStage::Selection)
-		{
-			this->grid->PickTiles(m_selectedTile);
-			if (m_startTile && m_selectedTile)
-			{
-				XMFLOAT3 s = m_startTile->getPosition();
-				XMFLOAT3 e = m_selectedTile->getPosition();
-
-				XMINT2 start;
-				start.x = static_cast<int>(s.x + 0.5f);
-				start.y = static_cast<int>(s.z + 0.5f);
-				XMINT2 end;
-				end.x = static_cast<int>(e.x + 0.5f);
-				end.y = static_cast<int>(e.z + 0.5f);
-
-				m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
-			}
-		}
-	}
-	else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
-	{
-		m_buildStage = BuildStage::End;
-	}
-	else if (m_buildStage == BuildStage::End)
-	{
-		XMFLOAT3 s = m_startTile->getPosition();
-		XMFLOAT3 e = m_selectedTile->getPosition();
-
-		XMINT2 start;
-		start.x = static_cast<int>(s.x + 0.5f);
-		start.y = static_cast<int>(s.z + 0.5f);
-		XMINT2 end;
-		end.x = static_cast<int>(e.x + 0.5f);
-		end.y = static_cast<int>(e.z + 0.5f);
-
-		if (start.x > end.x)
-			std::swap(start.x, end.x);
-		if (start.y > end.y)
-			std::swap(start.y, end.y);
-		this->grid->ResetTileColor(start, end);
-
-		end.x -= start.x - 1;
-		end.y -= start.y - 1;
-
-		m_buildStage = BuildStage::None;
-		m_startTile = nullptr;
-		m_selectedTile = nullptr;
-		m_roomPlaceable = false;
-		this->grid->AddRoom(start, end, m_selectedRoomType);
-	}
-}

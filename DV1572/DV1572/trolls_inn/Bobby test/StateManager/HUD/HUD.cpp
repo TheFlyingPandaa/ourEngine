@@ -14,6 +14,48 @@ void HUD::_cleanUp()
 	m_texts.clear();
 }
 
+void HUD::_setupAPotentialAreaCircle(int x, int y, int r, int relative)
+{
+	RectangleShape::RelativeTo rt = static_cast<RectangleShape::RelativeTo>(relative);
+	DirectX::XMINT2 s = Input::getWindowSize();
+	DirectX::XMINT2 pos(x, y);
+
+	switch (rt)
+	{
+	case RectangleShape::BR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		break;
+	case RectangleShape::TR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case RectangleShape::TL:
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case RectangleShape::C:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	case RectangleShape::BC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		break;
+	case RectangleShape::TC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		break;
+	case RectangleShape::LC:
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	case RectangleShape::RC:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		break;
+	}
+	
+	m_potentialAreas.push_back(PotentialAreaCircle{ pos.x, pos.y, r });
+
+}
+
 HUD::HUD()
 {
 
@@ -60,14 +102,14 @@ bool HUD::LoadHud(const std::string & path)
 				r->setMesh(m_mesh[m_mesh.size() - 1]);
 				
 				float pX, pY, sX, sY = 0.0f;
+				int relativeTo;
+				std::string buffer = "";
 				int index = 0;
 				float d = 0;
-				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %d %f", &pX, &pY, &sX, &sY, &index, &d);
+
+				stream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo;
 
 				d *= 0.00001f;
-
-				r->setScreenPos(pX, pY, d);
-
 				if (static_cast<int>(sX) == 0)
 					sX = static_cast<float>(Input::getWindowSize().x);
 				if (static_cast<int>(sY) == 0)
@@ -75,6 +117,10 @@ bool HUD::LoadHud(const std::string & path)
 
 				r->setWidth(sX);
 				r->setHeight(sY);
+
+				r->setRelative(static_cast<RectangleShape::RelativeTo>(relativeTo));
+				r->setScreenPos(pX, pY, d);
+
 				
 				if (index < 0)
 					m_quadsNonClickAble.push_back(r);
@@ -88,11 +134,14 @@ bool HUD::LoadHud(const std::string & path)
 			{
 				float x, y, scl, r, g, b, a, rot;
 				char allignment;
+				int relativeTo;
 				std::string text = "";
-				sscanf_s(currentLine.c_str(), "%*s %f %f %f %f %f %f %f %f %c", &x, &y, &scl, &r, &g, &b, &a, &rot, &allignment);
+
+				stream >> x >> y >> scl >> r >> g >> b >> a >> rot >> allignment >> relativeTo;
 				std::getline(inputFile, text);
 				Text t;
 				t.setColor(r, g, b, a);
+				t.setRelative(static_cast<Text::RelativeTo>(relativeTo));
 				t.setPosition(x, y);
 				t.setScale(scl);
 				t.setRotation(rot);
@@ -116,8 +165,11 @@ bool HUD::LoadHud(const std::string & path)
 			else if (type == "hc")
 			{
 				int x, y, r;
-				sscanf_s(currentLine.c_str(), "%*s %d %d %d", &x, &y, &r);
-				m_potentialAreas.push_back(HUD::PotentialAreaCircle{ x, y, r });
+				int relativeTo;
+				stream >> x >> y >> r >> relativeTo;
+
+
+				_setupAPotentialAreaCircle(x, y, r, relativeTo);
 			}
 
 		}

@@ -8,64 +8,57 @@
 # r 0 0 0.1 0.08 1 0
 # txt 950 4 0.5 0 0 1 1 0 L
 # Gold
-# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index.
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index relativeTo.
 # if sizeX or sizeY is 0, this is set as the screen res
-# txt posX posY Scl r g b a rotation allignment (L, C, R)
+# txt posX posY Scl r g b a rotation allignment (L, C, R) relativeTo
+				0	1	2	3	4	5	6	7	8
+# relativeTo:	BL, BR, TR, TL, C, BC, TC, LC, RC
+
 
 # Bar
 tx trolls_inn/Resources/HUD/Bar.png
-r 100 -25 0 158 -1 0.2
+r 0 0 0 128 -1 0.3 0
 
-# PortraitBackground
-tx trolls_inn/Resources/HUD/PortraitBackground.png
-r -50 -50 300 300 -1 0.1
+# End of Bar
+tx trolls_inn/Resources/HUD/BarEnd.png
+# Left
+r 0 0 8 128 -1 0.2 0
+# Right
+r 0 0 8 128 -1 0.2 1
+
+# Button Background
+tx trolls_inn/Resources/HUD/ButtonBackground.png
+r 8 8 208 112 -1 0.1 0
+
+# Hit box for buttons
+hc 109 70 104 0
+
+# Crew Button
+tx trolls_inn/Resources/HUD/CrewButton.png
+r 36 66 48 48 0 0 0
+
+# Build button
+tx trolls_inn/Resources/HUD/ShopButton.png
+r 132 66 48 48 1 0 0
+
+# Event Button
+tx trolls_inn/Resources/HUD/EventButton.png
+r 36 15 48 48 2 0 0
+
+# Stats Button
+tx trolls_inn/Resources/HUD/StatsButton.png
+r 132 15 48 48 3 0 0
+
+# Money background
+tx trolls_inn/Resources/HUD/MoneyBackground.png
+r 190 32 193 42 -1 0.1 1
 
 # Portrait
-tx trolls_inn/Resources/HUD/Portrait.png
-r -15 -15 230 230 -1 0
-
-# EventLog
-tx trolls_inn/Resources/HUD/EventLog.png
-r 349 -15 500 131 -1 0
-
-# ButtonBackground
-tx trolls_inn/Resources/HUD/MenuBackground.png
-r 1088 -20 204 204 -1 0.1
-
-# hitbox circle for buttonBackground
-hc 1190 82 144
-
-# Button_Shop
-tx trolls_inn/Resources/HUD/Button1.png
-r 1165 100 49 49 0 0
-
-# Button_Shop
-tx trolls_inn/Resources/HUD/Button1.png
-r 1115 50 49 49 1 0
-
-# Button_Shop
-tx trolls_inn/Resources/HUD/Button1.png
-r 1215 50 49 49 2 0
-
-# Button_Shop
-tx trolls_inn/Resources/HUD/Button1.png
-r 1165 2 49 49 3 0
-
-# Money
-tx trolls_inn/Resources/HUD/EventLog.png
-r 900 4 200 50 -1 0
+tx trolls_inn/Resources/HUD/P-Frame.png
+r 8 8 158 158 -1 0 1
 
 # Money text
-txt 1100 4 0.5 0 0 1 1 0 R
-Gold
-
-# Event text
-txt 600 50 0.5 1 0 0 1 0 C
-New Events
-
-# Character Text
-txt 0 200 0.5 1 1 1 1 0 L
-Ofc
-
+txt 198 32 0.4 0 0 1 1 0 R 1
+$10000
 
 

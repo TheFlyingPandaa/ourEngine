@@ -91,6 +91,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
@@ -140,6 +142,7 @@
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -147,7 +150,6 @@
     <ClCompile Include="trolls_inn\AI_Base\Attributes.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\CustomerFlowControl.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\InnDummyFile.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\LevelTracker.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
@@ -168,6 +170,8 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -175,6 +179,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
@@ -182,6 +187,7 @@
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\Text.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
@@ -224,6 +230,8 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\AI_Base\Economy.h" />
+    <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
+    <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>
   <ItemGroup>

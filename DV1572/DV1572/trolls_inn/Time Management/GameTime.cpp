@@ -14,7 +14,13 @@ GameTime::GameTime()
 	m_seconds = 0.0f; 
 	m_totalSeconds = 0; 
 	m_divider = 255.0f; 
-
+	m_seconds = 0;
+	m_currentTime = NOONTOEVENING;
+	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 };
+	m_sunStartInterpolate = m_sunCurrentFinalColor;
+	m_sunRotationStart = m_sunFinalRotation;
+	m_colorScaleFactor = 0.0f;
+	m_sunAngle = 90.0f;
 	
 	m_colorScaleFactor = 0.0001f;
 	m_rotationFactor = 0.0001f;
@@ -22,7 +28,7 @@ GameTime::GameTime()
 	m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
 	m_sunTargetInterpolate = DirectX::XMVECTOR{ 0,0,0 };
 	
-	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 }; 
+
 
 	m_sunRotationStart = DirectX::XMVECTOR{ 0,1,0 };
 	m_sunRotationTarget = DirectX::XMVECTOR{ 0,0,0 };

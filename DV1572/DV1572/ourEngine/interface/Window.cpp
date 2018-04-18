@@ -89,7 +89,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	attribDesc.w4 = rows[3];
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
-	attribDesc.lightIndex = shape->getLightIndex();
+	attribDesc.lightIndex = static_cast<float>(shape->getLightIndex());
 	
 	// Unique Mesh
 	if (existingId == -1)
@@ -1064,7 +1064,7 @@ void Window::_geometryPass(const Camera &cam)
 
 		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
 		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
-		meshBuffer.gridscale = instance.shape->getGridScale();
+		meshBuffer.gridscale = static_cast<float>(instance.shape->getGridScale());
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -1223,17 +1223,17 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	
 	//Send lights to GPU
 	POINT_LIGHT_COLLECTION pointLightCollectionBuffer; 
-	int nrOfLights = DX::g_lightQueue.size();
+	int nrOfLights = static_cast<int>(DX::g_lightQueue.size());
 
 	for (int i = 0; i < nrOfLights; i++)
 	{
 		pointLightCollectionBuffer.positionArray[i] = DX::g_lightQueue[i]->getPosition();
 		pointLightCollectionBuffer.colorArray[i] =	DX::g_lightQueue[i]->getColor(); 
-		pointLightCollectionBuffer.colorArray[i].w = DX::g_lightQueue[i]->getIndex();
+		pointLightCollectionBuffer.colorArray[i].w = static_cast<float>(DX::g_lightQueue[i]->getIndex());
 		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
-	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(nrOfLights, nrOfLights, nrOfLights, nrOfLights); 
+	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
 	DX::g_deviceContext->Map(m_pPointLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &lightData);
@@ -1565,7 +1565,7 @@ void Window::FullReset()
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, m_HUDviewProj, m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
 }
 
 void Window::Present()

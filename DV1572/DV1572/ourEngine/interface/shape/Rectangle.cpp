@@ -1,5 +1,6 @@
 #include "Rectangle.h"
 #include "../../core/Dx.h"
+#include "../Input.h"
 
 void RectangleShape::_buildRectangle()
 {
@@ -9,10 +10,15 @@ void RectangleShape::_buildRectangle()
 
 RectangleShape::RectangleShape(float w, float h)
 {
-	m_height = h;
-	m_width = w;
+	DirectX::XMINT2 s = Input::getWindowSize();
+	m_rt = RelativeTo::BL;
+	m_height = (h / s.y) * 4;
+	m_width = (w / s.x) * 4;
+
 	_buildRectangle();
-	this->setScale(w / 4500, h / 4500, 1.0f);
+	
+	
+	this->setScale(m_width, m_height, 1.0f);
 
 	setVertexShader(DX::g_3DVertexShader);
 	setPixelShader(DX::g_3DPixelShader);
@@ -33,21 +39,73 @@ void RectangleShape::setScreenPos(float x, float y, float depth)
 
 void RectangleShape::setScreenPos(DirectX::XMFLOAT3 pos)
 {
-	DirectX::XMFLOAT3 start(-0.0736f, -0.0414f, pos.z);
-	start.x += (pos.x / 8625.0f);
-	start.y += (pos.y / 8625.0f);
+	DirectX::XMINT2 s = Input::getWindowSize();
+	DirectX::XMFLOAT3 scl = Shape::getScale();
+	DirectX::XMFLOAT3 scrnPos;
 
-	Shape::setPos(start);
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
+
+	switch (m_rt)
+	{
+	case RectangleShape::BR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		offsetX = - scl.x;
+		break;
+	case RectangleShape::TR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetX = - scl.x;
+		offsetY = - scl.y;
+		break;
+	case RectangleShape::TL:
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetY = - scl.y;
+		break;
+	case RectangleShape::C:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetX = -(scl.x / 2.0f);
+		offsetY = -(scl.y / 2.0f);
+		break;
+	case RectangleShape::BC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		offsetX = -(scl.x / 2.0f);
+		break;
+	case RectangleShape::TC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetX = -(scl.x / 2.0f);
+		offsetY = -scl.y;
+		break;
+	case RectangleShape::LC:
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetY = -(scl.y / 2.0f);
+		break;
+	case RectangleShape::RC:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetX = -scl.x;
+		offsetY = -(scl.y / 2.0f);
+		break;
+	}
+
+
+	scrnPos.x = (2.0f * ((pos.x) / s.x) - 1.0f) + (offsetX / 2);
+	scrnPos.y = (2.0f * ((pos.y) / s.y) - 1.0f) + (offsetY / 2);
+	scrnPos.z = pos.z;
+
+	Shape::setPos(scrnPos);
+	//Shape::setPos(pos);
 }
 
 DirectX::XMFLOAT3 RectangleShape::getScreenPos() const
 {
 	DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(getPosition());
-	
-	pos.x += 0.0736f;
-	pos.x *= 8625.0f;
-	pos.y += 0.0414f;
-	pos.y *= 8625.0f;
+
+	DirectX::XMINT2 s = Input::getWindowSize();
+	pos.x = 0.5f * (pos.x * s.x) + 1.0f;
+	pos.y = 0.5f * (pos.y * s.y) + 1.0f;
 
 	return pos;
 }
@@ -66,24 +124,28 @@ void RectangleShape::setIndex(int index)
 
 void RectangleShape::setWidth(float w)
 {
-	m_width = w;
-	this->setScale(w / 4346, m_height / 4346, 1.0f);
-}
+	DirectX::XMINT2 s = Input::getWindowSize();
+	m_width = (w / s.x) * 4;
 
-float RectangleShape::getWidth() const
-{
-	return m_width;
+	this->setScale(m_width, m_height, 1.0f);
 }
 
 void RectangleShape::setHeight(float h)
 {
-	m_height = h;
-	this->setScale(m_width / 4346, h / 4346, 1.0f);
+	DirectX::XMINT2 s = Input::getWindowSize();
+	m_height = (h / s.y) * 4;
+
+	this->setScale(m_width, m_height, 1.0f);
 }
+float RectangleShape::getWidth() const
+{
+	return ((m_width / 4) * Input::getWindowSize().x) ;
+}
+
 
 float RectangleShape::getHeight() const
 {
-	return m_height;
+	return ((m_height / 4) * Input::getWindowSize().y);
 }
 
 void RectangleShape::setDiffuseTexture(const std::string & path)
@@ -100,6 +162,11 @@ void RectangleShape::DrawAsHud()
 {
 	m_hud = true;
 	DX::submitToInstance(this, DX::g_instanceGroupsHUD);
+}
+
+void RectangleShape::setRelative(RectangleShape::RelativeTo rt)
+{
+	m_rt = rt;
 }
 
 bool RectangleShape::isHud() const
