@@ -1,0 +1,65 @@
+# This is a file which defines the HUD
+# use the 'tx' keyword to define a texture
+# use the 'r' keyword to define a rectangle to use the defined texture
+# all rectangles will share the texture until a new texture is defined
+
+# example:
+# tx path/path/path/picture.png
+# r 0 0 0.1 0.08 1 0
+# txt 950 4 0.5 0 0 1 1 0 L
+# Gold
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index relativeTo.
+# if sizeX or sizeY is 0, this is set as the screen res
+# txt posX posY Scl r g b a rotation allignment (L, C, R) relativeTo
+				0	1	2	3	4	5	6	7	8
+# relativeTo:	BL, BR, TR, TL, C, BC, TC, LC, RC
+
+
+# Bar
+tx trolls_inn/Resources/HUD/Bar.png
+r 100 -25 0 158 -1 0.2 0
+
+# PortraitBackground
+tx trolls_inn/Resources/HUD/PortraitBackground.png
+r -50 -50 250 250 -1 0.1 0
+
+# Portrait
+tx trolls_inn/Resources/HUD/Portrait.png
+r -10 -10 200 200 -1 0 0
+
+# EventLog
+tx trolls_inn/Resources/HUD/EventLog.png
+r 0 7 400 100 -1 0 5
+
+# ButtonBackground
+tx trolls_inn/Resources/HUD/MenuBackground.png
+r -20 -20 204 204 -1 0.1 1
+
+# hitbox circle for buttonBackground
+hc 92 92 144 1
+
+# Button_Shop
+tx trolls_inn/Resources/HUD/Button1.png
+r 53 100 49 49 0 0 1
+r 0 50 49 49 1 0 1
+r 100 50 49 49 2 0 1
+r 50 2 49 49 3 0 1
+
+# Money
+tx trolls_inn/Resources/HUD/EventLog.png
+r 200 25 200 50 -1 0 1
+
+# Money text
+txt 250 20 0.5 0 0 1 1 0 R 1
+Gold
+
+# Event text
+txt 0 57 0.5 1 0 0 1 0 C 5
+New Events
+
+# Character Text
+txt 0 150 0.5 1 1 1 1 0 L 0
+Batman
+
+
+

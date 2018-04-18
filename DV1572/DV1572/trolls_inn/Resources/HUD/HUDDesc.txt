@@ -17,49 +17,48 @@
 
 # Bar
 tx trolls_inn/Resources/HUD/Bar.png
-r 100 -25 0 158 -1 0.2 0
+r 0 0 0 128 -1 0.3 0
 
-# PortraitBackground
-tx trolls_inn/Resources/HUD/PortraitBackground.png
-r -50 -50 250 250 -1 0.1 0
+# End of Bar
+tx trolls_inn/Resources/HUD/BarEnd.png
+# Left
+r 0 0 8 128 -1 0.2 0
+# Right
+r 0 0 8 128 -1 0.2 1
+
+# Button Background
+tx trolls_inn/Resources/HUD/ButtonBackground.png
+r 8 8 208 112 -1 0.1 0
+
+# Hit box for buttons
+hc 109 70 104 0
+
+# Crew Button
+tx trolls_inn/Resources/HUD/CrewButton.png
+r 36 66 48 48 0 0 0
+
+# Build button
+tx trolls_inn/Resources/HUD/ShopButton.png
+r 132 66 48 48 1 0 0
+
+# Event Button
+tx trolls_inn/Resources/HUD/EventButton.png
+r 36 15 48 48 2 0 0
+
+# Stats Button
+tx trolls_inn/Resources/HUD/StatsButton.png
+r 132 15 48 48 3 0 0
+
+# Money background
+tx trolls_inn/Resources/HUD/MoneyBackground.png
+r 190 32 193 42 -1 0.1 1
 
 # Portrait
-tx trolls_inn/Resources/HUD/Portrait.png
-r -10 -10 200 200 -1 0 0
-
-# EventLog
-tx trolls_inn/Resources/HUD/EventLog.png
-r 0 7 400 100 -1 0 5
-
-# ButtonBackground
-tx trolls_inn/Resources/HUD/MenuBackground.png
-r -20 -20 204 204 -1 0.1 1
-
-# hitbox circle for buttonBackground
-hc 92 92 144 1
-
-# Button_Shop
-tx trolls_inn/Resources/HUD/Button1.png
-r 53 100 49 49 0 0 1
-r 0 50 49 49 1 0 1
-r 100 50 49 49 2 0 1
-r 50 2 49 49 3 0 1
-
-# Money
-tx trolls_inn/Resources/HUD/EventLog.png
-r 200 25 200 50 -1 0 1
+tx trolls_inn/Resources/HUD/P-Frame.png
+r 8 8 158 158 -1 0 1
 
 # Money text
-txt 250 20 0.5 0 0 1 1 0 R 1
-Gold
-
-# Event text
-txt 0 57 0.5 1 0 0 1 0 C 5
-New Events
-
-# Character Text
-txt 0 150 0.5 1 1 1 1 0 L 0
-Batman
-
+txt 198 32 0.4 0 0 1 1 0 R 1
+$10000
 
 
