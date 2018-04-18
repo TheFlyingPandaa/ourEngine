@@ -1,64 +1,64 @@
 #include "LevelTracker.h"
 
-int LevelTracker::calculateExperienceToNextLevel() const
+int LevelTracker::_calculateExperienceToNextLevel() const
 {
-	return this->level * this->level * 10;
+	return this->m_level * this->m_level * 10;
 }
 
-void LevelTracker::setExperienceToNextLevel(int requiredExperience)
+void LevelTracker::_setExperienceToNextLevel(int requiredExperience)
 {
-	this->experienceToNextLevel = requiredExperience;
+	this->m_experienceToNextLevel = requiredExperience;
 }
 
-void LevelTracker::levelUp()
+void LevelTracker::_levelUp()
 {
-	this->level++;
-	this->experience -= this->experienceToNextLevel;
-	this->setExperienceToNextLevel(this->calculateExperienceToNextLevel());
+	this->m_level++;
+	this->m_experience -= this->m_experienceToNextLevel;
+	this->_setExperienceToNextLevel(this->_calculateExperienceToNextLevel());
 }
 
 LevelTracker::LevelTracker()
 {
-	this->experience = 0;
-	this->level = 0;
-	this->levelUp();
+	this->m_experience = 0;
+	this->m_level = 0;
+	this->_levelUp();
 }
 
 LevelTracker::~LevelTracker()
 {
 }
 
-int LevelTracker::getExperience() const
+int LevelTracker::GetExperience() const
 {
-	return this->experience;
+	return this->m_experience;
 }
 
-int LevelTracker::getLevel() const
+int LevelTracker::GetLevel() const
 {
-	return this->level;
+	return this->m_level;
 }
 
-int LevelTracker::getExperienceToNextLevel() const
+int LevelTracker::GetExperienceToNextLevel() const
 {
-	return this->experienceToNextLevel;
+	return this->m_experienceToNextLevel;
 }
 
-bool LevelTracker::increaseExperienceBy(int experienceGain)
+bool LevelTracker::IncreaseExperienceBy(int experienceGain)
 {
 	bool leveledUp = false;
-	this->experience += experienceGain;
+	this->m_experience += experienceGain;
 	
-	while (this->experience > this->experienceToNextLevel)
+	while (this->m_experience > this->m_experienceToNextLevel)
 	{
 		leveledUp = true;
-		this->levelUp();
+		this->_levelUp();
 	}
 
 	return leveledUp;
 }
 
-void LevelTracker::setLevel(int newLevel)
+void LevelTracker::SetLevel(int newLevel)
 {
-	this->level = newLevel;
-	this->setExperienceToNextLevel(this->calculateExperienceToNextLevel());
+	this->m_level = newLevel;
+	this->_setExperienceToNextLevel(this->_calculateExperienceToNextLevel());
 }

@@ -58,7 +58,7 @@ void GameState::Update(double deltaTime)
 
 	this->m_cam->update();
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	m_mai.update(this->m_cam);
+	m_mai.Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -100,7 +100,7 @@ void GameState::Update(double deltaTime)
 
 	if (Input::isKeyPressed('B'))
 	{
-		m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_mai.getGrid()));
+		m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_mai.GetGrid()));
 	}
 }
 
@@ -283,7 +283,7 @@ void GameState::_handleInput()
 		{
 			if (Input::isMouseLeftPressed())
 			{
-				m_mai.getGrid()->PickTiles();
+				m_mai.GetGrid()->PickTiles();
 				m_move = true;
 			}
 			else

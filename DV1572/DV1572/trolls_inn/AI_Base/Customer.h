@@ -39,14 +39,14 @@ enum CustomerState
 class Customer : public Character
 {
 private:
-	Attributes stats;
-	Economy economy;
-	Race race;
-	std::queue<CustomerState> stateQueue;
+	Attributes m_stats;
+	Economy m_economy;
+	Race m_race;
+	std::queue<CustomerState> m_stateQueue;
 
-	int hungry;
-	int tired;
-	int thirsty;
+	int m_hungry;
+	int m_tired;
+	int m_thirsty;
 
 public:
 	Customer();
@@ -54,38 +54,37 @@ public:
 	Customer(const Customer &other);
 	~Customer();
 
-	Attributes& getAttributes();
-	Economy& getEconomy();
-	Race getRace() const;
+	Attributes& GetAttributes();
+	Economy& GetEconomy();
+	Race GetRace() const;
 
-	const char* getRaceStr() const;
+	const char* GetRaceStr() const;
 
 	// Get desired action
-	Action getAction() const;
-	void setAction(Action nextAction);
-	void gotPathSetNextAction(Action nextAction);
+	Action GetAction() const;
+	void SetAction(Action nextAction);
+	void GotPathSetNextAction(Action nextAction);
 
-	int getQueueEmpty() const;
-	CustomerState getState() const;
-	void popToNextState();
+	int GetQueueEmpty() const;
+	CustomerState GetState() const;
+	void PopToNextState();
 
-	const char* getActionStr() const;
-	const char* getNextActionStr() const;
+	const char* GetActionStr() const;
+	const char* GetNextActionStr() const;
 
-	int getHungry() const;
-	int getTired() const;
-	int getThirsty() const;
+	int GetHungry() const;
+	int GetTired() const;
+	int GetThirsty() const;
 
-	void setHungry(int value);
-	void setTired(int value);
-	void setThirsty(int value);
+	void SetHungry(int value);
+	void SetTired(int value);
+	void SetThirsty(int value);
 
 	// Reduces hungry by 1
-	void eating();
+	void DoEating();
 	// Reduces tired by 1
-	void sleeping();
+	void DoSleeping();
 	// Reduces thirsty by 1
-	void drinking();
-
+	void DoDrinking();
 	void Update();
 };

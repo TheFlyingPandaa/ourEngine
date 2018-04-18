@@ -1,3 +1,4 @@
+#include "../AI_Base/FroggeDebug.h"
 #include <iostream>
 #include <string>
 #include <stack>
@@ -33,6 +34,19 @@
 
 //#include <vld.h>
 
+// MSDN Memory Leak Detection
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+/*#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif*/
+// END MSDN
 
 
 
@@ -42,10 +56,8 @@ extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
@@ -105,7 +117,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	bool play = false;
 
 
-	State * gameState = new GameState(&pickingEvents, &keyEvent, cam);
+	State* gameState = new GameState(&pickingEvents, &keyEvent, cam);
 
 	while (wnd.isOpen())
 	{	
@@ -133,14 +145,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				}
 				else
 				{
-					State * ref = gameStates.top()->NewState();
+					State* ref = gameStates.top()->NewState();
 					if (ref)
 						gameStates.push(ref);
 				}
 			}
 			else {
 				gameState->Update(1.0 / REFRESH_RATE);
-				State * ref = gameState->NewState();
+				State* ref = gameState->NewState();
 				
 				if (ref)
 					gameStates.push(ref);
@@ -231,5 +243,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	delete cam;
 	delete gameState;
+	// MSDN
+	_CrtDumpMemoryLeaks();
 	return 0;
 }

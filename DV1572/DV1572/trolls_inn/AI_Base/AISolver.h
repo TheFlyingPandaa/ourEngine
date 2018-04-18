@@ -11,12 +11,9 @@ public:
 	AISolver(Grid* grid);
 	~AISolver();
 
-	void update(Customer& customer);
-	void update(Customer& customer, Action desiredAction);
-	void update(Staff& staff);
-	void update(Staff& staff, Action desiredAction);
+	void Update(Customer& customer);
+	void Update(Customer& customer, Action desiredAction);
+	void Update(Staff& staff);
+	void Update(Staff& staff, Action desiredAction);
 	// Get Path function (?)
-private:
-	bool _findPath();
-	// Add update for Inn
 };

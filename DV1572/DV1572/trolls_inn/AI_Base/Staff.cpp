@@ -6,25 +6,25 @@ Staff::Staff()
 
 Staff::Staff(Professions profession)
 {
-	this->profession = profession;
+	this->m_profession = profession;
 }
 
 Staff::Staff(Professions profession, int level)
 {
-	this->profession = profession;
-	this->level.setLevel(level);
+	this->m_profession = profession;
+	this->m_level.SetLevel(level);
 }
 
 Staff::~Staff()
 {
 }
 
-Professions Staff::getProfession() const
+Professions Staff::GetProfession() const
 {
-	return this->profession;
+	return this->m_profession;
 }
 
-LevelTracker& Staff::getLevelTracker()
+LevelTracker& Staff::GetLevelTracker()
 {
-	return this->level;
+	return this->m_level;
 }

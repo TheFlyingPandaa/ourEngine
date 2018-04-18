@@ -8,7 +8,7 @@ RandomNumberGenerator::~RandomNumberGenerator()
 {
 }
 
-int RandomNumberGenerator::generateRandomNumber(int lowerBound, int upperBound)
+int RandomNumberGenerator::GenerateRandomNumber(int lowerBound, int upperBound)
 {
 	uint32_t seed = static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count());
 	int lower_bound = lowerBound;

@@ -5,20 +5,20 @@
 class Economy
 {
 private:
-	int	gold;
-	std::vector<int> transactions;
-	std::vector<std::string> transactionsDocumentation;
+	int	m_gold;
+	std::vector<int> m_transactions;
+	std::vector<std::string> m_transactionsDocumentation;
 
 public:
 	Economy();
 	Economy(int startGold);
 	~Economy();
 
-	void deposit(int amount);
-	bool withdraw(int amount);
+	void Deposit(int amount);
+	bool Withdraw(int amount);
 	
-	int getGold() const;
+	int GetGold() const;
 
-	std::vector<std::string> getTransactionHistory() const;
+	std::vector<std::string> GetTransactionHistory() const;
 
 };

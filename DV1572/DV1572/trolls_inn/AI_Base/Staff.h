@@ -14,8 +14,8 @@ enum Professions
 class Staff
 {
 private:
-	LevelTracker level;
-	Professions profession;
+	LevelTracker m_level;
+	Professions m_profession;
 
 public:
 	Staff();
@@ -23,6 +23,6 @@ public:
 	Staff(Professions profession, int level);
 	~Staff();
 	
-	Professions getProfession() const;
-	LevelTracker& getLevelTracker();
+	Professions GetProfession() const;
+	LevelTracker& GetLevelTracker();
 };

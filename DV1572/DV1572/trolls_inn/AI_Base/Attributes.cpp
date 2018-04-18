@@ -3,17 +3,17 @@
 Attributes::Attributes()
 {
 	// 0 is a neutral value, middle of the scale
-	this->reputation = 0;
-	this->standard = 0;
-	this->prices = 0;
-	this->creepy = 0;
-	this->shady = 0;
-	this->drinkQuality = 0;
-	this->foodQuality = 0;
+	this->m_reputation = 0;
+	this->m_standard = 0;
+	this->m_prices = 0;
+	this->m_creepy = 0;
+	this->m_shady = 0;
+	this->m_drinkQuality = 0;
+	this->m_foodQuality = 0;
 }
 
 Attributes::Attributes(int rep, int sta, int pri, int cre, int shad, int drin, int fod)
-	: reputation(rep), standard(sta), prices(pri), creepy(cre), shady(shad), drinkQuality(drin), foodQuality(fod)
+	: m_reputation(rep), m_standard(sta), m_prices(pri), m_creepy(cre), m_shady(shad), m_drinkQuality(drin), m_foodQuality(fod)
 {
 }
 
@@ -21,80 +21,80 @@ Attributes::~Attributes()
 {
 }
 
-int Attributes::getReputation() const
+int Attributes::GetReputation() const
 {
-	return this->reputation;
+	return this->m_reputation;
 }
 
-int Attributes::getStandard() const
+int Attributes::GetStandard() const
 {
-	return this->standard;
+	return this->m_standard;
 }
 
-int Attributes::getPrices() const
+int Attributes::GetPrices() const
 {
-	return this->prices;
+	return this->m_prices;
 }
 
-int Attributes::getCreepy() const
+int Attributes::GetCreepy() const
 {
-	return this->creepy;
+	return this->m_creepy;
 }
 
-int Attributes::getShady() const
+int Attributes::GetShady() const
 {
-	return this->shady;
+	return this->m_shady;
 }
 
-int Attributes::getDrinkQuality() const
+int Attributes::GetDrinkQuality() const
 {
-	return this->drinkQuality;
+	return this->m_drinkQuality;
 }
 
-int Attributes::getFoodQuality() const
+int Attributes::GetFoodQuality() const
 {
-	return this->foodQuality;
+	return this->m_foodQuality;
 }
 
-void Attributes::setReputation(int value)
+void Attributes::SetReputation(int value)
 {
-	this->reputation += value;
-	this->reputation = std::min(std::max(this->reputation, -10), 10);
+	this->m_reputation += value;
+	this->m_reputation = std::min(std::max(this->m_reputation, -10), 10);
 }
 
-void Attributes::setStandard(int value)
+void Attributes::SetStandard(int value)
 {
-	this->standard += value;
-	this->standard = std::min(std::max(this->standard, -10), 10);
+	this->m_standard += value;
+	this->m_standard = std::min(std::max(this->m_standard, -10), 10);
 }
 
-void Attributes::setPrices(int value)
+void Attributes::SetPrices(int value)
 {
-	this->prices += value;
-	this->prices = std::min(std::max(this->prices, -10), 10);
+	this->m_prices += value;
+	this->m_prices = std::min(std::max(this->m_prices, -10), 10);
 }
 
-void Attributes::setCreepy(int value)
+void Attributes::SetCreepy(int value)
 {
 	
-	this->creepy += value;
-	this->creepy = std::min(std::max(this->creepy, -10), 10);
+	this->m_creepy += value;
+	this->m_creepy = std::min(std::max(this->m_creepy, -10), 10);
 }
 
-void Attributes::setShady(int value)
+void Attributes::SetShady(int value)
 {
-	this->shady += value;
-	this->shady = std::min(std::max(this->shady, -10), 10);
+	this->m_shady += value;
+	this->m_shady = std::min(std::max(this->m_shady, -10), 10);
 }
 
-void Attributes::setDrinkQuality(int value)
+void Attributes::SetDrinkQuality(int value)
 {
-	this->drinkQuality += value;
-	this->drinkQuality = std::min(std::max(this->drinkQuality, -10), 10);
+	this->m_drinkQuality += value;
+	this->m_drinkQuality = std::min(std::max(this->m_drinkQuality, -10), 10);
 }
 
-void Attributes::setFoodQuality(int value)
+void Attributes::SetFoodQuality(int value)
 {
-	this->foodQuality += value;
-	this->foodQuality = std::min(std::max(this->foodQuality, -10), 10);
+	this->m_foodQuality += value;
+	this->m_foodQuality = std::min(std::max(this->m_foodQuality, -10), 10);
 }
