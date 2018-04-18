@@ -18,21 +18,21 @@ class Inn
 	friend class AISolver;
 private:
 	// Grid stuff
-	Grid * m_grid;
-	Mesh m;
-	Mesh kitchenTile;
-	Mesh rect;
-	Mesh door;
+	Grid* m_grid;
+	Mesh m_m;
+	Mesh m_kitchenTile;
+	Mesh m_rect;
+	Mesh m_door;
 
 	// Inn stuff
-	Attributes innAttributes;
-	innUpdateAttributes iUA;
-	int foodPrice;
-	int sleepPrice;
-	int drinkPrice;
+	Attributes m_innAttributes;
+	innUpdateAttributes m_iUA;
+	int m_foodPrice;
+	int m_sleepPrice;
+	int m_drinkPrice;
 
-	void addStatsToInn(Attributes type);
-	void checkInnStatUpdate();
+	void _addStatsToInn(Attributes type);
+	void _checkInnStatUpdate();
 
 public:
 	Inn();

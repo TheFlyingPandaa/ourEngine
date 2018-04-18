@@ -9,19 +9,20 @@
 class MasterAI
 {
 private:
-	AISolver solver;
-	std::vector<Customer*> customers;
-	std::vector<Customer*> leavingCustomers;
-	std::vector<Staff> staff;
-	CustomerFlowControl cFL;
-	Inn inn;
+	AISolver m_solver;
+	std::vector<Customer*> m_customers;
+	std::vector<Customer*> m_leavingCustomers;
+	std::vector<Staff> m_staff;
+	CustomerFlowControl m_cFC;
+	Inn m_inn;
 	// get day/night cycle to update customer needs
 
 public:
 	MasterAI();
 	~MasterAI();
-	Grid* getGrid();
-	void update(Camera* cam);
+	Grid* GetGrid();
+	
+	void Update(Camera* cam);
 	void Draw();
 
 	// TEMP

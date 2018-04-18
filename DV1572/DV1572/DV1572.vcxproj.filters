@@ -126,6 +126,7 @@
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
+    <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
