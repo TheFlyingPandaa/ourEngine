@@ -26,14 +26,17 @@ private:
 		float stepsLeft;
 	};
 
+	Billboard		m_thinkingEmoji;
+	Mesh			m_thinkingMesh;
+	WalkDirection	m_currentDir;
 	Object3D		m_model;
 	int				m_floor; //floor 0 is first floor 
 	std::deque<Go>  m_goQueue;
 	float			m_speed;
-	WalkDirection	m_currentDir;
 
 public:
 	Character();
+	Character(const Character& other);
 	virtual ~Character();
 	virtual void setModel(Mesh * model);
 	virtual void Update();
@@ -42,6 +45,7 @@ public:
 	virtual void setPosition(float x, float z);
 	virtual void setFloor(int floor);
 	virtual void setSpeed(float spd);
+	virtual void castShadow();
 
 	virtual const DirectX::XMFLOAT2 getPosition() const;
 	virtual WalkDirection getDirection() const;

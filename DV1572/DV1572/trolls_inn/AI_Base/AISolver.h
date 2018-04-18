@@ -5,12 +5,8 @@
 
 class AISolver
 {
-private:
-	Grid* map;
-
 public:
 	AISolver();
-	AISolver(Grid* grid);
 	~AISolver();
 
 	void update(Customer& customer);
@@ -18,6 +14,7 @@ public:
 	void update(Staff& staff);
 	void update(Staff& staff, Action desiredAction);
 	// Get Path function (?)
-
+private:
+	bool _findPath();
 	// Add update for Inn
 };

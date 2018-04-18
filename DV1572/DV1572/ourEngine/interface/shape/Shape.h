@@ -18,6 +18,7 @@ private:
 	DirectX::XMFLOAT4A		m_highLightColor;
 	int						m_gridscale;
 	int						m_lightIndex;
+	
 
 
 private: 
@@ -30,7 +31,6 @@ protected:
 	void setDomainShader(ID3D11DomainShader* s);
 	void setGeometryShader(ID3D11GeometryShader* s);
 	void setPixelShader(ID3D11PixelShader* s);
-	
 
 public:
 	Shape();

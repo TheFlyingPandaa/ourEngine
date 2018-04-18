@@ -21,6 +21,7 @@ private:
 	int										m_uniqueID;
 public:
 	Mesh();
+	Mesh(const std::string& path);
 	~Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(std::vector<VERTEX> &v);

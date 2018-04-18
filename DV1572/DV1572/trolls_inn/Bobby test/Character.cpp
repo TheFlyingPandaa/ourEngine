@@ -1,11 +1,29 @@
 #include "Character.h" 
-#include <iostream>
+#include "../../ourEngine/core/Dx.h"
 Character::Character()
 {
 	m_floor = 0;
 	m_speed = 2.0f / 60;
-	m_currentDir = DOWN;
 	m_model.setPos(0.5, 0.5, 0.5);
+	m_currentDir = DOWN;
+	
+	m_thinkingMesh.LoadModel("trolls_inn/resources/woodenfloor/floor.obj");
+	m_thinkingEmoji.setMesh(&m_thinkingMesh);
+	XMFLOAT3 playerPos = m_model.getPosition();
+	playerPos.y += 1.5f;
+	m_thinkingEmoji.setPos(playerPos);
+}
+
+Character::Character(const Character & other)
+{
+	this->m_thinkingEmoji = other.m_thinkingEmoji;
+	this->m_thinkingMesh = other.m_thinkingMesh;
+	this->m_currentDir = other.m_currentDir;
+	this->m_model = other.m_model;
+	this->m_floor = other.m_floor;
+	this->m_goQueue = other.m_goQueue;
+	this->m_speed = other.m_speed;
+
 }
 
 Character::~Character()
@@ -39,6 +57,7 @@ void Character::Update()
 			m_goQueue.pop_front();
 		else
 		{
+			
 			dir.stepsLeft -= m_speed;
 			m_goQueue[0] = dir;
 			if (dir.dir != m_currentDir)
@@ -72,6 +91,9 @@ void Character::Update()
 				m_model.Move(-m_speed, 0.0f, 0.0f);
 				break;
 			}
+			XMFLOAT3 playerPos = m_model.getPosition();
+			playerPos.y += 1.5f;
+			m_thinkingEmoji.setPos(playerPos);
 		}
 	}
 }
@@ -132,6 +154,11 @@ void Character::setFloor(int floor)
 void Character::setSpeed(float spd)
 {
 	m_speed = spd;
+}
+
+void Character::castShadow()
+{
+	DX::submitToInstance(&m_model, DX::g_InstanceGroupsShadow);
 }
 
 const DirectX::XMFLOAT2 Character::getPosition() const
@@ -210,4 +237,5 @@ bool Character::walkQueueDone() const
 void Character::Draw()
 {
 	m_model.Draw();
+	DX::submitToInstance(&m_thinkingEmoji, DX::g_instanceGroupsBillboard);
 }

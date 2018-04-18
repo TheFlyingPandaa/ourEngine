@@ -5,34 +5,39 @@ class BuildState :
 	public SubState
 {
 private:
-enum BuildStage
-{
-	None,
-	Start,
-	Selection,
-	End
-};
+	enum BuildStage
+	{
+		None,
+		Start,
+		Selection,
+		End
+	};
 
-RoomType m_selectedRoomType;
-Shape * m_startTile;
-Shape * m_selectedTile;
-BuildStage m_buildStage;
-bool m_roomPlaceable;
-Grid * grid;
+	RoomType	m_selectedRoomType;
+	Shape *		m_startTile;
+	Shape *		m_selectedTile;
+	BuildStage	m_buildStage;
+	bool		m_roomPlaceable;
+	Grid *		grid;
 
+	bool m_doorBuild = false;
 
+	void	_handleBuildRoom(Shape * pickedShape);
+	void	_buildInput();
 public:
 
 	BuildState(Camera * cam, 
-		std::stack<Shape *>* pickingEvent,
-		Grid * grid);
+	std::stack<Shape *>* pickingEvent,
+	Grid * grid);
 	~BuildState();
+
+	
 
 	// Inherited via SubState
 	virtual void _init() override;
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
-
+	virtual void DrawHUD() override;
 	
 };
 

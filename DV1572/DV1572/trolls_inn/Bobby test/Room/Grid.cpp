@@ -141,7 +141,13 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
+void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+{
+	m_tiles[pos.x][pos.y]->setIsWalkeble(false);
+	m_tiles[pos.x][pos.y]->setHasObject(true);
 
+	m_roomCtrl.addRoomObject(pos, mesh);
+}
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
 {
@@ -184,7 +190,10 @@ void Grid::Draw()
 		{
 			
 			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+			{
 				m_tiles[i][j]->getQuad().Draw();
+			}
+				
 		}
 	}
 	m_wholeGrid.Draw();
@@ -328,6 +337,12 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 
 		- If both start and end is inside then we perform djikstra first with the rooms and A* between 
 		the room doors. 
+
+		vt 1 1
+		vt 0 1
+		vt 0 0
+		vt 1 0
+
 		
 	*/
 

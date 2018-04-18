@@ -3,7 +3,7 @@
 #include <thread>
 #include "../core/Picking.h"
 #include <chrono>
-
+#include <iostream>
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
@@ -13,6 +13,9 @@ ID3D11DeviceContext* DX::g_deviceContext;
 ID3D11VertexShader* DX::g_3DVertexShader;
 ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
+
+ID3D11VertexShader* DX::g_billboardVertexShader;
+ID3D11PixelShader* DX::g_billboardPixelShader;
 
 //Rendering Queues
 std::vector<Shape*> DX::g_renderQueue;
@@ -37,6 +40,7 @@ std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsBillboard;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
@@ -306,6 +310,15 @@ void Window::_compileShaders()
 		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
+	
+	// Billboarding
+	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
+		L"ourEngine/shaders/billboardVertex.hlsl", "main",
+		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
+	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_billboardPixelShader,
+		L"ourEngine/shaders/billboardPixel.hlsl", "main");
+	// Billboarding end
+
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
 		L"ourEngine/shaders/3DVertex.hlsl", "main",
 		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
@@ -650,9 +663,6 @@ void Window::_shadowPass(Camera* c)
 		
 		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
-
-	
-
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
@@ -755,6 +765,7 @@ void Window::_setSamplerState()
 
 void Window::_createConstantBuffers()
 {
+	_createBillboardConstantBuffer();
 	_createMeshConstantBuffer();
 	_createPickConstantBuffer();
 	_createCameraPosConstantBuffer();
@@ -772,6 +783,19 @@ void Window::_createMeshConstantBuffer()
 	bDesc.StructureByteStride = 0;
 
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_meshConstantBuffer);
+}
+
+void Window::_createBillboardConstantBuffer()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(BILLBOARD_MESH_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_billboardConstantBuffer);
 }
 
 void Window::_createPickConstantBuffer()
@@ -889,6 +913,115 @@ void Window::_prepareGeometryPass()
 		renderTargets[i] = m_gbuffer[i].RTV;
 	}
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, m_depthStencilView);
+}
+
+void Window::_billboardPass(const Camera & cam)
+{
+	DirectX::XMMATRIX View = cam.getViewMatrix();
+	DirectX::XMMATRIX Proj = m_projectionMatrix;
+	View = XMMatrixTranspose(View);
+	Proj = XMMatrixTranspose(Proj);
+	static bool pressed = false;
+	static float index = 1;
+
+	if (Input::isKeyPressed('L'))
+	{
+		index = (int)index % 4;
+		index++;
+	}
+	
+
+	XMFLOAT4A lol(cam.getLookAt().x, cam.getLookAt().y, cam.getLookAt().z, 1.0f);
+	
+	BILLBOARD_MESH_BUFFER buffer;
+	DirectX::XMStoreFloat4x4A(&buffer.View, View);
+	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
+	DirectX::XMStoreFloat4A(&buffer.direction, XMLoadFloat4A(&lol));
+	
+	
+	buffer.spriteIndex = index;
+	
+
+	if (m_WireFrameDebug == true)
+	{
+		D3D11_RASTERIZER_DESC wfdesc;
+		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+		wfdesc.CullMode = D3D11_CULL_NONE;
+		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+		DX::g_deviceContext->RSSetState(m_WireFrame);
+	}
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+
+	for (auto& instance : DX::g_instanceGroupsBillboard)
+	{
+		
+		
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+		//We copy the data into the attribute part of the layout.
+		//This is what makes instancing special
+
+		
+
+		D3D11_MAPPED_SUBRESOURCE dataPtr;
+		DX::g_deviceContext->Map(m_billboardConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+		memcpy(dataPtr.pData, &buffer, sizeof(BILLBOARD_MESH_BUFFER));
+		DX::g_deviceContext->Unmap(m_billboardConstantBuffer, 0);
+		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_billboardConstantBuffer);
+
+		// Apply shaders
+		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
+
+		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		{
+			instance.shape->ApplyMaterials(i);
+
+			UINT32 vertexSize = sizeof(VERTEX);
+			UINT offset = 0;
+			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer * bufferPointers[2];
+			bufferPointers[0] = v;
+			bufferPointers[1] = instanceBuffer;
+
+			unsigned int strides[2];
+			strides[0] = sizeof(VERTEX);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+			unsigned int offsets[2];
+			offsets[0] = 0;
+			offsets[1] = 0;
+
+			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
+
+			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
+		}
+
+		instanceBuffer->Release();
+	}
+
+	if (m_WireFrameDebug == true)
+	{
+		D3D11_RASTERIZER_DESC wfdesc;
+		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+		wfdesc.FillMode = D3D11_FILL_SOLID;
+		wfdesc.CullMode = D3D11_CULL_BACK;
+		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+		DX::g_deviceContext->RSSetState(m_WireFrame);
+	}
 }
 
 void Window::_geometryPass(const Camera &cam)
@@ -1056,7 +1189,6 @@ void Window::_skyBoxPass(const Camera& cam)
 		instanceBuffer->Release();
 	}
 }
-
 
 void Window::_clearTargets()
 {
@@ -1363,6 +1495,7 @@ void Window::Clear()
 	DX::g_instanceGroupsPicking.clear();
 	DX::g_InstanceGroupsShadow.clear();
 	DX::g_textQueue.clear();
+	DX::g_instanceGroupsBillboard.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -1402,8 +1535,12 @@ void Window::Flush(Camera* c)
 	
 
 	_prepareGeometryPass();
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	_billboardPass(*c);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
 	_clearTargets();
+
 	_lightPass(*c);
 
 	_preparePostLight();
@@ -1428,7 +1565,10 @@ void Window::FullReset()
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	if(Input::isMouseLeftPressed())
+		return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	return nullptr;
+
 }
 
 void Window::Present()

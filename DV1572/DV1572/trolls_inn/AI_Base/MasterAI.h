@@ -10,8 +10,8 @@ class MasterAI
 {
 private:
 	AISolver solver;
-	std::vector<Customer> customers;
-	std::vector<Customer> leavingCustomers;
+	std::vector<Customer*> customers;
+	std::vector<Customer*> leavingCustomers;
 	std::vector<Staff> staff;
 	CustomerFlowControl cFL;
 	Inn inn;
@@ -20,5 +20,10 @@ private:
 public:
 	MasterAI();
 	~MasterAI();
-	void update();
+	Grid* getGrid();
+	void update(Camera* cam);
+	void Draw();
+
+	// TEMP
+	void spawn();
 };

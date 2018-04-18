@@ -252,10 +252,11 @@ void Shape::Draw()
 	{
 		DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 	}
-	else 
+	else
 	{
 		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
+
 }
 
 void Shape::setGridScale(int scale)

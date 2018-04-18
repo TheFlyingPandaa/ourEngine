@@ -50,6 +50,7 @@ private:
 	ID3D11SamplerState*		m_samplerState;
 
 	ID3D11Buffer*			m_meshConstantBuffer;
+	ID3D11Buffer*			m_billboardConstantBuffer;
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
 	ID3D11Buffer*			m_lightBuffer; 
@@ -117,6 +118,7 @@ private:
 	void	_setSamplerState();
 	void	_createConstantBuffers();
 	void	_createMeshConstantBuffer();
+	void	_createBillboardConstantBuffer();
 	void	_createPickConstantBuffer();
 	void	_createCameraPosConstantBuffer(); 
 	void	_createPointLightCollectionBuffer(); 
@@ -127,6 +129,7 @@ private:
 	// Deferred Rendering
 	void	_initGBuffer();
 	void	_prepareGeometryPass();
+	void	_billboardPass(const Camera& cam);
 	void	_geometryPass(const Camera & cam);
 	void	_clearTargets();
 	void	_preparePostLight();
