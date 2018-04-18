@@ -48,6 +48,7 @@ private:
 public:
 	Customer();
 	Customer(Race race, int gold);
+	Customer(const Customer &other);
 	~Customer();
 
 	Attributes& getAttributes();

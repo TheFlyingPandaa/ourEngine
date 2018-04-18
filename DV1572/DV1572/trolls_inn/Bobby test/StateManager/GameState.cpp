@@ -20,42 +20,16 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	_setHud();
 
-	box.LoadModel("trolls_inn/Resources/box.obj");
-	c.setModel(&box);
-	c.setPosition( 10+0.5, 5+0.5);
-	c.setFloor(0);
-	
-
-	int startSize = 32;
-	int firstRoomSizeX = 4;
-	int firstRoomSizeY = 3;
-
-	int secondRoomSizeX = 4;
-	int secondRoomSizeY = 2;
-
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, startSize, startSize, &rect);	
-	grid->CreateWalls(&m);	
-	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
-	grid->getRoomCtrl().setDoorMesh(&door);
-	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
-	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
-	
-	posX = 1;
-	posY = 1;
+
 	//grid->getRoomCtrl().CreateDoors();
 	previousKey = -1;	
-
-
-	
 
 }
 
 GameState::~GameState()
 {
-	delete grid;
 	while (!m_subStates.empty())
 	{
 		delete m_subStates.top();
@@ -72,12 +46,17 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
-	
+	static bool lol = false;
+	if (Input::isKeyPressed('L') && !lol)
+	{
+		this->m_mai.spawn();
+		lol = true;
+	}
 
 
 	this->m_cam->update();
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	this->grid->Update(this->m_cam);
+	this->m_mai.getGrid()->Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -106,48 +85,12 @@ void GameState::Update(double deltaTime)
 	//std::cout << " TIME: " << dt << std::endl;
 	
 
-	//<TEMP>
-	c.Update();
-	if (c.walkQueueDone())
+	
+	/*if (Input::isKeyPressed('G'))
 	{
-		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
-		{
-			c.Move(Character::UP);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
-		{
-			c.Move(Character::DOWN);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-	}
+		this->m_mai.getGrid()->AddRoomObject(DirectX::XMINT2(6, 6), &box);
+	}*/
 
-	if (Input::isKeyPressed('G'))
-	{
-		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
-	}
-
-	//if (Input::isKeyPressed('A'))
-	//{
-	//	c.Move(Character::LEFT);
-	//}
-	//if (Input::isKeyPressed('W'))
-	//{
-	//	c.Move(Character::UP);
-	//}
-	//if (Input::isKeyPressed('S'))
-	//{
-	//	c.Move(Character::DOWN);
-	//}
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	c.Move(Character::RIGHT);
-	//}
-	//</TEMP>
-
-	 // Get result.
 
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
@@ -155,24 +98,14 @@ void GameState::Update(double deltaTime)
 
 	if (Input::isKeyPressed('B'))
 	{
-		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+		m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_mai.getGrid()));
 	}
 }
 
 void GameState::Draw()
 {
 	gameTime.m_cpyLightToGPU();
-	this->grid->Draw();
-
-	//TEST
-	c.castShadow();
-	c.Draw();
-	//this->grid2->Draw();
-	test.setScale(5);
-	test.setPos(2.5f, 2.5f, 2.5f);
-	test.setMesh(&box);
-	test.CastShadow();
-	test.Draw();
+	m_mai.Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 }
@@ -189,16 +122,7 @@ void GameState::DrawHUD()
 
 void GameState::_init()
 {
-	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
-	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
-	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
-	door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
-	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+	
 }
 
 void GameState::_setHud()
@@ -252,29 +176,7 @@ void GameState::_handlePickingAi(Shape * obj)
 
 	if (m_stage == GameStage::Play)
 	{
-		if (c.walkQueueDone() && m_move)
-		{
-			//Shape * obj = this->p_pickingEvent->top();
-			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-			std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
-
-			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-			if (path.size() != 0)
-			{
-				m_justMoved = false;
-
-				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-				for (int i = 0; i < path.size() - 1; i++)
-					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-			}
-
-		}
+		
 	}
 }
 
@@ -379,7 +281,7 @@ void GameState::_handleInput()
 		{
 			if (Input::isMouseLeftPressed())
 			{
-				this->grid->PickTiles();
+				m_mai.getGrid()->PickTiles();
 				m_move = true;
 			}
 			else

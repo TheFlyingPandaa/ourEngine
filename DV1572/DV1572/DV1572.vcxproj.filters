@@ -99,7 +99,6 @@
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />
     <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
-    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
@@ -126,6 +125,7 @@
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

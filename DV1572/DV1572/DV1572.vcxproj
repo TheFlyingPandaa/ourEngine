@@ -178,6 +178,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />

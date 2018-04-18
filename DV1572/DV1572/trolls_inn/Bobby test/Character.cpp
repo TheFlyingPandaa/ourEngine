@@ -14,6 +14,18 @@ Character::Character()
 	m_thinkingEmoji.setPos(playerPos);
 }
 
+Character::Character(const Character & other)
+{
+	this->m_thinkingEmoji = other.m_thinkingEmoji;
+	this->m_thinkingMesh = other.m_thinkingMesh;
+	this->m_currentDir = other.m_currentDir;
+	this->m_model = other.m_model;
+	this->m_floor = other.m_floor;
+	this->m_goQueue = other.m_goQueue;
+	this->m_speed = other.m_speed;
+
+}
+
 Character::~Character()
 {
 }

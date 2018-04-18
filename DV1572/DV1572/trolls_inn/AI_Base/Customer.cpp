@@ -11,6 +11,17 @@ Customer::Customer(Race race, int gold)
 	this->setAction(WalkAction);
 }
 
+Customer::Customer(const Customer& other) : Character(other)
+{
+	this->stats = other.stats;
+	this->economy = other.economy;
+	this->race = other.race;
+	this->stateQueue = other.stateQueue;
+	this->hungry = other.hungry;
+	this->tired = other.tired;
+	this->thirsty = other.thirsty;
+}
+
 Customer::~Customer()
 {
 }

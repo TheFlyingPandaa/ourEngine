@@ -19,15 +19,15 @@ private:
 	Mesh dwarf;
 
 	// Determine what customers the inn attract
-	Customer evaluate(Attributes innAttributes);
+	Customer* evaluate(Attributes innAttributes);
 	Customer generateCustomer(Race race);
-	Customer generateRandomCustomer();
+	Customer* generateRandomCustomer();
 
 
 public:
 	CustomerFlowControl();
 	~CustomerFlowControl();
 
-	Customer update(Attributes innAttributes);
+	Customer* update(Attributes innAttributes);
 
 };

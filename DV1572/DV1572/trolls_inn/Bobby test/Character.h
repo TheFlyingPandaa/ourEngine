@@ -36,6 +36,7 @@ private:
 
 public:
 	Character();
+	Character(const Character& other);
 	virtual ~Character();
 	virtual void setModel(Mesh * model);
 	virtual void Update();

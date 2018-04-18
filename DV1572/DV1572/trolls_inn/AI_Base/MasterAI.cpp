@@ -8,10 +8,16 @@ MasterAI::~MasterAI()
 {
 }
 
-void MasterAI::update()
+Grid * MasterAI::getGrid()
 {
+	return inn.getGrid();
+}
+
+void MasterAI::update(Camera* cam)
+{
+	inn.update(cam);
 	// Set spawn time limit (?)
-	this->customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
+	//this->customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
 	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers
@@ -20,14 +26,14 @@ void MasterAI::update()
 
 	// Iterate through customers
 	// Evaluate what actions customers should take
-	for (auto customer : this->customers)
+	for (auto& customer : this->customers)
 	{
 		// Check if the customer is busy or not
-		if (customer.getQueueEmpty())
+		if (customer->getQueueEmpty())
 		{
 			Action desiredAction;
 
-			desiredAction = customer.getAction();
+			desiredAction = customer->getAction();
 			int price = 0;
 
 			switch (desiredAction)
@@ -43,7 +49,7 @@ void MasterAI::update()
 				break;
 			}
 
-			if (customer.getEconomy().getGold() < price)
+			if (customer->getEconomy().getGold() < price)
 			{
 				// Customer leaves inn
 				// Save id for leaving customers
@@ -52,14 +58,14 @@ void MasterAI::update()
 			else
 			{
 				// Customer wants path to Action area
-				customer.setAction(ThinkingAction);
-				this->solver.update(customer, desiredAction);
+				customer->setAction(ThinkingAction);
+				this->solver.update(*customer, desiredAction);
 			}
 		}
 		else
 		{
 			// Execute the action queue
-			this->solver.update(customer);
+			this->solver.update(*customer);
 		}
 
 		loopCounter++;
@@ -76,19 +82,19 @@ void MasterAI::update()
 	// Iterate through leaving customers
 	for (auto leavingCustomer : this->leavingCustomers)
 	{
-		if (leavingCustomer.getQueueEmpty())
+		if (leavingCustomer->getQueueEmpty())
 		{
 			// Customer wants path to exit
-			leavingCustomer.gotPathSetNextAction(LeavingInnAction);
+			leavingCustomer->gotPathSetNextAction(LeavingInnAction);
 		}
 		else
 		{
 			// Send review to inn if customer reached end of path
-			if (leavingCustomer.walkQueueDone())
-				leavingCustomer.popToNextState();
-			if (leavingCustomer.getState() == LeavingInn)
+			if (leavingCustomer->walkQueueDone())
+				leavingCustomer->popToNextState();
+			if (leavingCustomer->getState() == LeavingInn)
 			{
-				this->inn.customerReview(leavingCustomer.getAttributes());
+				this->inn.customerReview(leavingCustomer->getAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}
@@ -99,4 +105,16 @@ void MasterAI::update()
 	for (int i = 0; i < goneCustomers.size(); i++)
 		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
 
+}
+
+void MasterAI::Draw()
+{
+	inn.Draw();
+	for (auto& customer : customers)
+		customer->Draw();
+}
+
+void MasterAI::spawn()
+{
+	customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
 }
