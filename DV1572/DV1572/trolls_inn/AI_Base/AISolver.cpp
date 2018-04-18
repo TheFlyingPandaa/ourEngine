@@ -38,27 +38,33 @@ void AISolver::update(Customer& customer)
 				// Get a path to a new location
 				// Walk towards a room with the highest value (?) Tired, Hungry, Thirsty
 				// Go explore (?)
+				// Get race desires (?)
 			}
 			break;
 			// Update animations drink, eat, sleep(?)
 		case Drinking:
-			// Get drink
+			// Reduce how thirsty the customer is
+			// Base this on time somehow
 			if (customer.getThirsty() > 0)
 				customer.drinking();
+			else
+				customer.popToNextState();
 			break;
 		case Eating:
-			// Get food
+			// Reduce how hungry the customer is
+			// Base this on time somehow
 			if (customer.getHungry() > 0)
 				customer.eating();
+			else
+				customer.popToNextState();
 			break;
 		case Sleeping:
-			// Get a room
+			// Reduce how tired the customer is
+			// Base this on time somehow
 			if (customer.getTired() > 0)
 				customer.sleeping();
-			break;
-		case LeavingInn:
-			// Send review
-			
+			else
+				customer.popToNextState();
 			break;
 		}
 	}
@@ -71,9 +77,10 @@ void AISolver::update(Customer& customer, Action desiredAction)
 	switch (currentState)
 	{
 	case Thinking:
+		//getPath(customer, desiredAction);
+		//roomCtrl need action and spots open for customers
 		customer.popToNextState(); // pop Thinking state
 		customer.popToNextState(); // pop Idle state
-		//getPath(customer, desiredAction);
 		customer.gotPathSetNextAction(desiredAction);
 		break;
 	}
