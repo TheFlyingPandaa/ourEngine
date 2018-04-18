@@ -44,23 +44,6 @@ private:
 	int previousKey;
 	bool m_Rpressed;
 
-
-	// Build Mode
-	enum BuildStage
-	{
-		None,
-		Start,
-		Selection,
-		End
-	};
-	
-	RoomType m_selectedRoomType;
-	Shape * m_startTile;
-	Shape * m_selectedTile;
-	BuildStage m_buildStage;
-	bool m_roomPlaceable;
-	// Build Mode END
-
 	// HUD
 	enum HudPickingStage
 	{
@@ -84,19 +67,15 @@ private:
 	int m_i = 0;
 	std::future<void> future;
 
-	bool m_doorBuildRpressde = false;
-	bool m_doorBuild = false;
 	
 
 
-	void	_init() override;
-	void			_handleBuildRoom(Shape * s);
+	void			_init() override;
 	void			_setHud();
 	void			_handlePicking();
 	void			_handlePickingAi(Shape * obj);
 	void			_handleHUDPicking(RectangleShape* r);
 	void			_handleInput();
-	void			_buildInput();
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
