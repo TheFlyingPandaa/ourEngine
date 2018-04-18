@@ -141,12 +141,20 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
-void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+void Grid::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 {
-	m_tiles[pos.x][pos.y]->setIsWalkeble(false);
-	m_tiles[pos.x][pos.y]->setHasObject(true);
+	m_tiles[(int)pos.x][(int)pos.z]->setIsWalkeble(false);
+	m_tiles[(int)pos.x][(int)pos.z]->setHasObject(true);
 
-	m_roomCtrl.addRoomObject(pos, mesh);
+	m_roomCtrl.AddRoomObject(pos, mesh);
+}
+
+void Grid::AddRoomObject(Furniture furniture)
+{
+	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setIsWalkeble(false);
+	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setHasObject(true);
+
+	m_roomCtrl.AddRoomObject(furniture);
 }
 
 void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force)
@@ -274,6 +282,20 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 		}
 	}
 	return placeable;
+}
+
+bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size)
+{
+	if (m_tiles[start.x][start.y]->getHasObject() == true)
+	{
+		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+		return false;
+	}
+	else
+	{
+		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+		return true;
+	}
 }
 
 void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)

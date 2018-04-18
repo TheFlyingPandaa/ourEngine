@@ -61,7 +61,8 @@ public:
 
 	std::vector<std::vector<Tile *>> getGrid() const;
 
-	void	AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
+	void	AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
+	void	AddRoomObject(Furniture furniture);
 	
 	void	AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size);
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
@@ -71,6 +72,7 @@ public:
 
 	void	PickTiles(Shape* selectionTile = nullptr);
 	bool	CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end);
+	bool	CheckAndMarkTilesObject(DirectX::XMINT2 start, int size);
 
 	void	ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end);
 

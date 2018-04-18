@@ -6,6 +6,7 @@
 #include "Kitchen.h"
 #include "Bedroom.h"
 #include "Reception.h"
+#include "../../Furniture/Furniture.h"
 
 
 const unsigned short ROOM_TYPE_SIZE = 2;
@@ -29,7 +30,7 @@ private:
 	Mesh*				m_wall;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
-	std::vector<Object3D> m_roomObjects;
+	std::vector<Furniture> m_roomObjects;
 
 	std::vector<std::vector<int>> m_roomConnections;
 	std::vector<int> m_tempPath;
@@ -46,18 +47,20 @@ public:
 	RoomCtrl();
 	~RoomCtrl();
 
-	void				addRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
+	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
+	void				AddRoomObject(Furniture furniture);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	bool				_intersect(Room * room);
 	bool				_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	bool				isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+	bool				isPlaceableObject(DirectX::XMINT2 pos, int size);
 	void				setMesh(Mesh * mesh);
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force = false);
 	void				Update(Camera * cam);
 	void				Draw();
-
+	
 	//This is a expensiv function many many many for loops
 	//Be conservative when calling
 	void				CreateWalls();
