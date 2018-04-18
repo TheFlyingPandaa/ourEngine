@@ -514,7 +514,7 @@ void GameState::_buildInput()
 
 void GameState::_roomDeletionInput()
 {
-	std::cout << m_roomDeletionStage << std::endl; 
+	//std::cout << m_roomDeletionStage << std::endl; 
 	if (Input::isMouseLeftPressed())
 	{
 		if (m_roomDeletionStage == RoomDeletionStage::NoneRoom)
@@ -529,6 +529,21 @@ void GameState::_roomDeletionInput()
 			{
 				//Get the room and the tile belonging to it. 
 				Tile * t = grid->getTile(m_startTile->getPosition().x + 0.5f, m_startTile->getPosition().z + 0.5f);
+				std::cout << "AFTER:" << std::endl;
+				Room* roomPtr = t->getRoom(); 
+
+				if (roomPtr != nullptr)
+				{
+					for (int i = 0; i < roomPtr->getTiles().size(); i++)
+					{
+						for (int k = 0; k < roomPtr->getTiles().at(i).size(); k++)
+						{
+							std::cout << "Inside: " << roomPtr->getTiles().at(i).at(k)->getIsInside() << std::endl;
+							std::cout << "Walkable: " << roomPtr->getTiles().at(i).at(k)->getIsWalkeble() << std::endl;
+							std::cout << "Room: " << roomPtr->getTiles().at(i).at(k)->getRoom() << std::endl;
+						}
+					}
+				}
 				Room* tempRoom = t->getRoom();
 				//Change tiles of room into grass tile. 
 				if (t->getRoom() != nullptr)
@@ -574,11 +589,26 @@ void GameState::_roomDeletionInput()
 									tempRoom->getTiles()[i][k]->setWallSpotPopulated(static_cast<Direction>(j), false);
 									//m_tiles[i][k]->setTileWalls(static_cast<Direction>(i), nullptr);
 								}
-								tempRoom->getTiles()[i][k]->setRoom(nullptr);
+								//tempRoom->getTiles()[i][k]->setRoom(nullptr);
 							}
 						}
 					}
-					//Delete room and all connections. 
+					//Delete room and all connections.
+					//DX::g_lightQueue.erase(DX::g_lightQueue.begin() + tempRoom->getRoomIndex() - 1); 
+					std::cout << "AFTER:" << std::endl;
+					if (roomPtr != nullptr)
+					{
+						for (int i = 0; i < roomPtr->getTiles().size(); i++)
+						{
+							for (int k = 0; k < roomPtr->getTiles().at(i).size(); k++)
+							{
+								std::cout << "Inside: " << roomPtr->getTiles().at(i).at(k)->getIsInside() << std::endl;
+								std::cout << "Walkable: " << roomPtr->getTiles().at(i).at(k)->getIsWalkeble() << std::endl;
+								std::cout << "Room: " << roomPtr->getTiles().at(i).at(k)->getRoom() << std::endl;
+							}
+						}
+					}
+
 					grid->getRoomCtrl().removeRoom(tempRoom);
 					grid->getRoomCtrl().CreateWalls(); 
 				}	

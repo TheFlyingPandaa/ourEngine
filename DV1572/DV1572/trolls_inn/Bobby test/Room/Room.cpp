@@ -7,6 +7,7 @@ int Room::s_index = 1;
 void Room::_loadStatic()
 {
 	Room::s_AABB.LoadModel("trolls_inn/Resources/box.obj");
+	s_isLoaded = true;
 }
 
 void Room::_initAABB(int x, int y, int sx, int sy, int level)
@@ -58,7 +59,9 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 {
 	if (!s_isLoaded)
 		_loadStatic();
+
 	m_index = s_index++;
+
 	_initAABB(posX, posY, sizeX, sizeY);
 	_createLight(posX, posY, sizeX, sizeY);
 
@@ -85,7 +88,36 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 
 Room::~Room()
 {
+	for (auto& tile : m_tiles)
+	{
+		for (auto& t : tile)
+		{
+			if (t != nullptr)
+			{
+				t->setInside(false);
+				t->setIsWalkeble(true);
+				t->setRoom(nullptr);
 
+			}
+
+		}
+	}
+	int counter = 0;
+	for (auto& r : adjasentRooms)
+	{
+		for (auto& r2 : r->adjasentRooms)
+		{
+			counter++;
+			if (*r2 == *this)
+				r2->adjasentRooms[counter] = nullptr;
+		}
+		counter = 0;
+	}
+
+	for (auto& w : m_allWalls)
+	{
+		w = nullptr;
+	}
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const

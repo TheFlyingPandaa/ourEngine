@@ -12,6 +12,7 @@ Wall::Wall(Tile* tile, Mesh * mesh)
 
 Wall::~Wall()
 {
+
 }
 
 void Wall::setIsDoor(bool value)
