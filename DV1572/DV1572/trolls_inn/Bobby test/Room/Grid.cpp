@@ -316,6 +316,35 @@ void Grid::CreateWalls(Mesh * mesh)
 	//m_roomCtrl.CreateWalls();
 }
 
+void Grid::generatePath(Character& character, RoomType targetRoom)
+{
+	auto round_n = [&](float num, int dec) -> float
+	{
+		float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+		float pwr = pow(10.0f, dec);
+		return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+	};
+	XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
+	XMFLOAT3 targetPosition = m_roomCtrl.getClosestRoom(charPos, targetRoom);
+
+
+	int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+	int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+	std::vector<std::shared_ptr<Node>> path = findPathHighLevel(m_tiles[xTile][yTile], m_tiles[targetPosition.x][targetPosition.z]);
+
+	XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+	if (path.size() != 0)
+	{
+
+		character.Move(character.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+		for (int i = 0; i < path.size() - 1; i++)
+			character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+	}
+}
+
 float Grid::getDistance(Tile* t1, Tile* t2)
 {
 	XMVECTOR xmTile = XMLoadFloat3(&t1->getQuad().getPosition());

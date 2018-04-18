@@ -1,6 +1,7 @@
 #include "MasterAI.h"
 
 MasterAI::MasterAI()
+	: solver(inn.getGrid())
 {
 }
 
@@ -28,6 +29,8 @@ void MasterAI::update(Camera* cam)
 	// Evaluate what actions customers should take
 	for (auto& customer : this->customers)
 	{
+		//solver.update(*customer);
+
 		// Check if the customer is busy or not
 		if (customer->getQueueEmpty())
 		{
@@ -117,4 +120,5 @@ void MasterAI::Draw()
 void MasterAI::spawn()
 {
 	customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
+	std::cout << customers.back()->getActionStr() << std::endl;
 }

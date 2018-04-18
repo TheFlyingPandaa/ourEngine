@@ -5,8 +5,10 @@
 
 class AISolver
 {
+private:
+	Grid * m_grid;
 public:
-	AISolver();
+	AISolver(Grid* grid);
 	~AISolver();
 
 	void update(Customer& customer);

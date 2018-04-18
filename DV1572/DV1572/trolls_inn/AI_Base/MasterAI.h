@@ -9,12 +9,12 @@
 class MasterAI
 {
 private:
+	Inn inn;
 	AISolver solver;
 	std::vector<Customer*> customers;
 	std::vector<Customer*> leavingCustomers;
 	std::vector<Staff> staff;
 	CustomerFlowControl cFL;
-	Inn inn;
 	// get day/night cycle to update customer needs
 
 public:

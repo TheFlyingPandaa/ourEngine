@@ -4,6 +4,7 @@
 #include "RoomCtrl.h"
 #include <algorithm>
 #include <memory>
+#include "../Character.h"
 
 struct Node
 {
@@ -79,6 +80,8 @@ public:
 	RoomCtrl&	getRoomCtrl();
 
 	void	CreateWalls(Mesh * mesh = nullptr);
+
+	void generatePath(Character& character, RoomType targetRoom);
 
 	float getDistance(Tile* t1, Tile* t2);
 	std::vector<std::shared_ptr<Node>> findPathHighLevel(Tile* startTile, Tile* endTile);

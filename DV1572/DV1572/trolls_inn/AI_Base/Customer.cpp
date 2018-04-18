@@ -2,13 +2,14 @@
 
 Customer::Customer()
 {
+	int i = 0;
 }
 
 Customer::Customer(Race race, int gold)
 {
 	this->race = race;
 	this->economy = Economy(gold);
-	this->setAction(WalkAction);
+	this->setAction(WalkToInn);
 }
 
 Customer::Customer(const Customer& other) : Character(other)
@@ -104,6 +105,9 @@ void Customer::setAction(Action nextAction)
 		break;
 	case LeavingInnAction:
 		this->stateQueue.push(LeavingInn);
+		break;
+	case WalkToInn:
+		this->stateQueue.push(WalkingToInn);
 		break;
 	}
 	// To return the customer to idle after it executed its action
@@ -205,4 +209,10 @@ void Customer::sleeping()
 void Customer::drinking()
 {
 	this->thirsty--;
+}
+
+void Customer::Update()
+{
+	// Character update
+	Character::Update();
 }
