@@ -8,7 +8,7 @@
 # r 0 0 0.1 0.08 1 0
 # txt 950 4 0.5 0 0 1 1 0 L
 # Gold
-# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth index relativeTo.
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth relativeTo.
 # if sizeX or sizeY is 0, this is set as the screen res
 # txt posX posY Scl r g b a rotation allignment (L, C, R) relativeTo
 				0	1	2	3	4	5	6	7	8
@@ -16,45 +16,45 @@
 
 
 # Bar
-tx trolls_inn/Resources/HUD/Bar.png
+tx trolls_inn/Resources/HUD/MainHud/Bar.png
 r 0 0 0 128 -1 0.3 0
 
 # End of Bar
-tx trolls_inn/Resources/HUD/BarEnd.png
+tx trolls_inn/Resources/HUD/MainHud/BarEnd.png
 # Left
 r 0 0 8 128 -1 0.2 0
 # Right
 r 0 0 8 128 -1 0.2 1
 
 # Button Background
-tx trolls_inn/Resources/HUD/ButtonBackground.png
+tx trolls_inn/Resources/HUD/MainHud/ButtonBackground.png
 r 8 8 208 112 -1 0.1 0
 
 # Hit box for buttons
 hc 109 70 104 0
 
 # Crew Button
-tx trolls_inn/Resources/HUD/CrewButton.png
+tx trolls_inn/Resources/HUD/MainHud/CrewButton.png
 r 36 66 48 48 0 0 0
 
 # Build button
-tx trolls_inn/Resources/HUD/ShopButton.png
+tx trolls_inn/Resources/HUD/MainHud/ShopButton.png
 r 132 66 48 48 1 0 0
 
 # Event Button
-tx trolls_inn/Resources/HUD/EventButton.png
+tx trolls_inn/Resources/HUD/MainHud/EventButton.png
 r 36 15 48 48 2 0 0
 
 # Stats Button
-tx trolls_inn/Resources/HUD/StatsButton.png
+tx trolls_inn/Resources/HUD/MainHud/StatsButton.png
 r 132 15 48 48 3 0 0
 
 # Money background
-tx trolls_inn/Resources/HUD/MoneyBackground.png
+tx trolls_inn/Resources/HUD/MainHud/MoneyBackground.png
 r 190 32 193 42 -1 0.1 1
 
 # Portrait
-tx trolls_inn/Resources/HUD/P-Frame.png
+tx trolls_inn/Resources/HUD/MainHud/P-Frame.png
 r 8 8 158 158 -1 0 1
 
 # Money text

@@ -13,5 +13,11 @@ struct INPUT
 
 float4 main(INPUT input) : SV_TARGET
 {
-	return float4(tDiffuse.Sample(sampAni, input.tex) * input.color);
+	float4 finalColor = tDiffuse.Sample(sampAni, input.tex);
+
+	float3 modified = (finalColor.xyz == float3(0.0f, 0.0f, 0.0f)) ? float3(0.05f, 0.05f, 0.05f) : finalColor.xyz;
+	finalColor.xyz = modified.xyz;
+
+	return finalColor * input.color;
+	
 }
