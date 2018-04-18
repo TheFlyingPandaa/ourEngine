@@ -61,7 +61,7 @@ public:
 	~Grid();
 
 	std::vector<std::vector<Tile *>> getGrid() const;
-
+	bool	CheckIfDoorCanBeBuilt(DirectX::XMINT2 pos, DirectX::XMINT2 pos2);
 	void	AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
 	
 	void	AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size);

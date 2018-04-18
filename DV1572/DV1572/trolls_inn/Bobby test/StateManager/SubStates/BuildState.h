@@ -1,6 +1,7 @@
 #pragma once
 #include "SubState.h"
 #include "../../Room/Grid.h"
+
 class BuildState :
 	public SubState
 {
@@ -13,6 +14,7 @@ private:
 		End
 	};
 
+
 	RoomType	m_selectedRoomType;
 	Shape *		m_startTile;
 	Shape *		m_selectedTile;
@@ -20,10 +22,32 @@ private:
 	bool		m_roomPlaceable;
 	Grid *		grid;
 
-	bool m_doorBuild = false;
 
+	enum HudPickingStage
+	{
+		Miss,
+		Hover,
+		Click
+
+	};
+	HudPickingStage m_hudPickStage;
+	bool m_colorButton;
+	bool m_hasClicked;
+	int m_lastPickedIndex;
+	std::vector<bool> m_hudButtonsPressed;
+	void _resetHudButtonPressedExcept(int index);
+
+	Text m_priceOfRoom;
+	
+	
+	bool m_readyToPick;
+
+	bool m_doorBuild = false;
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
+	void	_doorBuildInput();
+	void	_handlePickingOfHud(RectangleShape * pickedShape);
+
 public:
 
 	BuildState(Camera * cam, 
@@ -39,5 +63,11 @@ public:
 	virtual void Draw() override;
 	virtual void DrawHUD() override;
 	
+
+	// Inherited via SubState
+	virtual void HandlePicking(Shape * pickedObject) override;
+
+	virtual void HandleInput() override;
+
 };
 

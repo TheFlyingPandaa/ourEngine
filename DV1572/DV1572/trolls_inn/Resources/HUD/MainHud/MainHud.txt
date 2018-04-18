@@ -16,22 +16,22 @@
 
 
 # Bar
-tx trolls_inn/Resources/HUD/MainHud/Bar.png
-r 0 0 0 128 -1 0.3 0
+#tx trolls_inn/Resources/HUD/MainHud/Bar.png
+#r 0 0 0 128 -1 0.3 0
 
 # End of Bar
-tx trolls_inn/Resources/HUD/MainHud/BarEnd.png
+#tx trolls_inn/Resources/HUD/MainHud/BarEnd.png
 # Left
-r 0 0 8 128 -1 0.2 0
+#r 0 0 8 128 -1 0.2 0
 # Right
-r 0 0 8 128 -1 0.2 1
+#r 0 0 8 128 -1 0.2 1
 
 # Button Background
 tx trolls_inn/Resources/HUD/MainHud/ButtonBackground.png
 r 8 8 208 112 -1 0.1 0
 
 # Hit box for buttons
-hc 109 70 104 0
+hr 8 8 208 112 0
 
 # Crew Button
 tx trolls_inn/Resources/HUD/MainHud/CrewButton.png

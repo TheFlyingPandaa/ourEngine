@@ -41,6 +41,8 @@ private:
 	bool m_colorButton;
 	bool m_hasClicked;
 	int m_lastPickedIndex;
+	std::vector<bool> m_hudButtonsPressed;
+	void _resetHudButtonPressedExcept(int index);
 	
 	bool m_move = false;
 	bool m_justMoved = false;

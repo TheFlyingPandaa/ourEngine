@@ -26,6 +26,8 @@ public:
 	virtual bool		exitState() { return m_exitState; }
 	virtual SubState*	newState() { return m_newState; }
 	
+	virtual void		HandlePicking(Shape * pickedObject) = 0;
+	virtual void		HandleInput() = 0;
 	virtual void		Update(double deltaTime) = 0;
 	virtual void		Draw() = 0;
 	virtual void		DrawHUD() = 0;
