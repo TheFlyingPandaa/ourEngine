@@ -348,7 +348,12 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 		case HudPickingStage::Click:
 		{
 			int index = r->getIndex();
-			while (!m_subStates.empty()) m_subStates.pop();
+			while (!m_subStates.empty())
+			{
+				SubState * s = m_subStates.top();
+				m_subStates.pop();
+				delete s;
+			}
 			switch (index)
 			{
 			case 0:
