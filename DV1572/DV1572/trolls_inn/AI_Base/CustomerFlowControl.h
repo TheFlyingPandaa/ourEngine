@@ -9,6 +9,10 @@ private:
 	Customer nextCustomer;
 	RandomNumberGenerator rNG;
 
+	// Race models
+	// Box race
+	Mesh box;
+
 	// Determine what customers the inn attract
 	Customer evaluate(Attributes innAttributes);
 	Customer generateCustomer(Race race);

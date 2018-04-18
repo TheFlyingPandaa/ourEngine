@@ -36,12 +36,12 @@ void AISolver::update(Customer& customer)
 			if (customer.getHungry() < 5 && customer.getThirsty() < 5 && customer.getTired() < 5)
 			{
 				// Get a path to a new location
-				// Walk towards a room with the highest value (?) Tired, Hungry, Thirsty
+				// Walk towards a room with the highest value (?) (Tired, Hungry or Thirsty)
 				// Go explore (?)
 				// Get race desires (?)
 			}
 			break;
-			// Update animations drink, eat, sleep(?)
+			// Update animations drink, eat, sleep (?)
 		case Drinking:
 			// Reduce how thirsty the customer is
 			// Base this on time somehow
@@ -78,7 +78,7 @@ void AISolver::update(Customer& customer, Action desiredAction)
 	{
 	case Thinking:
 		//getPath(customer, desiredAction);
-		//roomCtrl need action and spots open for customers
+		//roomCtrl need action and spots open for customers (?)
 		customer.popToNextState(); // pop Thinking state
 		customer.popToNextState(); // pop Idle state
 		customer.gotPathSetNextAction(desiredAction);
