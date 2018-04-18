@@ -2,18 +2,6 @@
 #include <DirectXMath.h>
 #include "Mesh.h"
 
-enum WalkDirection
-{
-	UP,
-	UPRIGHT,
-	UPLEFT,
-	DOWN,
-	DOWNRIGHT,
-	DOWNLEFT,
-	LEFT,
-	RIGHT
-};
-
 class Shape
 {
 private:
@@ -43,10 +31,8 @@ protected:
 	void setDomainShader(ID3D11DomainShader* s);
 	void setGeometryShader(ID3D11GeometryShader* s);
 	void setPixelShader(ID3D11PixelShader* s);
-	
-	bool					m_HENRIKTABORT;
+
 public:
-	WalkDirection	m_currentDir;
 	Shape();
 	~Shape();
 	void setMesh(Mesh* m);

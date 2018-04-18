@@ -50,27 +50,10 @@ OUTPUT main(INPUT input)
 	
 	float4x4 vp = mul(View, Projection);
 	o.pos = mul(float4(rotatedAndLol, 1.0f), View);
-	float3 billDireciton = normalize(direction.xyz);
-	float angle = dot(charDir.xyz, billDireciton);
-
+	o.pos.w = 2.0f;
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
-	if (angle < 0.0f)
-	{
-		o.tex.x = o.tex.x + 0.5;
-		o.tex.y = o.tex.y + 0.5;
-	}
-	else if (angle < 0.7)
-	{
-		o.tex.x = o.tex.x + 0.5;
-	}
-
-	
-	/*if (angle < 0.0f)
-	*/
-	
-	//o.tex.x = o.tex.y - 0.5;
 	o.normal = input.normal;
 
 	o.TBN[0] = normalize(mul(float4(input.tangent, 0), world)).xyz;

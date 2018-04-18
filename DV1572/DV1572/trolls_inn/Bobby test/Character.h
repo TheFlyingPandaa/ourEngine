@@ -7,7 +7,17 @@
 class Character
 {
 public:
-
+	enum WalkDirection
+	{
+		UP,
+		UPRIGHT,
+		UPLEFT,
+		DOWN,
+		DOWNRIGHT,
+		DOWNLEFT,
+		LEFT,
+		RIGHT
+	};
 
 private:
 	struct Go
@@ -16,7 +26,10 @@ private:
 		float stepsLeft;
 	};
 
-	Billboard		m_model;
+	Billboard		m_thinkingEmoji;
+	Mesh			m_thinkingMesh;
+	WalkDirection	m_currentDir;
+	Object3D		m_model;
 	int				m_floor; //floor 0 is first floor 
 	std::deque<Go>  m_goQueue;
 	float			m_speed;

@@ -26,7 +26,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	_setHud();
 
-	box.LoadModel("trolls_inn/Resources/woodenfloor/floor.obj");
+	box.LoadModel("trolls_inn/Resources/box.obj");
 	c.setModel(&box);
 	c.setPosition( 10+0.5, 5+0.5);
 	c.setFloor(0);
@@ -110,13 +110,13 @@ void GameState::Update(double deltaTime)
 	{
 		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
 		{
-			c.Move(UP);
+			c.Move(Character::UP);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
 		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
 		{
-			c.Move(DOWN);
+			c.Move(Character::DOWN);
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}

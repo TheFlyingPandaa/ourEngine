@@ -8,6 +8,13 @@ Mesh::Mesh()
 	m_uniqueID = m_idCounter++;
 }
 
+Mesh::Mesh(const std::string & path)
+{
+	LoadModel(path);
+	m_nrOfVertices = 0;
+	m_uniqueID = m_idCounter++;
+}
+
 Mesh::~Mesh()
 {	
 	// Sometimes are there copies of the same materials. Better solutions please!

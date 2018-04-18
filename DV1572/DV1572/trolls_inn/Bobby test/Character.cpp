@@ -5,7 +5,13 @@ Character::Character()
 	m_floor = 0;
 	m_speed = 2.0f / 60;
 	m_model.setPos(0.5, 0.5, 0.5);
-	m_model.m_currentDir = DOWN;
+	m_currentDir = DOWN;
+	
+	m_thinkingMesh.LoadModel("trolls_inn/resources/woodenfloor/floor.obj");
+	m_thinkingEmoji.setMesh(&m_thinkingMesh);
+	XMFLOAT3 playerPos = m_model.getPosition();
+	playerPos.y += 1.5f;
+	m_thinkingEmoji.setPos(playerPos);
 }
 
 Character::~Character()
@@ -39,9 +45,10 @@ void Character::Update()
 			m_goQueue.pop_front();
 		else
 		{
+			
 			dir.stepsLeft -= m_speed;
 			m_goQueue[0] = dir;
-			if (dir.dir != m_model.m_currentDir)
+			if (dir.dir != m_currentDir)
 			{
 				this->Turn(dir.dir);
 			}
@@ -72,6 +79,9 @@ void Character::Update()
 				m_model.Move(-m_speed, 0.0f, 0.0f);
 				break;
 			}
+			XMFLOAT3 playerPos = m_model.getPosition();
+			playerPos.y += 1.5f;
+			m_thinkingEmoji.setPos(playerPos);
 		}
 	}
 }
@@ -86,7 +96,7 @@ void Character::Move(WalkDirection dir)
 
 void Character::Turn(WalkDirection dir)
 {
-	m_model.m_currentDir = dir;
+	m_currentDir = dir;
 	switch (dir)
 	{
 	case UP:
@@ -148,27 +158,27 @@ const DirectX::XMFLOAT2 Character::getPosition() const
 	return position;
 }
 
-WalkDirection Character::getDirection() const
+Character::WalkDirection Character::getDirection() const
 {
-	return m_model.m_currentDir;
+	return m_currentDir;
 }
-const char* printDir(WalkDirection dir)
+const char* printDir(Character::WalkDirection dir)
 {
 	switch (dir)
 	{
-	case UP:
+	case Character::UP:
 		return "Up";
-	case DOWN:
+	case Character::DOWN:
 		return "Down";
-	case RIGHT:
+	case Character::RIGHT:
 		return "Right";
-	case LEFT:
+	case Character::LEFT:
 		return "Left";
 	}
 	return "No movement";
 		
 }
-WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
+Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
 {
 
 	XMVECTOR oldPosWithoutOffset = XMLoadFloat3(&oldPos);
@@ -215,4 +225,5 @@ bool Character::walkQueueDone() const
 void Character::Draw()
 {
 	m_model.Draw();
+	DX::submitToInstance(&m_thinkingEmoji, DX::g_instanceGroupsBillboard);
 }

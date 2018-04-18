@@ -956,23 +956,8 @@ void Window::_billboardPass(const Camera & cam)
 
 	for (auto& instance : DX::g_instanceGroupsBillboard)
 	{
-		XMFLOAT4A charDirection;
-		if (instance.shape->m_currentDir == UP)
-		{
-			std::cout << "UPP" << std::endl;
-			charDirection = XMFLOAT4A(0, 0, -1, 0.0f);
-		}
-		else if (instance.shape->m_currentDir == RIGHT || instance.shape->m_currentDir == LEFT)
-		{
-			charDirection = XMFLOAT4A(1, 0, 0, 0.0f);
-			std::cout << "Right/Left" << std::endl;
-		}
-		else if (instance.shape->m_currentDir == DOWN)
-		{
-			std::cout << "DOWN0" << std::endl;
-			charDirection = XMFLOAT4A(0, 0, 1, 0.0f);
-		}
-		DirectX::XMStoreFloat4A(&buffer.chardir, XMLoadFloat4A(&charDirection));
+		
+		
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
