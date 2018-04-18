@@ -124,6 +124,11 @@ void GameState::Update(double deltaTime)
 		}
 	}
 
+	if (Input::isKeyPressed('G'))
+	{
+		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
+	}
+
 	//if (Input::isKeyPressed('A'))
 	//{
 	//	c.Move(Character::LEFT);
@@ -245,7 +250,7 @@ void GameState::_handlePicking()
 			
 		}
 		else {
-			//std::cout << "Thread still running" << std::endl;
+			std::cout << "Thread still running" << std::endl;
 		}
 
 		//_handlePickingAi(obj);

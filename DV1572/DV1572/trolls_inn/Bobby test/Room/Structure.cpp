@@ -51,6 +51,16 @@ void Tile::setMesh(Mesh * mesh)
 	this->quad.setMesh(mesh);
 }
 
+bool Tile::getHasObject()
+{
+	return m_hasObject;
+}
+
+void Tile::setHasObject(bool bo)
+{
+	m_hasObject = bo;
+}
+
 void Tile::setWallSpotPopulated(Direction dir, bool value)
 {
 	this->m_walls[dir] = value;

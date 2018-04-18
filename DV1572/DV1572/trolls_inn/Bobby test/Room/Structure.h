@@ -90,6 +90,9 @@ public:
 
 	Object3D&	getQuad();
 	void	setMesh(Mesh * mesh);
+
+	bool	getHasObject();
+	void	setHasObject(bool bo);
 private:
 	int		m_posY;
 	int		m_posX;
@@ -99,7 +102,10 @@ private:
 
 	bool	m_inside = false;
 	bool	m_isWalkeble = false;
+	
 	Room *	m_room = nullptr;
+
+	bool	m_hasObject = false;
 	/*
 	0 = up
 	1 = down
