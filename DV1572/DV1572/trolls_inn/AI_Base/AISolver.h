@@ -18,5 +18,6 @@ public:
 	void update(Staff& staff);
 	void update(Staff& staff, Action desiredAction);
 	// Get Path function (?)
+
 	// Add update for Inn
 };

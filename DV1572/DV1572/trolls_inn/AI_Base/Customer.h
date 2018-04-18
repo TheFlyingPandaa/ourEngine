@@ -56,6 +56,7 @@ public:
 
 	const char* getRaceStr() const;
 
+	// Get desired action
 	Action getAction() const;
 	void setAction(Action nextAction);
 	void gotPathSetNextAction(Action nextAction);
@@ -74,4 +75,11 @@ public:
 	void setHungry(int value);
 	void setTired(int value);
 	void setThirsty(int value);
+
+	// Reduces hungry by 1
+	void eating();
+	// Reduces tired by 1
+	void sleeping();
+	// Reduces thirsty by 1
+	void drinking();
 };

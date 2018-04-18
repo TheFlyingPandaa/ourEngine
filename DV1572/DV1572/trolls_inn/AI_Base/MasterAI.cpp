@@ -84,12 +84,19 @@ void MasterAI::update()
 		else
 		{
 			// Send review to inn if customer reached end of path
-			this->inn.customerReview(leavingCustomer.getAttributes());
-			// If customer sent review then delete
-
+			if (leavingCustomer.walkQueueDone())
+				leavingCustomer.popToNextState();
+			if (leavingCustomer.getState() == LeavingInn)
+			{
+				this->inn.customerReview(leavingCustomer.getAttributes());
+				// If customer sent review then delete the customer
+				goneCustomers.push_back(loopCounter);
+			}
 		}
 		loopCounter++;
 	}
-	
-	
+	// Delete customers that left the inn area
+	for (int i = 0; i < goneCustomers.size(); i++)
+		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
+
 }

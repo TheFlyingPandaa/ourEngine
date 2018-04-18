@@ -180,3 +180,18 @@ void Customer::setThirsty(int value)
 {
 	this->thirsty = value;
 }
+
+void Customer::eating()
+{
+	this->hungry--;
+}
+
+void Customer::sleeping()
+{
+	this->tired--;
+}
+
+void Customer::drinking()
+{
+	this->thirsty--;
+}

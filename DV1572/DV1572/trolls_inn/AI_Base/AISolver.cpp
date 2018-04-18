@@ -33,29 +33,32 @@ void AISolver::update(Customer& customer)
 		case Idle:
 			// Calculate new desire
 			// Do customer want to walk around or take an action
-			if (customer.getHungry() < 4 && customer.getThirsty() < 4 && customer.getTired() < 4)
+			if (customer.getHungry() < 5 && customer.getThirsty() < 5 && customer.getTired() < 5)
 			{
 				// Get a path to a new location
 				// Walk towards a room with the highest value (?) Tired, Hungry, Thirsty
 				// Go explore (?)
 			}
 			break;
-			// Update animations (?)
+			// Update animations drink, eat, sleep(?)
 		case Drinking:
 			// Get drink
-			
+			if (customer.getThirsty() > 0)
+				customer.drinking();
 			break;
 		case Eating:
 			// Get food
-
+			if (customer.getHungry() > 0)
+				customer.eating();
 			break;
 		case Sleeping:
 			// Get a room
-
+			if (customer.getTired() > 0)
+				customer.sleeping();
 			break;
 		case LeavingInn:
 			// Send review
-
+			
 			break;
 		}
 	}
