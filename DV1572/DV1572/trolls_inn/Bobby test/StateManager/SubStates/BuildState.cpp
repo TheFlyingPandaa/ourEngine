@@ -2,28 +2,30 @@
 
 void BuildState::_handleBuildRoom(Shape * pickedShape)
 {
-	switch (m_buildStage)
+	if (dynamic_cast<RectangleShape*>(pickedShape) == nullptr)
 	{
-	case BuildStage::Start:
-		if (pickedShape)
+		switch (m_buildStage)
 		{
-			m_startTile = pickedShape;
-			m_buildStage = BuildStage::Selection;
+		case BuildStage::Start:
+			if (pickedShape)
+			{
+				m_startTile = pickedShape;
+				m_buildStage = BuildStage::Selection;
+			}
+			else
+				m_buildStage = BuildStage::None;
+			break;
+		case BuildStage::Selection:
+			if (pickedShape)
+				m_selectedTile = pickedShape;
+			break;
 		}
-		else
-			m_buildStage = BuildStage::None;
-		break;
-	case BuildStage::Selection:
-		if (pickedShape)
-			m_selectedTile = pickedShape;
-		break;
 	}
 }
 
 void BuildState::_buildInput()
 {
-
-	if (Input::isMouseLeftPressed())
+	if (Input::isMouseLeftPressed() && m_readyToPick)
 	{
 		if (m_buildStage == BuildStage::None)
 		{
@@ -113,6 +115,15 @@ void BuildState::_buildInput()
 		m_roomPlaceable = false;
 		this->grid->AddRoom(start, end, m_selectedRoomType);
 	}
+	else {
+		m_buildStage = BuildStage::None;
+	}
+
+	if (!Input::isMouseLeftPressed())
+		m_readyToPick = true;
+
+	if (Input::isKeyPressed('T'))
+		p_HUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/BuildHud.txt");
 
 }
 
@@ -123,6 +134,7 @@ BuildState::BuildState(Camera * cam,
 	this->grid = grid;
 	this->_init();
 	m_buildStage = BuildStage::None;
+	m_readyToPick = false;
 }
 
 BuildState::~BuildState()
@@ -131,7 +143,9 @@ BuildState::~BuildState()
 
 void BuildState::_init()
 {
-
+	p_HUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/BuildHud.txt");
+	for (int i = 0; i < p_HUD.getNrOfPickableButtons(); i++)
+		m_buttonPressed.push_back(false);
 }
 
 void BuildState::Update(double deltaTime)
@@ -145,13 +159,14 @@ void BuildState::Update(double deltaTime)
 		m_doorBuild = false;
 	}
 
-	if (!this->p_pickingEvent->empty()) {
+	/*if (!this->p_pickingEvent->empty()) {
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
 		if (m_buildStage != BuildStage::None)
 			_handleBuildRoom(obj);
-	}
+	}*/
+
 	if (Input::isKeyPressed('E'))
 		this->_exit();
 	
@@ -166,4 +181,15 @@ void BuildState::Draw()
 
 void BuildState::DrawHUD()
 {
+	p_HUD.Draw();
+}
+
+void BuildState::HandlePicking(Shape * pickedObject)
+{
+	_handleBuildRoom(pickedObject);
+}
+
+void BuildState::HandleInput()
+{
+	_buildInput();
 }

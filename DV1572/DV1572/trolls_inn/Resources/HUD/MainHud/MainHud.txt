@@ -31,7 +31,7 @@ tx trolls_inn/Resources/HUD/MainHud/ButtonBackground.png
 r 8 8 208 112 -1 0.1 0
 
 # Hit box for buttons
-hc 109 70 104 0
+hr 8 8 208 112 0
 
 # Crew Button
 tx trolls_inn/Resources/HUD/MainHud/CrewButton.png

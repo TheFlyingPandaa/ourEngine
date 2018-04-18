@@ -20,10 +20,15 @@ private:
 	bool		m_roomPlaceable;
 	Grid *		grid;
 
-	bool m_doorBuild = false;
 
+	std::vector<bool> m_buttonPressed;
+
+	bool m_readyToPick;
+
+	bool m_doorBuild = false;
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
+
 public:
 
 	BuildState(Camera * cam, 
@@ -39,5 +44,11 @@ public:
 	virtual void Draw() override;
 	virtual void DrawHUD() override;
 	
+
+	// Inherited via SubState
+	virtual void HandlePicking(Shape * pickedObject) override;
+
+	virtual void HandleInput() override;
+
 };
 

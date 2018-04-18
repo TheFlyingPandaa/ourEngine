@@ -56,6 +56,9 @@ private:
 	bool m_colorButton;
 	bool m_hasClicked;
 	int m_lastPickedIndex;
+	std::vector<bool> m_hudButtonsPressed;
+	void _resetHudButtonPressedExcept(int index);
+
 
 	//TEST
 	Mesh box;

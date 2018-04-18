@@ -52,7 +52,65 @@ void HUD::_setupAPotentialAreaCircle(int x, int y, int r, int relative)
 		break;
 	}
 	
-	m_potentialAreas.push_back(PotentialAreaCircle{ pos.x, pos.y, r });
+	m_potentialAreasCircle.push_back(PotentialAreaCircle{ pos.x, pos.y, r });
+
+}
+
+void HUD::_setupAPotentialAreaRect(int x, int y, int sx, int sy, int relative)
+{
+	DirectX::XMINT2 s = Input::getWindowSize();
+	DirectX::XMINT2 scl(sx, sy);
+	DirectX::XMINT2 pos(x, y);
+
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
+
+	switch (relative)
+	{
+	case RectangleShape::BR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		offsetX = -scl.x;
+		break;
+	case RectangleShape::TR:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetX = -scl.x;
+		offsetY = -scl.y;
+		break;
+	case RectangleShape::TL:
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetY = -scl.y;
+		break;
+	case RectangleShape::C:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetX = -(scl.x / 2.0f);
+		offsetY = -(scl.y / 2.0f);
+		break;
+	case RectangleShape::BC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		offsetX = -(scl.x / 2.0f);
+		break;
+	case RectangleShape::TC:
+		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.y = static_cast<float>(s.y) - pos.y;
+		offsetX = -(scl.x / 2.0f);
+		offsetY = -scl.y;
+		break;
+	case RectangleShape::LC:
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetY = -(scl.y / 2.0f);
+		break;
+	case RectangleShape::RC:
+		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		offsetX = -scl.x;
+		offsetY = -(scl.y / 2.0f);
+		break;
+	}
+
+	PotentialAreaRect rect{ pos.x, pos.y, scl.x, scl.y };
+	m_potentialAreasRect.push_back(rect);
 
 }
 
@@ -171,6 +229,15 @@ bool HUD::LoadHud(const std::string & path)
 
 				_setupAPotentialAreaCircle(x, y, r, relativeTo);
 			}
+			else if (type == "hr")
+			{
+				int x, y, sx, sy;
+				int relativeTo;
+				stream >> x >> y >> sx >> sy >> relativeTo;
+
+
+				_setupAPotentialAreaRect(x, y, sx, sy, relativeTo);
+			}
 
 		}
 	}
@@ -196,9 +263,9 @@ RectangleShape * HUD::Pick(DirectX::XMFLOAT2 at)
 	return nullptr;
 }
 
-bool HUD::isMouseInsidePotentialArea(DirectX::XMFLOAT2 mousePos)
+bool HUD::isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos)
 {
-	for (auto pa : m_potentialAreas)
+	for (auto pa : m_potentialAreasCircle)
 	{
 		int dist = static_cast<int>(DirectX::XMVectorGetX(DirectX::XMVector2Length((XMVectorSet(pa.x, pa.y, 0.0f, 0.0f) - XMLoadFloat2(&mousePos)))) + 0.5f);
 		if (dist < pa.r)
@@ -208,13 +275,35 @@ bool HUD::isMouseInsidePotentialArea(DirectX::XMFLOAT2 mousePos)
 	return false;
 }
 
+bool HUD::isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos)
+{
+	for (auto pa : m_potentialAreasRect)
+	{
+		if (mousePos.x > pa.x && mousePos.x < pa.x + pa.sx &&
+			mousePos.y > pa.y && mousePos.y < pa.y + pa.sy)
+			return true;
+	}
 
-void HUD::ResetColorsOnPickable()
+	return false;
+}
+
+
+void HUD::ResetColorsOnPickableWithIndex(int index)
 {
 	for (RectangleShape * s : m_quadsClickAble)
 	{
-		s->setColor(1.0f, 1.0f, 1.0f);
+		if (s->getIndex() == index)
+		{
+			s->setColor(1, 1, 1);
+			return;
+		}
+
 	}
+}
+
+int HUD::getNrOfPickableButtons() const
+{
+	return static_cast<int>(m_quadsClickAble.size());
 }
 
 void HUD::CheckIfPicked()

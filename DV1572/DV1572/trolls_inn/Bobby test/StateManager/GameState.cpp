@@ -17,8 +17,14 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	// Building END
 	m_lastPickedIndex = -1;
 	m_Rpressed = false;
-
 	_setHud();
+
+	int nrOfButtons = m_stateHUD.getNrOfPickableButtons();
+	for (int i = 0; i < nrOfButtons; i++)
+	{
+		m_hudButtonsPressed.push_back(false);
+	}
+
 
 	box.LoadModel("trolls_inn/Resources/Box.obj");
 
@@ -72,11 +78,11 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
-	
+	_handlePicking();	// It's important this is before handleInput();
+	_handleInput();		// It's important this is after handlePicking();
 
 
 	this->m_cam->update();
-	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	this->grid->Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
@@ -93,6 +99,7 @@ void GameState::Update(double deltaTime)
 		}
 		return;
 	}
+	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
 		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
@@ -149,14 +156,9 @@ void GameState::Update(double deltaTime)
 
 	 // Get result.
 
-	_handlePicking();	// It's important this is before handleInput();
-	_handleInput();		// It's important this is after handlePicking();
+	
 	
 
-	if (Input::isKeyPressed('B'))
-	{
-		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
-	}
 }
 
 void GameState::Draw()
@@ -178,12 +180,24 @@ void GameState::Draw()
 
 void GameState::DrawHUD()
 {
+	m_stateHUD.Draw();
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->DrawHUD();
 		return;
 	}
-	m_stateHUD.Draw();
+}
+
+void GameState::_resetHudButtonPressedExcept(int index)
+{
+	for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+	{
+		if (i != index)
+		{
+			m_hudButtonsPressed[i] = false;
+			m_stateHUD.ResetColorsOnPickableWithIndex(i);
+		}
+	}
 }
 
 void GameState::_init()
@@ -214,7 +228,13 @@ void GameState::_handlePicking()
 
 		if (m_hudPickStage != HudPickingStage::Miss)
 			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
-		
+		else if (!m_subStates.empty())
+		{
+			SubState* ss = m_subStates.top();
+
+			ss->HandlePicking(obj);
+		}
+
 
 
 		using namespace std::chrono_literals;
@@ -282,6 +302,10 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 {
 	if (r)
 	{
+		float cH = 5.0f;
+		float cHL = 2.0f;
+		float cC = 50.0f;
+
 			m_colorButton = true;
 		switch (m_hudPickStage)
 		{
@@ -291,22 +315,29 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 			if (index != m_lastPickedIndex)
 			{
 				m_lastPickedIndex = index;
-				m_stateHUD.ResetColorsOnPickable();
+				for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+				{
+					if (!m_hudButtonsPressed[i])
+						m_stateHUD.ResetColorsOnPickableWithIndex(i);
+				}
 			}
-
 			switch (index)
 			{
 			case 0:
-				r->setColor(5, 2, 2);
+				if (!m_hudButtonsPressed[index])
+					r->setColor(cH, cHL, cHL);
 				break;
 			case 1:
-				r->setColor(2, 5, 2);
+				if (!m_hudButtonsPressed[index])
+					r->setColor(cHL, cH, cHL);
 				break;
 			case 2:
-				r->setColor(2, 2, 5);
+				if (!m_hudButtonsPressed[index])
+					r->setColor(cHL, cHL, cH);
 				break;
 			case 3:
-				r->setColor(5, 0.5, 5);
+				if (!m_hudButtonsPressed[index])
+					r->setColor(cH, cHL / 4, cH);
 				break;
 			default:
 				r->setColor(3, 3, 3);
@@ -317,22 +348,36 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 		case HudPickingStage::Click:
 		{
 			int index = r->getIndex();
+			while (!m_subStates.empty()) m_subStates.pop();
 			switch (index)
 			{
 			case 0:
 				std::cout << "Crew Button Pressed\n";
+				r->setColor(cC, cHL, cHL);
+				_resetHudButtonPressedExcept(index);
 				break;
 			case 1:
-				std::cout << "Build Button Pressed\n";
+				std::cout << "BUID Button Pressed\n";
+				r->setColor(cHL, cC, cHL);
+				_resetHudButtonPressedExcept(index);
+				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+				if (m_hudButtonsPressed[index])
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+					
 				break;
 			case 2:
 				std::cout << "Event Button Pressed\n";
+				r->setColor(cHL, cHL, cC);
+				_resetHudButtonPressedExcept(index);
 				break;
 			case 3:
 				std::cout << "Stats Button Pressed\n";
+				r->setColor(cC, cHL/4, cC);
+				_resetHudButtonPressedExcept(index);
 				break;
 			default:
 				std::cout << "Something Pressed\n";
+				_resetHudButtonPressedExcept(index);
 				break;
 			}
 			
@@ -348,7 +393,7 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 
 void GameState::_handleInput()
 {
-	if (m_stateHUD.isMouseInsidePotentialArea(Input::getMousePositionLH()))
+	if (m_stateHUD.isMouseInsidePotentialAreaRect(Input::getMousePositionLH()))
 	{
 		m_stateHUD.CheckIfPicked();
 		m_hudPickStage = HudPickingStage::Hover;
@@ -362,19 +407,33 @@ void GameState::_handleInput()
 			m_hasClicked = false;
 		}
 		if (!m_colorButton)
-			m_stateHUD.ResetColorsOnPickable();
+			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+			{
+				if (!m_hudButtonsPressed[i])
+					m_stateHUD.ResetColorsOnPickableWithIndex(i);
+			}
 	}
 	else
 	{
 		if (m_hudPickStage != HudPickingStage::Miss)
 		{
 			m_hudPickStage = HudPickingStage::Miss;
-			m_stateHUD.ResetColorsOnPickable();
+			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+			{
+				if (!m_hudButtonsPressed[i])
+					m_stateHUD.ResetColorsOnPickableWithIndex(i);
+			}
+		}
+		
+		if (!m_subStates.empty())
+		{
+			SubState* ss = m_subStates.top();
+
+			ss->HandleInput();
 		}
 
-
 		
-		if (m_stage == GameStage::Play)
+		if (m_stage == GameStage::Play && m_subStates.empty())
 		{
 			if (Input::isMouseLeftPressed())
 			{
