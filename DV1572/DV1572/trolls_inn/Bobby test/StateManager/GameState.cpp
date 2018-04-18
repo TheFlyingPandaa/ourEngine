@@ -135,30 +135,6 @@ void GameState::Update(double deltaTime)
 	{
 		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
 	}
-
-	//if (Input::isKeyPressed('A'))
-	//{
-	//	c.Move(Character::LEFT);
-	//}
-	//if (Input::isKeyPressed('W'))
-	//{
-	//	c.Move(Character::UP);
-	//}
-	//if (Input::isKeyPressed('S'))
-	//{
-	//	c.Move(Character::DOWN);
-	//}
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	c.Move(Character::RIGHT);
-	//}
-	//</TEMP>
-
-	 // Get result.
-
-	
-	
-
 }
 
 void GameState::Draw()

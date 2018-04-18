@@ -141,6 +141,37 @@ std::vector<std::vector<Tile*>> Grid::getGrid() const
 	return m_tiles;	
 }
 
+bool Grid::CheckIfDoorCanBeBuilt(DirectX::XMINT2 pos, DirectX::XMINT2 pos2)
+{
+	bool result = false;
+	DirectX::XMFLOAT3 c(5.0f, 0.5f, 0.5f);
+	Tile* t1 = m_tiles[pos.x][pos.y];
+	Tile* t2 = m_tiles[pos2.x][pos2.y];
+	if ((abs(pos.x - pos2.x) == 1 || abs(pos.y - pos2.y) == 1) &&
+		(pos.x == pos2.x || pos.y == pos2.y))
+	{
+		if (t1->getIsInside() && t2->getIsInside())
+		{
+			if (t1 != t2)
+			{
+				Direction dir = m_roomCtrl.getDirection(t1, t2);
+
+				Wall* w = t1->getTileWalls(dir);
+				if (w)
+				{
+					c = DirectX::XMFLOAT3(0.05f, 5.0f, 0.5f);
+				}
+			}
+		}
+	}
+	
+	t1->getQuad().setColor(c.x, c.y, c.z);
+	t2->getQuad().setColor(c.x, c.y, c.z);
+
+	return result;
+}
+
+
 void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
 {
 	m_tiles[pos.x][pos.y]->setIsWalkeble(false);
@@ -169,17 +200,20 @@ void Grid::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType,
 
 void Grid::AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size)
 {
-	Tile* t1 = m_tiles[pos.x][pos.y];
-	Tile* t2 = m_tiles[pos2.x][pos2.y];
-
-	if (t1->getIsInside() && t2->getIsInside())
+	if ((abs(pos.x - pos2.x) == 1 || abs(pos.y - pos2.y) == 1) &&
+		(pos.x == pos2.x || pos.y == pos2.y))
 	{
-		if (t1 != t2)
+		Tile* t1 = m_tiles[pos.x][pos.y];
+		Tile* t2 = m_tiles[pos2.x][pos2.y];
+
+		if (t1->getIsInside() && t2->getIsInside())
 		{
-			m_roomCtrl.CreateDoor(t1, t2);
+			if (t1 != t2)
+			{
+				m_roomCtrl.CreateDoor(t1, t2);
+			}
 		}
 	}
-	
 }
 
 void Grid::Draw()
