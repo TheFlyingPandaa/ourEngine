@@ -525,14 +525,23 @@ void GameState::_roomDeletionInput()
 		}
 		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && !m_hasBeenDeleted)
 		{
-			//selected tile never assigned...
 			if (m_startTile)
 			{
+				//Get the room and the tile belonging to it. 
 				Tile * t = grid->getTile(m_startTile->getPosition().x + 0.5f, m_startTile->getPosition().z + 0.5f);
 				Room* tempRoom = t->getRoom();
-
+				//Change tiles of room into grass tile. 
 				if (t->getRoom() != nullptr)
 				{
+					for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
+					{
+						for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
+						{
+							t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect);
+						}
+					}
+
+					//Delete walls. 
 					std::vector<Wall*>* tempVector = t->getRoom()->getAllWalls();
 					for (int i = 0; i < tempVector->size(); i++)
 					{
@@ -545,29 +554,51 @@ void GameState::_roomDeletionInput()
 							tempVector->at(i)->setIsInner(false);
 						}
 					}
-					for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
+					//Remove connections to adjacent rooms
+					for (int i = 0; i < tempRoom->getAdjasent()->size(); i++)
 					{
-						for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
+						tempRoom->getAdjasent()->at(i) = nullptr;
+						tempRoom->getAdjasent()->erase(tempRoom->getAdjasent()->begin() + i);
+					}
+
+					//Remove connections between room and tiles
+					for (int i = 0; i < tempRoom->getTiles().size(); i++)
+					{
+						for (int k = 0; k < tempRoom->getTiles()[i].size(); k++)
 						{
-							t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect);
+							if (tempRoom->getTiles()[i][k] != nullptr)
+							{
+								tempRoom->getTiles()[i][k]->setInside(false);
+								for (int j = 0; j < 4; j++)
+								{
+									tempRoom->getTiles()[i][k]->setWallSpotPopulated(static_cast<Direction>(j), false);
+									//m_tiles[i][k]->setTileWalls(static_cast<Direction>(i), nullptr);
+								}
+								tempRoom->getTiles()[i][k]->setRoom(nullptr);
+							}
 						}
 					}
+					//Delete room and all connections. 
 					grid->getRoomCtrl().removeRoom(tempRoom);
-				}
-				grid->getRoomCtrl().CreateWalls();  
-				m_hasBeenDeleted = true;
+					grid->getRoomCtrl().CreateWalls(); 
+				}	
+				else
+					m_hasBeenDeleted = true;
 			}
+			else
+				m_hasBeenDeleted = true;
 		}
 
 		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && m_hasBeenDeleted)
 		{
-			m_roomDeletionStage = RoomDeletionStage::EndRoom; 
+			m_roomDeletionStage = RoomDeletionStage::NoneRoom; 
 			m_hasBeenDeleted = false; 
+			m_startTile = nullptr;
 		}
 		else if (m_roomDeletionStage == RoomDeletionStage::EndRoom)
 		{
 			m_roomDeletionStage = RoomDeletionStage::NoneRoom;
-			m_startTile = nullptr;
+		
 		}
 	}
 }

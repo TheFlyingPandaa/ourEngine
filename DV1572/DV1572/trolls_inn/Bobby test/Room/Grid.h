@@ -58,7 +58,7 @@ private:
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
-
+	
 	std::vector<std::vector<Tile *>> getGrid() const;
 	
 	void	AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size);

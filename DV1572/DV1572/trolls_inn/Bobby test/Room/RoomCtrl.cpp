@@ -308,6 +308,7 @@ void RoomCtrl::Draw()
 	for (int i = 0; i < m_walls.size(); i++)
 	{	
 		//m_walls[i]->getObject3D().setInside();
+		if(m_walls[i] != nullptr)
 		m_walls[i]->Draw();
 	}
 	for (Room* r : m_rooms)
@@ -633,8 +634,8 @@ void RoomCtrl::removeWall(Wall * wallToRemove)
 	{
 		if (m_walls[i] == wallToRemove)
 		{
-			delete wallToRemove; 
-			m_walls.erase(m_walls.begin() + i, m_walls.begin() + i + 1); 
+			delete wallToRemove;  
+			m_walls.erase(m_walls.begin() + i); 
 		}
 	}
 }
@@ -787,6 +788,7 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 bool RoomCtrl::removeRoom(Room * roomToRemove)
 {
 	bool removed = false; 
+
 	for (int i = 0; i < m_rooms.size() && !removed; i++)
 	{
 		if (roomToRemove == m_rooms[i])

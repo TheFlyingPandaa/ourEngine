@@ -85,21 +85,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 
 Room::~Room()
 {
-	for (int i = 0; i < m_tiles.size(); i++)
-	{
-		for (int k = 0; k < m_tiles[i].size(); k++)
-		{
-			if (m_tiles[i][k] != nullptr)
-			{
-				m_tiles[i][k]->setInside(false);
-				m_tiles[i][k]->setTileWalls(Direction::down, nullptr);
-				m_tiles[i][k]->setTileWalls(Direction::up, nullptr);
-				m_tiles[i][k]->setTileWalls(Direction::left, nullptr);
-				m_tiles[i][k]->setTileWalls(Direction::right, nullptr);
-				m_tiles[i][k]->setRoom(nullptr);
-			}
-			}
-	}
+
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const
@@ -251,23 +237,27 @@ void Room::Update(Camera * cam)
 	}
 	for (int i = 0; i < down.size(); i++)
 	{
-		if (down[i]->getIsInner() && !down[i]->getIsDoor())
-			down[i]->setScale(1.0f, 0.05f, 1.0f);
+		if (down[i] != nullptr)
+			if (down[i]->getIsInner() && !down[i]->getIsDoor())
+				down[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < up.size(); i++)
 	{
-		if (up[i]->getIsInner() && !up[i]->getIsDoor())
-			up[i]->setScale(1.0f, 0.05f, 1.0f);
+		if (up[i] != nullptr)
+			if (up[i]->getIsInner() && !up[i]->getIsDoor())
+				up[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < left.size(); i++)
 	{
-		if (left[i]->getIsInner() && !left[i]->getIsDoor())
-			left[i]->setScale(1.0f, 0.05f, 1.0f);
+		if (left[i] != nullptr)
+			if (left[i]->getIsInner() && !left[i]->getIsDoor())
+				left[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 	for (int i = 0; i < right.size(); i++)
 	{
-		if (right[i]->getIsInner() && !right[i]->getIsDoor())
-			right[i]->setScale(1.0f, 0.05f, 1.0f);
+		if (right[i] != nullptr)
+			if (right[i]->getIsInner() && !right[i]->getIsDoor())
+				right[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 }
 
