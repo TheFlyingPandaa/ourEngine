@@ -7,6 +7,8 @@ MasterAI::MasterAI()
 
 MasterAI::~MasterAI()
 {
+	for (auto& cust : customers)
+		delete cust;
 }
 
 Grid * MasterAI::getGrid()

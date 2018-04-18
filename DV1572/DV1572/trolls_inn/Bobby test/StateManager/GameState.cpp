@@ -47,11 +47,13 @@ float round_n(float num, int dec)
 void GameState::Update(double deltaTime)
 {
 	static bool lol = false;
-	if (Input::isKeyPressed('L') && !lol)
+	bool lol2 = Input::isKeyPressed('L');
+	if (lol2 && !lol)
 	{
 		this->m_mai.spawn();
 		
 	}
+	lol = lol2;
 
 
 	this->m_cam->update();

@@ -7,6 +7,7 @@ int Room::s_index = 1;
 void Room::_loadStatic()
 {
 	Room::s_AABB.LoadModel("trolls_inn/Resources/box.obj");
+	s_isLoaded = true;
 }
 
 void Room::_initAABB(int x, int y, int sx, int sy, int level)
@@ -85,7 +86,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 
 Room::~Room()
 {
-
+	
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const
