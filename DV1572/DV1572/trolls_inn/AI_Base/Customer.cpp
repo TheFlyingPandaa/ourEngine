@@ -7,9 +7,9 @@ Customer::Customer()
 
 Customer::Customer(Race race, int gold)
 {
-	this->race = race;
-	this->economy = Economy(gold);
-	this->setAction(WalkToInn);
+	this->m_race = race;
+	this->m_economy = Economy(gold);
+	this->SetAction(WalkToInn);
 }
 
 Customer::Customer(const Customer& other) : Character(other)
@@ -107,7 +107,7 @@ void Customer::SetAction(Action nextAction)
 		this->m_stateQueue.push(LeavingInn);
 		break;
 	case WalkToInn:
-		this->stateQueue.push(WalkingToInn);
+		this->m_stateQueue.push(WalkingToInn);
 		break;
 	}
 	// To return the customer to idle after it executed its action

@@ -1,3 +1,4 @@
+#include "../AI_Base/FroggeDebug.h"
 #include <iostream>
 #include <string>
 #include <stack>

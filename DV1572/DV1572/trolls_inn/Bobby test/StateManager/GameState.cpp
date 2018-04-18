@@ -56,7 +56,7 @@ void GameState::Update(double deltaTime)
 
 	this->m_cam->update();
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	m_mai.update(this->m_cam);
+	m_mai.Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);

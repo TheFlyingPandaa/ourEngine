@@ -1,7 +1,7 @@
 #include "MasterAI.h"
 
 MasterAI::MasterAI()
-	: solver(inn.getGrid())
+	: m_solver(m_inn.getGrid())
 {
 }
 

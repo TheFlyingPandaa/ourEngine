@@ -12,15 +12,15 @@ AISolver::~AISolver()
 
 void AISolver::Update(Customer& customer)
 {
-	CustomerState currentState = customer.getState();
+	CustomerState currentState = customer.GetState();
 	customer.Update();
 	if (currentState == WalkingToInn)
 	{
 		if (customer.walkQueueDone())
 		{
 			m_grid->generatePath(customer, reception);
-			customer.popToNextState();
-			currentState = customer.getState();
+			customer.PopToNextState();
+			currentState = customer.GetState();
 		}
 	}
 
@@ -99,35 +99,4 @@ void AISolver::Update(Staff& staff)
 void AISolver::Update(Staff& staff, Action desiredAction)
 {
 
-}
-
-bool AISolver::_findPath()
-{
-	bool result = false;
-	//if (c.walkQueueDone() && m_move)
-	//{
-	//	//Shape * obj = this->p_pickingEvent->top();
-	//	XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-	//	int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-	//	int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-	//	std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
-
-	//	XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-	//	if (path.size() != 0)
-	//	{
-	//		result = true;
-	//		m_justMoved = false;
-
-	//		c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-	//		for (int i = 0; i < path.size() - 1; i++)
-	//			c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-	//	}
-
-	//}
-
-	return result;
 }
