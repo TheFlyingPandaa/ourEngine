@@ -68,7 +68,7 @@ void BuildState::_buildInput()
 				//for text
 				if (!m_doorBuild)
 				{
-					int area = ((end.x -start.x) + 1) * ((end.y - start.y) + 1);
+					int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
 					std::string textString = "Area: " + std::to_string(area);
 					m_priceOfRoom.setTextString(textString);
 					DirectX::XMFLOAT2 mp = Input::getMousePositionLH();

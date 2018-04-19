@@ -33,3 +33,14 @@ r 368 48 64 64 1 0 0
 # Door Button
 tx trolls_inn/Resources/HUD/BuildHud/DoorButton.png
 r 304 12 64 64 2 0 0
+
+# Pause
+tx trolls_inn/Resources/HUD/BuildHud/Pause.png
+r 0 32 2 0 -1 0 3
+r 0 0 2 0 -1 0 1
+r 32 0 0 2 -1 0 3
+r 0 0 0 2 -1 0 0
+
+# Pause Icon
+tx trolls_inn/Resources/HUD/BuildHud/PauseIcon.png
+r 0 0 64 64 -1 0 3
