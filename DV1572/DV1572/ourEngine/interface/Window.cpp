@@ -554,8 +554,8 @@ void Window::_loadShadowBuffers()
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = m_width * 1.0;
-	texDesc.Height = m_height * 1.0;
+	texDesc.Width = 4096;
+	texDesc.Height = 4096;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -575,6 +575,7 @@ void Window::_loadShadowBuffers()
 	dsvDesc.Texture2D.MipSlice = 0;
 
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+	
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
@@ -585,7 +586,7 @@ void Window::_loadShadowBuffers()
 	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
 
 	//m_shadowProjMatrix = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
-	m_shadowProjMatrix = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
+	m_shadowProjMatrix = XMMatrixOrthographicLH(10, 10, 1.0f, 50.0f);
 }
 
 void Window::_prepareShadow()
@@ -600,34 +601,71 @@ void Window::_prepareShadow()
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilViewShad);
-}
 
+	D3D11_RASTERIZER_DESC wfdesc;
+	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	wfdesc.FillMode = D3D11_FILL_SOLID;
+	wfdesc.CullMode = D3D11_CULL_BACK;
+	wfdesc.DepthClipEnable = true;
+	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+	DX::g_deviceContext->RSSetState(m_WireFrame);
+
+	m_viewport.Height = 4096;
+	m_viewport.Width = 4096;
+	m_viewport.MinDepth = 0.f;
+	m_viewport.MaxDepth = 1.f;
+
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
+}
+#include <iostream>
 void Window::_shadowPass(Camera* c)
 {
 
-	XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
-	XMFLOAT4 lookAt = XMFLOAT4(16, 0, 16, 1);
-	XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
-	XMVECTOR p;
-	XMVECTOR l;
-	//p = XMLoadFloat4(&pos);
-	//l = XMLoadFloat4(&lookAt);
+	XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 500.0f);
+		/*XMMatrixPerspectiveFovLH(
+		XM_PIDIV2,
+		1.0f,
+		1.f,
+		5000.f
+	);*/
 
-	//p = XMLoadFloat4(&DX::g_lightPos);
-	l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
-	XMVECTOR look = XMLoadFloat4(&lookAt);
+	// Point light at (20, 15, 20), pointed at the origin. POV up-vector is along the y-axis.
+	static float x = 0.0f;
+	if (Input::isKeyPressed('B'))
+		x += 0.01f;
+	if (Input::isKeyPressed('V'))
+		x -= 0.01f;
+	//const XMVECTORF32 eye = { c->getPosition().x,c->getPosition().y,c->getPosition().z, 0.0f };
+	const XMVECTORF32 eye = { x, 20, 32, 0.0f };
+	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
+	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-	XMVECTOR u = XMLoadFloat4(&up);
-	p =  look + (-l *20.0f);
-	p = XMVectorSetW(p, 1.0f);
 	
 
-	XMMATRIX view = XMMatrixLookAtLH(p, look, u);
-	
+
+	//XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
+	//XMFLOAT4 lookAt = XMFLOAT4(16, 0, 16, 1);
+	//XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
+	//XMVECTOR p;
+	//XMVECTOR l;
+	////p = XMLoadFloat4(&pos);
+	////l = XMLoadFloat4(&lookAt);
+
+	////p = XMLoadFloat4(&DX::g_lightPos);
+	//l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
+	//XMVECTOR look = XMLoadFloat4(&lookAt);
+
+	//XMVECTOR u = XMLoadFloat4(&up);
+	//p =  look + (-l *20.0f);
+	//p = XMVectorSetW(p, 1.0f);
+	//
+
+	//XMMATRIX view = XMMatrixLookAtLH(p, look, u);
+	//
 	SHADOW_MATRIX_BUFFER meshBuffer;
 
-	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));
-	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(m_shadowProjMatrix));
+	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(lightPerspectiveMatrix));
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 	for (auto& instance : DX::g_InstanceGroupsShadow)
@@ -751,24 +789,25 @@ void Window::_setSamplerState()
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	DX::g_device->CreateSamplerState(&samplerDesc, &m_samplerState);
-	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	
 
 	D3D11_SAMPLER_DESC samplerDescPoint;
-	samplerDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	samplerDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.MipLODBias = 0.0f;
-	samplerDescPoint.MaxAnisotropy = 1;
-	samplerDescPoint.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDescPoint.BorderColor[0] = 0;
-	samplerDescPoint.BorderColor[1] = 0;
-	samplerDescPoint.BorderColor[2] = 0;
-	samplerDescPoint.BorderColor[3] = 0;
-	samplerDescPoint.MinLOD = 0;
+	samplerDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.BorderColor[0] = 1.0f;
+	samplerDescPoint.BorderColor[1] = 1.0f;
+	samplerDescPoint.BorderColor[2] = 1.0f;
+	samplerDescPoint.BorderColor[3] = 1.0f;
+	samplerDescPoint.MinLOD = 0.f;
 	samplerDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDescPoint.MipLODBias = 0.f;
+	samplerDescPoint.MaxAnisotropy = 0;
+	samplerDescPoint.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	samplerDescPoint.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+
 	DX::g_device->CreateSamplerState(&samplerDescPoint, &m_samplerStatePoint);
-	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
+
 }
 
 void Window::_createConstantBuffers()
@@ -907,6 +946,20 @@ void Window::_prepareGeometryPass()
 		renderTargets[i] = m_gbuffer[i].RTV;
 	}
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, m_depthStencilView);
+
+	_initViewPort();
+	_setViewport();
+
+	//D3D11_RASTERIZER_DESC wfdesc;
+	//ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	//wfdesc.FillMode = D3D11_FILL_SOLID;
+	//wfdesc.CullMode = D3D11_CULL_FRONT;
+	//wfdesc.DepthClipEnable = true;
+	//DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+	//DX::g_deviceContext->RSSetState(m_WireFrame);
+	////DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
 }
 
 void Window::_geometryPass(const Camera &cam)
