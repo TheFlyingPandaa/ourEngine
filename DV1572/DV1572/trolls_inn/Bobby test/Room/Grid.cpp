@@ -178,18 +178,35 @@ void Grid::AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 si
 
 void Grid::Draw()
 {
-	for (int i = 0; i < m_sizeX; i++)
+	for (int i = 0; i < m_tiles.size(); i++)
 	{
-		for (int j = 0; j < m_sizeY; j++)
+		for (int j = 0; j < m_tiles[0].size(); j++)
 		{
-			
-			if(m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
-				m_tiles[i][j]->getQuad().Draw();
+			if (m_tiles[i][j] != nullptr)
+			{
+				if (m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+					m_tiles[i][j]->getQuad().Draw();
+			}
 		}
 	}
 	m_wholeGrid.Draw();
 
 	m_roomCtrl.Draw();
+
+	/*for (int i = 0; i < m_sizeX; i++)
+	{
+		for (int j = 0; j < m_sizeY; j++)
+		{
+			if (m_tiles[i][j] != nullptr)
+			{
+				if (m_tiles[i][j]->getQuad().getColor().x != 1.0f || m_tiles[i][j]->getIsInside())
+					m_tiles[i][j]->getQuad().Draw();
+			}
+		}
+	}
+	m_wholeGrid.Draw();
+
+	m_roomCtrl.Draw();*/
 }
 
 void Grid::PickTiles(Shape* selectionTile)
@@ -206,13 +223,14 @@ void Grid::PickTiles(Shape* selectionTile)
 				
 				// Boundcheck
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
-
+				if(m_tiles[indexX][indexY] != nullptr)
 				m_tiles[indexX][indexY]->getQuad().CheckPick();
 			}
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
 			for (int j = 0; j < m_tiles[i].size(); j++)
 			{
+				if (m_tiles[i][j] != nullptr)
 				m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
 			
 			}
@@ -226,8 +244,11 @@ void Grid::PickTiles(Shape* selectionTile)
 		{
 			for (int j = 0; j < m_tiles[i].size(); j++)
 			{
-				m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
-				m_tiles[i][j]->getQuad().CheckPick();
+				if (m_tiles[i][j] != nullptr)
+				{
+					m_tiles[i][j]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+					m_tiles[i][j]->getQuad().CheckPick();
+				}
 			}
 		}
 	}
@@ -298,6 +319,37 @@ RoomCtrl & Grid::getRoomCtrl()
 
 void Grid::Update(Camera * cam) {
 	m_roomCtrl.Update(cam);
+}
+
+void Grid::deleteTilesBetween(int xStart, int xEnd, int yStart, int yEnd)
+{
+	for (int i = xStart; i < (xStart + xEnd); i++)
+	{
+		for (int k = yStart; k < (yStart + yEnd); k++)
+		{
+			delete m_tiles[i][k];
+			m_tiles[i][k] = nullptr;
+		}
+	}
+}
+
+void Grid::addTilesBetween(int xSize, int ySize,std::vector<XMFLOAT3> tilePositions, Mesh* mesh)
+{
+	int tileCounter = 0; 
+	for (int i = 0; i < xSize; i++)
+	{
+		for (int k = 0; k < ySize; k++)
+		{
+			tileCounter++; 
+			m_tiles[i][k] = new Tile(32, 32, mesh); 
+			m_tiles[i][k]->setMesh(mesh); 
+			m_tiles[i][k]->setPosX(tilePositions.at(tileCounter).x);
+			m_tiles[i][k]->setPosY(tilePositions.at(tileCounter).z); 
+			m_tiles[i][k]->setInside(false); 
+			m_tiles[i][k]->setIsWalkeble(true); 
+			m_tiles[i][k]->setRoom(nullptr); 
+		}
+	}
 }
 
 void Grid::CreateWalls(Mesh * mesh)

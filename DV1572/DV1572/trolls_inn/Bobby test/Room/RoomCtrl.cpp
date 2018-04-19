@@ -303,6 +303,21 @@ void RoomCtrl::Update(Camera * cam)
 	}
 }
 
+std::vector<Wall*>& RoomCtrl::getRoomCtrlWalls()
+{
+	return m_walls; 
+}
+
+std::vector<XMINT2> RoomCtrl::getRoomWallsIndex()
+{
+	return m_roomWallsIndex; 
+}
+
+std::vector<Room*> RoomCtrl::getRoomVector()
+{
+	return m_rooms; 
+}
+
 void RoomCtrl::Draw()
 {
 	for (int i = 0; i < m_walls.size(); i++)
@@ -319,6 +334,7 @@ void RoomCtrl::Draw()
 
 void RoomCtrl::CreateWalls()
 {
+	int wallCounter = 0; 
 	if (this->m_wall == nullptr)
 	{
 		std::cout << "no mesh boi" << std::endl;
@@ -329,6 +345,7 @@ void RoomCtrl::CreateWalls()
 	{
 		for (int x = 0; x < m_rooms[i]->getSizeX(); x++)
 		{
+			int roomIndex = i; 
 			Tile * t = m_rooms[i]->getTiles(x,0);
 			Tile * t2;
 			if (!t->isWall(Direction::down))
@@ -356,6 +373,9 @@ void RoomCtrl::CreateWalls()
 					wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY())));
 					m_rooms[i]->addWall(wall, Direction::down);
 					this->m_walls.push_back(wall);
+
+					//Set wall values. 
+					m_roomWallsIndex.push_back(XMINT2(i, wallCounter++)); 
 				}
 			}
 			else {
@@ -386,6 +406,9 @@ void RoomCtrl::CreateWalls()
 					wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY())));
 					m_rooms[i]->addWall(wall, Direction::up);
 					this->m_walls.push_back(wall);
+					
+					//Set wall values. 
+					m_roomWallsIndex.push_back(XMINT2(i, wallCounter++));
 				}
 			}
 			else {
@@ -429,6 +452,9 @@ void RoomCtrl::CreateWalls()
 					wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
 					m_rooms[i]->addWall(wall, Direction::left);
 					this->m_walls.push_back(wall);
+
+					//Set wall values. 
+					m_roomWallsIndex.push_back(XMINT2(i, wallCounter++));
 				}
 			}
 			else
@@ -463,6 +489,9 @@ void RoomCtrl::CreateWalls()
 					wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
 					m_rooms[i]->addWall(wall, Direction::right);
 					this->m_walls.push_back(wall);
+
+					//Set wall values
+					m_roomWallsIndex.push_back(XMINT2(i, wallCounter++));
 				}
 			}
 			else
@@ -661,6 +690,17 @@ int RoomCtrl::getNrOfRooms() const
 	return m_rooms.size(); 
 }
 
+void RoomCtrl::removeWalls(Room * roomPtr)
+{
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		if (m_rooms[i] == roomPtr)
+		{
+			delete m_rooms[i]->getAllWalls()->at(i);
+		}
+	}
+}
+
 std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 {
 	m_tempPath.clear();
@@ -707,6 +747,17 @@ XMINT2 RoomCtrl::getRoomLeavePos(Room * startRoom, int roomDstIndex)
 Room * RoomCtrl::getRoomAt(int index)
 {
 	return m_rooms[index];
+}
+
+int RoomCtrl::getRoomIndex(Room * roomPtr)
+{
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		if (m_rooms[i] == roomPtr)
+		{
+			return i; 
+		}
+	}
 }
 
 Direction RoomCtrl::getDirection(Tile * t1, Tile * t2)

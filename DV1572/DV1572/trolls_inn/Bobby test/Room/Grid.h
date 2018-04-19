@@ -65,6 +65,9 @@ public:
 	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
 	void	Update(Camera * cam);
 
+	void deleteTilesBetween(int xStart, int xEnd, int yStart, int yEnd); 
+	void addTilesBetween(int sizeX, int sizeY, std::vector<XMFLOAT3> tilePositions, Mesh* mesh); 
+
 	void	Draw();
 
 	void	PickTiles(Shape* selectionTile = nullptr);

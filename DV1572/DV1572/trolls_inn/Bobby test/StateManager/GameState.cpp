@@ -483,32 +483,35 @@ void GameState::_buildInput()
 	}
 	else if (m_buildStage == BuildStage::End)
 	{
-		XMFLOAT3 s = m_startTile->getPosition();
-		XMFLOAT3 e = m_selectedTile->getPosition();
+		if (m_startTile != nullptr && m_selectedTile != nullptr)
+		{
+			XMFLOAT3 s = m_startTile->getPosition();
+			XMFLOAT3 e = m_selectedTile->getPosition();
 
-		XMINT2 start;
-		start.x = static_cast<int>(s.x + 0.5f);
-		start.y = static_cast<int>(s.z + 0.5f);
-		XMINT2 end;
-		end.x = static_cast<int>(e.x + 0.5f);
-		end.y = static_cast<int>(e.z + 0.5f);
+			XMINT2 start;
+			start.x = static_cast<int>(s.x + 0.5f);
+			start.y = static_cast<int>(s.z + 0.5f);
+			XMINT2 end;
+			end.x = static_cast<int>(e.x + 0.5f);
+			end.y = static_cast<int>(e.z + 0.5f);
 
-		if (start.x > end.x)
-			std::swap(start.x, end.x);
-		if (start.y > end.y)
-			std::swap(start.y, end.y);
-		this->grid->ResetTileColor(start, end);
+			if (start.x > end.x)
+				std::swap(start.x, end.x);
+			if (start.y > end.y)
+				std::swap(start.y, end.y);
+			this->grid->ResetTileColor(start, end);
 
-		//This makes it a size.
-		//this will change the end point
-		end.x -= start.x - 1;
-		end.y -= start.y - 1;
+			//This makes it a size.
+			//this will change the end point
+			end.x -= start.x - 1;
+			end.y -= start.y - 1;
 
-		m_buildStage = BuildStage::None;
-		m_startTile = nullptr;
-		m_selectedTile = nullptr;
-		m_roomPlaceable = false;
-		this->grid->AddRoom(start, end, m_selectedRoomType);
+			m_buildStage = BuildStage::None;
+			m_startTile = nullptr;
+			m_selectedTile = nullptr;
+			m_roomPlaceable = false;
+			this->grid->AddRoom(start, end, m_selectedRoomType);
+		}
 	}
 }
 
@@ -527,96 +530,62 @@ void GameState::_roomDeletionInput()
 		{
 			if (m_startTile)
 			{
-				//Get the room and the tile belonging to it. 
 				Tile * t = grid->getTile(m_startTile->getPosition().x + 0.5f, m_startTile->getPosition().z + 0.5f);
-				std::cout << "AFTER:" << std::endl;
-				Room* roomPtr = t->getRoom(); 
+				Room* roomPtr = t->getRoom();
 
 				if (roomPtr != nullptr)
 				{
-					for (int i = 0; i < roomPtr->getTiles().size(); i++)
+					int nrOfTilesX = roomPtr->getTiles().size();
+					int nrOfTilesY = roomPtr->getTiles().at(0).size();
+
+					//Delete from world grid
+					grid->deleteTilesBetween(roomPtr->getTiles()[0][0]->getPosX(), nrOfTilesX,
+						roomPtr->getTiles()[0][0]->getPosY(), nrOfTilesY);
+
+					std::vector<DirectX::XMFLOAT3> tilePositions;
+					tilePositions.resize(nrOfTilesX * nrOfTilesY);
+
+					for (int i = 0; i < nrOfTilesX; i++)
 					{
-						for (int k = 0; k < roomPtr->getTiles().at(i).size(); k++)
+						for (int k = 0; k < nrOfTilesY; k++)
 						{
-							std::cout << "Inside: " << roomPtr->getTiles().at(i).at(k)->getIsInside() << std::endl;
-							std::cout << "Walkable: " << roomPtr->getTiles().at(i).at(k)->getIsWalkeble() << std::endl;
-							std::cout << "Room: " << roomPtr->getTiles().at(i).at(k)->getRoom() << std::endl;
+							if (roomPtr->getTiles()[i][k] != nullptr)
+							{
+								tilePositions.push_back(XMFLOAT3(roomPtr->getTiles()[i][k]->getPosX(), 0, roomPtr->getTiles()[i][k]->getPosY()));
+							}
 						}
+					}
+
+					//Add new tiles and set them to grass. 
+					grid->addTilesBetween(roomPtr->getSizeX(), roomPtr->getSizeY(), tilePositions, &m);
+
+					//Wall delete ////////////////////////////////////////////////////////////////////////////////////////////////
+
+					//Get the wall vector,
+					std::vector<Wall*> tempWallVector = grid->getRoomCtrl().getRoomCtrlWalls(); 
+					std::vector<XMINT2> roomWallIndex = grid->getRoomCtrl().getRoomWallsIndex(); 
+					int roomIndex = grid->getRoomCtrl().getRoomIndex(roomPtr);
+					int firstWallOfRoomIndex = 0; 
+					
+					//Use the value stored in y in roomWallindex to find out how many steps there are to the last well of the room. 
+					for (int i = 0; i < tempWallVector.size() && firstWallOfRoomIndex == 0; i++)
+					{
+						if (roomWallIndex.at(i).x == roomIndex)
+						{
+							firstWallOfRoomIndex = i; 
+						}
+					}
+
+					//Use the index of the first wall and the step count to the last wall of the room to delete the correct walls from the vector. 
+					for (int i = firstWallOfRoomIndex; i < (firstWallOfRoomIndex + roomWallIndex.at(firstWallOfRoomIndex).y); i++)
+					{
+						delete tempWallVector.at(i); 
+						tempWallVector.at(i) = nullptr;
+						tempWallVector.resize(tempWallVector.size() - roomWallIndex.at(firstWallOfRoomIndex).y); 
 					}
 				}
-				Room* tempRoom = t->getRoom();
-				//Change tiles of room into grass tile. 
-				if (t->getRoom() != nullptr)
-				{
-					for (int i = 0; i < t->getRoom()->getTiles().size(); i++)
-					{
-						for (int k = 0; k < t->getRoom()->getTiles().at(i).size(); k++)
-						{
-							t->getRoom()->getTiles().at(i).at(k)->setMesh(&rect);
-						}
-					}
-
-					//Delete walls. 
-					std::vector<Wall*>* tempVector = t->getRoom()->getAllWalls();
-					for (int i = 0; i < tempVector->size(); i++)
-					{
-						if (!tempVector->at(i)->getIsInner())
-						{
-							grid->getRoomCtrl().removeWall(tempVector->at(i));
-						}
-						else
-						{
-							tempVector->at(i)->setIsInner(false);
-						}
-					}
-					//Remove connections to adjacent rooms
-					for (int i = 0; i < tempRoom->getAdjasent()->size(); i++)
-					{
-						tempRoom->getAdjasent()->at(i) = nullptr;
-						tempRoom->getAdjasent()->erase(tempRoom->getAdjasent()->begin() + i);
-					}
-
-					//Remove connections between room and tiles
-					for (int i = 0; i < tempRoom->getTiles().size(); i++)
-					{
-						for (int k = 0; k < tempRoom->getTiles()[i].size(); k++)
-						{
-							if (tempRoom->getTiles()[i][k] != nullptr)
-							{
-								tempRoom->getTiles()[i][k]->setInside(false);
-								for (int j = 0; j < 4; j++)
-								{
-									tempRoom->getTiles()[i][k]->setWallSpotPopulated(static_cast<Direction>(j), false);
-									//m_tiles[i][k]->setTileWalls(static_cast<Direction>(i), nullptr);
-								}
-								//tempRoom->getTiles()[i][k]->setRoom(nullptr);
-							}
-						}
-					}
-					//Delete room and all connections.
-					//DX::g_lightQueue.erase(DX::g_lightQueue.begin() + tempRoom->getRoomIndex() - 1); 
-					std::cout << "AFTER:" << std::endl;
-					if (roomPtr != nullptr)
-					{
-						for (int i = 0; i < roomPtr->getTiles().size(); i++)
-						{
-							for (int k = 0; k < roomPtr->getTiles().at(i).size(); k++)
-							{
-								std::cout << "Inside: " << roomPtr->getTiles().at(i).at(k)->getIsInside() << std::endl;
-								std::cout << "Walkable: " << roomPtr->getTiles().at(i).at(k)->getIsWalkeble() << std::endl;
-								std::cout << "Room: " << roomPtr->getTiles().at(i).at(k)->getRoom() << std::endl;
-							}
-						}
-					}
-
-					grid->getRoomCtrl().removeRoom(tempRoom);
-					grid->getRoomCtrl().CreateWalls(); 
-				}	
-				else
-					m_hasBeenDeleted = true;
-			}
-			else
 				m_hasBeenDeleted = true;
+			}
 		}
 
 		else if (m_roomDeletionStage == RoomDeletionStage::SelectionRoom && m_hasBeenDeleted)

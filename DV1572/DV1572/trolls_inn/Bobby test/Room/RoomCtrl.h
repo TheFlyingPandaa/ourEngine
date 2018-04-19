@@ -31,6 +31,7 @@ private:
 
 	std::vector<std::vector<int>> m_roomConnections;
 	std::vector<int> m_tempPath;
+	std::vector<XMINT2> m_roomWallsIndex; 
 	
 	bool				_checkLegal(Room * room);
 	void				_makeRoomConnection(int source, int destination);
@@ -53,6 +54,11 @@ public:
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force = false);
 	void				Update(Camera * cam);
+
+	std::vector<Wall*>&  getRoomCtrlWalls(); 
+	std::vector<XMINT2> getRoomWallsIndex(); 
+	std::vector<Room*>	getRoomVector(); 
+
 	void				Draw();
 
 	//This is a expensiv function many many many for loops
@@ -69,6 +75,7 @@ public:
 
 	int					getNrOfRooms() const; 
 
+	void				removeWalls(Room* roomPtr); 
 
 	Room*				getMainRoom() const;
 	XMINT2				getMainDoorPosEnter() const;
@@ -78,6 +85,7 @@ public:
 	XMINT2				getRoomLeavePos(Room* startRoom, int roomDstIndex);
 
 	Room*				getRoomAt(int index);
+	int					getRoomIndex(Room * roomPtr); 
 
 	Direction			getDirection(Tile*, Tile*);
 	XMINT2				getDirection2i(Tile*, Tile*);

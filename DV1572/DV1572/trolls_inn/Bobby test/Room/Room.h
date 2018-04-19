@@ -105,6 +105,8 @@ public:
 	virtual std::vector<Wall*>*	getAllWalls();
 	virtual std::vector<Wall*>*	getWall(Direction dir);
 	
+	void setUpDownLeftRightToNull(); 
+	void removeWalls(); 
 
 	virtual void		setHasDoor(Direction, bool);
 	virtual bool		getHasDoor(Direction) const;

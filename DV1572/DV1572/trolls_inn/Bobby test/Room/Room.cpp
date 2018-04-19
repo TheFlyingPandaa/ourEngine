@@ -81,14 +81,13 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 			tiles[x][y]->setInside(true);
 			tiles[x][y]->setIsWalkeble(true);
 			tiles[x][y]->setRoom(this);
-
 		}
 	}
 }
 
 Room::~Room()
 {
-	for (auto& tile : m_tiles)
+	/*for (auto& tile : m_tiles)
 	{
 		for (auto& t : tile)
 		{
@@ -117,7 +116,7 @@ Room::~Room()
 	for (auto& w : m_allWalls)
 	{
 		w = nullptr;
-	}
+	}*/
 }
 
 std::vector<std::vector<Tile*>> Room::getTiles() const
@@ -478,6 +477,46 @@ std::vector<Wall*>* Room::getWall(Direction dir)
 	default:
 		return nullptr;
 		break;
+	}
+}
+
+void Room::setUpDownLeftRightToNull()
+{
+	for (int i = 0; i < up.size(); i++)
+	{
+		up[i] = nullptr; 
+	}
+	for (int i = 0; i < down.size(); i++)
+	{
+		down[i] = nullptr;
+	}
+	for (int i = 0; i < left.size(); i++)
+	{
+		left[i] = nullptr;
+	}
+	for (int i = 0; i < right.size(); i++)
+	{
+		right[i] = nullptr;
+	}
+}
+
+void Room::removeWalls()
+{
+	for (int i = 0; i < up.size(); i++)
+	{
+		delete up[i]; 
+	}
+	for (int i = 0; i < down.size(); i++)
+	{
+		delete down[i];
+	}
+	for (int i = 0; i < left.size(); i++)
+	{
+		delete left[i];
+	}
+	for (int i = 0; i < right.size(); i++)
+	{
+		delete right[i];
 	}
 }
 
