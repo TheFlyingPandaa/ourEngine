@@ -46,6 +46,7 @@ private:
 	static int s_index;
 	int	m_index;
 	Object3D m_AABB;
+	Object3D m_AABB2;
 	void _loadStatic();
 	void _initAABB(int x, int y, int sx, int sy, int level = 0);
 	void _createLight(int x, int y, int sx, int sy, int level = 0);

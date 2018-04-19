@@ -7,13 +7,14 @@ int Room::s_index = 1;
 void Room::_loadStatic()
 {
 	Room::s_AABB.LoadModel("trolls_inn/Resources/box.obj");
+	Room::s_isLoaded = true;
 }
 
 void Room::_initAABB(int x, int y, int sx, int sy, int level)
 {
 	m_AABB.setMesh(&s_AABB);
-	m_AABB.setPos(x + ((float)sx / 2.0f), (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f));
-	m_AABB.setScale(static_cast<float>(sx), 2.01f, static_cast<float>(sy));
+	m_AABB.setPos(x + ((float)sx / 2.0f) + 0.001, (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f) - 0.001);
+	m_AABB.setScale(static_cast<float>(sx) + 0.05, 2.1f, static_cast<float>(sy) + 0.05);
 }
 
 void Room::_createLight(int x, int y, int sx, int sy, int level)

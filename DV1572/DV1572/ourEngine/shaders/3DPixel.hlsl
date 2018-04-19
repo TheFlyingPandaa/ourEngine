@@ -1,4 +1,4 @@
-SamplerState sampAni;
+SamplerState sampAni : register(s0);
 
 Texture2D tDiffuse : register(t0);
 Texture2D tNormal : register(t1);

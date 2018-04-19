@@ -554,8 +554,8 @@ void Window::_loadShadowBuffers()
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = m_width;
-	texDesc.Height = m_height;
+	texDesc.Width = m_width * 1.0;
+	texDesc.Height = m_height * 1.0;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -737,6 +737,7 @@ void Window::_setSamplerState()
 {
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -751,6 +752,23 @@ void Window::_setSamplerState()
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	DX::g_device->CreateSamplerState(&samplerDesc, &m_samplerState);
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+
+	D3D11_SAMPLER_DESC samplerDescPoint;
+	samplerDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDescPoint.MipLODBias = 0.0f;
+	samplerDescPoint.MaxAnisotropy = 1;
+	samplerDescPoint.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDescPoint.BorderColor[0] = 0;
+	samplerDescPoint.BorderColor[1] = 0;
+	samplerDescPoint.BorderColor[2] = 0;
+	samplerDescPoint.BorderColor[3] = 0;
+	samplerDescPoint.MinLOD = 0;
+	samplerDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
+	DX::g_device->CreateSamplerState(&samplerDescPoint, &m_samplerStatePoint);
+	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
 }
 
 void Window::_createConstantBuffers()
@@ -1424,6 +1442,7 @@ void Window::FullReset()
 	DX::g_deviceContext->ClearState();
 	_setViewport();
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
 }
 
 Shape * Window::getPicked(Camera* c)

@@ -186,7 +186,7 @@ void GameState::_init()
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 	door.LoadModel("trolls_inn/Resources/door/Door.obj");
 	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	this->m.LoadModel("trolls_inn/Resources/Wall2.obj");
+	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
 

@@ -1,3 +1,4 @@
+SamplerState SampleType : register(s0);
 Texture2D tDiffuse : register(t0);
 
 cbuffer SUN_BUFFER : register (b2)
@@ -8,7 +9,6 @@ cbuffer SUN_BUFFER : register (b2)
 	float4x4 sunViewProjection;
 }
 
-SamplerState SampleType;
 
 struct INPUT {
 	float4 pos : SV_POSITION;

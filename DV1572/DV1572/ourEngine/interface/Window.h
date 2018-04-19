@@ -48,6 +48,7 @@ private:
 	DirectX::XMMATRIX		m_projectionMatrix; 
 
 	ID3D11SamplerState*		m_samplerState;
+	ID3D11SamplerState*		m_samplerStatePoint;
 
 	ID3D11Buffer*			m_meshConstantBuffer;
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
