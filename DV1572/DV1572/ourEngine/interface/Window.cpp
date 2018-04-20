@@ -268,6 +268,7 @@ HRESULT Window::_initDirect3DContext()
 		//we are creating the standard depth buffer here.
 		_createDepthBuffer();
 		_loadShadowBuffers();
+		_loadWindowBuffers();
 		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);	//As a standard we set the rendertarget. But it will be changed in the prepareGeoPass
 		pBackBuffer->Release();
 	}
@@ -708,7 +709,7 @@ void Window::_loadWindowBuffers()
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
-	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_windowDepthTexture);
+	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_depthBufferTexWindow);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	dsvDesc.Flags = 0;
@@ -716,7 +717,7 @@ void Window::_loadWindowBuffers()
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Texture2D.MipSlice = 0;
 
-	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexWindow, &dsvDesc, &m_depthStencilViewWindow);
 
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -725,7 +726,94 @@ void Window::_loadWindowBuffers()
 	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 
-	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexWindow, &srvDesc, &m_windowDepthTexture);
+}
+
+void Window::_windowPass(Camera * c)
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilViewWindow);
+
+	D3D11_RASTERIZER_DESC wfdesc;
+	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	wfdesc.FillMode = D3D11_FILL_SOLID;
+	wfdesc.CullMode = D3D11_CULL_BACK;
+	wfdesc.DepthClipEnable = true;
+	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+	DX::g_deviceContext->RSSetState(m_WireFrame);
+
+	m_viewport.Height = 2048;
+	m_viewport.Width = 2048;
+	m_viewport.MinDepth = 0.f;
+	m_viewport.MaxDepth = 1.f;
+
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
+
+	static XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
+
+	const XMVECTORF32 eye = { DX::g_lightPos.x, DX::g_lightPos.y, DX::g_lightPos.z, 0.0f };
+	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
+	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+	SHADOW_MATRIX_BUFFER meshBuffer;
+
+	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(lightPerspectiveMatrix));
+
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_windowsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
+	DX::g_deviceContext->Unmap(m_windowsBuffer, 0);
+
+	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_windowsBuffer);
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+	for (auto& instance : DX::g_instanceGroupWindows)
+	{
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
+
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
+
+
 }
 
 void Window::_initFonts()
@@ -1153,6 +1241,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	DX::g_deviceContext->PSSetShaderResources(4, 1, &m_shadowDepthTexture);
+	DX::g_deviceContext->PSSetShaderResources(5, 1, &m_windowDepthTexture);
 	DX::g_deviceContext->PSSetConstantBuffers(9, 1, &m_shadowBuffer);
 	
 	//Send lights to GPU
@@ -1437,6 +1526,7 @@ void Window::Clear()
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewWindow, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
 	//DX::g_lightsPos.clear();
 	//DX::g_lightsDir.clear();
@@ -1457,6 +1547,7 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
+	_windowPass(c);
 	_prepareShadow();
 	_shadowPass(c);
 	if (DEBUG == 1)

@@ -6,6 +6,7 @@ Texture2D tNormal : register(t1);
 Texture2D tPosition : register(t2);
 Texture2D tLIndex : register(t3);
 Texture2D tShadow : register(t4);
+Texture2D tWindow : register(t5);
 
 cbuffer CAMERA_POS_BUFFER : register(b1)
 {
@@ -87,11 +88,12 @@ float4 main(Input input) : SV_Target
 	shadowTexCoords.x = 0.5f + (posLightH.x / posLightH.w * 0.5f);
 	shadowTexCoords.y = 0.5f - (posLightH.y / posLightH.w * 0.5f);
 	float pixelDepth = posLightH.z / posLightH.w;
-
+	float window = 1.0f;
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
 		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
 		pixelDepth > 0)
 	{
+
 		float margin = acos(saturate(dot(normal,sunLightToObject)));
 
 		float epsilon = 0.001 / margin;
@@ -111,9 +113,13 @@ float4 main(Input input) : SV_Target
 		shadowCoeff /= 36.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
 
+		window = float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords, pixelDepth + epsilon));
+
 	}
 	
-
+	window = 1 - window;
+	if (shadowCoeff == 0.2)
+		shadowCoeff = window;
 	finalColorForSun = ambient + (diffuse + finalSpec) * sunColor.rgb * shadowCoeff;
 	
 	float3 finalColorForPointLights = float3(0,0,0);
