@@ -226,6 +226,11 @@ void Shape::CastShadow()
 	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);
 }
 
+void Shape::WindowDraw()
+{
+	DX::submitToInstance(this, DX::g_instanceGroupWindows);
+}
+
 const DirectX::XMMATRIX & Shape::getWorld() const
 {
 	return m_worldMatrix; 

@@ -26,9 +26,12 @@ bool Wall::getIsDoor() const
 
 void Wall::Draw()
 {
-	//TODO: Remove Debug
-	m_wall.Draw();
-		//m_wall.Scale(1, .2f, 1);
+	m_wall.Draw();	
+}
+
+void Wall::WindowDraw()
+{
+	m_wall.WindowDraw();
 }
 
 bool Wall::getIsInner() const

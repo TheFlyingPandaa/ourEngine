@@ -35,6 +35,7 @@ public:
 	bool	getIsDoor() const;
 
 	void	Draw();
+	void	WindowDraw();
 
 	bool	getIsInner() const;
 	void	setIsInner(bool isInner);

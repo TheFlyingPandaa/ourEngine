@@ -15,7 +15,7 @@ GameTime::GameTime()
 	m_totalSeconds = 0; 
 	m_divider = 255.0f; 
 	m_seconds = 0;
-	m_currentTime = NOONTOEVENING;
+	m_currentTime = MORNINGTONOON;
 	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 };
 	m_sunStartInterpolate = m_sunCurrentFinalColor;
 	m_sunRotationStart = m_sunFinalRotation;
@@ -33,7 +33,7 @@ GameTime::GameTime()
 	m_sunRotationStart = DirectX::XMVECTOR{ 0,1,0 };
 	m_sunRotationTarget = DirectX::XMVECTOR{ 0,0,0 };
 
-	DirectX::XMFLOAT3 tempPos = { 10.0f,0.0f,0.0f };
+	DirectX::XMFLOAT3 tempPos = { 0.0f,10.0f,0.0f };
 	m_sunPos = XMLoadFloat3(&tempPos);
 	//DirectX::XMStoreFloat3(&tempPos, m_sunPos);
 	m_sunAngle = 0.0f;
@@ -61,108 +61,95 @@ void GameTime::updateCurrentTime(float refreshRate)
 	m_seconds += m_currentClockValue; 
 	m_sun.CreatesShadows();
 
-	m_currentAngle += m_currentClockValue * 0.01;
-	if (m_currentAngle > 180.0) m_currentAngle = 0;
-	m_fFinalColor = XMFLOAT4A(1.0f, 1.0f, 1.0f, 1.0f);
+	switch (m_currentTime)
+	{
+		//06:00 -> 12:00
+	case MORNINGTONOON:
+		if (m_colorScaleFactor < 1.0f)
+		{
 
-	//if (DEBUG == 0)
-	//{
-	//	switch (m_currentTime)
-	//	{
-	//		//Fr�n 06:00 -> 12:00
-	//	case MORNINGTONOON:
-	//		if (m_colorScaleFactor < 1.0f)
-	//		{
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
+			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
+			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
+			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
 
-	//			m_sunTargetInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
-	//			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
-	//			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
-	//			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
+			XMFLOAT3 targetPosition = { 16.0f, 10.0f, 16.0f };
+			XMFLOAT3 startPosition = { 0, 10, 0 };
+			XMVECTOR result = XMVectorLerp(XMLoadFloat3(&startPosition), XMLoadFloat3(&targetPosition), m_colorScaleFactor);
+			m_sunPos = result;
+			XMStoreFloat3(&targetPosition, result);
+		}
+		else
+		{
+			m_seconds = 0;
+			m_currentTime = NOONTOEVENING;
+			m_sunStartInterpolate = m_sunCurrentFinalColor;
+			XMFLOAT3 startNext(16, 10, 16);
+			m_sunPos = XMLoadFloat3(&startNext);
+			m_colorScaleFactor = 0.0f;
+		}
+		break;
 
-	//			m_sunAngleTarget = 90.0f;
-	//			XMFLOAT3 startAngle = { m_sunAngle, m_sunAngle, m_sunAngle };
-	//			XMFLOAT3 targetAngle = { m_sunAngleTarget,m_sunAngleTarget ,m_sunAngleTarget };
-	//			m_currentAngle = XMVectorGetX(XMVectorLerp(XMLoadFloat3(&startAngle), XMLoadFloat3(&targetAngle), m_colorScaleFactor));
+		//Fr�n 12:00 -> 17:00
+	case NOONTOEVENING:
+		if (m_colorScaleFactor < 1.0f)
+		{
 
+			m_sunTargetInterpolate = DirectX::XMVECTOR{ 230.0f / m_divider,120.0f / m_divider, 120.0f / m_divider };
+			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
+			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
+			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
 
-	//		}
-	//		else
-	//		{
-	//			m_seconds = 0;
-	//			m_currentTime = NOONTOEVENING;
-	//			m_sunStartInterpolate = m_sunCurrentFinalColor;
-	//			m_sunRotationStart = m_sunFinalRotation;
-	//			m_colorScaleFactor = 0.0f;
-	//			m_sunAngle = 90.0f;
-	//		}
-	//		break;
+			XMFLOAT3 targetPosition = { 20, 10.0f, 20.0f };
+			XMFLOAT3 startPosition = { 16, 10, 16 };
+			XMVECTOR result = XMVectorLerp(XMLoadFloat3(&startPosition), XMLoadFloat3(&targetPosition), m_colorScaleFactor);
+			XMStoreFloat3(&targetPosition, result);
+			m_sunPos = result;
+		}
+		else
+		{
+			m_seconds = 0;
+			m_currentTime = EVENINGTONIGHT;
+			m_sunStartInterpolate = m_sunCurrentFinalColor;
+			XMFLOAT3 startNext(20, 10, 20);
+			m_sunPos = XMLoadFloat3(&startNext);
+			m_colorScaleFactor = 0.0f;
+		}
+	break;
+	//Fr�n 17:00 -> 21:00
+case EVENINGTONIGHT:
+	if (m_colorScaleFactor < 1.0f)
+	{
+		//std::cout << "Evening to Night" << std::endl;
+		m_sunTargetInterpolate = DirectX::XMVECTOR{ 90.0f / m_divider,70.0f / m_divider, 190.0f / m_divider };
+		m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
+		m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
+		DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
 
-	//		//Fr�n 12:00 -> 17:00
-	//	case NOONTOEVENING:
-	//		if (m_colorScaleFactor < 1.0f)
-	//		{
-	//			//std::cout << "Noon to Evening" << std::endl;
+		XMFLOAT3 targetPosition = { 32.0f, 10.0f, 32.0f };
+		XMFLOAT3 startPosition = { 20, 10, 20 };
+		XMVECTOR result = XMVectorLerp(XMLoadFloat3(&startPosition), XMLoadFloat3(&targetPosition), m_colorScaleFactor);
+		XMStoreFloat3(&targetPosition, result);
+		m_sunPos = result;
+		
 
-	//			m_sunTargetInterpolate = DirectX::XMVECTOR{ 230.0f / m_divider,120.0f / m_divider, 120.0f / m_divider };
-	//			m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
-	//			m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
-	//			DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
+	}
+	else
+	{
 
-	//			m_sunAngleTarget = 135.0f;
-	//			XMFLOAT3 startAngle = { m_sunAngle, m_sunAngle, m_sunAngle };
-	//			XMFLOAT3 targetAngle = { m_sunAngleTarget,m_sunAngleTarget ,m_sunAngleTarget };
-	//			m_currentAngle = XMVectorGetX(XMVectorLerp(XMLoadFloat3(&startAngle), XMLoadFloat3(&targetAngle), m_colorScaleFactor));
+		m_seconds = 0;
+		m_currentTime = MORNINGTONOON;
+		m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
+		XMFLOAT3 startNext(0, 10, 0);
+		m_sunPos = XMLoadFloat3(&startNext);
+		m_totalSeconds = 0;
+		m_minutes = 0;
+		m_colorScaleFactor = 0.0f;
+	}
+		break;
+	}
 
-	//		
-	//	}
-	//	else
-	//	{
-	//		m_seconds = 0;
-	//		m_currentTime = EVENINGTONIGHT;
-	//		m_sunStartInterpolate = m_sunCurrentFinalColor;
-	//		m_sunRotationStart = m_sunFinalRotation;
-	//		m_sunAngle = 135.0f;
-	//		m_colorScaleFactor = 0.0f;
-	//	}
-	//	break;
-	//	//Fr�n 17:00 -> 21:00
-	//case EVENINGTONIGHT:
-	//	if (m_colorScaleFactor < 1.0f)
-	//	{
-	//		//std::cout << "Evening to Night" << std::endl;
-	//		m_sunTargetInterpolate = DirectX::XMVECTOR{ 90.0f / m_divider,70.0f / m_divider, 190.0f / m_divider };
-	//		m_colorScaleFactor = m_seconds / (6.0f * 60.0f);
-	//		m_sunCurrentFinalColor = DirectX::XMVectorLerp(m_sunStartInterpolate, m_sunTargetInterpolate, m_colorScaleFactor);
-	//		DirectX::XMStoreFloat4A(&m_fFinalColor, m_sunCurrentFinalColor);
-
-	//			m_sunAngleTarget = 180.0f;
-	//			XMFLOAT3 startAngle = { m_sunAngle, m_sunAngle, m_sunAngle };
-	//			XMFLOAT3 targetAngle = { m_sunAngleTarget,m_sunAngleTarget ,m_sunAngleTarget };
-	//			m_currentAngle = XMVectorGetX(XMVectorLerp(XMLoadFloat3(&startAngle), XMLoadFloat3(&targetAngle), m_colorScaleFactor));
-
-	//		}
-	//		else
-	//		{
-
-	//			m_seconds = 0;
-	//			m_currentTime = MORNINGTONOON;
-	//			m_sunStartInterpolate = DirectX::XMVECTOR{ 182.0f / m_divider,126.0f / m_divider,91.0f / m_divider };
-
-	//			m_totalSeconds = 0;
-	//			m_minutes = 0;
-	//			m_sunAngle = 0.0f;
-	//			m_colorScaleFactor = 0.0f;
-	//		}
-	//		break;
-	//	}
-
-	//}
-	//else if(DEBUG == 1)
-	//{
-	//	m_currentAngle = 90.0f; 
-	//	m_fFinalColor = XMFLOAT4A( 1.0f, 1.0f, 1.0f, 1.0f );
-	//}	
-	//m_cpyLightToGPU(); 
+	
 }
 
 GameTime::TIMEOFDAY GameTime::getTimePeriod()
@@ -194,7 +181,11 @@ void GameTime::m_cpyLightToGPU()
 	
 	m_sun.setColor(m_fFinalColor);
 	m_sunBuffer.color = m_sun.getColor(); 
-
+	XMFLOAT3 sunPos;
+	XMStoreFloat3(&sunPos, m_sunPos);
+	DX::g_lightPos.x = sunPos.x;
+	DX::g_lightPos.y = sunPos.y;
+	DX::g_lightPos.z = sunPos.z;
 		
 	XMMATRIX rot = XMMatrixRotationZ(XMConvertToRadians(m_currentAngle));
 		

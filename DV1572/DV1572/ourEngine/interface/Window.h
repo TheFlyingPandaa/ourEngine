@@ -97,6 +97,14 @@ private:
 	ID3D11Buffer		*	m_shadowBuffer;
 	ID3D11ShaderResourceView * m_shadowDepthTexture = nullptr;
 	XMMATRIX				m_shadowProjMatrix;
+
+	// WindowPass
+	ID3D11DepthStencilView* m_depthStencilViewWindow;
+	ID3D11Texture2D*		m_depthBufferTexWindow;
+	ID3D11Buffer		*	m_windowsBuffer;
+	// Use the same shadow vertex and pixel shader
+	ID3D11ShaderResourceView * m_windowDepthTexture;
+
 	//DEBUG
 	ID3D11RasterizerState*	m_WireFrame;
 	bool					m_WireFrameDebug = false;;
@@ -154,6 +162,10 @@ private:
 	void	_loadShadowBuffers();
 	void	_prepareShadow();
 	void	_shadowPass(Camera* c);
+
+	//Window
+	void	_loadWindowBuffers();
+	void	_windowPass(Camera* c);
 
 	void	_initFonts();
 	void	_drawText();

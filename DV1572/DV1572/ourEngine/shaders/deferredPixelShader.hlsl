@@ -59,7 +59,7 @@ float4 main(Input input) : SV_Target
 
 
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	float3 sunLightToObject = normalize(-sunDir.xyz);
+	float3 sunLightToObject = normalize(sunLightPos.xyz  - wordPos);
 	//TODO:Hey Future me Remove this
 	//return float4(diffuseSample,1);
 	float3 diffuse = diffuseSample * max(dot(normal, sunLightToObject), 0.0f);
@@ -100,14 +100,15 @@ float4 main(Input input) : SV_Target
 		float width;
 		tShadow.GetDimensions(width, width);
 		float texelSize = 1.0f / width;
-		for (int x = -5; x <= 5; ++x)
+
+		for (int x = -3; x <= 3; ++x)
 		{
-			for (int y = -5; y <= 5; ++y)
+			for (int y = -3; y <= 3; ++y)
 			{
 				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
 			}
 		}
-		shadowCoeff /= 100.0f;
+		shadowCoeff /= 36.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
 
 	}
@@ -115,11 +116,6 @@ float4 main(Input input) : SV_Target
 
 	finalColorForSun = ambient + (diffuse + finalSpec) * sunColor.rgb * shadowCoeff;
 	
-
-
-
-
-
 	float3 finalColorForPointLights = float3(0,0,0);
 	float3 tempColor = float3(0,0,0);
 	float3 diffuseForPointLight = float3(0,0,0); 

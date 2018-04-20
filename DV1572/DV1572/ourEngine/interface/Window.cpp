@@ -37,6 +37,7 @@ std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
@@ -617,54 +618,28 @@ void Window::_prepareShadow()
 
 	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
 }
-#include <iostream>
+
 void Window::_shadowPass(Camera* c)
 {
 
-	XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
-		/*XMMatrixPerspectiveFovLH(
-		XM_PIDIV2,
-		1.0f,
-		1.f,
-		5000.f
-	);*/
+	static XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
 
-	// Point light at (20, 15, 20), pointed at the origin. POV up-vector is along the y-axis.
-	static float x = 16.0f;
-	
-	x += 1.0f/60.0f;
-	
-	//const XMVECTORF32 eye = { c->getPosition().x,c->getPosition().y,c->getPosition().z, 0.0f };
-	const XMVECTORF32 eye = { x, 10, x, 0.0f };
+	const XMVECTORF32 eye = { DX::g_lightPos.x, DX::g_lightPos.y, DX::g_lightPos.z, 0.0f };
 	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-	
-
-
-	//XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
-	//XMFLOAT4 lookAt = XMFLOAT4(16, 0, 16, 1);
-	//XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
-	//XMVECTOR p;
-	//XMVECTOR l;
-	////p = XMLoadFloat4(&pos);
-	////l = XMLoadFloat4(&lookAt);
-
-	////p = XMLoadFloat4(&DX::g_lightPos);
-	//l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
-	//XMVECTOR look = XMLoadFloat4(&lookAt);
-
-	//XMVECTOR u = XMLoadFloat4(&up);
-	//p =  look + (-l *20.0f);
-	//p = XMVectorSetW(p, 1.0f);
-	//
-
-	//XMMATRIX view = XMMatrixLookAtLH(p, look, u);
-	//
 	SHADOW_MATRIX_BUFFER meshBuffer;
 
 	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
 	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(lightPerspectiveMatrix));
+
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
+	DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
+
+	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 	for (auto& instance : DX::g_InstanceGroupsShadow)
@@ -679,16 +654,6 @@ void Window::_shadowPass(Camera* c)
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
-
-		D3D11_MAPPED_SUBRESOURCE dataPtr;
-		DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
-		DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
-		
-		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
-
-
-	
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -705,8 +670,6 @@ void Window::_shadowPass(Camera* c)
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		
-
 		Mesh* mesh = instance.shape->getMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
@@ -718,6 +681,51 @@ void Window::_shadowPass(Camera* c)
 	}
 
 	
+}
+
+void Window::_loadWindowBuffers()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(SHADOW_MATRIX_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_windowsBuffer);
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_windowDepthTexture);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = 0;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Texture2D.MipSlice = 0;
+
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
 }
 
 void Window::_initFonts()
@@ -930,10 +938,6 @@ void Window::_initGBuffer()
 
 void Window::_prepareGeometryPass()
 {
-	/*float c[4] = { 0.0f,0.0f,0.0f,1.0f };
-	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
-	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);*/
-
 	//The patchlist is used for tessellation, the tessellator takes patches not points
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
@@ -949,14 +953,6 @@ void Window::_prepareGeometryPass()
 	_initViewPort();
 	_setViewport();
 
-	//D3D11_RASTERIZER_DESC wfdesc;
-	//ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
-	//wfdesc.FillMode = D3D11_FILL_SOLID;
-	//wfdesc.CullMode = D3D11_CULL_FRONT;
-	//wfdesc.DepthClipEnable = true;
-	//DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
-	//DX::g_deviceContext->RSSetState(m_WireFrame);
-	////DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
 	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
 }
@@ -1432,6 +1428,11 @@ void Window::Clear()
 	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
 	DX::g_InstanceGroupsShadow.clear();
+
+	// WINDOW Test
+	DX::g_instanceGroupWindows.clear();
+	// end window test
+
 	DX::g_textQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);

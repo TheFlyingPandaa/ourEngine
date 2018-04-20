@@ -145,11 +145,7 @@ void GameState::Draw()
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
-	test.setScale(5);
-	test.setPos(2.5f, 2.5f, 2.5f);
-	test.setMesh(&box);
-	test.CastShadow();
-	test.Draw();
+
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 }

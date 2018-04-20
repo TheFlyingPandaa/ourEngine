@@ -1,7 +1,6 @@
 #include "RoomCtrl.h"
 
 
-
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 {
 	m_tileMesh[roomType] = mesh;
@@ -309,14 +308,21 @@ void RoomCtrl::Update(Camera * cam)
 		m_rooms[i]->Update(cam);
 	}
 }
-
+#include "../../../ourEngine/core/Dx.h"
 void RoomCtrl::Draw()
 {
+	
+	m_walls[10]->setScale(1, 0.6, 1);
+	
 	for (int i = 0; i < m_walls.size(); i++)
 	{	
-		//m_walls[i]->getObject3D().setInside();
+		if (i == 10)
+		{
+			m_walls[i]->WindowDraw();
+		}
 		m_walls[i]->Draw();
 	}
+
 	for (Room* r : m_rooms)
 	{
 		r->CastShadow();
@@ -676,7 +682,6 @@ Room * RoomCtrl::getMainRoom() const
 {
 	return m_entrance;
 }
-
 
 XMINT2 RoomCtrl::getMainDoorPosEnter() const
 {

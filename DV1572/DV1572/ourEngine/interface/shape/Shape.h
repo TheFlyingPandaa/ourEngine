@@ -71,6 +71,7 @@ public:
 
 	void CheckPick();
 	void	CastShadow();
+	void WindowDraw();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;
