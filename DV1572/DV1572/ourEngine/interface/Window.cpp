@@ -554,8 +554,8 @@ void Window::_loadShadowBuffers()
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = 4096;
-	texDesc.Height = 4096;
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -610,8 +610,8 @@ void Window::_prepareShadow()
 	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 	DX::g_deviceContext->RSSetState(m_WireFrame);
 
-	m_viewport.Height = 4096;
-	m_viewport.Width = 4096;
+	m_viewport.Height = 2048;
+	m_viewport.Width = 2048;
 	m_viewport.MinDepth = 0.f;
 	m_viewport.MaxDepth = 1.f;
 
@@ -621,7 +621,7 @@ void Window::_prepareShadow()
 void Window::_shadowPass(Camera* c)
 {
 
-	XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 500.0f);
+	XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
 		/*XMMatrixPerspectiveFovLH(
 		XM_PIDIV2,
 		1.0f,
@@ -630,13 +630,12 @@ void Window::_shadowPass(Camera* c)
 	);*/
 
 	// Point light at (20, 15, 20), pointed at the origin. POV up-vector is along the y-axis.
-	static float x = 0.0f;
-	if (Input::isKeyPressed('B'))
-		x += 0.01f;
-	if (Input::isKeyPressed('V'))
-		x -= 0.01f;
+	static float x = 16.0f;
+	
+	x += 1.0f/60.0f;
+	
 	//const XMVECTORF32 eye = { c->getPosition().x,c->getPosition().y,c->getPosition().z, 0.0f };
-	const XMVECTORF32 eye = { x, 20, 32, 0.0f };
+	const XMVECTORF32 eye = { x, 10, x, 0.0f };
 	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
