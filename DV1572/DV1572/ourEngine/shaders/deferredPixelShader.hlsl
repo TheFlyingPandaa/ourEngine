@@ -100,14 +100,14 @@ float4 main(Input input) : SV_Target
 		float width;
 		tShadow.GetDimensions(width, width);
 		float texelSize = 1.0f / width;
-		for (int x = -1; x <= 1; ++x)
+		for (int x = -5; x <= 5; ++x)
 		{
-			for (int y = -1; y <= 1; ++y)
+			for (int y = -5; y <= 5; ++y)
 			{
 				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
 			}
 		}
-		shadowCoeff /= 9.0f;
+		shadowCoeff /= 100.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
 
 	}
