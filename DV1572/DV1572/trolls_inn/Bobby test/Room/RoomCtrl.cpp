@@ -313,20 +313,21 @@ void RoomCtrl::Draw()
 {
 	
 	//16.5 0 7
-	m_walls[5]->getObject3D().setPos(16.5, 0.5, 7);
-	m_walls[5]->getObject3D().setScale(1, 0.5, 1);
+	/*m_walls[5]->getObject3D().setPos(16.5, 0.5, 7);
+	m_walls[5]->getObject3D().setScale(1, 0.5, 1);*/
 	for (int i = 0; i < m_walls.size(); i++)
 	{	
 		if (i == 5)
 		{
-			m_walls[5]->getObject3D().setPos(16.5, 0.5, 7);
-			m_walls[5]->getObject3D().setScale(1, 0.5, 1);
-			std::cout << m_walls[i]->getObject3D().getPosition().x << " " << m_walls[i]->getObject3D().getPosition().y << " " << m_walls[i]->getObject3D().getPosition().z << "\n";
+			/*m_walls[5]->getObject3D().setPos(16.5, 0.5, 7);
+			m_walls[5]->getObject3D().setScale(1, 0.5, 1);*/
+			//std::cout << m_walls[i]->getObject3D().getPosition().x << " " << m_walls[i]->getObject3D().getPosition().y << " " << m_walls[i]->getObject3D().getPosition().z << "\n";
 			m_walls[i]->WindowDraw();
-			m_walls[5]->getObject3D().setPos(16.5, 0, 7);
-			m_walls[5]->getObject3D().setScale(1, 1, 1);
+			/*m_walls[5]->getObject3D().setPos(16.5, 0, 7);
+			m_walls[5]->getObject3D().setScale(1, 1, 1);*/
 		}
-		m_walls[i]->Draw();
+		else
+			m_walls[i]->Draw();
 	}
 
 	for (Room* r : m_rooms)

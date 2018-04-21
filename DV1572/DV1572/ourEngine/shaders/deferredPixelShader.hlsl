@@ -85,10 +85,13 @@ float4 main(Input input) : SV_Target
 	float4 posLightH = mul(float4(wordPos, 1.0f), mul(view, projection));
 	float shadowCoeff = 1;
 	float2 shadowTexCoords;
-	shadowTexCoords.x = 0.5f + (posLightH.x / posLightH.w * 0.5f);
-	shadowTexCoords.y = 0.5f - (posLightH.y / posLightH.w * 0.5f);
-	float pixelDepth = posLightH.z / posLightH.w;
+	shadowTexCoords.x = 0.5f + (posLightH.x * 0.5f);
+	shadowTexCoords.y = 0.5f - (posLightH.y * 0.5f);
+	float pixelDepth = posLightH.z;
+
 	float window = 1.0f;
+	
+	// If we are in shadow
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
 		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
 		pixelDepth > 0)
@@ -108,18 +111,18 @@ float4 main(Input input) : SV_Target
 			for (int y = -3; y <= 3; ++y)
 			{
 				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
+				window += float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
 			}
 		}
 		shadowCoeff /= 36.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
-
-		window = float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords, pixelDepth + epsilon));
+		window /= 36.0f;
+		window = 1 - window;
 
 	}
+
+//	return float4(window, window, window, 1.0f);
 	
-	window = 1 - window;
-	if (shadowCoeff == 0.2)
-		shadowCoeff = window;
 	finalColorForSun = ambient + (diffuse + finalSpec) * sunColor.rgb * shadowCoeff;
 	
 	float3 finalColorForPointLights = float3(0,0,0);
@@ -154,7 +157,7 @@ float4 main(Input input) : SV_Target
 
 			tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i].xyz;
 
-			finalColorForPointLights += tempColor;
+			finalColorForPointLights += tempColor + (finalColorForSun * window);// (window == 1) ? tempColor : 0;
 		}
 	}
 
