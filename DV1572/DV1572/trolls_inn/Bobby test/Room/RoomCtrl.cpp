@@ -330,14 +330,15 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 	if (m_rooms.size() == 0)
 	{
 		for (int i = 0; i < currentRoomSizeX; i++)
+		{
 			allowedWallsDown.push_back(true);
+			allowedWallsUp.push_back(true);
+		}
 		for (int i = 0; i < currentRoomSizeY; i++)
+		{
 			allowedWallsLeft.push_back(true);
-
-		currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
-		currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, up);
-		currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
-		currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, right);
+			allowedWallsRight.push_back(true);
+		}
 	}
 	else
 	{
@@ -355,7 +356,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsDown[i] = false;
 						wall->setIsShared(true);
-						break;
+						
 					}
 				}
 
@@ -367,7 +368,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsUp[i] = false;
 						wall->setIsShared(true);
-						break;
+						
 					}
 				}
 
@@ -385,7 +386,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsRight[i] = false;
 						wall->setIsShared(true);
-						break;
+						
 					}
 				}
 
@@ -397,19 +398,19 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsLeft[i] = false;
 						wall->setIsShared(true);
-						break;
+						
 					}
 				}
 
 			}
-			currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
-			currentRoom->CreateWallSide(m_wallMesh, allowedWallsUp, up);
-			currentRoom->CreateWallSide(m_wallMesh, allowedWallsRight, right);
-			currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
+		
 
 		}
 	}
-
+	currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
+	currentRoom->CreateWallSide(m_wallMesh, allowedWallsUp, up);
+	currentRoom->CreateWallSide(m_wallMesh, allowedWallsRight, right);
+	currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
 	
 }
 
