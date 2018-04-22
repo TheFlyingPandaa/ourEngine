@@ -23,6 +23,7 @@ private:
 protected:
 	std::vector<PointLight> m_lights;
 	std::vector<Tile*> m_roomTiles;
+	Object3D m_wholeFloor;
 	std::vector<Object3D> m_roomObjects;
 
 	int		m_posX, m_posY;

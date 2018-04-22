@@ -272,9 +272,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 
 	CreateWalls(currentRoom);
-
+	currentRoom->ApplyIndexOnMesh();
 	m_rooms.push_back(currentRoom);
 	
+
 	
 	if (m_roomConnectionMap.size() < m_rooms.size())
 	{

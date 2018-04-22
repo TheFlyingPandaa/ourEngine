@@ -69,6 +69,10 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 
 	this->m_roomTiles = tiles;
 
+	m_wholeFloor.setPos(posX, 0.0f, posY);
+	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
+	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
+
 }
 
 Room::~Room()
@@ -141,6 +145,7 @@ bool Room::operator==(const Room & other) const
 
 void Room::setFloorMesh(Mesh * mesh)
 {
+	m_wholeFloor.setMesh(mesh);
 	for (auto& tile : m_roomTiles)
 		tile->getQuad().setMesh(mesh);
 }
@@ -203,8 +208,6 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 
 		}
 	}
-
-	ApplyIndexOnMesh();
 }
 
 int Room::getX() const

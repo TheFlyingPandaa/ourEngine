@@ -16,8 +16,7 @@ Kitchen::~Kitchen()
 
 void Kitchen::Draw()
 {
-	for (auto& tile : m_roomTiles)
-		tile->getQuad().Draw();
+	m_wholeFloor.Draw();
 	for (auto& wall : m_allWalls)
 		wall->Draw();
 
