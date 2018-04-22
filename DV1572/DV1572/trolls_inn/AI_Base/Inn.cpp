@@ -66,8 +66,8 @@ Inn::Inn()
 
 
 	int startSize = 32;
-	int firstRoomSizeX = 4;
-	int firstRoomSizeY = 3;
+	int firstRoomSizeX = 5;
+	int firstRoomSizeY = 8;
 
 	int secondRoomSizeX = 4;
 	int secondRoomSizeY = 2;

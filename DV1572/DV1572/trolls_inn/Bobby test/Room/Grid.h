@@ -48,10 +48,12 @@ private:
 	bool				m_walls[4] = { false };
 	Mesh*				m_tileMesh;
 	Mesh*				m_gridMesh;
+	Mesh*				m_catWalkMesh;
 	Object3D			m_wholeGrid;
 	RoomCtrl			m_roomCtrl;
 
 	std::vector<std::vector<Tile*>> m_tiles;
+	Object3D			m_catWalkTile;
 
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;

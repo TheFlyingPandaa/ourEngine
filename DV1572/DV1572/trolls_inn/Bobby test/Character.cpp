@@ -5,7 +5,7 @@ Character::Character()
 {
 	m_floor = 0;
 	m_speed = 2.0f / 60;
-	m_model.setPos(0.5, 0.5, 0.5);
+	m_model.setPos(0.5, 0.5, -10.5);
 	m_currentDir = DOWN;
 	
 	m_thinkingMesh.LoadModel("trolls_inn/resources/woodenfloor/floor.obj");
@@ -24,6 +24,7 @@ Character::Character(const Character & other)
 	this->m_floor = other.m_floor;
 	this->m_goQueue = other.m_goQueue;
 	this->m_speed = other.m_speed;
+	
 
 }
 

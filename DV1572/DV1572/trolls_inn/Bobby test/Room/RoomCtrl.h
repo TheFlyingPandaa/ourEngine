@@ -12,7 +12,8 @@ const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
 	bedroom,
-	reception
+	reception,
+	randomStupid
 };
 
 const float WALLOFFSET = 0.5f;

@@ -34,7 +34,8 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
-	float gridscale;
+	float gridscaleX;
+	float gridscaleY;
 };
 
 struct BILLBOARD_MESH_BUFFER

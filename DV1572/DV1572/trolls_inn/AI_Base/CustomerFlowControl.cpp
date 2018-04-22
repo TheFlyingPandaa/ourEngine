@@ -110,7 +110,7 @@ Customer* CustomerFlowControl::update(Attributes innAttributes)
 	std::cout << "A " << nextCustomer->GetRaceStr()<< " has arrived!" << std::endl;
 
 	// Set this to path entrance
-	nextCustomer->setPosition(7 + 0.5f, 2 + 0.5f);
+	nextCustomer->setPosition(0 + 0.5f, -2.f + 0.5f);
 	nextCustomer->setModel(&box);
 	nextCustomer->setFloor(0);
 

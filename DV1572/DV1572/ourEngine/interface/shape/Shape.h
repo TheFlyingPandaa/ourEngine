@@ -16,7 +16,8 @@ private:
 
 	DirectX::XMMATRIX		m_worldMatrix;
 	DirectX::XMFLOAT4A		m_highLightColor;
-	int						m_gridscale;
+	int						m_gridscaleX;
+	int						m_gridscaleY;
 	int						m_lightIndex;
 	
 
@@ -80,7 +81,10 @@ public:
 	void setColor(DirectX::XMFLOAT4A color);
 
 	virtual void Draw();
-	void setGridScale(int scale);
-	int getGridScale() const;
+	void setUVScale(int scale);
+	void setUVScaleX(int x);
+	void setUVScaleY(int y);
+	int getGridScaleX() const;
+	int getGridScaleY() const;
 	void TEMPTRANS();
 };

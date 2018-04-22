@@ -1032,6 +1032,12 @@ void Window::_geometryPass(const Camera &cam)
 
 	MESH_BUFFER meshBuffer;
 
+	DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
+	DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
+
+	DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+	DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
+	
 	if (m_WireFrameDebug == true)
 	{
 		D3D11_RASTERIZER_DESC wfdesc;
@@ -1060,19 +1066,16 @@ void Window::_geometryPass(const Camera &cam)
 		//We copy the data into the attribute part of the layout.
 		//This is what makes instancing special
 		
-		
-
-		DirectX::XMMATRIX vp = DirectX::XMMatrixTranspose(viewProj);
-		DirectX::XMStoreFloat4x4A(&meshBuffer.VP, vp);
-		meshBuffer.gridscale = static_cast<float>(instance.shape->getGridScale());
+		meshBuffer.gridscaleX = static_cast<float>(instance.shape->getGridScaleX());
+		meshBuffer.gridscaleY = static_cast<float>(instance.shape->getGridScaleY());
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 		memcpy(dataPtr.pData, &meshBuffer, sizeof(MESH_BUFFER));
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
-		DX::g_deviceContext->DSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
-		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 		
+
+
 		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 

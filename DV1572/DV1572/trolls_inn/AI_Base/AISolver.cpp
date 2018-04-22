@@ -18,9 +18,21 @@ void AISolver::Update(Customer& customer)
 	{
 		if (customer.walkQueueDone())
 		{
-			m_grid->generatePath(customer, reception);
-			customer.PopToNextState();
-			currentState = customer.GetState();
+			if (customer.getPosition().y < 0)
+			{
+				// walk along the catwalk then upwards towards the gridsystem where the rooms are located
+				for (int i = 0; i < 16; ++i)
+					customer.Move(Character::WalkDirection::RIGHT);
+				for (int i = 0; i < 3; ++i)
+					customer.Move(Character::WalkDirection::UP);
+			}
+			else
+			{
+				m_grid->generatePath(customer, RoomType::randomStupid);
+				customer.PopToNextState();
+				currentState = customer.GetState();
+			}
+			
 		}
 	}
 

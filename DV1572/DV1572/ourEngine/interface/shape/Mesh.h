@@ -36,5 +36,6 @@ public:
 	ID3D11Buffer* getIndicesBuffer(int i = 0) const;
 	int getNrOfIndices(int i = 0) const;
 	int getNumberOfParts() const;
+
 	bool CheckID(const Mesh& other) const;
 };

@@ -25,18 +25,31 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	this->m_sizeY = sizeY;
 	
 	
-	this->m_tileMesh = mesh;
-	this->m_gridMesh = new Mesh();
+	m_tileMesh = mesh;
+	m_gridMesh = new Mesh();
+	m_catWalkMesh = new Mesh();
 
 	m_gridMesh->MakeRectangle();
 	m_gridMesh->setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	m_gridMesh->setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 
+	m_catWalkMesh->MakeRectangle();
+	
+	m_catWalkMesh->setDiffuseTexture("trolls_inn/Resources/Brickfloor/brickwall.png");
+	m_catWalkMesh->setNormalTexture("trolls_inn/Resources/Brickfloor/brickwall_normal.png");
+
 	m_wholeGrid.setMesh(m_gridMesh);
 	m_wholeGrid.setScale(sizeX *2.0f);
 	m_wholeGrid.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posX));
 	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
-	m_wholeGrid.setGridScale(sizeX);
+	m_wholeGrid.setUVScale(sizeX);
+
+	m_catWalkTile.setMesh(m_catWalkMesh);
+	m_catWalkTile.setScale(sizeX*2.0f, 1, 10.0f);
+	m_catWalkTile.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posY - 5));
+	m_catWalkTile.setRotation(90.0f, 0.0f, 0.0f);
+	m_catWalkTile.setUVScaleX(sizeX);
+	m_catWalkTile.setUVScaleY(10);
 
 	this->m_tiles = std::vector<std::vector<Tile*>>(this->m_sizeX);
 	for (int i = 0; i < sizeX; i++)
@@ -230,6 +243,7 @@ void Grid::Draw()
 				
 		}
 	}
+	m_catWalkTile.Draw();
 	m_wholeGrid.Draw();
 
 	m_roomCtrl.Draw();
@@ -359,7 +373,12 @@ void Grid::generatePath(Character& character, RoomType targetRoom)
 		return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
 	};
 	XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
-	XMFLOAT3 targetPosition = m_roomCtrl.getClosestRoom(charPos, targetRoom);
+
+	XMFLOAT3 targetPosition;
+	if (targetRoom == randomStupid)
+		targetPosition = { float(rand() % 31), 0.0f, float(rand() % 31) };
+	else
+		targetPosition = m_roomCtrl.getClosestRoom(charPos, targetRoom);
 
 
 	int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
