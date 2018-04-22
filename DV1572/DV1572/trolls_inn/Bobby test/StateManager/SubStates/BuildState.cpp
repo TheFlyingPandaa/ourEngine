@@ -77,7 +77,7 @@ void BuildState::_buildInput()
 				}
 				else
 				{
-					this->grid->CheckIfDoorCanBeBuilt(start, end);
+				//	this->grid->CheckIfDoorCanBeBuilt(start, end);
 				}
 
 			}
@@ -115,7 +115,7 @@ void BuildState::_buildInput()
 		m_roomPlaceable = false;
 
 		//If debugging is needed you got the size
-		this->grid->AddDoor(start, end, size);
+		//this->grid->AddDoor(start, end, size);
 
 
 	}
@@ -148,7 +148,7 @@ void BuildState::_buildInput()
 		m_startTile = nullptr;
 		m_selectedTile = nullptr;
 		m_roomPlaceable = false;
-		this->grid->AddRoom(start, end, m_selectedRoomType);
+		m_roomCtrl->AddRoom(start, end, m_selectedRoomType, grid->extractTiles(start,end));
 	}
 	else {
 		m_buildStage = BuildStage::None;
@@ -181,10 +181,10 @@ void BuildState::_doorBuildInput()
 		if (start.y > end.y)
 			std::swap(start.y, end.y);
 		
-		if (Input::isMouseLeftPressed() && this->grid->CheckIfDoorCanBeBuilt(start, end))
-		{
-			this->grid->AddDoor(start, end, end);
-		}
+		//if (Input::isMouseLeftPressed() && this->grid->CheckIfDoorCanBeBuilt(start, end))
+		//{
+		//	//this->grid->AddDoor(start, end, end);
+		//}
 	}
 		
 
@@ -276,9 +276,10 @@ void BuildState::_handlePickingOfHud(RectangleShape * r)
 
 BuildState::BuildState(Camera * cam,
 	std::stack<Shape *>* pickingEvent,
-	Grid * grid) : SubState(cam, pickingEvent)
+	Grid * grid, RoomCtrl* roomCtrl) : SubState(cam, pickingEvent)
 {
 	this->grid = grid;
+	m_roomCtrl = roomCtrl;
 	this->_init();
 	m_buildStage = BuildStage::None;
 	m_readyToPick = false;

@@ -260,10 +260,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		/*room = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
-
-		if (m_tileMesh[0] != nullptr)
-			room->setTile(m_tileMesh[0]);*/
+		currentRoom = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
+		currentRoom->setFloorMesh(m_tileMesh[0]);
 		break;
 	case bedroom:
 		break;
@@ -354,7 +352,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
 					if (lol.x == upPos.x && lol.y == upPos.y)
+					{
 						allowedWallsDown[i] = false;
+						wall->setIsShared(true);
+						break;
+					}
 				}
 
 				for (auto& wall : room->getWalls(Direction::down))
@@ -362,7 +364,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z + currentRoomSizeY };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
 					if (lol.x == upPos.x && lol.y == upPos.y)
+					{
 						allowedWallsUp[i] = false;
+						wall->setIsShared(true);
+						break;
+					}
 				}
 
 			}
@@ -378,6 +384,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					if (lol.x == leftPos.x && lol.y == leftPos.y)
 					{
 						allowedWallsRight[i] = false;
+						wall->setIsShared(true);
 						break;
 					}
 				}
@@ -387,7 +394,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					XMFLOAT2 lol = { currentRoomPos.x, currentRoomPos.z + i };
 					XMFLOAT2 rightPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
 					if (lol.x == rightPos.x && lol.y == rightPos.y)
+					{
 						allowedWallsLeft[i] = false;
+						wall->setIsShared(true);
+						break;
+					}
 				}
 
 			}

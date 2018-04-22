@@ -26,8 +26,9 @@ Tile * Grid::_getTile(int x, int y)
 {
 	const XMINT2 pos = { x,y };
 	for (auto& tile : m_tiles)
-		if (*tile == pos)
-			return tile;
+		if(tile != nullptr)
+			if (*tile == pos)
+				return tile;
 	return nullptr;
 }
 
@@ -152,7 +153,7 @@ void Grid::Draw()
 		
 		if (tile != nullptr)
 		{
-			//tile->getQuad().CheckPick();
+			
 			if (tile->getQuad().getColor().x != 1.0f)
 				tile->getQuad().Draw();
 
@@ -178,13 +179,16 @@ void Grid::PickTiles(Shape* selectionTile)
 				
 				// Boundcheck
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
-
-				_getTile(x,y)->getQuad().CheckPick();
+				
+				Tile* t = _getTile(indexX, indexY);
+				if(t)
+					t->getQuad().CheckPick();
 			}
 
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
-			m_tiles[i]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+			if(m_tiles[i] != nullptr)
+				m_tiles[i]->getQuad().setColor(1.0f, 1.0f, 1.0f);
 		}
 	
 	}
@@ -192,8 +196,11 @@ void Grid::PickTiles(Shape* selectionTile)
 	{
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
-			m_tiles[i]->getQuad().setColor(1.0f, 1.0f, 1.0f);
-			m_tiles[i]->getQuad().CheckPick();
+			if (m_tiles[i] != nullptr)
+			{
+				m_tiles[i]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+				m_tiles[i]->getQuad().CheckPick();
+			}
 		}
 	}
 	
@@ -211,13 +218,15 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 		std::swap(end.y, start.y);
 	}
 	
-	color = XMFLOAT3(5.0f, 0.5f, 0.5f);
+	//color = XMFLOAT3(5.0f, 0.5f, 0.5f);
 
 	for (int i = start.x; i < end.x + 1; i++)
 	{
 		for (int j = start.y; j < end.y + 1; j++)
 		{
-			_getTile(i,j)->getQuad().setColor(color.x, color.y, color.z);
+			Tile* t = _getTile(i, j);
+			if(t)
+				t->getQuad().setColor(color.x, color.y, color.z);
 		}
 	}
 	return true;
@@ -237,7 +246,9 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 	{
 		for (int j = pos.y; j < end.y + 1; j++)
 		{
-			_getTile(i,j)->getQuad().setColor(1.0f, 1.0f, 1.0f);
+			Tile* t = _getTile(i, j);
+			if(t)
+				t->getQuad().setColor(1.0f, 1.0f, 1.0f);
 		}
 	}
 }

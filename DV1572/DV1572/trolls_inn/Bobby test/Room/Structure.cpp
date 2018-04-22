@@ -5,16 +5,6 @@ void Tile::setMesh(Mesh * mesh)
 	this->quad.setMesh(mesh);
 }
 
-int Tile::getPosX() const
-{
-	return quad.getPosition().x;
-}
-
-int Tile::getPosY() const
-{
-	return quad.getPosition().z;
-}
-
 void Tile::setPosX(const int x)
 {
 	XMFLOAT3 tempPos = quad.getPosition();

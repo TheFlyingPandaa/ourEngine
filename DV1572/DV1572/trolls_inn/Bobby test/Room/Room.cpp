@@ -95,13 +95,20 @@ void Room::Update(Camera * cam)
 	XMVECTOR xmCamDir = XMLoadFloat3(&cam->getLookAt());
 	for (auto& wall : m_allWalls)
 	{
-		XMFLOAT3 wallDir = { wall->getDirection().x, 0, wall->getDirection().y };
-		XMVECTOR xmWallDir = XMLoadFloat3(&wallDir);
-		float angleDegrees = XMConvertToDegrees(XMVectorGetX(XMVector3AngleBetweenNormals(xmCamDir, xmWallDir)));
-		if (angleDegrees < 90)
+		if (wall->isShared())
+		{
 			wall->setScale(1, 0.05f, 1.0f);
-		else 
-			wall->setScale(1, 1.0f, 1.0f);
+		}
+		else
+		{
+			XMFLOAT3 wallDir = { wall->getDirection().x, 0, wall->getDirection().y };
+			XMVECTOR xmWallDir = XMLoadFloat3(&wallDir);
+			float angleDegrees = XMConvertToDegrees(XMVectorGetX(XMVector3AngleBetweenNormals(xmCamDir, xmWallDir)));
+			if (angleDegrees < 90)
+				wall->setScale(1, 0.05f, 1.0f);
+			else 
+				wall->setScale(1, 1.0f, 1.0f);
+		}
 	}
 
 
@@ -272,7 +279,6 @@ void Room::setFloorMesh(Mesh * mesh)
 
 void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 {
-	// X led only
 	if (side == up)
 	{
 		for (int i = 0; i < m_sizeX; ++i)

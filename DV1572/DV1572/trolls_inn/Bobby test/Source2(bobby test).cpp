@@ -175,7 +175,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		
 
 			if (picked) {
-				picked->
 				pickingEvents.push(picked);
 			}
 		}

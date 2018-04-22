@@ -41,13 +41,12 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, startSize, startSize, &rect);	
-	grid->CreateWalls(&m);	
-	grid->getRoomCtrl().setTileMesh(&kitchenTile, RoomType::kitchen);
-	grid->getRoomCtrl().setDoorMesh(&door);
-	grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
+	grid = new Grid(0, 0, startSize, startSize);	
+	roomctrl.AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
+	
+	//grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
 	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
-	grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
+	//grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
 	
 	posX = 1;
 	posY = 1;
@@ -83,7 +82,8 @@ void GameState::Update(double deltaTime)
 
 
 	this->m_cam->update();
-	this->grid->Update(this->m_cam);
+	roomctrl.Update(m_cam);
+	//this->grid->Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -133,13 +133,15 @@ void GameState::Update(double deltaTime)
 
 	if (Input::isKeyPressed('G'))
 	{
-		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
+		//this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
 	}
 }
 
 void GameState::Draw()
 {
 	gameTime.m_cpyLightToGPU();
+	
+	roomctrl.Draw();
 	this->grid->Draw();
 
 	//TEST
@@ -249,25 +251,25 @@ void GameState::_handlePickingAi(Shape * obj)
 	{
 		if (c.walkQueueDone() && m_move)
 		{
-			//Shape * obj = this->p_pickingEvent->top();
-			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+			////Shape * obj = this->p_pickingEvent->top();
+			//XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
 
-			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+			//int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+			//int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-			std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+			//std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
-			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+			//XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 
-			if (path.size() != 0)
-			{
-				m_justMoved = false;
+			//if (path.size() != 0)
+			//{
+			//	m_justMoved = false;
 
-				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+			//	c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
-				for (int i = 0; i < path.size() - 1; i++)
-					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-			}
+			//	for (int i = 0; i < path.size() - 1; i++)
+			//		c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+			//}
 
 		}
 	}
@@ -343,7 +345,7 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 				_resetHudButtonPressedExcept(index);
 				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
 				if (m_hudButtonsPressed[index])
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid, &roomctrl));
 					
 				break;
 			case 2:

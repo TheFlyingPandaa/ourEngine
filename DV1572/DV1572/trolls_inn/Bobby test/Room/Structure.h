@@ -18,6 +18,7 @@ class Wall
 private:
 	Object3D			m_wall;
 	XMFLOAT2			m_direction;
+	bool				m_sharedWall;
 public:
 	Wall(Mesh * mesh, XMFLOAT2 dir);
 	~Wall();
@@ -31,6 +32,8 @@ public:
 	void	setScale(float x, float y, float z);
 
 	void	setMesh(Mesh * mesh);
+	void	setIsShared(bool shared);
+	bool	isShared() const;
 
 	XMFLOAT2 getDirection() const;
 	bool	operator==(const Wall& other);

@@ -49,6 +49,16 @@ void Wall::setMesh(Mesh * mesh)
 	this->m_wall.setMesh(mesh);
 }
 
+void Wall::setIsShared(bool isShared)
+{
+	m_sharedWall = isShared;
+}
+
+bool Wall::isShared() const
+{
+	return m_sharedWall;
+}
+
 
 bool Wall::operator==(const Wall & other)
 {
