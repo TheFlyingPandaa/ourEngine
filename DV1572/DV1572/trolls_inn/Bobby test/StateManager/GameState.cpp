@@ -216,7 +216,7 @@ void GameState::_handlePicking()
 		
 		if (Input::isKeyPressed('G'))
 		{
-			this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), 1);
+			this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), 2, 0);
 			Table fut = Table(obj->getPosition(), &table);
 			this->grid->AddRoomObject(fut);
 		}

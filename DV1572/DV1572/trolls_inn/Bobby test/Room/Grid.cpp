@@ -151,6 +151,78 @@ void Grid::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 
 void Grid::AddRoomObject(Furniture furniture)
 {
+	if (angle == 0 || angle == 180)
+	{
+		for (size_t i = 0; i < furniture.getGridSize(); i++)
+		{
+			if (angle == 0)
+			{
+				if (m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getHasObject() == false)
+				{
+					m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+			else
+			{
+				if (m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getHasObject() == false)
+				{
+					m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+		}
+	}
+	if (angle == 90 || angle == 270)
+	{
+		for (size_t i = 0; i < size; i++)
+		{
+			if (angle == 90)
+			{
+				if (m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getHasObject() == false)
+				{
+					m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+			else
+			{
+				if (m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getHasObject() == false)
+				{
+					m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+		}
+	}
+
+	if (m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getHasObject() == true)
+	{
+		m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+		//return false;
+	}
+	else
+	{
+		m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+		//return true;
+	}
+
 	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setIsWalkeble(false);
 	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setHasObject(true);
 
@@ -284,8 +356,69 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	return placeable;
 }
 
-bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size)
+bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 {
+	if (angle == 0 || angle == 180)
+	{
+		for (size_t i = 0; i < size; i++)
+		{
+			if (angle == 0)
+			{
+				if (m_tiles[start.x][start.y + i]->getHasObject() == false)
+				{
+					m_tiles[start.x][start.y + i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x][start.y + i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+			else
+			{
+				if (m_tiles[start.x][start.y - i]->getHasObject() == false)
+				{
+					m_tiles[start.x][start.y - i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x][start.y - i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+		}
+	}
+	if (angle == 90 || angle == 270)
+	{
+		for (size_t i = 0; i < size; i++)
+		{
+			if (angle == 90)
+			{
+				if (m_tiles[start.x + i][start.y]->getHasObject() == false)
+				{
+					m_tiles[start.x + i][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x + i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+			else
+			{
+				if (m_tiles[start.x - i][start.y]->getHasObject() == false)
+				{
+					m_tiles[start.x - i][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x - i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//return false;
+				}
+			}
+		}
+	}
+
 	if (m_tiles[start.x][start.y]->getHasObject() == true)
 	{
 		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));

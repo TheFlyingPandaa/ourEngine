@@ -13,6 +13,8 @@ public:
 	int	getGridSize(); //gets the size this furniture will take up
 
 	DirectX::XMINT3 getPosition();
+	int				getRotation();
+	
 	void Draw();
 
 private:

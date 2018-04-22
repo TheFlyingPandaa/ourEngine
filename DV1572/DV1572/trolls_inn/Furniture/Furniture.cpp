@@ -32,6 +32,11 @@ DirectX::XMINT3 Furniture::getPosition()
 	return this->pos;
 }
 
+int Furniture::getRotation()
+{
+	return p_rot;
+}
+
 void Furniture::Draw()
 {
 	p_object.Draw();
