@@ -231,6 +231,9 @@ RoomCtrl::~RoomCtrl()
 	{
 		delete m_rooms[i];
 	}
+
+	delete m_wallMesh;
+	delete m_tileMesh[0];
 	m_rooms.clear();
 }
 
@@ -247,7 +250,7 @@ void RoomCtrl::addRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
-	Room * room = nullptr;
+	Room * currentRoom = nullptr;
 	if (!force)
 	{		
 		if (!isPlaceable(pos, size))
@@ -265,18 +268,44 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	case bedroom:
 		break;
 	case reception:
-		room = new Reception(pos.x, pos.y, size.x, size.y, tiles);
-		room->setFloorMesh(m_tileMesh[0]);
-		room->CreateWalls(m_wallMesh, { true, true, true, true });
+		currentRoom = new Reception(pos.x, pos.y, size.x, size.y, tiles);
+		currentRoom->setFloorMesh(m_tileMesh[0]);
+		
 
 		break;
 	default:
 		break;
 	}
 
-	if (room)
-		m_rooms.push_back(room);
+	
 
+	std::vector<bool> sides = { true, true, true, true };
+
+	XMFLOAT3 currentRoomPos = currentRoom->getPosition();
+	int currentRoomSizeX = currentRoom->getSizeX();
+	for (auto& room : m_rooms)
+	{
+
+
+		XMFLOAT3 existingPos = room->getPosition();
+		int existingSizeX = room->getSizeX();
+		int existingSizeY = room->getSizeY();
+		std::cout << "Check pos " << (existingPos.x) << "\n";
+		std::cout << "New pos " << currentRoomPos.x << "\n";
+		
+		// Höger nuvarande med vänster nya
+		if ((existingPos.x + existingSizeX) == currentRoomPos.x)
+			sides[2] = false;
+		// Up nuvarnade med ner nya 
+		if ((existingPos.z + existingSizeY) == currentRoomPos.z)
+			sides[0] = false;
+		// Vänster nuvarande med höger nya
+		if ((existingPos.x) == (currentRoomPos.x + currentRoomSizeX))
+			sides[3] = false;
+	}
+	currentRoom->CreateWalls(m_wallMesh, sides);
+
+	m_rooms.push_back(currentRoom);
 	/*CreateWalls();
 	
 	_printRoomConnections();

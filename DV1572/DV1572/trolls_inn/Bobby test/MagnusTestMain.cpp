@@ -23,12 +23,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	wnd.Init(1280, 720, "Banan");
 	Grid test(0,0,32,32);
 	RoomCtrl ctrl;
-	XMINT2 pos = { 5, 5 };
-	XMINT2 pos2 = { 10, 10};
+	XMINT2 pos = { 5, 0 };
+	XMINT2 pos2 = { 0, 5 };
 	XMINT2 size = { 5,5 };
 
 	ctrl.AddRoom(pos, size, RoomType::reception, test.extractTiles(pos, size));
-
 	ctrl.AddRoom(pos2, size, RoomType::reception, test.extractTiles(pos2, size));
 
 	using namespace std::chrono;
@@ -65,8 +64,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		ctrl.Draw();
 		test.Draw();
 
-		Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);
+		/*Shape* picked = nullptr;
+		picked = wnd.getPicked(cam);*/
 
 		
 			

@@ -152,7 +152,7 @@ void Grid::Draw()
 		
 		if (tile != nullptr)
 		{
-			tile->getQuad().CheckPick();
+			//tile->getQuad().CheckPick();
 			if (tile->getQuad().getColor().x != 1.0f)
 				tile->getQuad().Draw();
 

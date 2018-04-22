@@ -74,6 +74,8 @@ Room::~Room()
 {
 	for (auto& walls : m_allWalls)
 		delete walls;
+	for (auto& tile : m_roomTiles)
+		delete tile;
 }
 
 bool Room::Inside(int x, int y)
@@ -87,7 +89,7 @@ bool Room::Inside(Tile * t)
 	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
 			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
-#include <iostream>
+
 void Room::Update(Camera * cam)
 {
 	XMVECTOR xmCamDir = XMLoadFloat3(&cam->getLookAt());
@@ -268,10 +270,21 @@ void Room::setFloorMesh(Mesh * mesh)
 		tile->getQuad().setMesh(mesh);
 }
 
-void Room::CreateWalls(Mesh* mesh, std::vector<bool> sides)
+void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 {
 	// X led only
-
+	if (side == up)
+	{
+		for (int i = 0; i < m_sizeX; ++i)
+		{
+			if (allowed[1])
+			{
+				Wall* newWallUp = new Wall(mesh, { 0, -1 });
+				newWallUp->setPosition(m_posX + 0.5f + i, m_posY + m_sizeY);
+				m_allWalls.push_back(newWallUp);
+			}
+		}
+	}
 	for (int i = 0; i < m_sizeX; ++i)
 	{
 		if (sides[0])
@@ -336,28 +349,28 @@ void Room::setWalls(std::vector<Wall*> walls, Direction dir)
 		m_allWalls.push_back(walls[i]);
 	}
 
-	switch (dir)
-	{
-	case 0:
-		up = walls;
-		break;
-	case 1:
-		down = walls;
-		break;
-	case 2:
-		left = walls;
-		break;
-	case 3:
-		right = walls;
-		break;
-	default:
-		break;
-	}
+	//switch (dir)
+	//{
+	//case 0:
+	//	up = walls;
+	//	break;
+	//case 1:
+	//	down = walls;
+	//	break;
+	//case 2:
+	//	left = walls;
+	//	break;
+	//case 3:
+	//	right = walls;
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void Room::addWall(Wall * wall, Direction dir)
 {
-	m_allWalls.push_back(wall);
+	/*m_allWalls.push_back(wall);
 	switch (dir)
 	{
 	case 0:		
@@ -378,7 +391,7 @@ void Room::addWall(Wall * wall, Direction dir)
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
 DirectX::XMFLOAT3 Room::getPosition() const
@@ -437,7 +450,7 @@ std::vector<Wall*>* Room::getAllWalls()
 
 std::vector<Wall*>* Room::getWall(Direction dir)
 {
-	switch (dir)
+	/*switch (dir)
 	{
 	case Direction::up:
 		return &up;
@@ -454,7 +467,8 @@ std::vector<Wall*>* Room::getWall(Direction dir)
 	default:
 		return nullptr;
 		break;
-	}
+	}*/
+	return new std::vector<Wall*>();
 }
 
 void Room::move(int x, int y)

@@ -28,14 +28,12 @@ protected:
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
 
-	bool	m_culledWalls[4] = { false };
-
 	std::vector<Wall*> m_allWalls;
-	//TODO
-	std::vector<Wall*> up;
-	std::vector<Wall*> down;
-	std::vector<Wall*> left;
-	std::vector<Wall*> right;
+
+	std::vector<Wall*> m_upWalls;
+	std::vector<Wall*> m_downWalls;
+	std::vector<Wall*> m_rightWalls;
+	std::vector<Wall*> m_leftWalls;
 
 
 public:
@@ -48,7 +46,7 @@ public:
 	//virtual Tile*								getTiles(int x, int y) const;
 
 	virtual void		setFloorMesh(Mesh * mesh);
-	virtual void		CreateWalls(Mesh* mesh, std::vector<bool> sides);
+	virtual void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
 	
 	virtual int			getX() const; 
 	virtual int			getY() const;
