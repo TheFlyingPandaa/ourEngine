@@ -86,7 +86,7 @@ public:
 
 	//This is a expensiv function many many many for loops
 	//Be conservative when calling
-	void				CreateWalls();
+	void				CreateWalls(Room* currentRoom);
 	void				CreateDoors(Room * room);
 	DirectX::XMINT2		CreateMainDoor(Room * room);
 	void				setDoorMesh(Mesh * mesh);

@@ -23,8 +23,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	wnd.Init(1280, 720, "Banan");
 	Grid test(0,0,32,32);
 	RoomCtrl ctrl;
-	XMINT2 pos = { 5, 0 };
-	XMINT2 pos2 = { 0, 5 };
+	XMINT2 pos = {6, 0 };
+	XMINT2 pos2 = { 1, 1 };
 	XMINT2 size = { 5,5 };
 
 	ctrl.AddRoom(pos, size, RoomType::reception, test.extractTiles(pos, size));

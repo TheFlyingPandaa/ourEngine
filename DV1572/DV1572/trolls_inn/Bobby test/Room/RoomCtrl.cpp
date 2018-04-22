@@ -11,8 +11,8 @@ bool RoomCtrl::_intersect(Room * room)
 {
 	for (size_t i = 0; i < m_rooms.size(); i++)
 	{
-		if ((std::abs(room->getX() - m_rooms[i]->getX()) * 2) < (room->getSizeX() + m_rooms[i]->getSizeX()) &&
-			(std::abs(room->getY() - m_rooms[i]->getY()) * 2) < (room->getSizeY() + m_rooms[i]->getSizeY()))
+		if ((std::abs(room->getX() - m_rooms[i]->getX()) * 2) < (room->getSize().x + m_rooms[i]->getSize().x) &&
+			(std::abs(room->getY() - m_rooms[i]->getY()) * 2) < (room->getSize().y + m_rooms[i]->getSize().y))
 			return true;
 	}
 	return false;
@@ -35,9 +35,9 @@ bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 			|| pos.y > m_rooms[i]->getY() + m_rooms[i]->getSizeY()))*/
 		//if ((std::abs(pos.x - m_rooms[i]->getX()) * 2) < (size.x + m_rooms[i]->getSizeX()) &&
 		//	(std::abs(pos.y - m_rooms[i]->getY()) * 2) < (size.y + m_rooms[i]->getSizeY()))
-		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
+		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSize().x &&
 			pos.x + size.x > m_rooms[i]->getX() &&
-			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY() &&
+			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSize().y &&
 			pos.y + size.y > m_rooms[i]->getY())
 			return true;
 
@@ -57,13 +57,13 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	{
 		r = m_rooms[i];
 		x = r->getX();
-		mx = r->getX() + r->getSizeX();
+		mx = r->getX() + r->getSize().x;
 		y = r->getY();
-		my = r->getY() + r->getSizeY();
+		my = r->getY() + r->getSize().y;
 
-		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
+		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSize().x &&
 			pos.x + size.x > m_rooms[i]->getX() &&
-			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY() &&
+			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSize().y &&
 			pos.y + size.y > m_rooms[i]->getY())
 			return false;
 		/*
@@ -270,45 +270,14 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	case reception:
 		currentRoom = new Reception(pos.x, pos.y, size.x, size.y, tiles);
 		currentRoom->setFloorMesh(m_tileMesh[0]);
-		
-
-		break;
-	default:
 		break;
 	}
 
-	
-
-	std::vector<bool> sides = { true, true, true, true };
-
-	XMFLOAT3 currentRoomPos = currentRoom->getPosition();
-	int currentRoomSizeX = currentRoom->getSizeX();
-	for (auto& room : m_rooms)
-	{
-
-
-		XMFLOAT3 existingPos = room->getPosition();
-		int existingSizeX = room->getSizeX();
-		int existingSizeY = room->getSizeY();
-		std::cout << "Check pos " << (existingPos.x) << "\n";
-		std::cout << "New pos " << currentRoomPos.x << "\n";
-		
-		// Höger nuvarande med vänster nya
-		if ((existingPos.x + existingSizeX) == currentRoomPos.x)
-			sides[2] = false;
-		// Up nuvarnade med ner nya 
-		if ((existingPos.z + existingSizeY) == currentRoomPos.z)
-			sides[0] = false;
-		// Vänster nuvarande med höger nya
-		if ((existingPos.x) == (currentRoomPos.x + currentRoomSizeX))
-			sides[3] = false;
-	}
-	currentRoom->CreateWalls(m_wallMesh, sides);
+	CreateWalls(currentRoom);
 
 	m_rooms.push_back(currentRoom);
-	/*CreateWalls();
 	
-	_printRoomConnections();
+	
 	if (m_roomConnectionMap.size() < m_rooms.size())
 	{
 		m_roomConnectionMap.push_back(std::vector<int>());
@@ -321,9 +290,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				j++;
 		}
 	}
+	_printRoomConnections();
 
 	if (!m_entrance) m_entrance = m_rooms.back();
-	room->ApplyIndexOnMesh();*/
+
 	
 }
 
@@ -346,158 +316,90 @@ void RoomCtrl::Draw()
 
 }
 
-void RoomCtrl::CreateWalls()
+void RoomCtrl::CreateWalls(Room* currentRoom)
 {
-	//if (this->m_wall == nullptr)
-	//{
-	//	std::cout << "no mesh boi" << std::endl;
-	//	return;
-	//}	
-	//bool createWall = true;
-	//for (size_t i = 0; i < m_rooms.size(); i++)
-	//{
-	//	for (int x = 0; x < m_rooms[i]->getSizeX(); x++)
-	//	{
-	//		Tile * t = m_rooms[i]->getTiles(x,0);
-	//		Tile * t2;
-	//		if (!t->isWall(Direction::down))
-	//		{
-	//			t2 = t->getAdjacent(Direction::down);
+		
+	XMFLOAT3 currentRoomPos = { currentRoom->getPosition().x + 0.5f, 0.0f, currentRoom->getPosition().z + 0.5f };
 
-	//			createWall = true;
-	//			if (t2 != nullptr)
-	//				if (t2->isWall(Direction::up))
-	//				{
-	//					createWall = false;
-	//					t2->getTileWalls(Direction::up)->setIsInner(true);		
-	//					t->setTileWalls(Direction::down, t2->getTileWalls(Direction::up));
+	int currentRoomSizeY = currentRoom->getSize().y;
+	int currentRoomSizeX = currentRoom->getSize().x;
 
-	//					m_rooms[i]->addAdjasentRoom(t2->getRoom());
-	//					m_rooms[i]->addWall(t2->getTileWalls(Direction::up), Direction::down);
-	//				}
+	std::vector<bool> allowedWallsDown;
+	std::vector<bool> allowedWallsUp;
+	std::vector<bool> allowedWallsLeft;
+	std::vector<bool> allowedWallsRight;
 
-	//			if (createWall) // where we aculy create the walls
-	//			{
-	//				t->setWallSpotPopulated(Direction::down, true);
-	//				Wall * wall = new Wall(t, this->m_wall);
-	//				t->setTileWalls(Direction::down, wall);
+	if (m_rooms.size() == 0)
+	{
+		for (int i = 0; i < currentRoomSizeX; i++)
+			allowedWallsDown.push_back(true);
+		for (int i = 0; i < currentRoomSizeY; i++)
+			allowedWallsLeft.push_back(true);
 
-	//				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY())));
-	//				m_rooms[i]->addWall(wall, Direction::down);
-	//				this->m_walls.push_back(wall);
-	//			}
-	//		}
-	//		else {
-	//			m_rooms[i]->addWall(t->getTileWalls(Direction::down), Direction::down);
-	//		}
-	//		t = m_rooms[i]->getTiles(x, m_rooms[i]->getSizeY() - 1);
-	//		if (!t->isWall(Direction::up))
-	//		{
-	//			t2 = t->getAdjacent(Direction::up);
-	//			createWall = true;
+		currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
+		currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, up);
+		currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
+		currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, right);
+	}
+	else
+	{
+		for (auto& room : m_rooms)
+		{
+			for (int i = 0; i < currentRoomSizeX; i++)
+			{
+				allowedWallsDown.push_back(true);
+				allowedWallsUp.push_back(true);
+				for (auto& wall : room->getWalls(Direction::up))
+				{
+					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z };
+					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
+					if (lol.x == upPos.x && lol.y == upPos.y)
+						allowedWallsDown[i] = false;
+				}
 
-	//			if (t2 != nullptr)
-	//				if (t2->isWall(Direction::down))
-	//				{
-	//					createWall = false;
-	//					t2->getTileWalls(Direction::down)->setIsInner(true);
-	//					t->setTileWalls(Direction::up, t2->getTileWalls(Direction::down));
-	//					m_rooms[i]->addAdjasentRoom(t2->getRoom());
-	//					m_rooms[i]->addWall(t2->getTileWalls(Direction::down), Direction::up);
-	//				}
-	//			if (createWall)
-	//			{
-	//				Tile * t = m_rooms[i]->getTiles(x, this->m_rooms[i]->getSizeY() - 1);
-	//				t->setWallSpotPopulated(Direction::up, true);
-	//				Wall * wall = new Wall(t, this->m_wall);
-	//				t->setTileWalls(Direction::up, wall);
+				for (auto& wall : room->getWalls(Direction::down))
+				{
+					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z + currentRoomSizeY };
+					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
+					if (lol.x == upPos.x && lol.y == upPos.y)
+						allowedWallsUp[i] = false;
+				}
 
-	//				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + x) + WALLOFFSET, static_cast<float>(this->m_rooms[i]->getY() + this->m_rooms[i]->getSizeY())));
-	//				m_rooms[i]->addWall(wall, Direction::up);
-	//				this->m_walls.push_back(wall);
-	//			}
-	//		}
-	//		else {
-	//			m_rooms[i]->addWall(t->getTileWalls(Direction::up), Direction::up);
-	//		}
-	//	}
+			}
 
+			for (int i = 0; i < currentRoomSizeY; i++)
+			{
+				allowedWallsLeft.push_back(true);
+				allowedWallsRight.push_back(true);
+				for (auto& wall : room->getWalls(Direction::left))
+				{
+					XMFLOAT2 lol = { currentRoomPos.x + currentRoomSizeX , currentRoomPos.z + i };
+					XMFLOAT2 leftPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
+					if (lol.x == leftPos.x && lol.y == leftPos.y)
+					{
+						allowedWallsRight[i] = false;
+						break;
+					}
+				}
 
-	//}
+				for (auto& wall : room->getWalls(Direction::right))
+				{
+					XMFLOAT2 lol = { currentRoomPos.x, currentRoomPos.z + i };
+					XMFLOAT2 rightPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
+					if (lol.x == rightPos.x && lol.y == rightPos.y)
+						allowedWallsLeft[i] = false;
+				}
 
-	//for (size_t i = 0; i < m_rooms.size(); i++)
-	//{
-	//	for (int y = 0; y < m_rooms[i]->getSizeY(); y++)
-	//	{
-	//		
-	//		Tile * t = m_rooms[i]->getTiles(0, y);
-	//		Tile * t2;
-	//		if (!t->isWall(Direction::left))
-	//		{
-	//			 t2 = t->getAdjacent(Direction::left);
+			}
+			currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
+			currentRoom->CreateWallSide(m_wallMesh, allowedWallsUp, up);
+			currentRoom->CreateWallSide(m_wallMesh, allowedWallsRight, right);
+			currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
 
-	//			createWall = true;
-	//			if (t2 != nullptr)
-	//				if (t2->isWall(Direction::right))
-	//				{
-	//					createWall = false;
-	//					t2->getTileWalls(Direction::right)->setIsInner(true);
-	//					t->setTileWalls(Direction::left, t2->getTileWalls(Direction::right));
-	//					m_rooms[i]->addAdjasentRoom(t2->getRoom());
-	//					m_rooms[i]->addWall(t2->getTileWalls(Direction::right), Direction::left);
-	//				}
-	//			if (createWall)
-	//			{
-	//				//obj->setPos(this->m_posX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-	//				//Tile * t = m_rooms[i]->getTiles(0, y);
-	//				t->setWallSpotPopulated(Direction::left, true);
-	//				Wall * wall = new Wall(t, this->m_wall);
-	//				t->setTileWalls(Direction::left, wall);
-	//				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));
+		}
+	}
 
-	//				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
-	//				m_rooms[i]->addWall(wall, Direction::left);
-	//				this->m_walls.push_back(wall);
-	//			}
-	//		}
-	//		else
-	//			m_rooms[i]->addWall(t->getTileWalls(Direction::left), Direction::left);
-
-	//		t = m_rooms[i]->getTiles(m_rooms[i]->getSizeX() - 1, y);
-	//		if (!t->isWall(Direction::right))
-	//		{
-	//			t2 = t->getAdjacent(Direction::right);
-
-	//			createWall = true;
-	//			if (t2 != nullptr)
-	//				if (t2->isWall(Direction::left))
-	//				{
-	//					createWall = false;
-	//					t2->getTileWalls(Direction::left)->setIsInner(true);
-	//					t->setTileWalls(Direction::right, t2->getTileWalls(Direction::left));
-	//					m_rooms[i]->addAdjasentRoom(t2->getRoom());
-	//					m_rooms[i]->addWall(t2->getTileWalls(Direction::left), Direction::right);
-
-	//				}
-	//			if (createWall)
-	//			{
-	//				//obj->setPos(this->m_posX + this->m_sizeX, 0, static_cast<float>(this->m_posY + static_cast<int>(y)) + 0.5f);
-	//				//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX() - 1, this->m_rooms[i]->getY() + y);
-	//				//Tile * t = m_rooms[i]->getTiles(this->m_rooms[i]->getSizeX() - 1, y);
-	//				t->setWallSpotPopulated(Direction::right, true);
-	//				Wall * wall = new Wall(t, this->m_wall);
-	//				t->setTileWalls(Direction::right, wall);
-	//				wall->setRotation(DirectX::XMFLOAT3(0, 90, 0));
-
-	//				wall->setPosition(DirectX::XMFLOAT2(static_cast<float>(this->m_rooms[i]->getX() + this->m_rooms[i]->getSizeX()), this->m_rooms[i]->getY() + y + WALLOFFSET));
-	//				m_rooms[i]->addWall(wall, Direction::right);
-	//				this->m_walls.push_back(wall);
-	//			}
-	//		}
-	//		else
-	//			m_rooms[i]->addWall(t->getTileWalls(Direction::right), Direction::right);
-	//	}
-	//}	
+	
 }
 
 void RoomCtrl::CreateDoors(Room * room)
@@ -758,8 +660,8 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 	XMVECTOR r1Pos = XMLoadFloat3(&r1->getPosition());
 
 	XMFLOAT3 r2PosLOL = r2->getPosition();
-	int r2SizeX = r2->getSizeX();
-	int r2SizeY = r2->getSizeY();
+	int r2SizeX = r2->getSize().x;
+	int r2SizeY = r2->getSize().y;
 
 	XMVECTOR r2Pos[4];
 	r2Pos[0] = r2Pos[1] = r2Pos[2] = r2Pos[3] = XMLoadFloat3(&r2PosLOL);

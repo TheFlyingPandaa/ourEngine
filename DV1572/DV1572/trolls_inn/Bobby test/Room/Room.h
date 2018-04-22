@@ -50,15 +50,11 @@ public:
 	
 	virtual int			getX() const; 
 	virtual int			getY() const;
-	virtual int			getSizeX() const; 
-	virtual int			getSizeY() const; 
-
-	virtual void		setWalls(std::vector<Wall*> walls, Direction dir);
-	virtual void		addWall(Wall* wall, Direction dir);
+	XMINT2				getSize() const;
 	virtual DirectX::XMFLOAT3	getPosition() const;
 
 	virtual std::vector<Wall*>*	getAllWalls();
-	virtual std::vector<Wall*>*	getWall(Direction dir);
+	virtual std::vector<Wall*>	getWalls(Direction dir);
 		
 	virtual void		move(int x, int y);
 

@@ -277,48 +277,57 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 	{
 		for (int i = 0; i < m_sizeX; ++i)
 		{
-			if (allowed[1])
+			if (allowed[i])
 			{
 				Wall* newWallUp = new Wall(mesh, { 0, -1 });
 				newWallUp->setPosition(m_posX + 0.5f + i, m_posY + m_sizeY);
 				m_allWalls.push_back(newWallUp);
+				m_upWalls.push_back(newWallUp);
 			}
 		}
 	}
-	for (int i = 0; i < m_sizeX; ++i)
+	else if (side == down)
 	{
-		if (sides[0])
+		for (int i = 0; i < m_sizeX; ++i)
 		{
-			Wall* newWallLow = new Wall(mesh, { 0,1 });
-			newWallLow->setPosition(m_posX + 0.5f + i, m_posY);
-			m_allWalls.push_back(newWallLow);
+			if (allowed[i])
+			{
+				Wall* newWallLow = new Wall(mesh, { 0,1 });
+				newWallLow->setPosition(m_posX + 0.5f + i, m_posY);
+				m_allWalls.push_back(newWallLow);
+				m_downWalls.push_back(newWallLow);
+			}
 		}
-		if (sides[1])
-		{
-			Wall* newWallUp = new Wall(mesh, { 0, -1 });
-			newWallUp->setPosition(m_posX + 0.5f + i, m_posY + m_sizeY);
-			m_allWalls.push_back(newWallUp);
-		}
-		
 	}
-
-	for (int i = 0; i < m_sizeY; ++i)
+	else if (side == left)
 	{
-		if (sides[2])
+		for (int i = 0; i < m_sizeY; ++i)
 		{
-			Wall* newWallLeft = new Wall(mesh, { 1, 0 });
-			newWallLeft->setRotation(0, 90, 0);
-			newWallLeft->setPosition(m_posX, m_posY + 0.5f + i);
-			m_allWalls.push_back(newWallLeft);
+			if (allowed[i])
+			{
+				Wall* newWallLeft = new Wall(mesh, { 1, 0 });
+				newWallLeft->setRotation(0, 90, 0);
+				newWallLeft->setPosition(m_posX, m_posY + 0.5f + i);
+				m_allWalls.push_back(newWallLeft);
+				m_leftWalls.push_back(newWallLeft);
+			}
 		}
-		if (sides[3])
+	}
+	else
+	{
+		for (int i = 0; i < m_sizeY; ++i)
 		{
-			Wall* newWallRight = new Wall(mesh, { -1, 0 } );
-			newWallRight->setRotation(0, 90, 0);
-			newWallRight->setPosition(m_posX + m_sizeX, m_posY + 0.5f + i);
-			m_allWalls.push_back(newWallRight);
+
+			if (allowed[i])
+			{
+				Wall* newWallRight = new Wall(mesh, { -1, 0 });
+				newWallRight->setRotation(0, 90, 0);
+				newWallRight->setPosition(m_posX + m_sizeX, m_posY + 0.5f + i);
+				m_allWalls.push_back(newWallRight);
+				m_rightWalls.push_back(newWallRight);
+			}
+
 		}
-		
 	}
 }
 
@@ -332,66 +341,9 @@ int Room::getY() const
 	return m_posY;
 }
 
-int Room::getSizeX() const
+XMINT2 Room::getSize() const
 {
-	return m_sizeX;
-}
-
-int Room::getSizeY() const
-{
-	return m_sizeY;
-}
-
-void Room::setWalls(std::vector<Wall*> walls, Direction dir)
-{
-	for (int i = 0; i < walls.size(); i++)
-	{
-		m_allWalls.push_back(walls[i]);
-	}
-
-	//switch (dir)
-	//{
-	//case 0:
-	//	up = walls;
-	//	break;
-	//case 1:
-	//	down = walls;
-	//	break;
-	//case 2:
-	//	left = walls;
-	//	break;
-	//case 3:
-	//	right = walls;
-	//	break;
-	//default:
-	//	break;
-	//}
-}
-
-void Room::addWall(Wall * wall, Direction dir)
-{
-	/*m_allWalls.push_back(wall);
-	switch (dir)
-	{
-	case 0:		
-		if (std::find(up.begin(), up.end(), wall) == up.end())
-			up.push_back(wall);
-		break;
-	case 1:
-		if (std::find(down.begin(), down.end(), wall) == down.end())
-			down.push_back(wall);
-		break;
-	case 2:
-		if (std::find(left.begin(), left.end(), wall) == left.end())
-			left.push_back(wall);
-		break;
-	case 3:
-		if (std::find(right.begin(), right.end(), wall) == right.end())
-			right.push_back(wall);
-		break;
-	default:
-		break;
-	}*/
+	return XMINT2(m_sizeX, m_sizeY);
 }
 
 DirectX::XMFLOAT3 Room::getPosition() const
@@ -448,27 +400,24 @@ std::vector<Wall*>* Room::getAllWalls()
 	return &m_allWalls;
 }
 
-std::vector<Wall*>* Room::getWall(Direction dir)
+std::vector<Wall*> Room::getWalls(Direction dir)
 {
-	/*switch (dir)
+	switch (dir)
 	{
 	case Direction::up:
-		return &up;
+		return m_upWalls;
 		break;
 	case Direction::down:
-		return &down;
+		return m_downWalls;
 		break;
 	case Direction::left:
-		return &left;
+		return m_leftWalls;
 		break;
 	case Direction::right:
-		return &right;
+		return m_rightWalls;
 		break;
-	default:
-		return nullptr;
-		break;
-	}*/
-	return new std::vector<Wall*>();
+	}
+	return std::vector<Wall*>();
 }
 
 void Room::move(int x, int y)
