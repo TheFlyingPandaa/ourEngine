@@ -16,17 +16,17 @@ Kitchen::~Kitchen()
 
 void Kitchen::Draw()
 {
-	/*for (size_t x = 0; x < down.size(); x++)
-	{
-		down[x]->Draw();
-		down[x]->CheckPick();
-		up[x]->Draw();
-	}
-	for (size_t y = 0; y < left.size(); y++)
-	{
-		left[y]->Draw();
-		right[y]->Draw();
-	}*/
+	for (auto& roomObj : m_roomObjects)
+		roomObj.Draw();
+
+	for (auto& vec : m_roomTiles)
+		for (auto& floor : vec)
+			floor->getQuad().Draw();
+
+	for (auto& wall : m_allWalls)
+		wall->Draw();
+
+
 }
 std::string Kitchen::toString() const
 {

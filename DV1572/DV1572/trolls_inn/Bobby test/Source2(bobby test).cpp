@@ -172,8 +172,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 			Shape* picked = nullptr;
 			picked = wnd.getPicked(cam);
+		
 
 			if (picked) {
+				picked->
 				pickingEvents.push(picked);
 			}
 		}

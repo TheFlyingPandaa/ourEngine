@@ -6,7 +6,7 @@ Reception::Reception(int posX, int posY, int sizeX, int sizeY, Mesh * m) : Room(
 {
 }
 
-Reception::Reception(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles) : Room(posX, posY, sizeX, sizeY, tiles)
+Reception::Reception(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles) : Room(posX, posY, sizeX, sizeY, tiles)
 {
 }
 
@@ -18,6 +18,10 @@ Reception::~Reception()
 
 void Reception::Draw()
 {
+	for (auto& tile : m_roomTiles)
+		tile->getQuad().Draw();
+	for (auto& wall : m_allWalls)
+		wall->Draw();
 }
 
 std::string Reception::toString() const

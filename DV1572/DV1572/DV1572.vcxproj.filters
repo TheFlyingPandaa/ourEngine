@@ -29,8 +29,6 @@
     <ClCompile Include="ourEngine\interface\shape\Rectangle.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Shape.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Attributes.cpp" />
@@ -43,28 +41,23 @@
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="ourEngine\core\FileReader.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AITest.cpp" />
     <ClCompile Include="ourEngine\core\Picking.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\shape\SkyBoxObject.cpp" />
     <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -81,9 +74,6 @@
     <ClInclude Include="ourEngine\interface\shape\Shape.h" />
     <ClInclude Include="ourEngine\interface\Window.h" />
     <ClInclude Include="ourEngine\Structs.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="ourEngine\interface\light\Light.h" />
     <ClInclude Include="ourEngine\interface\Input.h" />
     <ClInclude Include="trolls_inn\AI_Base\Attributes.h" />
@@ -95,14 +85,8 @@
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteBatch.h" />
     <ClInclude Include="ourEngine\core\Font\SpriteFont.h" />
     <ClInclude Include="ourEngine\core\FileReader.h" />
@@ -112,13 +96,13 @@
     <ClInclude Include="ourEngine\interface\Text.h" />
     <ClInclude Include="ourEngine\interface\shape\SkyBoxObject.h" />
     <ClInclude Include="ourEngine\interface\light\PointLight.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
-    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
+    <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

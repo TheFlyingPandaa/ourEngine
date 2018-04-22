@@ -20,19 +20,45 @@ const float WALLOFFSET = 0.5f;
 class RoomCtrl
 {
 public:
-	
+	struct RoomConnection
+	{
+		Room* otherRoom; // if nullptr, then the connection is to the outside
+		XMINT2 connectingDoor;
+		XMINT2 direction;
+
+		bool operator==(const RoomConnection& other)
+		{
+			return *otherRoom == *other.otherRoom;
+		}
+		bool operator==(const Room& other)
+		{
+			return *otherRoom == other;
+		}
+		bool operator==(const Room* other)
+		{
+			if (other == nullptr)
+			{
+				if (otherRoom == nullptr)
+					return true;
+				return false;
+			}
+			if (otherRoom == nullptr)
+				return false;
+
+			return *otherRoom == *other;
+		}
+	};
 private:
 	std::vector<Room*>	m_rooms;
+
 	Room*				m_entrance;
-	std::vector<Wall*>	m_walls;
 	Mesh*				m_doorMesh;
-	Mesh*				m_wall;
+	Mesh*				m_wallMesh;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
-	std::vector<Object3D> m_roomObjects;
+	std::vector<std::vector<int>> m_roomConnectionMap;
 
-	std::vector<std::vector<int>> m_roomConnections;
-	std::vector<int> m_tempPath;
+	std::vector<int>	m_tempPath;
 	
 	bool				_checkLegal(Room * room);
 	void				_makeRoomConnection(int source, int destination);
@@ -54,7 +80,7 @@ public:
 	bool				isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	void				setMesh(Mesh * mesh);
 
-	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<std::vector<Tile*>> tiles, bool force = false);
+	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	void				Update(Camera * cam);
 	void				Draw();
 

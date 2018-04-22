@@ -63,7 +63,6 @@ void OrbitCamera::update()
 		xmCamPos = xmCamPos + (xmLookAt *  modifier);
 	}
 	
-	
 	XMStoreFloat3(&m_pos, xmCamPos);
 	// --- ZOOM ----
 	if (Input::isMouseMiddlePressed())

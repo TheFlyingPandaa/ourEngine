@@ -139,8 +139,6 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-
-
 		Mesh* mesh = instance.shape->getMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 

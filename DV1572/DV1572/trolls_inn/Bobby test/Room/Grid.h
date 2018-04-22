@@ -44,27 +44,30 @@ private:
 
 	int					m_posX, m_posY;
 	int					m_sizeX, m_sizeY;
-	bool				m_walls[4] = { false };
+
 	Mesh*				m_tileMesh;
 	Mesh*				m_gridMesh;
 	Object3D			m_wholeGrid;
-	RoomCtrl			m_roomCtrl;
 
-	std::vector<std::vector<Tile*>> m_tiles;
+	std::vector<Tile*> m_tiles;
 
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
+	
+	int _index(int x, int y) const;
+	Tile* _getTile(int x, int y);
 
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
 	~Grid();
 
-	std::vector<std::vector<Tile *>> getGrid() const;
+	std::vector<Tile *> getGrid() const;
+	
 	bool	CheckIfDoorCanBeBuilt(DirectX::XMINT2 pos, DirectX::XMINT2 pos2);
 	void	AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
 	
-	void	AddDoor(DirectX::XMINT2 pos, DirectX::XMINT2 pos2, DirectX::XMINT2 size);
-	void	AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, bool force = false);
+	std::vector<Tile*> extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+
 	void	Update(Camera * cam);
 
 	void	Draw();
