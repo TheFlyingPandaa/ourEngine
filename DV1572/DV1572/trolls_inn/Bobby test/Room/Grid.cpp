@@ -22,15 +22,6 @@ int Grid::_index(int x, int y) const
 	return x + (y * m_sizeY);
 }
 
-Tile * Grid::_getTile(int x, int y) 
-{
-	const XMINT2 pos = { x,y };
-	for (auto& tile : m_tiles)
-		if(tile != nullptr)
-			if (*tile == pos)
-				return tile;
-	return nullptr;
-}
 
 Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 {
@@ -187,7 +178,7 @@ void Grid::PickTiles(Shape* selectionTile)
 				// Boundcheck
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
 				
-				Tile* t = _getTile(indexX, indexY);
+				Tile* t = m_tiles[_index(indexX, indexY)];
 				if (t)
 				{
 					t->getQuad().CheckPick();
@@ -229,18 +220,31 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 		std::swap(end.y, start.y);
 	}
 	
-	//color = XMFLOAT3(5.0f, 0.5f, 0.5f);
-
+	
+	bool result = true;
 	for (int i = start.x; i < end.x + 1; i++)
 	{
 		for (int j = start.y; j < end.y + 1; j++)
 		{
-			Tile* t = _getTile(i, j);
-			if(t)
+			Tile* t = m_tiles[_index(i, j)];
+			if (!t)
+			{
+				color = XMFLOAT3(5.0f, 0.5f, 0.5f);
+				result = false;
+			}
+		}
+	}
+	for (int i = start.x; i < end.x + 1; i++)
+	{
+		for (int j = start.y; j < end.y + 1; j++)
+		{
+			Tile* t = m_tiles[_index(i, j)];
+			if (t)
 				t->getQuad().setColor(color.x, color.y, color.z);
 		}
 	}
-	return true;
+
+	return result;
 }
 
 void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
@@ -257,7 +261,7 @@ void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)
 	{
 		for (int j = pos.y; j < end.y + 1; j++)
 		{
-			Tile* t = _getTile(i, j);
+			Tile* t = m_tiles[_index(i, j)];
 			if(t)
 				t->getQuad().setColor(1.0f, 1.0f, 1.0f);
 		}

@@ -68,6 +68,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 	this->m_sizeY = sizeY;
 
 	this->m_roomTiles = tiles;
+
 }
 
 Room::~Room()
@@ -110,134 +111,6 @@ void Room::Update(Camera * cam)
 				wall->setScale(1, 1.0f, 1.0f);
 		}
 	}
-
-
-	
-	/*if (cam)
-	{
-		bool cullWalls[4] = { false, false, false, false };
-		DirectX::XMFLOAT3 camPos3D = cam->getPosition();
-		DirectX::XMFLOAT2 camPosition = { camPos3D.x, camPos3D.z };
-		DirectX::XMFLOAT2 roomCenter(m_AABB.getPosition().x, m_AABB.getPosition().z);
-		float distanceToCamera = DirectX::XMVectorGetX(DirectX::XMVector2Length(DirectX::XMLoadFloat2(&camPosition) - DirectX::XMLoadFloat2(&roomCenter)));
-		int cullDist = 15;
-
-		if (distanceToCamera < cullDist)
-		{
-			if (camPosition.x < m_posX)
-			{
-				cullWalls[Direction::left] = true;
-			}
-			else if (camPosition.x > m_posX + m_sizeX)
-			{
-				cullWalls[Direction::right] = true;
-			}
-			if (camPosition.y < m_posY)
-			{
-				cullWalls[Direction::down] = true;
-			}
-			else if (camPosition.y > m_posY + m_sizeY)
-			{
-				cullWalls[Direction::up] = true;
-			}
-		}
-
-		bool changeUp = false;
-		bool changeDown = false;
-		bool changeRight = false;
-		bool changeLeft = false;
-
-		if (m_culledWalls[Direction::up] != cullWalls[Direction::up])
-		{
-			m_culledWalls[Direction::up] = cullWalls[Direction::up];
-			changeUp = true;
-		}
-		if (m_culledWalls[Direction::down] != cullWalls[Direction::down])
-		{
-			m_culledWalls[Direction::down] = cullWalls[Direction::down];
-			changeDown = true;
-		}
-		if (m_culledWalls[Direction::right] != cullWalls[Direction::right])
-		{
-			m_culledWalls[Direction::right] = cullWalls[Direction::right];
-			changeRight = true;
-		}
-		if (m_culledWalls[Direction::left] != cullWalls[Direction::left])
-		{
-			m_culledWalls[Direction::left] = cullWalls[Direction::left];
-			changeLeft = true;
-		}
-
-
-		if (changeUp || changeDown)
-		{
-			for (size_t x = 0; x < down.size(); x++)
-			{
-				if (changeDown)
-				{
-					if (m_culledWalls[Direction::down] && !down[x]->getIsDoor())
-						down[x]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						down[x]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-			for (size_t x = 0; x < up.size(); x++)
-			{
-				if (changeUp)
-				{
-					if (m_culledWalls[Direction::up] && !up[x]->getIsDoor())
-						up[x]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						up[x]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-		}
-
-		if (changeRight || changeLeft)
-		{
-			for (size_t y = 0; y < left.size(); y++)
-			{
-				if (changeLeft)
-				{
-					if (m_culledWalls[Direction::left] && !left[y]->getIsDoor())
-						left[y]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						left[y]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-			for (size_t y = 0; y < right.size(); y++)
-			{
-				if (changeRight)
-				{
-					if (m_culledWalls[Direction::right] && !right[y]->getIsDoor())
-						right[y]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						right[y]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-		}
-
-	}
-	for (int i = 0; i < down.size(); i++)
-	{
-		if (down[i]->getIsInner() && !down[i]->getIsDoor())
-			down[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < up.size(); i++)
-	{
-		if (up[i]->getIsInner() && !up[i]->getIsDoor())
-			up[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < left.size(); i++)
-	{
-		if (left[i]->getIsInner() && !left[i]->getIsDoor())
-			left[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < right.size(); i++)
-	{
-		if (right[i]->getIsInner() && !right[i]->getIsDoor())
-			right[i]->setScale(1.0f, 0.05f, 1.0f);
-	}*/
 }
 
 int Room::getRoomIndex() const
@@ -251,13 +124,8 @@ void Room::ApplyIndexOnMesh()
 	{
 		w->getObject3D().setLightIndex(m_index);
 	}
-	//for (int i = 0; i < m_sizeY; i++)
-	//{
-	//	for (int j = 0; j < m_sizeX; j++)
-	//	{
-	//		m_tiles[j][i]->getQuad().setLightIndex(m_index);
-	//	}
-	//}
+	for(auto& tile : m_roomTiles)
+			tile->getQuad().setLightIndex(m_index);
 }
 
 void Room::CastShadow()
@@ -335,6 +203,8 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 
 		}
 	}
+
+	ApplyIndexOnMesh();
 }
 
 int Room::getX() const

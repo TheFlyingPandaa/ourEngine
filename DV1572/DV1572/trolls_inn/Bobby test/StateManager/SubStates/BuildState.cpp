@@ -68,11 +68,11 @@ void BuildState::_buildInput()
 				//for text
 				if (!m_doorBuild)
 				{
-					int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
+					/*int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
 					std::string textString = "Area: " + std::to_string(area);
 					m_priceOfRoom.setTextString(textString);
 					DirectX::XMFLOAT2 mp = Input::getMousePositionLH();
-					m_priceOfRoom.setPosition(mp.x, mp.y + 20);
+					m_priceOfRoom.setPosition(mp.x, mp.y + 20);*/
 					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
 				}
 				else
@@ -147,8 +147,9 @@ void BuildState::_buildInput()
 		m_buildStage = BuildStage::None;
 		m_startTile = nullptr;
 		m_selectedTile = nullptr;
-		m_roomPlaceable = false;
-		m_roomCtrl->AddRoom(start, end, m_selectedRoomType, grid->extractTiles(start,end));
+		 if(m_roomPlaceable)
+			 m_roomCtrl->AddRoom(start, end, m_selectedRoomType, grid->extractTiles(start,end));
+		 m_roomPlaceable = false;
 	}
 	else {
 		m_buildStage = BuildStage::None;

@@ -55,7 +55,6 @@ private:
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
 	
 	int _index(int x, int y) const;
-	Tile* _getTile(int x, int y);
 
 public:
 	Grid(int posX = 0, int posY = 0, int sizeX = 8, int sizeY = 8, Mesh * mesh = nullptr);
