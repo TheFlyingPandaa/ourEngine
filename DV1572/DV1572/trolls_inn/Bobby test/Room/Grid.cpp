@@ -40,10 +40,15 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	this->m_sizeY = sizeY;
 	
 	this->m_gridMesh = new Mesh();
+	m_tileMesh = new Mesh();
 
 	m_gridMesh->MakeRectangle();
 	m_gridMesh->setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	m_gridMesh->setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+
+	m_tileMesh->MakeRectangle();
+	m_tileMesh->setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
+	m_tileMesh->setNormalTexture("trolls_inn/Resources/GrassNormal.png");
 	
 
 	m_wholeGrid.setMesh(m_gridMesh);
@@ -58,10 +63,11 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	{
 		for (int j = 0; j < sizeX; j++)
 		{
-			Tile* t = new Tile(sizeX, sizeY, m_gridMesh);
+			Tile* t = new Tile(sizeX, sizeY, m_tileMesh);
 
 			t->getQuad().setScale(2.0f);
 			t->getQuad().setPos(static_cast<float>(j + posX), 0, static_cast<float>(i + posY));
+			t->getQuad().setGridScale(1);
 
 			this->m_tiles.push_back(t);
 		}
@@ -160,19 +166,20 @@ void Grid::Draw()
 		}
 	}
 	
-
 	m_wholeGrid.Draw();
+
 }
 
 void Grid::PickTiles(Shape* selectionTile)
 {
+	bool notFound = false;
 	if (selectionTile)
 	{
 		int xPos = static_cast<int>(selectionTile->getPosition().x);
 		int yPos = static_cast<int>(selectionTile->getPosition().z);
 
-		for(int x = -5; x < 5; x++)
-			for (int y = -5; y < 5; y++)
+		for(int x = -1; x <= 1; x++)
+			for (int y = -1; y <= 1; y++)
 			{
 				int indexX = xPos + x;
 				int indexY = yPos + y;
@@ -181,8 +188,12 @@ void Grid::PickTiles(Shape* selectionTile)
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
 				
 				Tile* t = _getTile(indexX, indexY);
-				if(t)
+				if (t)
+				{
 					t->getQuad().CheckPick();
+					t->getQuad().setColor(1.0f, 1.0f, 1.0f);
+					notFound = true;
+				}
 			}
 
 		for (int i = 0; i < m_tiles.size(); i++)
@@ -192,7 +203,7 @@ void Grid::PickTiles(Shape* selectionTile)
 		}
 	
 	}
-	else
+	else if(!notFound)
 	{
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
