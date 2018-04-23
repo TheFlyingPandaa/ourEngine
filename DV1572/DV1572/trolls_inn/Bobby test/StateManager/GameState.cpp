@@ -132,40 +132,6 @@ void GameState::Update(double deltaTime)
 			m_justMoved = true;
 		}
 	}
-
-	if (Input::isKeyPressed('G'))
-	{
-		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
-	}
-
-	//if (Input::isKeyPressed('A'))
-	//{
-	//	c.Move(Character::LEFT);
-	//}
-	//if (Input::isKeyPressed('W'))
-	//{
-	//	c.Move(Character::UP);
-	//}
-	//if (Input::isKeyPressed('S'))
-	//{
-	//	c.Move(Character::DOWN);
-	//}
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	c.Move(Character::RIGHT);
-	//}
-	//</TEMP>
-
-	 // Get result.
-
-	_handlePicking();	// It's important this is before handleInput();
-	_handleInput();		// It's important this is after handlePicking();
-	
-
-	if (Input::isKeyPressed('B'))
-	{
-		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
-	}
 }
 
 void GameState::Draw()
@@ -238,8 +204,7 @@ void GameState::_handlePicking()
 		else if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
-			
-		ss->HandlePicking(obj);
+			ss->HandlePicking(obj);
 		}
 		
 		if (Input::isKeyPressed('G'))
