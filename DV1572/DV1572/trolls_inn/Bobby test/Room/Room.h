@@ -49,6 +49,7 @@ public:
 	virtual void		setFloorMesh(Mesh * mesh);
 	virtual void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
 	virtual void		PickTiles();
+	virtual void		PickWalls();
 	
 	std::vector<Tile*>	ReturnTiles();
 

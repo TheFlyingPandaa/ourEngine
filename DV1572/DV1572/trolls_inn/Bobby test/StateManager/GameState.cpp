@@ -44,7 +44,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	grid = new Grid(0, 0, startSize, startSize);	
 	m_roomctrl = new RoomCtrl();
 	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	
+
 	//grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
 	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	//grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
@@ -118,6 +118,10 @@ void GameState::Update(double deltaTime)
 	if (Input::isKeyPressed('D'))
 	{
 		m_roomctrl->PickRoomTiles();
+	}
+	if (Input::isKeyPressed('C'))
+	{
+		m_roomctrl->PickWalls();
 	}
 	
 
@@ -221,15 +225,24 @@ void GameState::_handlePicking()
 			ss->HandlePicking(obj);
 		}
 
-//		std::cout << "POs (" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
-		XMINT2 delPos = { static_cast<int>(obj->getPosition().x), static_cast<int>(obj->getPosition().z) };
+		if (Input::isKeyPressed('C'))
+		{
+			m_roomctrl->CreateDoor(obj->getPosition());
+		}
+		else if (Input::isKeyPressed('D'))
+		{
+
+			XMINT2 delPos = { static_cast<int>(obj->getPosition().x), static_cast<int>(obj->getPosition().z) };
+
+			std::vector<Tile*> tiles;
+			XMINT2 roomPos;
+			XMINT2 roomSize;
+			bool remove = m_roomctrl->RemoveRoom(delPos,tiles,roomPos,roomSize);
+			if(remove)
+				grid->insertTiles(roomPos,roomSize,tiles);
 		
-		std::vector<Tile*> tiles;
-		XMINT2 roomPos;
-		XMINT2 roomSize;
-		bool remove = m_roomctrl->RemoveRoom(delPos,tiles,roomPos,roomSize);
-		if(remove)
-			grid->insertTiles(roomPos,roomSize,tiles);
+		}
+	
 		
 
 

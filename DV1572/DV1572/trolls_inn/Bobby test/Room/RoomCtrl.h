@@ -83,6 +83,7 @@ public:
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
 	void				PickRoomTiles();
+	void				PickWalls();
 	void				Update(Camera * cam);
 	void				Draw();
 
@@ -92,7 +93,7 @@ public:
 	void				CreateDoors(Room * room);
 	DirectX::XMINT2		CreateMainDoor(Room * room);
 	void				setDoorMesh(Mesh * mesh);
-	void				CreateDoor(Tile * tile1, Tile * tile2);
+	void				CreateDoor(XMFLOAT3 wallPosition);
 	void				CreateMainDoor(Tile * tile1, Tile * tile2);
 
 	std::vector<int>	roomTraversal(Tile* roomTile1, Tile * roomTile2);

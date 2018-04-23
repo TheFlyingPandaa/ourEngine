@@ -197,6 +197,9 @@ RoomCtrl::RoomCtrl()
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
 
+	m_doorMesh = new Mesh();
+	m_doorMesh->LoadModel("trolls_inn/Resources/door/Door.obj");
+
 }
 
 
@@ -209,6 +212,7 @@ RoomCtrl::~RoomCtrl()
 
 	delete m_wallMesh;
 	delete m_tileMesh[0];
+	delete m_doorMesh;
 	m_rooms.clear();
 }
 
@@ -292,6 +296,12 @@ void RoomCtrl::PickRoomTiles()
 {
 	for (auto& room : m_rooms)
 		room->PickTiles();
+}
+
+void RoomCtrl::PickWalls()
+{
+	for (auto& room : m_rooms)
+		room->PickWalls();
 }
 
 void RoomCtrl::Update(Camera * cam)
@@ -533,42 +543,23 @@ void RoomCtrl::setDoorMesh(Mesh * mesh)
 	this->m_doorMesh = mesh;
 }
 
-void RoomCtrl:: CreateDoor(Tile * tile1, Tile * tile2)
+void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 {
-	//Direction dir = this->getDirection(tile1, tile2);
+	for (auto& rooms : m_rooms)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			for (auto& wall : rooms->getWalls(static_cast<Direction>(i)))
+			{
+				if (wall->getObject3D().getPosition().x == wallPosition.x && wall->getObject3D().getPosition().z == wallPosition.z)
+				{
+					wall->getObject3D().setMesh(m_doorMesh);
+					return;
+				}
+			}
 
-	//Wall* w = tile1->getTileWalls(dir);
-	//if (!w)
-	//	return;
-	//w->setScale(1.0f,1.0f,1.0f);
-	//w->setIsDoor(true);
-	//int indexes[2] = { -1 };
-	//Room* firstRoom = tile1->getRoom();
-	//Room* secondRoom = tile2->getRoom();
-	//for (int i = 0; i < m_rooms.size(); i++)
-	//{
-	//	if (*firstRoom == *m_rooms[i])
-	//		indexes[0] = i;
-	//	if (*secondRoom == *m_rooms[i])
-	//		indexes[1] = i;
-	//}
-	//
-	//_makeRoomConnection(indexes[0], indexes[1]);
-	//XMINT2 tilePosition = { tile1->getPosX(), tile1->getPosY() };
-	//XMINT2 tilePosition2 = { tile2->getPosX(), tile2->getPosY() };
-	//XMINT2 doorDir = getDirection2i(tile1, tile2);
-	//XMINT2 doorDirInv = { -doorDir.x, -doorDir.y };
-	////std::cout << "Door position1 (" << tilePosition.x << "," << tilePosition.y << ")\n";
-	////std::cout << "Door direction1 (" << doorDir.x << "," << doorDir.y << ")\n";
-
-	////std::cout << "\nDoor position2 (" << tilePosition2.x << "," << tilePosition2.y << ")\n";
-	////std::cout << "Door direction2 (" << doorDirInv.x << "," << doorDirInv.y << ")\n";
-	//firstRoom->addAdjasentRoomDoor(secondRoom, tilePosition, doorDir);
-	//secondRoom->addAdjasentRoomDoor(firstRoom, tilePosition2, doorDirInv);
-
-	//w->setMesh(this->m_doorMesh);
-	//_printRoomConnections();
-
+		}
+	}
 }
 
 void RoomCtrl::CreateMainDoor(Tile * tile1, Tile * tile2)

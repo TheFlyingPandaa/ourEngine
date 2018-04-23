@@ -219,6 +219,12 @@ void Room::PickTiles()
 	}
 }
 
+void Room::PickWalls()
+{
+	for (auto& wall : m_allWalls)
+		wall->getObject3D().CheckPick();
+}
+
 std::vector<Tile*> Room::ReturnTiles()
 {
 	std::vector<Tile*> tiles;

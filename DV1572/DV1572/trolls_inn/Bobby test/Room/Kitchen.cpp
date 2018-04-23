@@ -18,7 +18,9 @@ void Kitchen::Draw()
 {
 	m_wholeFloor.Draw();
 	for (auto& wall : m_allWalls)
+	{
 		wall->Draw();
+	}
 
 }
 std::string Kitchen::toString() const

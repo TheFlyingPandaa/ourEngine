@@ -21,7 +21,9 @@ void Reception::Draw()
 	m_wholeFloor.Draw();
 
 	for (auto& wall : m_allWalls)
+	{
 		wall->Draw();
+	}
 }
 
 std::string Reception::toString() const

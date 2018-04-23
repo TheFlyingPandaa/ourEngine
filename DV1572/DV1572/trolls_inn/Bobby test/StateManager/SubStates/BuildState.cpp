@@ -43,11 +43,10 @@ void BuildState::_buildInput()
 		{
 			m_buildStage = BuildStage::Start;
 			this->grid->PickTiles();
+			
 		}
 		else if (m_buildStage == BuildStage::Selection)
 		{
-			this->grid->PickTiles(m_selectedTile);
-
 			if (m_startTile && m_selectedTile)
 			{
 				XMFLOAT3 s = m_startTile->getPosition();
@@ -77,10 +76,15 @@ void BuildState::_buildInput()
 				}
 				else
 				{
-				//	this->grid->CheckIfDoorCanBeBuilt(start, end);
+					// This is the door building
+					/*std::cout << "Start: (" << start.x << "," << start.y << ") ";
+					std::cout << "End: (" << end.x << "," << end.y << ")\n";*/
+					//this->grid->CheckIfDoorCanBeBuilt(start, end);
 				}
 
 			}
+
+			this->grid->PickTiles(m_selectedTile);
 		}
 	}
 	else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
@@ -164,7 +168,7 @@ void BuildState::_buildInput()
 
 void BuildState::_doorBuildInput()
 {
-	this->grid->PickTiles(m_startTile);
+//	this->grid->PickTiles(m_startTile);
 	if (m_startTile)
 	{
 		XMFLOAT3 s = m_startTile->getPosition();
