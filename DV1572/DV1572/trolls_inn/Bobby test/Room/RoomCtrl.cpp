@@ -1,5 +1,5 @@
 #include "RoomCtrl.h"
-
+#include "../../Furniture/Table.h"
 
 
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
@@ -82,6 +82,11 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	}
 
 	return isPlaceable;
+}
+
+bool RoomCtrl::isPlaceableObject(DirectX::XMINT2 pos, int size)
+{
+	return true;
 }
 
 bool RoomCtrl::_checkLegal(Room * room)
@@ -232,14 +237,17 @@ RoomCtrl::~RoomCtrl()
 	m_walls.clear();
 }
 
-void RoomCtrl::addRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+void RoomCtrl::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 {
-	Object3D tempObj;
-	tempObj.setMesh(mesh);
-	tempObj.setPos(pos.x + 0.5f, 0, pos.y + 0.5f);
+	Table tempObj = Table(pos, mesh);
 	
 	m_roomObjects.push_back(tempObj);
 	
+}
+
+void RoomCtrl::AddRoomObject(Furniture furniture)
+{
+	m_roomObjects.push_back(furniture);
 }
 
 void RoomCtrl::setMesh(Mesh * mesh)

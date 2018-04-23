@@ -4,7 +4,8 @@
 class Table : public Furniture
 {
 public:
-	Table(DirectX::XMINT2 pos, Mesh * mesh);
+	Table(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	~Table();
 
+	//static int getGridSize();
 };

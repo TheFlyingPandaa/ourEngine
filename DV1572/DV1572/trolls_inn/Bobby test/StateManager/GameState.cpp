@@ -7,6 +7,7 @@
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
 #include "../StateManager/SubStates/BuildState.h"
+#include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -26,6 +27,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	}
 
 
+	table.LoadModel("trolls_inn/Resources/Stol.obj");
 	box.LoadModel("trolls_inn/Resources/Box.obj");
 
 	c.setModel(&box);
@@ -135,6 +137,35 @@ void GameState::Update(double deltaTime)
 	{
 		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
 	}
+
+	//if (Input::isKeyPressed('A'))
+	//{
+	//	c.Move(Character::LEFT);
+	//}
+	//if (Input::isKeyPressed('W'))
+	//{
+	//	c.Move(Character::UP);
+	//}
+	//if (Input::isKeyPressed('S'))
+	//{
+	//	c.Move(Character::DOWN);
+	//}
+	//if (Input::isKeyPressed('D'))
+	//{
+	//	c.Move(Character::RIGHT);
+	//}
+	//</TEMP>
+
+	 // Get result.
+
+	_handlePicking();	// It's important this is before handleInput();
+	_handleInput();		// It's important this is after handlePicking();
+	
+
+	if (Input::isKeyPressed('B'))
+	{
+		m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
+	}
 }
 
 void GameState::Draw()
@@ -207,11 +238,20 @@ void GameState::_handlePicking()
 		else if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
-
-			ss->HandlePicking(obj);
+			
+		ss->HandlePicking(obj);
 		}
-
-
+		
+		if (Input::isKeyPressed('G'))
+		{
+			Table fut = Table(obj->getPosition(), &table);
+			bool test = this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), fut.getGridSize(), fut.getRotation());
+			if (test)
+			{
+				this->grid->AddRoomObject(fut);
+			}
+			
+		}
 
 		using namespace std::chrono_literals;
 
