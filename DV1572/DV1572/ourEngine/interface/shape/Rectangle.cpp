@@ -16,7 +16,7 @@ RectangleShape::RectangleShape(float w, float h)
 	m_width = (w / s.x) * 4;
 
 	_buildRectangle();
-	
+	m_shape = ShapeType::Rectangle;
 	
 	this->setScale(m_width, m_height, 1.0f);
 
@@ -101,13 +101,25 @@ void RectangleShape::setScreenPos(DirectX::XMFLOAT3 pos)
 
 DirectX::XMFLOAT3 RectangleShape::getScreenPos() const
 {
-	DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(getPosition());
-
 	DirectX::XMINT2 s = Input::getWindowSize();
-	pos.x = 0.5f * (pos.x * s.x) + 1.0f;
-	pos.y = 0.5f * (pos.y * s.y) + 1.0f;
+	DirectX::XMFLOAT3 scrnPos = DirectX::XMFLOAT3(getPosition());
+	DirectX::XMFLOAT3 pos;
+
+
+	pos.x = ((scrnPos.x + 1.0f) * s.x) * 0.5f;
+	pos.y = ((scrnPos.y + 1.0f) * s.y) * 0.5f;
 
 	return pos;
+}
+
+void RectangleShape::setShapeType(ShapeType t)
+{
+	m_shape = t;
+}
+
+RectangleShape::ShapeType RectangleShape::getShapeType() const
+{
+	return m_shape;
 }
 
 int RectangleShape::getIndex() const

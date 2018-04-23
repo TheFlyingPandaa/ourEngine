@@ -11,11 +11,10 @@
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
 	m_stage = GameStage::Play;
-	m_hasClicked = false;
-	m_colorButton = false;
-	m_hudPickStage = HudPickingStage::Miss;
+	m_clickedLastFrame = false;
+	m_madeFullReset = true;
+	m_lastClickedIndex = -1;
 	// Building END
-	m_lastPickedIndex = -1;
 	m_Rpressed = false;
 	_setHud();
 
@@ -107,7 +106,6 @@ void GameState::Update(double deltaTime)
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	
 	
-	m_colorButton = false;
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	//std::cout << " TIME: " << dt << std::endl;
@@ -197,14 +195,18 @@ void GameState::_setHud()
 
 void GameState::_handlePicking()
 {
+	bool hudWasPicked = _handleHUDPicking();
+
+	if (hudWasPicked)
+		while (!p_pickingEvent->empty()) this->p_pickingEvent->pop();
+
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
-		if (m_hudPickStage != HudPickingStage::Miss)
-			_handleHUDPicking(dynamic_cast<RectangleShape*>(obj));
-		else if (!m_subStates.empty())
+		
+		if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
 
@@ -274,156 +276,127 @@ void GameState::_handlePickingAi(Shape * obj)
 }
 
 
-void GameState::_handleHUDPicking(RectangleShape* r)
+bool GameState::_handleHUDPicking()
 {
-	if (r)
+	bool pickedHUD = false;
+	int index = m_stateHUD.PickHud(Input::getMousePositionLH());
+
+	if (index != -2) pickedHUD = true;
+		
+	
+	if (index >= 0)
 	{
 		float cH = 5.0f;
 		float cHL = 2.0f;
 		float cC = 50.0f;
-
-			m_colorButton = true;
-		switch (m_hudPickStage)
+		m_madeFullReset = false;
+		if (!m_clickedLastFrame && Input::isMouseLeftPressed())
 		{
-		case HudPickingStage::Hover:
-		{
-			int index = r->getIndex();
-			if (index != m_lastPickedIndex)
-			{
-				m_lastPickedIndex = index;
-				for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-				{
-					if (!m_hudButtonsPressed[i])
-						m_stateHUD.ResetColorsOnPickableWithIndex(i);
-				}
-			}
-			switch (index)
-			{
-			case 0:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cH, cHL, cHL);
-				break;
-			case 1:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cHL, cH, cHL);
-				break;
-			case 2:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cHL, cHL, cH);
-				break;
-			case 3:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cH, cHL / 4, cH);
-				break;
-			default:
-				r->setColor(3, 3, 3);
-				break;
-			}
-			break;
-		}
-		case HudPickingStage::Click:
-		{
-			int index = r->getIndex();
+			m_lastClickedIndex = index;
+			// Clicked a button
 			while (!m_subStates.empty())
 			{
 				SubState * s = m_subStates.top();
 				m_subStates.pop();
 				delete s;
 			}
+			_resetHudButtonPressedExcept(index);
+			m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+			m_clickedLastFrame = true;
+
 			switch (index)
 			{
 			case 0:
+				// Crew Button
 				std::cout << "Crew Button Pressed\n";
-				r->setColor(cC, cHL, cHL);
-				_resetHudButtonPressedExcept(index);
+				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
 				break;
 			case 1:
-				std::cout << "BUID Button Pressed\n";
-				r->setColor(cHL, cC, cHL);
-				_resetHudButtonPressedExcept(index);
-				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+				// Build Button
+				std::cout << "Build Button Pressed\n";
+				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index])
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid));
-					
 				break;
 			case 2:
+				// Event Button
 				std::cout << "Event Button Pressed\n";
-				r->setColor(cHL, cHL, cC);
-				_resetHudButtonPressedExcept(index);
+				m_stateHUD.SetColorOnButton(index, cHL, cHL, cC);
 				break;
 			case 3:
+				// Stats Button
 				std::cout << "Stats Button Pressed\n";
-				r->setColor(cC, cHL/4, cC);
-				_resetHudButtonPressedExcept(index);
-				break;
-			default:
-				std::cout << "Something Pressed\n";
-				_resetHudButtonPressedExcept(index);
+				m_stateHUD.SetColorOnButton(index, cC, cHL / 4, cC);
 				break;
 			}
-			
-			break;
+
 		}
+		else
+		{
+			switch (index)
+			{
+			case 0:
+				// Crew Button
+				if (!m_hudButtonsPressed[index])
+					m_stateHUD.SetColorOnButton(index, cH, cHL, cHL);
+				break;
+			case 1:
+				// Build Button
+				if (!m_hudButtonsPressed[index])
+					m_stateHUD.SetColorOnButton(index, cHL, cH, cHL);
+				break;
+			case 2:
+				// Event Button
+				if (!m_hudButtonsPressed[index])
+					m_stateHUD.SetColorOnButton(index, cHL, cHL, cH);
+				break;
+			case 3:
+				// Stats Button
+				if (!m_hudButtonsPressed[index])
+					m_stateHUD.SetColorOnButton(index, cH, cHL / 4, cH);
+				break;
+			}
+
 		}
+		if (m_clickedLastFrame && !Input::isMouseLeftPressed())
+		{
+			m_clickedLastFrame = false;
+		}
+
 	}
-	else
+	else if (!m_madeFullReset)
 	{
-		m_hudPickStage = HudPickingStage::Miss;
+		// Miss all buttons
+		for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+		{
+			if (!m_hudButtonsPressed[i])
+				m_stateHUD.ResetColorsOnPickableWithIndex(i);
+		}
+		m_madeFullReset = true;
 	}
+
+	return pickedHUD;
 }
 
 void GameState::_handleInput()
-{
-	if (m_stateHUD.isMouseInsidePotentialAreaRect(Input::getMousePositionLH()))
+{	
+	if (!m_subStates.empty())
 	{
-		m_stateHUD.CheckIfPicked();
-		m_hudPickStage = HudPickingStage::Hover;
-		if (Input::isMouseLeftPressed() && !m_hasClicked)
-		{
-			m_hudPickStage = HudPickingStage::Click;
-			m_hasClicked = true;
-		}
-		else if (!Input::isMouseLeftPressed() && m_hasClicked)
-		{
-			m_hasClicked = false;
-		}
-		if (!m_colorButton)
-			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-			{
-				if (!m_hudButtonsPressed[i])
-					m_stateHUD.ResetColorsOnPickableWithIndex(i);
-			}
+		SubState* ss = m_subStates.top();
+
+		ss->HandleInput();
 	}
-	else
+
+		
+	if (m_stage == GameStage::Play && m_subStates.empty())
 	{
-		if (m_hudPickStage != HudPickingStage::Miss)
+		if (Input::isMouseLeftPressed())
 		{
-			m_hudPickStage = HudPickingStage::Miss;
-			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-			{
-				if (!m_hudButtonsPressed[i])
-					m_stateHUD.ResetColorsOnPickableWithIndex(i);
-			}
+			this->grid->PickTiles();
+			m_move = true;
 		}
-		
-		if (!m_subStates.empty())
-		{
-			SubState* ss = m_subStates.top();
-
-			ss->HandleInput();
-		}
-
-		
-		if (m_stage == GameStage::Play && m_subStates.empty())
-		{
-			if (Input::isMouseLeftPressed())
-			{
-				this->grid->PickTiles();
-				m_move = true;
-			}
-			else
-				m_move = false;
-		}
+		else
+			m_move = false;
 	}
 
 	if (Input::isKeyPressed('P'))

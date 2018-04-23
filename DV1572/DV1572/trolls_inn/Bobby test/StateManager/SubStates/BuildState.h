@@ -23,17 +23,8 @@ private:
 	Grid *		grid;
 
 
-	enum HudPickingStage
-	{
-		Miss,
-		Hover,
-		Click
-
-	};
-	HudPickingStage m_hudPickStage;
-	bool m_colorButton;
-	bool m_hasClicked;
-	int m_lastPickedIndex;
+	bool m_madeFullReset;
+	bool m_clickedLastFrame;
 	std::vector<bool> m_hudButtonsPressed;
 	void _resetHudButtonPressedExcept(int index);
 
@@ -46,7 +37,7 @@ private:
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
 	void	_doorBuildInput();
-	void	_handlePickingOfHud(RectangleShape * pickedShape);
+	bool	_handleHUDPicking();
 
 public:
 

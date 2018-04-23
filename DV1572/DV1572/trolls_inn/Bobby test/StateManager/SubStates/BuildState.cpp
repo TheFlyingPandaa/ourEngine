@@ -193,86 +193,168 @@ void BuildState::_doorBuildInput()
 
 }
 
-void BuildState::_handlePickingOfHud(RectangleShape * r)
+bool BuildState::_handleHUDPicking()
 {
-	if (r)
+	bool pickedHUD = false;
+	int index = p_HUD.PickHud(Input::getMousePositionLH());
+
+	if (index != -2) pickedHUD = true;
+
+	if (index >= 0)
 	{
 		float cH = 5.0f;
 		float cHL = 2.0f;
 		float cC = 50.0f;
+		m_madeFullReset = false;
+		if (!m_clickedLastFrame && Input::isMouseLeftPressed())
+		{
+			// Clicked a button
+			_resetHudButtonPressedExcept(index);
+			m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+			m_clickedLastFrame = true;
 
-		m_colorButton = true;
-		switch (m_hudPickStage)
-		{
-		case HudPickingStage::Hover:
-		{
-			int index = r->getIndex();
-			if (index != m_lastPickedIndex)
-			{
-				m_lastPickedIndex = index;
-				for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-				{
-					if (!m_hudButtonsPressed[i])
-						p_HUD.ResetColorsOnPickableWithIndex(i);
-				}
-			}
 			switch (index)
 			{
 			case 0:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cH, cHL, cHL);
-				break;
-			case 1:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cHL, cH, cHL);
-				break;
-			case 2:
-				if (!m_hudButtonsPressed[index])
-					r->setColor(cHL, cHL, cH);
-				break;
-			default:
-				r->setColor(3, 3, 3);
-				break;
-			}
-			break;
-		}
-		case HudPickingStage::Click:
-		{
-			int index = r->getIndex();
-			switch (index)
-			{
-			case 0:
+				// Rooms Button
 				std::cout << "Build Rooms Button Pressed\n";
-				r->setColor(cC, cHL, cHL);
-				_resetHudButtonPressedExcept(index);
-				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+				p_HUD.SetColorOnButton(index, cC, cHL, cHL);
 				break;
 			case 1:
+				// Furniture Button
 				std::cout << "Build Furniutre Button Pressed\n";
-				r->setColor(cHL, cC, cHL);
-				_resetHudButtonPressedExcept(index);
+				p_HUD.SetColorOnButton(index, cHL, cC, cHL);
 				break;
 			case 2:
+				// Door Button
 				std::cout << "Build Door Button Pressed\n";
-				r->setColor(cHL, cHL, cC);
-				_resetHudButtonPressedExcept(index);
-				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
-				break;
-			default:
-				std::cout << "Something Pressed\n";
-				_resetHudButtonPressedExcept(index);
+				p_HUD.SetColorOnButton(index, cHL, cHL, cC);
 				break;
 			}
 
-			break;
 		}
+		else
+		{
+			switch (index)
+			{
+			case 0:
+				// Rooms Button
+				if (!m_hudButtonsPressed[index])
+					p_HUD.SetColorOnButton(index, cH, cHL, cHL);
+				break;
+			case 1:
+				// Furniture Button
+				if (!m_hudButtonsPressed[index])
+					p_HUD.SetColorOnButton(index, cHL, cH, cHL);
+				break;
+			case 2:
+				// Door Button
+				if (!m_hudButtonsPressed[index])
+					p_HUD.SetColorOnButton(index, cHL, cHL, cH);
+				break;
+			}
+
 		}
+		if (m_clickedLastFrame && !Input::isMouseLeftPressed())
+		{
+			m_clickedLastFrame = false;
+		}
+
 	}
-	else
+	else if (!m_madeFullReset)
 	{
-		m_hudPickStage = HudPickingStage::Miss;
+		// Miss all buttons
+		for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+		{
+			if (!m_hudButtonsPressed[i])
+				p_HUD.ResetColorsOnPickableWithIndex(i);
+		}
+		m_madeFullReset = true;
 	}
+
+	return pickedHUD;
 }
+
+//void BuildState::_handlePickingOfHud(RectangleShape * r)
+//{
+//	if (r)
+//	{
+//		float cH = 5.0f;
+//		float cHL = 2.0f;
+//		float cC = 50.0f;
+//
+//		m_colorButton = true;
+//		switch (m_hudPickStage)
+//		{
+//		case HudPickingStage::Hover:
+//		{
+//			int index = r->getIndex();
+//			if (index != m_lastPickedIndex)
+//			{
+//				m_lastPickedIndex = index;
+//				for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+//				{
+//					if (!m_hudButtonsPressed[i])
+//						p_HUD.ResetColorsOnPickableWithIndex(i);
+//				}
+//			}
+//			switch (index)
+//			{
+//			case 0:
+//				if (!m_hudButtonsPressed[index])
+//					r->setColor(cH, cHL, cHL);
+//				break;
+//			case 1:
+//				if (!m_hudButtonsPressed[index])
+//					r->setColor(cHL, cH, cHL);
+//				break;
+//			case 2:
+//				if (!m_hudButtonsPressed[index])
+//					r->setColor(cHL, cHL, cH);
+//				break;
+//			default:
+//				r->setColor(3, 3, 3);
+//				break;
+//			}
+//			break;
+//		}
+//		case HudPickingStage::Click:
+//		{
+//			int index = r->getIndex();
+//			switch (index)
+//			{
+//			case 0:
+//				std::cout << "Build Rooms Button Pressed\n";
+//				r->setColor(cC, cHL, cHL);
+//				_resetHudButtonPressedExcept(index);
+//				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+//				break;
+//			case 1:
+//				std::cout << "Build Furniutre Button Pressed\n";
+//				r->setColor(cHL, cC, cHL);
+//				_resetHudButtonPressedExcept(index);
+//				break;
+//			case 2:
+//				std::cout << "Build Door Button Pressed\n";
+//				r->setColor(cHL, cHL, cC);
+//				_resetHudButtonPressedExcept(index);
+//				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
+//				break;
+//			default:
+//				std::cout << "Something Pressed\n";
+//				_resetHudButtonPressedExcept(index);
+//				break;
+//			}
+//
+//			break;
+//		}
+//		}
+//	}
+//	else
+//	{
+//		m_hudPickStage = HudPickingStage::Miss;
+//	}
+//}
 
 BuildState::BuildState(Camera * cam,
 	std::stack<Shape *>* pickingEvent,
@@ -323,47 +405,11 @@ void BuildState::DrawHUD()
 
 void BuildState::HandlePicking(Shape * pickedObject)
 {
-	if (m_hudPickStage != HudPickingStage::Miss)
-		_handlePickingOfHud(dynamic_cast<RectangleShape*>(pickedObject));
-
 	_handleBuildRoom(pickedObject);
 }
 
 void BuildState::HandleInput()
 {
-	if (p_HUD.isMouseInsidePotentialAreaRect(Input::getMousePositionLH()))
-	{
-		p_HUD.CheckIfPicked();
-		m_hudPickStage = HudPickingStage::Hover;
-		if (Input::isMouseLeftPressed() && !m_hasClicked)
-		{
-			m_hudPickStage = HudPickingStage::Click;
-			m_hasClicked = true;
-		}
-		else if (!Input::isMouseLeftPressed() && m_hasClicked)
-		{
-			m_hasClicked = false;
-		}
-		if (!m_colorButton)
-			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-			{
-				if (!m_hudButtonsPressed[i])
-					p_HUD.ResetColorsOnPickableWithIndex(i);
-			}
-	}
-	else
-	{
-		if (m_hudPickStage != HudPickingStage::Miss)
-		{
-			m_hudPickStage = HudPickingStage::Miss;
-			for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
-			{
-				if (!m_hudButtonsPressed[i])
-					p_HUD.ResetColorsOnPickableWithIndex(i);
-			}
-		}
+	if(!_handleHUDPicking())
 		_buildInput();
-	}
-
-
 }

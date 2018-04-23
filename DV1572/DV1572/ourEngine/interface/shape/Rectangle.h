@@ -17,11 +17,19 @@ public:
 		RC		// Right Center
 	};
 
+	enum ShapeType
+	{
+		Rectangle,
+		Circle,
+		Elipse
+	};
+
 private:
 	float m_width, m_height;
 	bool m_hud;
 	int m_index;
 	RelativeTo m_rt;
+	ShapeType m_shape;
 
 private:
 	void _buildRectangle();
@@ -33,6 +41,8 @@ public:
 	void setScreenPos(DirectX::XMFLOAT3 pos);
 	DirectX::XMFLOAT3 getScreenPos() const;
 
+	void setShapeType(ShapeType t);
+	ShapeType getShapeType() const;
 	int getIndex() const;
 	void setIndex(int index);
 	void setWidth(float w);

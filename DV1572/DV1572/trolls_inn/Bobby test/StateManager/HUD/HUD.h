@@ -26,16 +26,20 @@ private:
 	void _cleanUp();
 	void _setupAPotentialAreaCircle(int x, int y, int r, int relative);
 	void _setupAPotentialAreaRect(int x, int y, int sx, int sy, int relative);
+	bool _isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos) const;
+	bool _isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos) const;
+	bool _checkAgainstCircle(DirectX::XMFLOAT2 mousePos, const RectangleShape & rect) const;
+	bool _checkAgainstRectangle(DirectX::XMFLOAT2 mousePos, const RectangleShape & rect) const;
+	bool _checkAgainstElipse(DirectX::XMFLOAT2 mousePos, const RectangleShape & rect) const;
 public:
 	HUD();
 	~HUD();
 	bool LoadHud(const std::string &path);
 	RectangleShape*	Pick(DirectX::XMFLOAT2 at);
-	bool	isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos);
-	bool	isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos);
 	void	ResetColorsOnPickableWithIndex(int index);
 	int		getNrOfPickableButtons() const;
-
-	void CheckIfPicked();
+	int		PickHud(DirectX::XMFLOAT2 mousePos) const;
+	void	SetColorOnButton(int index, float r, float g, float b);
+	//void CheckIfPicked();
 	void Draw();
 };
