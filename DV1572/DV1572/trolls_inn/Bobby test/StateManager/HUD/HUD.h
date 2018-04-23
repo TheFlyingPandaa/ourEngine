@@ -40,6 +40,7 @@ public:
 	int		getNrOfPickableButtons() const;
 	int		PickHud(DirectX::XMFLOAT2 mousePos) const;
 	void	SetColorOnButton(int index, float r, float g, float b);
+	void	ResetColorsExcept(int index);
 	//void CheckIfPicked();
 	void Draw();
 };

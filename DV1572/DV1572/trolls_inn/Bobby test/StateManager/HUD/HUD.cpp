@@ -382,6 +382,15 @@ void HUD::SetColorOnButton(int index, float r, float g, float b)
 	m_quadsClickAble[index]->setColor(r, g, b);
 }
 
+void HUD::ResetColorsExcept(int index)
+{
+	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
+	{
+		if (m_quadsClickAble[i]->getIndex() != index)
+			m_quadsClickAble[i]->setColor(1, 1, 1);
+	}
+}
+
 //void HUD::CheckIfPicked()
 //{
 //	for (auto& p : m_quadsClickAble)

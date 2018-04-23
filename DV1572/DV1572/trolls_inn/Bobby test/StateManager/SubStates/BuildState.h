@@ -19,23 +19,34 @@ private:
 	//-----
 
 
-	RoomType	m_selectedRoomType;
 	Shape *		m_startTile;
 	Shape *		m_selectedTile;
 	BuildStage	m_buildStage;
 	bool		m_roomPlaceable;
 	Grid *		grid;
 
-	HUD			m_roomHUD;
-	HUD			m_doorHUD;
-	HUD			m_furnitureHUD;
 
-
-	bool m_madeFullReset;
+	// <Main HUD>
+	bool m_madeFullResetMain;
 	bool m_clickedLastFrame;
 	std::vector<bool> m_hudButtonsPressed;
-	void _resetHudButtonPressedExcept(int index);
+	// </Main Hud>
 
+	// <Create Room HUD>
+	bool				m_madeFullResetRoomHud;
+	HUD					m_roomHUD;
+	std::vector<bool>	m_roomHUDButtonsPressed;
+	RoomType			m_selectedRoomType;
+	// </Create Room HUD>
+
+	// <Create Room HUD>
+	HUD					m_doorHUD;
+	int					m_selectedDoor;
+	// </Create Room HUD>
+
+	HUD			m_furnitureHUD;
+	
+	
 	Text m_priceOfRoom;
 	
 	
@@ -58,7 +69,11 @@ private:
 	void	_roomBuildInput();
 	void	_objectBuildInput();
 	bool	_handleHUDPicking();
+	bool	_mainHudPick();
+	bool	_roomBuildHudPick();
+	bool	_doorBuildHudPick();
 
+	void _resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
 public:
 
 	BuildState(Camera * cam, 
