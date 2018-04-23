@@ -91,6 +91,10 @@ void MasterAI::Update(Camera* cam)
 		}
 		else
 		{
+			if (updateCustomerNeeds)
+			{
+				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
+			}
 			// Execute the action queue
 			this->m_solver.Update(*customer);
 		}
@@ -146,5 +150,5 @@ void MasterAI::Draw()
 
 void MasterAI::spawn()
 {
-	m_customers.push_back(this->m_cFC.update(this->m_inn.getInnAttributes()));
+	m_customers.push_back(this->m_cFC.Update(this->m_inn.getInnAttributes()));
 }

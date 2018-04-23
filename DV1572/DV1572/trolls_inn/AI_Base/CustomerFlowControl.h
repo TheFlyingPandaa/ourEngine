@@ -28,6 +28,6 @@ public:
 	CustomerFlowControl();
 	~CustomerFlowControl();
 
-	Customer* update(Attributes innAttributes);
+	Customer* Update(Attributes innAttributes);
 
 };

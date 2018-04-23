@@ -58,6 +58,7 @@ void AISolver::Update(Customer& customer)
 				// Go explore (?)
 				// Get race desires (?)
 			}
+			customer.PopToNextState();
 			break;
 			// Update animations drink, eat, sleep (?)
 		case Drinking:

@@ -97,7 +97,7 @@ CustomerFlowControl::~CustomerFlowControl()
 {
 }
 
-Customer* CustomerFlowControl::update(Attributes innAttributes)
+Customer* CustomerFlowControl::Update(Attributes innAttributes)
 {
 	Customer* nextCustomer;
 
@@ -113,6 +113,11 @@ Customer* CustomerFlowControl::update(Attributes innAttributes)
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
 	nextCustomer->setModel(&box);
 	nextCustomer->setFloor(0);
+
+	// Set needs for the customer
+	nextCustomer->SetHungry(this->m_rNG.GenerateRandomNumber(0, 4));
+	nextCustomer->SetTired(this->m_rNG.GenerateRandomNumber(0, 4));
+	nextCustomer->SetThirsty(this->m_rNG.GenerateRandomNumber(0, 4));
 
 	return nextCustomer;
 }

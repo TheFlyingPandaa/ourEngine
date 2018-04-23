@@ -70,7 +70,7 @@ public:
 	void PopToNextState();
 
 	const char* GetActionStr() const;
-	const char* GetNextActionStr() const;
+	const char* GetStateStr() const;
 
 	int GetHungry() const;
 	int GetTired() const;

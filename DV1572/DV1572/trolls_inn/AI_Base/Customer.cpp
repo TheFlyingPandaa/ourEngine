@@ -122,7 +122,7 @@ void Customer::GotPathSetNextAction(Action nextAction)
 
 const char* Customer::GetActionStr() const
 {
-	Action action = GetAction();
+	Action action = this->GetAction();
 
 	switch (action)
 	{
@@ -143,23 +143,25 @@ const char* Customer::GetActionStr() const
 	return "Idle";
 }
 
-const char* Customer::GetNextActionStr() const
+const char * Customer::GetStateStr() const
 {
-	Action action = GetAction();
+	CustomerState state = this->GetState();
 
-	switch (action)
+	switch (state)
 	{
-	case WalkAction:
+	case WalkingToInn:
+		return "Walking towards Trolls Inn";
+	case Walking:
 		return "Walking";
-	case ThinkingAction:
+	case Thinking:
 		return "Thinking";
-	case DrinkAction:
+	case Drinking:
 		return "Drink";
-	case EatAction:
+	case Eating:
 		return "Eat";
-	case SleepAction:
+	case Sleeping:
 		return "Sleep";
-	case LeavingInnAction:
+	case LeavingInn:
 		return "Leaving Trolls Inn";
 	}
 
