@@ -5,6 +5,7 @@
 #include "CustomerFlowControl.h"
 #include "Inn.h"
 #include <vector>
+#include <chrono>
 
 class MasterAI
 {
@@ -15,7 +16,12 @@ private:
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
 	CustomerFlowControl m_cFC;
-	// get day/night cycle to update customer needs
+
+	// Customer needs update variables
+	std::chrono::high_resolution_clock m_clock;
+	std::chrono::high_resolution_clock::time_point m_start, m_now;
+	std::chrono::duration<double, std::ratio<1, 1>> time_span;
+	
 
 public:
 	MasterAI();

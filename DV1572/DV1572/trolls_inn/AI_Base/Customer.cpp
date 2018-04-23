@@ -183,17 +183,20 @@ int Customer::GetThirsty() const
 
 void Customer::SetHungry(int value)
 {
-	this->m_hungry = value;
+	//this->m_hungry = value;
+	this->m_hungry = min(max(value, 0), 10);
 }
 
 void Customer::SetTired(int value)
 {
-	this->m_tired = value;
+	//this->m_tired = value;
+	this->m_tired = min(max(value, 0), 10);
 }
 
 void Customer::SetThirsty(int value)
 {
-	this->m_thirsty = value;
+	//this->m_thirsty = value;
+	this->m_thirsty = min(max(value, 0), 10);
 }
 
 void Customer::DoEating()

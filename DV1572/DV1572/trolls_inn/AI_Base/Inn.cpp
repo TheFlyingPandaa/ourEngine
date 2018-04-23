@@ -16,37 +16,38 @@ void Inn::_checkInnStatUpdate()
 {
 	if (this->m_iUA.creepy >= 10.0f)
 	{
-		this->m_innAttributes.SetCreepy((int)(this->m_iUA.creepy * 0.1));
+		this->m_innAttributes.SetCreepy(1);
+		//this->m_innAttributes.SetCreepy((int)(this->m_iUA.creepy * 0.1));
 		this->m_iUA.creepy -= 10.0f;
 	}
 	else if (this->m_iUA.drinkQuality >= 10.0f)
 	{
-		this->m_innAttributes.SetDrinkQuality((int)(this->m_iUA.drinkQuality * 0.1));
+		this->m_innAttributes.SetDrinkQuality(1);
 		this->m_iUA.drinkQuality -= 10.0f;
 	}
 	else if (this->m_iUA.foodQuality >= 10.0f)
 	{
-		this->m_innAttributes.SetFoodQuality((int)(this->m_iUA.foodQuality * 0.1));
+		this->m_innAttributes.SetFoodQuality(1);
 		this->m_iUA.foodQuality -= 10.0f;
 	}
 	else if (this->m_iUA.prices >= 10.0f)
 	{
-		this->m_innAttributes.SetPrices((int)(this->m_iUA.prices * 0.1));
+		this->m_innAttributes.SetPrices(1);
 		this->m_iUA.prices -= 10.0f;
 	}
 	else if (this->m_iUA.reputation >= 10.0f)
 	{
-		this->m_innAttributes.SetReputation((int)(this->m_iUA.reputation * 0.1));
+		this->m_innAttributes.SetReputation(1);
 		this->m_iUA.reputation -= 10.0f;
 	}
 	else if (this->m_iUA.shady >= 10.0f)
 	{
-		this->m_innAttributes.SetShady((int)(this->m_iUA.shady * 0.1));
+		this->m_innAttributes.SetShady(1);
 		this->m_iUA.shady -= 10.0f;
 	}
 	else
 	{
-		this->m_innAttributes.SetStandard((int)(this->m_iUA.standard * 0.1));
+		this->m_innAttributes.SetStandard(1);
 		this->m_iUA.standard -= 10.0f;
 	}
 }
@@ -124,7 +125,7 @@ void Inn::furnitureStatAdd(Attributes furnitureStats)
 	this->_checkInnStatUpdate();
 }
 
-void Inn::update(Camera * cam)
+void Inn::Update(Camera * cam)
 {
 	m_grid->Update(cam);
 }

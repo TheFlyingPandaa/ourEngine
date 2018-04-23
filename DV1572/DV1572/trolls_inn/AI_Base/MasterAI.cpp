@@ -3,6 +3,7 @@
 MasterAI::MasterAI()
 	: m_solver(m_inn.getGrid())
 {
+	this->m_start = this->m_clock.now();
 }
 
 MasterAI::~MasterAI()
@@ -18,9 +19,22 @@ Grid * MasterAI::GetGrid()
 
 void MasterAI::Update(Camera* cam)
 {
-	m_inn.update(cam);
+	// Get the elapsed time
+	this->m_now = this->m_clock.now();
+	this->time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
+	
+	// Check if customer needs shall be updated
+	bool updateCustomerNeeds = false;
+	
+	if (this->time_span.count() > 10)
+	{
+		updateCustomerNeeds = true;
+		this->m_start = this->m_clock.now();
+	}
+
+	m_inn.Update(cam);
 	// Set spawn time limit (?)
-	//this->customers.push_back(this->cFL.update(this->inn.getInnAttributes()));
+	//this->customers.push_back(this->cFC.Update(this->inn.getInnAttributes()));
 	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers
@@ -32,7 +46,15 @@ void MasterAI::Update(Camera* cam)
 	for (auto& customer : this->m_customers)
 	{
 		//solver.update(*customer);
-
+		if (updateCustomerNeeds)
+		{
+			std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
+			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
+			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
+			customer->SetHungry(customer->GetHungry() + 1);
+			customer->SetTired(customer->GetTired() + 1);
+			customer->SetThirsty(customer->GetThirsty() + 1);
+		}
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty())
 		{

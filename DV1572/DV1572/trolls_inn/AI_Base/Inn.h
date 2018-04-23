@@ -51,6 +51,6 @@ public:
 	// Add stats to the inn based on the furniture placed
 	void furnitureStatAdd(Attributes furnitureStats);
 
-	void update(Camera* cam);
+	void Update(Camera* cam);
 	void Draw();
 };
