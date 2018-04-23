@@ -15,11 +15,15 @@ private:
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
 
+
 public:
 	AISolver(Grid* grid);
 	~AISolver();
 
-	void Update(Customer& customer);
+	std::chrono::duration<double> getTimeSpan() const;
+	void restartClock();
+
+	void Update(Customer& customer, std::chrono::duration<double> time_span);
 	void Update(Customer& customer, Action desiredAction);
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);

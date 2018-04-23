@@ -3,6 +3,7 @@
 #include "../Bobby test/Character.h"
 #include "Economy.h"
 #include <queue>
+//#include <chrono>
 
 enum Race
 {
@@ -86,5 +87,6 @@ public:
 	void DoSleeping();
 	// Reduces thirsty by 1
 	void DoDrinking();
+
 	void Update();
 };

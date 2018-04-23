@@ -11,7 +11,17 @@ AISolver::~AISolver()
 	
 }
 
-void AISolver::Update(Customer& customer)
+std::chrono::duration<double> AISolver::getTimeSpan() const
+{
+	return this->m_time_span;
+}
+
+void AISolver::restartClock()
+{
+	this->m_start = this->m_clock.now();
+}
+
+void AISolver::Update(Customer& customer, std::chrono::duration<double> time_span)
 {
 	// Get the elapsed time
 	this->m_now = this->m_clock.now();
@@ -76,8 +86,6 @@ void AISolver::Update(Customer& customer)
 					customer.DoDrinking();
 				else
 					customer.PopToNextState();
-
-				this->m_start = this->m_clock.now();
 			}
 			break;
 		case Eating:
@@ -89,8 +97,6 @@ void AISolver::Update(Customer& customer)
 					customer.DoEating();
 				else
 					customer.PopToNextState();
-
-				this->m_start = this->m_clock.now();
 			}
 			break;
 		case Sleeping:
@@ -102,8 +108,6 @@ void AISolver::Update(Customer& customer)
 					customer.DoSleeping();
 				else
 					customer.PopToNextState();
-
-				this->m_start = this->m_clock.now();
 			}
 			break;
 		}
