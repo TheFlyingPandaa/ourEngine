@@ -353,7 +353,7 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 
 bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 {
-	
+	bool isFalse = false;
 
 	if (angle == 0 || angle == 180)
 	{
@@ -368,7 +368,7 @@ bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 				else
 				{
 					m_tiles[start.x][start.y + i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
+					isFalse = true;
 				}
 			}
 			else
@@ -380,7 +380,7 @@ bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 				else
 				{
 					m_tiles[start.x][start.y - i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
+					isFalse = true;
 				}
 			}
 		}
@@ -398,7 +398,7 @@ bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 				else
 				{
 					m_tiles[start.x + i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
+					isFalse = true;
 				}
 			}
 			else
@@ -410,7 +410,7 @@ bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 				else
 				{
 					m_tiles[start.x - i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
+					isFalse = true;
 				}
 			}
 		}
@@ -424,7 +424,13 @@ bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 	else
 	{
 		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-		return true;
+		if (isFalse)
+		{
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 }
 
