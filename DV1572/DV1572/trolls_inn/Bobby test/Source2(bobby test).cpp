@@ -169,7 +169,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				pressed = false;
 			}
 
-
+			
+		}
+		if (Input::isMouseLeftPressed())
+		{
 			Shape* picked = nullptr;
 			picked = wnd.getPicked(cam);
 

@@ -241,6 +241,11 @@ void Shape::setColor(float r, float g, float b, float a)
 	m_highLightColor = DirectX::XMFLOAT4A{ r,g,b,a };
 }
 
+void Shape::setColor(DirectX::XMFLOAT3 color)
+{
+	m_highLightColor = DirectX::XMFLOAT4A{ color.x,color.y,color.z,1 };
+}
+
 void Shape::setColor(DirectX::XMFLOAT4A color)
 {
 	m_highLightColor = color;	//Fucking magnus wanted more functionality... erg erg passive argressive jocke :]

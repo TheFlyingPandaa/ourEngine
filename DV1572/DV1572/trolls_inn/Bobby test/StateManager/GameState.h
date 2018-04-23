@@ -62,6 +62,7 @@ private:
 	int m_i = 0;
 	std::future<void> future;
 
+	Mesh table;
 	
 
 

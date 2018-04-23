@@ -7,6 +7,7 @@
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
 #include "../StateManager/SubStates/BuildState.h"
+#include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
 {
@@ -25,6 +26,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	}
 
 
+	table.LoadModel("trolls_inn/Resources/Stol.obj");
 	box.LoadModel("trolls_inn/Resources/Box.obj");
 
 	c.setModel(&box);
@@ -128,11 +130,6 @@ void GameState::Update(double deltaTime)
 			m_justMoved = true;
 		}
 	}
-
-	if (Input::isKeyPressed('G'))
-	{
-		this->grid->AddRoomObject(DirectX::XMINT2(6, 6), &box);
-	}
 }
 
 void GameState::Draw()
@@ -209,11 +206,19 @@ void GameState::_handlePicking()
 		if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
-
 			ss->HandlePicking(obj);
 		}
-
-
+		
+		if (Input::isKeyPressed('G'))
+		{
+			Table fut = Table(obj->getPosition(), &table);
+			bool test = this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), fut.getGridSize(), fut.getRotation());
+			if (test)
+			{
+				this->grid->AddRoomObject(fut);
+			}
+			
+		}
 
 		using namespace std::chrono_literals;
 

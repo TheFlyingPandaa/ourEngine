@@ -1,7 +1,11 @@
 #include "Furniture.h"
 
-Furniture::Furniture()
+Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
 {
+	p_rot = 0;
+	this->pos.x = pos.x;
+	this->pos.y = pos.y;
+	this->pos.z = pos.z;
 }
 
 Furniture::~Furniture()
@@ -10,15 +14,32 @@ Furniture::~Furniture()
 
 Object3D Furniture::getObject3D()
 {
-	return m_object;
+	return p_object;
 }
 
 Attributes& Furniture::getAttributes()
 {
-	return m_attributes;
+	return p_attributes;
 }
 
 int Furniture::getGridSize()
 {
-	return m_gridSize;
+	return p_gridSize;
+}
+
+DirectX::XMINT3 Furniture::getPosition()
+{
+	return this->pos;
+}
+
+int Furniture::getRotation()
+{
+	return p_rot;
+}
+
+
+
+void Furniture::Draw()
+{
+	p_object.Draw();
 }
