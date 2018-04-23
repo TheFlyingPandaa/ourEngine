@@ -22,6 +22,10 @@ private:
 	bool		m_roomPlaceable;
 	Grid *		grid;
 
+	HUD			m_roomHUD;
+	HUD			m_doorHUD;
+	HUD			m_furnitureHUD;
+
 
 	bool m_madeFullReset;
 	bool m_clickedLastFrame;
