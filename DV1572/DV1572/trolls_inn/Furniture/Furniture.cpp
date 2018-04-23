@@ -37,6 +37,8 @@ int Furniture::getRotation()
 	return p_rot;
 }
 
+
+
 void Furniture::Draw()
 {
 	p_object.Draw();

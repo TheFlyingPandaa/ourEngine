@@ -151,76 +151,37 @@ void Grid::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 
 void Grid::AddRoomObject(Furniture furniture)
 {
-	if (angle == 0 || angle == 180)
+	if (furniture.getRotation() == 0 || furniture.getRotation() == 180)
 	{
 		for (size_t i = 0; i < furniture.getGridSize(); i++)
 		{
-			if (angle == 0)
+			if (furniture.getRotation() == 0)
 			{
-				if (m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getHasObject() == false)
-				{
-					m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
-				}
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->setHasObject(true);
 			}
 			else
 			{
-				if (m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getHasObject() == false)
-				{
-					m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
-				}
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setHasObject(true);
 			}
 		}
 	}
-	if (angle == 90 || angle == 270)
+	if (furniture.getRotation() == 90 || furniture.getRotation() == 270)
 	{
-		for (size_t i = 0; i < size; i++)
+		for (size_t i = 0; i < furniture.getGridSize(); i++)
 		{
-			if (angle == 90)
+			if (furniture.getRotation() == 90)
 			{
-				if (m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getHasObject() == false)
-				{
-					m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
-				}
+				m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->setHasObject(true);
 			}
 			else
 			{
-				if (m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getHasObject() == false)
-				{
-					m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					//return false;
-				}
+				m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setHasObject(true);
 			}
 		}
-	}
-
-	if (m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getHasObject() == true)
-	{
-		m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-		//return false;
-	}
-	else
-	{
-		m_tiles[furniture.getPosition().x][furniture.getPosition().z]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-		//return true;
 	}
 
 	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setIsWalkeble(false);
@@ -358,6 +319,8 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 
 bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
 {
+	
+
 	if (angle == 0 || angle == 180)
 	{
 		for (size_t i = 0; i < size; i++)
