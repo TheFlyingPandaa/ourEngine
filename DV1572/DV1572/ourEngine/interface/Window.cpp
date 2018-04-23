@@ -15,7 +15,6 @@ ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
 
 //Rendering Queues
-std::vector<Shape*> DX::g_renderQueue;
 std::vector<Shape*> DX::g_skyBoxQueue;
 std::vector<Shape*> DX::g_shadowQueue;
 std::vector<Shape*> DX::g_transQueue;
