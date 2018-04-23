@@ -34,9 +34,19 @@ private:
 	bool m_readyToPick;
 
 	bool m_doorBuild = false;
+	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
+	{
+		Room,
+		Door,
+		Furniture,
+		NONE
+	};
+	CurrentBuildType m_currentBuildType;
+
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
 	void	_doorBuildInput();
+	void	_roomBuildInput();
 	bool	_handleHUDPicking();
 
 public:
