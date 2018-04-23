@@ -16,31 +16,20 @@
 
 
 # Button Background
-tx trolls_inn/Resources/HUD/MainHud/ButtonBackground.png
-r 232 8 208 112 -1 0.1 0
+tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/ButtonBackground.png
+r 0 120 216 72 -1 0.1 0
 
 # Hit box for buttons
-hr 232 8 208 112 0
+hr 0 120 216 72 0
 
-# Wall Button
-tx trolls_inn/Resources/HUD/BuildHud/WallsButton.png
-r 240 48 64 64 0 0 0 circle
+# Kitchen
+tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Kitchen.png
+r 0 124 64 64 0 0 0 circle
 
-# Furnitue Button
-tx trolls_inn/Resources/HUD/BuildHud/FurnitureButton.png
-r 368 48 64 64 1 0 0 circle
+# Hallway
+tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Hallway.png
+r 68 124 64 64 1 0 0 circle
 
-# Door Button
-tx trolls_inn/Resources/HUD/BuildHud/DoorButton.png
-r 304 12 64 64 2 0 0 circle
-
-# Pause
-tx trolls_inn/Resources/HUD/BuildHud/Pause.png
-r 0 32 2 0 -1 0 3
-r 0 0 2 0 -1 0 1
-r 32 0 0 2 -1 0 3
-r 0 0 0 2 -1 0 0
-
-# Pause Icon
-tx trolls_inn/Resources/HUD/BuildHud/PauseIcon.png
-r 0 0 64 64 -1 0 3
+# BedRoom
+tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/BedRoom.png
+r 136 64 64 64 2 0 0 circle

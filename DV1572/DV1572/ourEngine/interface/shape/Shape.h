@@ -70,13 +70,14 @@ public:
 	void ApplyMaterials(int i = 0);
 
 	void CheckPick();
-	void	CastShadow();
+	void CastShadow();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;
 	
 	DirectX::XMFLOAT4A getColor();
 	void setColor(float r, float g, float b, float a = 1);
+	void setColor(DirectX::XMFLOAT3 color);
 	void setColor(DirectX::XMFLOAT4A color);
 
 	virtual void Draw();

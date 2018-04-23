@@ -1,7 +1,7 @@
 #pragma once
 #include "SubState.h"
 #include "../../Room/Grid.h"
-
+#include "../../../Furniture/Table.h"
 class BuildState :
 	public SubState
 {
@@ -14,6 +14,10 @@ private:
 		End
 	};
 
+	//TEMP
+	Mesh table;
+	//-----
+
 
 	RoomType	m_selectedRoomType;
 	Shape *		m_startTile;
@@ -23,18 +27,13 @@ private:
 	Grid *		grid;
 	RoomCtrl*  m_roomCtrl;
 
+	HUD			m_roomHUD;
+	HUD			m_doorHUD;
+	HUD			m_furnitureHUD;
 
-	enum HudPickingStage
-	{
-		Miss,
-		Hover,
-		Click
 
-	};
-	HudPickingStage m_hudPickStage;
-	bool m_colorButton;
-	bool m_hasClicked;
-	int m_lastPickedIndex;
+	bool m_madeFullReset;
+	bool m_clickedLastFrame;
 	std::vector<bool> m_hudButtonsPressed;
 	void _resetHudButtonPressedExcept(int index);
 
@@ -44,10 +43,22 @@ private:
 	bool m_readyToPick;
 
 	bool m_doorBuild = false;
+	bool m_canBuildFurniture = false;
+	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
+	{
+		Room,
+		Door,
+		Furniture,
+		NONE
+	};
+	CurrentBuildType m_currentBuildType;
+
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
 	void	_doorBuildInput();
-	void	_handlePickingOfHud(RectangleShape * pickedShape);
+	void	_roomBuildInput();
+	void	_objectBuildInput();
+	bool	_handleHUDPicking();
 
 public:
 

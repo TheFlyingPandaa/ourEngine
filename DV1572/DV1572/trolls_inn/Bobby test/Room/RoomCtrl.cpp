@@ -1,4 +1,5 @@
 #include "RoomCtrl.h"
+#include "../../Furniture/Table.h"
 
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 {
@@ -111,6 +112,47 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 		_traversalPath(parent, dst, src, dst);
 }
 
+void RoomCtrl::AddRoomObject(Furniture furniture)
+{
+	/*if (furniture.getRotation() == 0 || furniture.getRotation() == 180)
+	{
+		for (size_t i = 0; i < furniture.getGridSize(); i++)
+		{
+			if (furniture.getRotation() == 0)
+			{
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z + i]->setHasObject(true);
+			}
+			else
+			{
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setHasObject(true);
+			}
+		}
+	}
+	if (furniture.getRotation() == 90 || furniture.getRotation() == 270)
+	{
+		for (size_t i = 0; i < furniture.getGridSize(); i++)
+		{
+			if (furniture.getRotation() == 90)
+			{
+				m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x + i][furniture.getPosition().z]->setHasObject(true);
+			}
+			else
+			{
+				m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
+				m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setHasObject(true);
+			}
+		}
+	}
+
+	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setIsWalkeble(false);
+	m_tiles[furniture.getPosition().x][furniture.getPosition().z]->setHasObject(true);
+
+	m_roomCtrl.AddRoomObject(furniture);*/
+}
+
 void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 {
 	if (parent[j] == -1)
@@ -177,11 +219,9 @@ RoomCtrl::~RoomCtrl()
 	m_rooms.clear();
 }
 
-void RoomCtrl::addRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
+void RoomCtrl::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 {
-	Object3D tempObj;
-	tempObj.setMesh(mesh);
-	tempObj.setPos(pos.x + 0.5f, 0, pos.y + 0.5f);
+	Table tempObj = Table(pos, mesh);
 	
 	//m_roomObjects.push_back(tempObj);
 	

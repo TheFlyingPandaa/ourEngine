@@ -161,11 +161,11 @@ bool HUD::LoadHud(const std::string & path)
 				
 				float pX, pY, sX, sY = 0.0f;
 				int relativeTo;
-				std::string buffer = "";
+				std::string shape = "";
 				int index = 0;
 				float d = 0;
 
-				stream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo;
+				stream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo >> shape;
 
 				d *= 0.00001f;
 				if (static_cast<int>(sX) == 0)
@@ -179,6 +179,12 @@ bool HUD::LoadHud(const std::string & path)
 				r->setRelative(static_cast<RectangleShape::RelativeTo>(relativeTo));
 				r->setScreenPos(pX, pY, d);
 
+				if (shape == "circle")
+					r->setShapeType(RectangleShape::ShapeType::Circle);
+				else if (shape == "elipse")
+					r->setShapeType(RectangleShape::ShapeType::Elipse);
+				else if (shape == "rectangle")
+					r->setShapeType(RectangleShape::ShapeType::Rectangle);
 				
 				if (index < 0)
 					m_quadsNonClickAble.push_back(r);
@@ -263,7 +269,7 @@ RectangleShape * HUD::Pick(DirectX::XMFLOAT2 at)
 	return nullptr;
 }
 
-bool HUD::isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos)
+bool HUD::_isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos) const
 {
 	for (auto pa : m_potentialAreasCircle)
 	{
@@ -275,7 +281,7 @@ bool HUD::isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos)
 	return false;
 }
 
-bool HUD::isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos)
+bool HUD::_isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos) const
 {
 	for (auto pa : m_potentialAreasRect)
 	{
@@ -283,6 +289,34 @@ bool HUD::isMouseInsidePotentialAreaRect(DirectX::XMFLOAT2 mousePos)
 			mousePos.y > pa.y && mousePos.y < pa.y + pa.sy)
 			return true;
 	}
+
+	return false;
+}
+
+bool HUD::_checkAgainstCircle(DirectX::XMFLOAT2 mousePos, const RectangleShape & rect) const
+{
+	float r = rect.getWidth() / 2;
+	
+	DirectX::XMVECTOR o = DirectX::XMLoadFloat2(&DirectX::XMFLOAT2(rect.getWidth(), rect.getHeight())) / 2;
+	DirectX::XMVECTOR m = DirectX::XMLoadFloat2(&mousePos);
+	DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&rect.getScreenPos());
+	p += o;
+	float d = DirectX::XMVectorGetX(DirectX::XMVector2Length(m - p));
+
+	if (d > r)
+		return false;
+	
+	return true;
+}
+
+bool HUD::_checkAgainstRectangle(DirectX::XMFLOAT2 mousePos, const RectangleShape & rect) const
+{
+	DirectX::XMFLOAT3 pa = rect.getScreenPos();
+	DirectX::XMFLOAT2 s(rect.getWidth(), rect.getHeight());
+
+		if (mousePos.x > pa.x && mousePos.x < pa.x + s.x &&
+			mousePos.y > pa.y && mousePos.y < pa.y + s.y)
+			return true;
 
 	return false;
 }
@@ -306,13 +340,55 @@ int HUD::getNrOfPickableButtons() const
 	return static_cast<int>(m_quadsClickAble.size());
 }
 
-void HUD::CheckIfPicked()
+int HUD::PickHud(DirectX::XMFLOAT2 mousePos) const
 {
-	for (auto& p : m_quadsClickAble)
+	int returnIndex = -2;
+
+	if (_isMouseInsidePotentialAreaRect(mousePos) || _isMouseInsidePotentialAreaCircle(mousePos))
 	{
-		p->CheckPick();
+		returnIndex = -1;
+		for (size_t i = 0; i < m_quadsClickAble.size(); i++)
+		{
+			switch (m_quadsClickAble[i]->getShapeType())
+			{
+			case RectangleShape::ShapeType::Circle:
+				if (_checkAgainstCircle(mousePos, *m_quadsClickAble[i]))
+				{
+					return m_quadsClickAble[i]->getIndex();
+				}
+				break;
+			case RectangleShape::ShapeType::Elipse:
+				printf("Yet to be implemented\n");
+				/*if (_checkAgainstElipse(mousePos, *m_quadsClickAble[i]))
+				{
+					return m_quadsClickAble[i]->getIndex();
+				}*/
+				break;
+			default:
+				if (_checkAgainstRectangle(mousePos, *m_quadsClickAble[i]))
+				{
+					return m_quadsClickAble[i]->getIndex();
+				}
+				break;
+			}
+		}
 	}
+	
+	return returnIndex;
 }
+
+void HUD::SetColorOnButton(int index, float r, float g, float b)
+{
+	m_quadsClickAble[index]->setColor(r, g, b);
+}
+
+//void HUD::CheckIfPicked()
+//{
+//	for (auto& p : m_quadsClickAble)
+//	{
+//		p->CheckPick();
+//	}
+//}
 
 void HUD::Draw()
 {

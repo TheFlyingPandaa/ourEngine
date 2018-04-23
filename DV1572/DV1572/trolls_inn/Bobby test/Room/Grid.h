@@ -68,6 +68,7 @@ public:
 
 	void	PickTiles(Shape* selectionTile = nullptr);
 	bool	CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end);
+	bool	CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle = 0);
 
 	void	ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end);
 

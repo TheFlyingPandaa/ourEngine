@@ -125,13 +125,13 @@ std::vector<Tile*> Grid::extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
 	std::vector<Tile*> extractedTiles;
 	extractedTiles.reserve(size.x * size.y);
-
-
-	for (int y = 0; y < size.y; y++)
+	int x, y;
+	for (y = 0; y < size.y; y++)
 	{
-		for (int x = 0; x < size.x; x++)
+		for (x = 0; x < size.x; x++);
 		{
 			Tile* tile = m_tiles[_index(x + pos.x, y+pos.y)];
+
 			if (tile != nullptr)
 			{
 				extractedTiles.push_back(tile);
@@ -260,6 +260,90 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	}
 
 	return result;
+}
+
+bool Grid::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
+{
+	/*bool isFalse = false;
+
+	if (angle == 0 || angle == 180)
+	{
+		for (size_t i = 0; i < size; i++)
+		{
+			if (angle == 0)
+			{
+				if (m_tiles[start.x][start.y + i]->getHasObject() == false)
+				{
+					m_tiles[start.x][start.y + i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x][start.y + i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					isFalse = true;
+				}
+			}
+			else
+			{
+				if (m_tiles[start.x][start.y - i]->getHasObject() == false)
+				{
+					m_tiles[start.x][start.y - i]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x][start.y - i]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					isFalse = true;
+				}
+			}
+		}
+	}
+	if (angle == 90 || angle == 270)
+	{
+		for (size_t i = 0; i < size; i++)
+		{
+			if (angle == 90)
+			{
+				if (m_tiles[start.x + i][start.y]->getHasObject() == false)
+				{
+					m_tiles[start.x + i][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x + i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					isFalse = true;
+				}
+			}
+			else
+			{
+				if (m_tiles[start.x - i][start.y]->getHasObject() == false)
+				{
+					m_tiles[start.x - i][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+				}
+				else
+				{
+					m_tiles[start.x - i][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					isFalse = true;
+				}
+			}
+		}
+	}
+
+	if (m_tiles[start.x][start.y]->getHasObject() == true)
+	{
+		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+		return false;
+	}
+	else
+	{
+		m_tiles[start.x][start.y]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+		if (isFalse)
+		{
+			return false;
+		}
+		else {
+			return true;
+		}
+	}*/
+	return true;
 }
 
 void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)

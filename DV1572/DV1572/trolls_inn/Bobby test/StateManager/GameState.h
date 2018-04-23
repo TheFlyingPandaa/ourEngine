@@ -46,17 +46,9 @@ private:
 	bool m_Rpressed;
 
 	// HUD
-	enum HudPickingStage
-	{
-		Miss,
-		Hover,
-		Click
-
-	};
-	HudPickingStage m_hudPickStage;
-	bool m_colorButton;
-	bool m_hasClicked;
-	int m_lastPickedIndex;
+	bool m_clickedLastFrame;
+	bool m_madeFullReset;
+	int m_lastClickedIndex;
 	std::vector<bool> m_hudButtonsPressed;
 	void _resetHudButtonPressedExcept(int index);
 
@@ -71,6 +63,7 @@ private:
 	int m_i = 0;
 	std::future<void> future;
 
+	Mesh table;
 	
 
 
@@ -78,7 +71,7 @@ private:
 	void			_setHud();
 	void			_handlePicking();
 	void			_handlePickingAi(Shape * obj);
-	void			_handleHUDPicking(RectangleShape* r);
+	bool			_handleHUDPicking();
 	void			_handleInput();
 
 public:
