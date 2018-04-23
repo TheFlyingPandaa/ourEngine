@@ -39,23 +39,31 @@ void BuildState::_buildInput()
 {
 	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE))
 	{
+		//this->grid->PickTiles();
 		if (m_buildStage == BuildStage::None)
 		{
 			m_buildStage = BuildStage::Start;
-			this->grid->PickTiles();
+			
+
+			if (m_currentBuildType == CurrentBuildType::Room)
+				grid->PickTiles();
+			if (m_currentBuildType == CurrentBuildType::Door)
+				m_roomCtrl->PickWalls();
+
 			
 		}
 		else if (m_buildStage == BuildStage::Selection)
 		{
 			//This runs when we are in the selection Face.
 			//aka when you are dragin and droping.
-			this->grid->PickTiles(m_selectedTile);
+			grid->PickTiles(m_selectedTile);
 
 			if (m_startTile && m_selectedTile)
 			{
 				XMFLOAT3 s = m_startTile->getPosition();
 				XMFLOAT3 e = m_selectedTile->getPosition();
 
+			
 				XMINT2 start;
 				start.x = static_cast<int>(s.x + 0.5f);
 				start.y = static_cast<int>(s.z + 0.5f);
@@ -68,9 +76,9 @@ void BuildState::_buildInput()
 				if (start.y > end.y)
 					std::swap(start.y, end.y);*/
 
-				//For each state it will have a special condition
-				//Just follow what is done below for new states
-				//Don't forget to declare the new state in the update
+					//For each state it will have a special condition
+					//Just follow what is done below for new states
+					//Don't forget to declare the new state in the update
 				if (m_currentBuildType == CurrentBuildType::Room)
 				{
 					/*int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
@@ -80,7 +88,7 @@ void BuildState::_buildInput()
 					m_priceOfRoom.setPosition(mp.x, mp.y + 20);*/
 					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
 				}
-				else if(m_currentBuildType == CurrentBuildType::Door)
+				else if (m_currentBuildType == CurrentBuildType::Door)
 				{
 					// This is the door building
 					/*std::cout << "Start: (" << start.x << "," << start.y << ") ";
@@ -94,8 +102,6 @@ void BuildState::_buildInput()
 				}
 
 			}
-
-			this->grid->PickTiles(m_selectedTile);
 		}
 	}
 	else if (m_buildStage == BuildStage::Selection && !Input::isMouseLeftPressed())
@@ -125,33 +131,13 @@ void BuildState::_buildInput()
 void BuildState::_doorBuildInput()
 {
 	XMFLOAT3 s = m_startTile->getPosition();
-	XMFLOAT3 e = m_selectedTile->getPosition();
-
-	XMINT2 start;
-	start.x = static_cast<int>(s.x + 0.5f);
-	start.y = static_cast<int>(s.z + 0.5f);
-	XMINT2 end;
-	end.x = static_cast<int>(e.x + 0.5f);
-	end.y = static_cast<int>(e.z + 0.5f);
-
-	if (start.x > end.x)
-		std::swap(start.x, end.x);
-	if (start.y > end.y)
-		std::swap(start.y, end.y);
-	this->grid->ResetTileColor(start, end);
-
-	XMINT2 size = end;
-	size.x -= start.x - 1;
-	size.y -= start.y - 1;
-
 
 	m_buildStage = BuildStage::None;
 	m_startTile = nullptr;
 	m_selectedTile = nullptr;
 	m_roomPlaceable = false;
+	m_roomCtrl->CreateDoor(s);
 
-	//If debugging is needed you got the size
-	//this->grid->AddDoor(start, end, size);
 		
 }
 
@@ -181,8 +167,10 @@ void BuildState::_roomBuildInput()
 	m_buildStage = BuildStage::None;
 	m_startTile = nullptr;
 	m_selectedTile = nullptr;
+	if(m_roomPlaceable)
+		m_roomCtrl->AddRoom(start, end, RoomType::reception, grid->extractTiles(start, end));
 	m_roomPlaceable = false;
-//	this->grid->AddRoom(start, end, m_selectedRoomType);
+	
 }
 
 void BuildState::_objectBuildInput()

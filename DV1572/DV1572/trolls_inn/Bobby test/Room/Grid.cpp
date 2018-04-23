@@ -125,19 +125,19 @@ std::vector<Tile*> Grid::extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
 	std::vector<Tile*> extractedTiles;
 	extractedTiles.reserve(size.x * size.y);
-	int x, y;
-	for (y = 0; y < size.y; y++)
+
+	for (int _y = 0; _y < size.y; _y++)
 	{
-		for (x = 0; x < size.x; x++);
+		for (int _x = 0; _x < size.x; _x++)
 		{
-			Tile* tile = m_tiles[_index(x + pos.x, y+pos.y)];
+			Tile* tile = m_tiles[_index(_x + pos.x, _y + pos.y)];
 
 			if (tile != nullptr)
 			{
 				extractedTiles.push_back(tile);
-				m_tiles[_index(x + pos.x, y + pos.y)] = nullptr;
+				m_tiles[_index(_x + pos.x, _y + pos.y)] = nullptr;
 			}
-			
+
 		}
 	}
 
@@ -162,10 +162,8 @@ void Grid::Draw()
 {
 	for (auto& tile : m_tiles)
 	{
-		
 		if (tile != nullptr)
 		{
-			
 			if (tile->getQuad().getColor().x != 1.0f)
 				tile->getQuad().Draw();
 
@@ -183,33 +181,28 @@ void Grid::PickTiles(Shape* selectionTile)
 	{
 		int xPos = static_cast<int>(selectionTile->getPosition().x);
 		int yPos = static_cast<int>(selectionTile->getPosition().z);
+		for (int x = -5; x < 5; x++)
+		{
 
-		for(int x = -1; x <= 1; x++)
-			for (int y = -1; y <= 1; y++)
+			for (int y = -5; y < 5; y++)
 			{
 				int indexX = xPos + x;
 				int indexY = yPos + y;
-				
+
 				// Boundcheck
 				if (indexX < 0 || indexX >= m_sizeX || indexY < 0 || indexY >= m_sizeY) continue;
-				
 				Tile* t = m_tiles[_index(indexX, indexY)];
-				if (t)
-				{
-					t->getQuad().CheckPick();
-					t->getQuad().setColor(1.0f, 1.0f, 1.0f);
-					notFound = true;
-				}
+				if(t)t->getQuad().CheckPick();
 			}
-
-		for (int i = 0; i < m_tiles.size(); i++)
-		{
-			if(m_tiles[i] != nullptr)
-				m_tiles[i]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+			
 		}
-	
+
+		for (auto& t : m_tiles)
+			if (t)
+				t->getQuad().setColor(1.0f, 1.0f, 1.0f);
+
 	}
-	else if(!notFound)
+	else
 	{
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
@@ -221,11 +214,12 @@ void Grid::PickTiles(Shape* selectionTile)
 		}
 	}
 	
+	
 }
 bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 {
-	DirectX::XMFLOAT3 color(0.5f, 5.0f, 0.5f);
-		
+	DirectX::XMFLOAT3 color(0.5f, 500.0f, 0.5f);
+
 	if (end.x < start.x)
 	{
 		std::swap(end.x, start.x);
@@ -235,7 +229,9 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 		std::swap(end.y, start.y);
 	}
 	
+
 	
+
 	bool result = true;
 	for (int i = start.x; i < end.x + 1; i++)
 	{

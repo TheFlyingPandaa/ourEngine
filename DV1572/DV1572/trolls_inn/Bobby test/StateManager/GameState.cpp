@@ -234,7 +234,7 @@ void GameState::_handlePicking()
 			
 		}*/
 
-		if (Input::isKeyPressed('C'))
+		/*if (Input::isKeyPressed('C'))
 		{
 			m_roomctrl->CreateDoor(obj->getPosition());
 		}
@@ -254,7 +254,7 @@ void GameState::_handlePicking()
 	
 		
 
-
+*/
 		using namespace std::chrono_literals;
 
 		// Create a promise and get its future.
@@ -432,7 +432,7 @@ void GameState::_handleInput()
 	{
 		if (Input::isMouseLeftPressed())
 		{
-			this->grid->PickTiles();
+			//this->grid->PickTiles();
 			m_move = true;
 		}
 		else
