@@ -48,7 +48,10 @@ public:
 
 	virtual void		setFloorMesh(Mesh * mesh);
 	virtual void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
+	virtual void		PickTiles();
 	
+	std::vector<Tile*>	ReturnTiles();
+
 	virtual int			getX() const; 
 	virtual int			getY() const;
 	XMINT2				getSize() const;

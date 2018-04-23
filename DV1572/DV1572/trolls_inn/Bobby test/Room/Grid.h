@@ -62,6 +62,7 @@ public:
 
 	std::vector<Tile *> getGrid() const;	
 	std::vector<Tile*> extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+	void insertTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size, std::vector<Tile*>& tiles);
 
 	void	Draw();
 

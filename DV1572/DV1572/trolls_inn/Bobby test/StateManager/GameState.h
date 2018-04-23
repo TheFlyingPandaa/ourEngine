@@ -24,7 +24,7 @@ private:
 	Mesh kitchenTile;
 	Mesh rect;
 	Grid* grid;
-	RoomCtrl roomctrl;
+	RoomCtrl* m_roomctrl;
 
 
 	DirectX::XMINT2 m_mainDoorPos;

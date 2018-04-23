@@ -70,6 +70,7 @@ Grid::~Grid()
 		delete tile;
 
 	delete m_gridMesh;
+	delete m_tileMesh;
 }
 
 
@@ -141,6 +142,20 @@ std::vector<Tile*> Grid::extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 	}
 
 	return extractedTiles;
+}
+
+void Grid::insertTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size, std::vector<Tile*>& tiles)
+{
+	int counter = 0;
+	for (int y = 0; y < size.y; y++)
+	{
+		for (int x = 0; x < size.x; x++)
+		{
+			m_tiles[_index(x + pos.x, y + pos.y)] = tiles[counter++];
+			m_tiles[_index(x + pos.x, y + pos.y)]->setMesh(m_tileMesh);
+			m_tiles[_index(x + pos.x, y + pos.y)]->getQuad().setColor(1.0f, 1.0f, 1.0f);
+		}
+	}
 }
 
 void Grid::Draw()

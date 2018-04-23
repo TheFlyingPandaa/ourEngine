@@ -42,7 +42,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 	this->_init();
 	grid = new Grid(0, 0, startSize, startSize);	
-	roomctrl.AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
+	m_roomctrl = new RoomCtrl();
+	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 	
 	//grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
 	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
@@ -60,6 +61,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 GameState::~GameState()
 {
+	delete m_roomctrl;
 	delete grid;
 	while (!m_subStates.empty())
 	{
@@ -82,7 +84,8 @@ void GameState::Update(double deltaTime)
 
 
 	this->m_cam->update();
-	roomctrl.Update(m_cam);
+
+	m_roomctrl->Update(m_cam);
 	//this->grid->Update(this->m_cam);
 	if (!m_subStates.empty())
 	{
@@ -110,7 +113,12 @@ void GameState::Update(double deltaTime)
 	m_colorButton = false;
 	auto time = std::chrono::high_resolution_clock::now();
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
-	//std::cout << " TIME: " << dt << std::endl;
+	
+
+	if (Input::isKeyPressed('D'))
+	{
+		m_roomctrl->PickRoomTiles();
+	}
 	
 
 	//<TEMP>
@@ -141,7 +149,7 @@ void GameState::Draw()
 {
 	gameTime.m_cpyLightToGPU();
 	
-	roomctrl.Draw();
+	m_roomctrl->Draw();
 	this->grid->Draw();
 
 	//TEST
@@ -213,6 +221,16 @@ void GameState::_handlePicking()
 			ss->HandlePicking(obj);
 		}
 
+//		std::cout << "POs (" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
+		XMINT2 delPos = { static_cast<int>(obj->getPosition().x), static_cast<int>(obj->getPosition().z) };
+		
+		std::vector<Tile*> tiles;
+		XMINT2 roomPos;
+		XMINT2 roomSize;
+		bool remove = m_roomctrl->RemoveRoom(delPos,tiles,roomPos,roomSize);
+		if(remove)
+			grid->insertTiles(roomPos,roomSize,tiles);
+		
 
 
 		using namespace std::chrono_literals;
@@ -345,7 +363,7 @@ void GameState::_handleHUDPicking(RectangleShape* r)
 				_resetHudButtonPressedExcept(index);
 				m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
 				if (m_hudButtonsPressed[index])
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid, &roomctrl));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid, m_roomctrl));
 					
 				break;
 			case 2:

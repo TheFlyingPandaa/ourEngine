@@ -76,11 +76,13 @@ public:
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	bool				_intersect(Room * room);
-	bool				_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	bool				isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	void				setMesh(Mesh * mesh);
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
+	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
+	void				PickRoomTiles();
 	void				Update(Camera * cam);
 	void				Draw();
 

@@ -210,6 +210,26 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 	}
 }
 
+void Room::PickTiles()
+{
+	for (auto& rTile : m_roomTiles)
+	{
+		rTile->getQuad().setColor(1.0f, 1.0f, 1.0f);
+		rTile->getQuad().CheckPick();
+	}
+}
+
+std::vector<Tile*> Room::ReturnTiles()
+{
+	std::vector<Tile*> tiles;
+	for (auto& t : m_roomTiles)
+	{
+		tiles.push_back(t);
+		t = nullptr;
+	}
+	return tiles;
+}
+
 int Room::getX() const
 {
 	return m_posX;

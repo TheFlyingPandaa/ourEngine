@@ -18,31 +18,18 @@ bool RoomCtrl::_intersect(Room * room)
 	return false;
 }
 
-bool RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
+int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
 	for (size_t i = 0; i < m_rooms.size(); i++)
 	{
-		/*if ((pos.x > m_rooms[i]->getX() && pos.y > m_rooms[i]->getY() && 
-			pos.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() && 
-			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY()) || 
-			(pos.x + size.x > m_rooms[i]->getX() && pos.y + size.y > m_rooms[i]->getY() &&
-			pos.x + size.x < m_rooms[i]->getX() + m_rooms[i]->getSizeX() &&
-			pos.y + size.y < m_rooms[i]->getY() + m_rooms[i]->getSizeY()))*/
-
-		/*if (!(pos.x > m_rooms[i]->getX() + m_rooms[i]->getSizeX()
-			|| pos.x + size.x < m_rooms[i]->getX()
-			|| pos.y + size.y > m_rooms[i]->getY()
-			|| pos.y > m_rooms[i]->getY() + m_rooms[i]->getSizeY()))*/
-		//if ((std::abs(pos.x - m_rooms[i]->getX()) * 2) < (size.x + m_rooms[i]->getSizeX()) &&
-		//	(std::abs(pos.y - m_rooms[i]->getY()) * 2) < (size.y + m_rooms[i]->getSizeY()))
 		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSize().x &&
 			pos.x + size.x > m_rooms[i]->getX() &&
 			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSize().y &&
 			pos.y + size.y > m_rooms[i]->getY())
-			return true;
+			return i;
 
 	}
-	return false;
+	return -1;
 }
 
 bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
@@ -66,19 +53,6 @@ bool RoomCtrl::isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 			pos.y < m_rooms[i]->getY() + m_rooms[i]->getSize().y &&
 			pos.y + size.y > m_rooms[i]->getY())
 			return false;
-		/*
-		if ((pos.y == my || pos.y + size.y == y))
-		{	
-			if ((pos.x < mx && pos.x + size.x > x))
-				isPlaceable = true;			
-		}
-		if ((pos.x == mx || pos.x + size.x == x))
-		{
-			if ((pos.y < my && pos.y + size.y > y))
-				isPlaceable = true;
-		}
-		*/
-		
 	}
 
 	return isPlaceable;
@@ -222,6 +196,7 @@ RoomCtrl::RoomCtrl()
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
+
 }
 
 
@@ -294,6 +269,29 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	if (!m_entrance) m_entrance = m_rooms.back();
 
 	
+}
+
+ bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
+{
+	int index = _intersect(pos, XMINT2(1, 1));
+	
+	if (index != -1)
+	{
+		backtiles = m_rooms[index]->ReturnTiles();
+		XMFLOAT3 _pos = m_rooms[index]->getPosition();
+		delSize = m_rooms[index]->getSize();
+		delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
+		delete m_rooms[index];
+		m_rooms.erase(m_rooms.begin() + index);
+	}
+	
+	return index != -1;
+}
+
+void RoomCtrl::PickRoomTiles()
+{
+	for (auto& room : m_rooms)
+		room->PickTiles();
 }
 
 void RoomCtrl::Update(Camera * cam)
