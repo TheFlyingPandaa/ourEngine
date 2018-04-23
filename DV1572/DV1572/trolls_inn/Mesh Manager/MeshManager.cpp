@@ -99,3 +99,51 @@ Mesh * MeshHandler::getBox()
 	}
 	return box;
 }
+
+void MeshHandler::cleanAll()
+{
+	if (table != nullptr)
+	{
+		delete table; 
+	}
+
+	if (wall != nullptr)
+	{
+		delete wall;
+	}
+	
+	if (chair != nullptr)
+	{
+		delete chair;
+	}
+
+	if (grassTile != nullptr)
+	{
+		delete grassTile;
+	}
+
+	if (floorTile != nullptr)
+	{
+		delete floorTile;
+	}
+
+	if (wallWithWindow != nullptr)
+	{
+		delete wallWithWindow;
+	}
+
+	if (bed != nullptr)
+	{
+		delete bed;
+	}
+
+	if (door != nullptr)
+	{
+		delete door;
+	}
+
+	if (box != nullptr)
+	{
+		delete box;
+	}
+}

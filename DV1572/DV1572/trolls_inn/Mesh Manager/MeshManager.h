@@ -23,4 +23,6 @@ public:
 	static Mesh* getBed();
 	static Mesh* getDoor(); 
 	static Mesh* getBox(); 
+
+	static void cleanAll(); 
 };

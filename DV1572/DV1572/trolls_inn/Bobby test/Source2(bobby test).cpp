@@ -245,5 +245,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	delete cam;
 	delete gameState;
+	MeshHandler::cleanAll(); 
+
 	return 0;
 }
