@@ -30,32 +30,10 @@ void Room::_createLight(int x, int y, int sx, int sy, int level)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	if (!s_isLoaded)
-		_loadStatic();
-	m_index = s_index++;
-	_initAABB(posX, posY, sizeX, sizeY);
-	_createLight(posX, posY, sizeX, sizeY);
-
-	this->m_posX = posX;
-	this->m_posY = posY;
-	this->m_sizeX = sizeX;
-	this->m_sizeY = sizeY;
 	
-	//this->m_hasDoor = false;
-
-	for (unsigned short x = 0; x < m_tiles.size(); x++)
-	{
-		for (unsigned short y = 0; y < m_tiles[x].size(); y++)
-		{
-			//8D
-			//To scale
-			m_tiles[x][y]->setMesh(m);
-		}
-	}
-	//TODO: Dont forget to send the tiles you lil cunt :D
 }
 
-Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles)
+Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 {
 	if (!s_isLoaded)
 		_loadStatic();
@@ -68,54 +46,21 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Til
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
 
-	this->m_tiles = tiles;
+	this->m_roomTiles = tiles;
 
-	//this->m_hasDoor = false;
+	m_wholeFloor.setPos(posX, -0.001f, posY);
+	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
+	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 
-	for (unsigned short x = 0; x < tiles.size(); x++)
-	{
-		for (unsigned short y = 0; y < tiles[x].size(); y++)
-		{
-			tiles[x][y]->setInside(true);
-			tiles[x][y]->setIsWalkeble(true);
-			tiles[x][y]->setRoom(this);
-
-		}
-	}
 }
 
 Room::~Room()
 {
-
+	for (auto& walls : m_allWalls)
+		delete walls;
+	for (auto& tile : m_roomTiles)
+		delete tile;
 }
-
-std::vector<std::vector<Tile*>> Room::getTiles() const
-{
-	return this->m_tiles;
-}
-
-Tile * Room::getTiles(int x, int y) const
-{
-	if (x >= 0 && x < this->m_sizeX && y >= 0 && y < this->m_sizeY)
-		return m_tiles[x][y];
-	else
-		return nullptr;
-}
-
-void Room::setTile(Mesh * mesh)
-{
-	for (int x = 0; x < m_tiles.size(); x++)
-	{
-		for (int y = 0; y < m_tiles[x].size(); y++)
-		{
-			m_tiles[x][y]->setMesh(mesh);
-			//m_tiles[x][y]->quad.setScale(1, 1, 1);
-			//m_tiles[x][y]->quad.setScale(1, 1, 1);
-		}
-	}
-}
-
-
 
 bool Room::Inside(int x, int y)
 {
@@ -131,130 +76,23 @@ bool Room::Inside(Tile * t)
 
 void Room::Update(Camera * cam)
 {
-	if (cam)
+	XMVECTOR xmCamDir = XMLoadFloat3(&cam->getLookAt());
+	for (auto& wall : m_allWalls)
 	{
-		bool cullWalls[4] = { false, false, false, false };
-		DirectX::XMFLOAT3 camPos3D = cam->getPosition();
-		DirectX::XMFLOAT2 camPosition = { camPos3D.x, camPos3D.z };
-		DirectX::XMFLOAT2 roomCenter(m_AABB.getPosition().x, m_AABB.getPosition().z);
-		float distanceToCamera = DirectX::XMVectorGetX(DirectX::XMVector2Length(DirectX::XMLoadFloat2(&camPosition) - DirectX::XMLoadFloat2(&roomCenter)));
-		int cullDist = 15;
-
-		if (distanceToCamera < cullDist)
+		if (wall->isShared())
 		{
-			if (camPosition.x < m_posX)
-			{
-				cullWalls[Direction::left] = true;
-			}
-			else if (camPosition.x > m_posX + m_sizeX)
-			{
-				cullWalls[Direction::right] = true;
-			}
-			if (camPosition.y < m_posY)
-			{
-				cullWalls[Direction::down] = true;
-			}
-			else if (camPosition.y > m_posY + m_sizeY)
-			{
-				cullWalls[Direction::up] = true;
-			}
+			wall->setScale(1, 0.05f, 1.0f);
 		}
-
-		bool changeUp = false;
-		bool changeDown = false;
-		bool changeRight = false;
-		bool changeLeft = false;
-
-		if (m_culledWalls[Direction::up] != cullWalls[Direction::up])
+		else
 		{
-			m_culledWalls[Direction::up] = cullWalls[Direction::up];
-			changeUp = true;
+			XMFLOAT3 wallDir = { wall->getDirection().x, 0, wall->getDirection().y };
+			XMVECTOR xmWallDir = XMLoadFloat3(&wallDir);
+			float angleDegrees = XMConvertToDegrees(XMVectorGetX(XMVector3AngleBetweenNormals(xmCamDir, xmWallDir)));
+			if (angleDegrees < 90)
+				wall->setScale(1, 0.05f, 1.0f);
+			else 
+				wall->setScale(1, 1.0f, 1.0f);
 		}
-		if (m_culledWalls[Direction::down] != cullWalls[Direction::down])
-		{
-			m_culledWalls[Direction::down] = cullWalls[Direction::down];
-			changeDown = true;
-		}
-		if (m_culledWalls[Direction::right] != cullWalls[Direction::right])
-		{
-			m_culledWalls[Direction::right] = cullWalls[Direction::right];
-			changeRight = true;
-		}
-		if (m_culledWalls[Direction::left] != cullWalls[Direction::left])
-		{
-			m_culledWalls[Direction::left] = cullWalls[Direction::left];
-			changeLeft = true;
-		}
-
-
-		if (changeUp || changeDown)
-		{
-			for (size_t x = 0; x < down.size(); x++)
-			{
-				if (changeDown)
-				{
-					if (m_culledWalls[Direction::down] && !down[x]->getIsDoor())
-						down[x]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						down[x]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-			for (size_t x = 0; x < up.size(); x++)
-			{
-				if (changeUp)
-				{
-					if (m_culledWalls[Direction::up] && !up[x]->getIsDoor())
-						up[x]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						up[x]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-		}
-
-		if (changeRight || changeLeft)
-		{
-			for (size_t y = 0; y < left.size(); y++)
-			{
-				if (changeLeft)
-				{
-					if (m_culledWalls[Direction::left] && !left[y]->getIsDoor())
-						left[y]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						left[y]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-			for (size_t y = 0; y < right.size(); y++)
-			{
-				if (changeRight)
-				{
-					if (m_culledWalls[Direction::right] && !right[y]->getIsDoor())
-						right[y]->setScale(1.0f, 0.05f, 1.0f);
-					else
-						right[y]->setScale(1.0f, 1.0f, 1.0f);
-				}
-			}
-		}
-
-	}
-	for (int i = 0; i < down.size(); i++)
-	{
-		if (down[i]->getIsInner() && !down[i]->getIsDoor())
-			down[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < up.size(); i++)
-	{
-		if (up[i]->getIsInner() && !up[i]->getIsDoor())
-			up[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < left.size(); i++)
-	{
-		if (left[i]->getIsInner() && !left[i]->getIsDoor())
-			left[i]->setScale(1.0f, 0.05f, 1.0f);
-	}
-	for (int i = 0; i < right.size(); i++)
-	{
-		if (right[i]->getIsInner() && !right[i]->getIsDoor())
-			right[i]->setScale(1.0f, 0.05f, 1.0f);
 	}
 }
 
@@ -269,13 +107,8 @@ void Room::ApplyIndexOnMesh()
 	{
 		w->getObject3D().setLightIndex(m_index);
 	}
-	for (int i = 0; i < m_sizeY; i++)
-	{
-		for (int j = 0; j < m_sizeX; j++)
-		{
-			m_tiles[j][i]->getQuad().setLightIndex(m_index);
-		}
-	}
+	for(auto& tile : m_roomTiles)
+			tile->getQuad().setLightIndex(m_index);
 }
 
 void Room::CastShadow()
@@ -289,6 +122,109 @@ bool Room::operator==(const Room & other) const
 	return m_posX == other.m_posX && m_posY == other.m_posY;
 }
 
+void Room::setFloorMesh(Mesh * mesh)
+{
+	m_wholeFloor.setMesh(mesh);
+	for (auto& tile : m_roomTiles)
+		tile->getQuad().setMesh(mesh);
+}
+
+void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
+{
+	if (side == up)
+	{
+		for (int i = 0; i < m_sizeX; ++i)
+		{
+			if (allowed[i])
+			{
+				Wall* newWallUp = new Wall(mesh, { 0, -1 });
+				newWallUp->setPosition(m_posX + 0.5f + i, m_posY + m_sizeY);
+				m_allWalls.push_back(newWallUp);
+				m_upWalls.push_back(newWallUp);
+			}
+		}
+	}
+	else if (side == down)
+	{
+		for (int i = 0; i < m_sizeX; ++i)
+		{
+			if (allowed[i])
+			{
+				Wall* newWallLow = new Wall(mesh, { 0,1 });
+				newWallLow->setPosition(m_posX + 0.5f + i, m_posY);
+				m_allWalls.push_back(newWallLow);
+				m_downWalls.push_back(newWallLow);
+			}
+		}
+	}
+	else if (side == left)
+	{
+		for (int i = 0; i < m_sizeY; ++i)
+		{
+			if (allowed[i])
+			{
+				Wall* newWallLeft = new Wall(mesh, { 1, 0 });
+				newWallLeft->setRotation(0, 90, 0);
+				newWallLeft->setPosition(m_posX, m_posY + 0.5f + i);
+				m_allWalls.push_back(newWallLeft);
+				m_leftWalls.push_back(newWallLeft);
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m_sizeY; ++i)
+		{
+
+			if (allowed[i])
+			{
+				Wall* newWallRight = new Wall(mesh, { -1, 0 });
+				newWallRight->setRotation(0, 90, 0);
+				newWallRight->setPosition(m_posX + m_sizeX, m_posY + 0.5f + i);
+				m_allWalls.push_back(newWallRight);
+				m_rightWalls.push_back(newWallRight);
+			}
+
+		}
+	}
+}
+
+void Room::AddRoomObject(Furniture fut)
+{
+	m_roomObjects.push_back(fut);
+}
+
+void Room::PickTiles()
+{
+	for (auto& rTile : m_roomTiles)
+	{
+		rTile->getQuad().setColor(1.0f, 1.0f, 1.0f);
+		rTile->getQuad().CheckPick();
+	}
+}
+
+void Room::PickWalls()
+{
+	for (auto& wall : m_allWalls)
+		wall->getObject3D().CheckPick();
+}
+
+std::vector<Tile*> Room::ReturnTiles()
+{
+	std::vector<Tile*> tiles;
+	for (auto& t : m_roomTiles)
+	{
+		tiles.push_back(t);
+		t = nullptr;
+	}
+	return tiles;
+}
+
+std::vector<Tile*> Room::getTiles()
+{
+	return m_roomTiles;
+}
+
 int Room::getX() const
 {
 	return m_posX;
@@ -299,161 +235,83 @@ int Room::getY() const
 	return m_posY;
 }
 
-int Room::getSizeX() const
+XMINT2 Room::getSize() const
 {
-	return m_sizeX;
-}
-
-int Room::getSizeY() const
-{
-	return m_sizeY;
-}
-
-void Room::setWalls(std::vector<Wall*> walls, Direction dir)
-{
-	for (int i = 0; i < walls.size(); i++)
-	{
-		m_allWalls.push_back(walls[i]);
-	}
-
-	switch (dir)
-	{
-	case 0:
-		up = walls;
-		break;
-	case 1:
-		down = walls;
-		break;
-	case 2:
-		left = walls;
-		break;
-	case 3:
-		right = walls;
-		break;
-	default:
-		break;
-	}
-}
-
-void Room::addWall(Wall * wall, Direction dir)
-{
-	m_allWalls.push_back(wall);
-	switch (dir)
-	{
-	case 0:		
-		if (std::find(up.begin(), up.end(), wall) == up.end())
-			up.push_back(wall);
-		break;
-	case 1:
-		if (std::find(down.begin(), down.end(), wall) == down.end())
-			down.push_back(wall);
-		break;
-	case 2:
-		if (std::find(left.begin(), left.end(), wall) == left.end())
-			left.push_back(wall);
-		break;
-	case 3:
-		if (std::find(right.begin(), right.end(), wall) == right.end())
-			right.push_back(wall);
-		break;
-	default:
-		break;
-	}
-}
-
-bool Room::hasConnectedRooms() const
-{
-	return adjasentRoomDoors.size();
+	return XMINT2(m_sizeX, m_sizeY);
 }
 
 DirectX::XMFLOAT3 Room::getPosition() const
 {
 	return DirectX::XMFLOAT3(static_cast<float>(getX()), 0.0f, static_cast<float>(getY()));
 }
+//
+//void Room::addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction)
+//{
+//	if (std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), room) == adjasentRoomDoors.end())
+//	{
+//		RoomConnection newConnection;
+//		newConnection.otherRoom = room;
+//		newConnection.connectingDoor = doorPos;
+//		newConnection.direction = direction;
+//		adjasentRoomDoors.push_back(newConnection);
+//	}
+//}
 
-void Room::addAdjasentRoomDoor(Room * room, XMINT2 doorPos, XMINT2 direction)
-{
-	if (std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), room) == adjasentRoomDoors.end())
-	{
-		RoomConnection newConnection;
-		newConnection.otherRoom = room;
-		newConnection.connectingDoor = doorPos;
-		newConnection.direction = direction;
-		adjasentRoomDoors.push_back(newConnection);
-	}
-}
+//void Room::addAdjasentRoom(Room * room)
+//{
+//	if (std::find(adjasentRooms.begin(), adjasentRooms.end(), room) == adjasentRooms.end())
+//	{
+//		adjasentRooms.push_back(room);
+//	}
+//}
 
-void Room::addAdjasentRoom(Room * room)
-{
-	if (std::find(adjasentRooms.begin(), adjasentRooms.end(), room) == adjasentRooms.end())
-	{
-		adjasentRooms.push_back(room);
-	}
-}
+//XMINT2 Room::getConnectingRoomDoorPositionPartOne(Room * otherroom)
+//{
+//	std::vector<RoomConnection>::iterator it =  std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+//
+//	if (it != adjasentRoomDoors.end())
+//		return it->connectingDoor;
+//	else
+//		return XMINT2(-1, -1);
+//}
 
-XMINT2 Room::getConnectingRoomDoorPositionPartOne(Room * otherroom)
-{
-	std::vector<RoomConnection>::iterator it =  std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+//XMINT2 Room::getConnectingRoomDoorPositionPartTwo(Room * otherroom)
+//{
+//	std::vector<RoomConnection>::iterator it = std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
+//
+//	if (it != adjasentRoomDoors.end())
+//	{
+//		XMINT2 doorPos = it->connectingDoor;
+//		return { doorPos.x + it->direction.x, doorPos.y + it->direction.y };
+//	}
+//	else
+//		return XMINT2(-1, -1);
+//}
 
-	if (it != adjasentRoomDoors.end())
-		return it->connectingDoor;
-	else
-		return XMINT2(-1, -1);
-}
-
-XMINT2 Room::getConnectingRoomDoorPositionPartTwo(Room * otherroom)
-{
-	std::vector<RoomConnection>::iterator it = std::find(adjasentRoomDoors.begin(), adjasentRoomDoors.end(), otherroom);
-
-	if (it != adjasentRoomDoors.end())
-	{
-		XMINT2 doorPos = it->connectingDoor;
-		return { doorPos.x + it->direction.x, doorPos.y + it->direction.y };
-	}
-	else
-		return XMINT2(-1, -1);
-}
-
-std::vector<Room*>* Room::getAdjasent()
-{
-	return &adjasentRooms;
-}
 
 std::vector<Wall*>* Room::getAllWalls()
 {
 	return &m_allWalls;
 }
 
-std::vector<Wall*>* Room::getWall(Direction dir)
+std::vector<Wall*> Room::getWalls(Direction dir)
 {
 	switch (dir)
 	{
 	case Direction::up:
-		return &up;
+		return m_upWalls;
 		break;
 	case Direction::down:
-		return &down;
+		return m_downWalls;
 		break;
 	case Direction::left:
-		return &left;
+		return m_leftWalls;
 		break;
 	case Direction::right:
-		return &right;
-		break;
-	default:
-		return nullptr;
+		return m_rightWalls;
 		break;
 	}
-}
-
-void Room::setHasDoor(Direction dir, bool value)
-{
-	this->m_hasDoor[dir] = value;
-}
-
-bool Room::getHasDoor(Direction dir) const
-{
-	return this->m_hasDoor[dir];
+	return std::vector<Wall*>();
 }
 
 void Room::move(int x, int y)

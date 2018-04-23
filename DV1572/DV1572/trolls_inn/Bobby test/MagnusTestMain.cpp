@@ -1,8 +1,15 @@
 #include <chrono>
-#include "../../ourEngine/interface/Interface.h"
+#include"Room\Grid.h"
+#include "Room\RoomCtrl.h"
+
 #include <iostream>
 
 const float REFRESH_RATE = 60.0f;
+
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -14,6 +21,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	Window wnd(hInstance);
 	wnd.Init(1280, 720, "Banan");
+	Grid test(0,0,32,32);
+	RoomCtrl ctrl;
+	XMINT2 pos = {6, 0 };
+	XMINT2 pos2 = { 1, 1 };
+	XMINT2 size = { 5,5 };
+
+	ctrl.AddRoom(pos, size, RoomType::reception, test.extractTiles(pos, size));
+	ctrl.AddRoom(pos2, size, RoomType::reception, test.extractTiles(pos2, size));
 
 	using namespace std::chrono;
 	auto time = steady_clock::now();
@@ -23,25 +38,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
 
-
 	Camera* cam = new OrbitCamera(wnd.getSize());
-	
-
-	
-	Mesh mBox;
-	mBox.LoadModel("trolls_inn/Resources/nanosuit/nanosuit.obj");
-	
-	const int size = 50;
-	Object3D box[size];
-	for (int i = 0; i < size; i++)
-	{
-		box[i].setMesh(&mBox);
-		box[i].setPos(i *2, 0, 0);
-		box[i].setScale(0.1f);
-	}
-	
-
-
 
 	while (wnd.isOpen())
 	{
@@ -59,15 +56,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			cam->update();
-			for(auto& b : box)
-				b.Rotate(0, 1, 0);
+			ctrl.Update(cam);
 		}
 
 		fpsCounter++;
-
-		for (auto& b : box)
-			b.Draw();
 		
+		ctrl.Draw();
+		test.Draw();
+
+		/*Shape* picked = nullptr;
+		picked = wnd.getPicked(cam);*/
+
+		
+			
+
+
+
 		wnd.Flush(cam);
 		wnd.Present();
 		wnd.FullReset();

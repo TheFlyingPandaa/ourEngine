@@ -52,8 +52,6 @@ float4 main(Input input) : SV_Target
 
 	float3 ambient = diffuseSample * 0.2f;
 	float3 finalColorForSun; 
-
-
 	//SUN//
 
 	

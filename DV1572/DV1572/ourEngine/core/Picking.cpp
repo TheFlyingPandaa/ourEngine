@@ -22,9 +22,11 @@ Picking::Picking()
 Picking::~Picking()
 {
 }
-
+#include <iostream>
 void Picking::InitPickingTexture(const int width, const int height, const int sample, ID3D11Texture2D*& TextureMap, ID3D11RenderTargetView*&RTV, ID3D11ShaderResourceView*&SRV, ID3D11Texture2D*&  m_pickingReadBuffer)
 {
+	
+	
 	D3D11_TEXTURE2D_DESC tDesc{};
 	tDesc.Width = width;
 	tDesc.Height = height;
@@ -88,11 +90,12 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 	MESH_BUFFER meshBuffer;
 	OFFSETBUFFER offsetBuffer;
-
 	ID3D11Buffer* instanceBuffer = nullptr;
 	int counter = 0;
+	bool ran = false;
 	for (auto& instance : DX::g_instanceGroupsPicking)
 	{
+		ran = true;
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -139,8 +142,6 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-
-
 		Mesh* mesh = instance.shape->getMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
@@ -152,49 +153,52 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		instanceBuffer->Release();
 	}
 
-
-	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	
-	D3D11_BOX srcBox;
-	srcBox.left = static_cast<UINT>(Input::getMousePosition().x);
-	srcBox.right = srcBox.left + 1;
-	srcBox.top = static_cast<UINT>(Input::getMousePosition().y);
-	srcBox.bottom = srcBox.top + 1;
-	srcBox.front = 0;
-	srcBox.back = 1;
-
-
-	DX::g_deviceContext->CopySubresourceRegion(m_pickingReadBuffer, 0, 0, 0, 0, TextureMap, 0, &srcBox);
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	HRESULT hr = DX::g_deviceContext->Map(m_pickingReadBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
-	DirectX::XMFLOAT4A pixel = *((DirectX::XMFLOAT4A*)mappedResource.pData);
-	DX::g_deviceContext->Unmap(m_pickingReadBuffer, 0);
-
-	Shape * returnValue = nullptr;
-
-	long index = static_cast<int>(pixel.x + (pixel.y * 256) + (pixel.z * 256 * 256) + 0.5f);
-	if (index != 0)
+	if (ran)
 	{
-		index--;
-		long indexInPickingQueue = 0;
-		bool found = false;
-	
-		for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
+		DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		D3D11_BOX srcBox;
+		srcBox.left = static_cast<UINT>(Input::getMousePosition().x);
+		srcBox.right = srcBox.left + 1;
+		srcBox.top = static_cast<UINT>(Input::getMousePosition().y);
+		srcBox.bottom = srcBox.top + 1;
+		srcBox.front = 0;
+		srcBox.back = 1;
+
+
+		DX::g_deviceContext->CopySubresourceRegion(m_pickingReadBuffer, 0, 0, 0, 0, TextureMap, 0, &srcBox);
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = DX::g_deviceContext->Map(m_pickingReadBuffer, 0, D3D11_MAP_READ, 0, &mappedResource);
+		DirectX::XMFLOAT4A pixel = *((DirectX::XMFLOAT4A*)mappedResource.pData);
+		DX::g_deviceContext->Unmap(m_pickingReadBuffer, 0);
+
+		Shape * returnValue = nullptr;
+
+		long index = static_cast<int>(pixel.x + (pixel.y * 256) + (pixel.z * 256 * 256) + 0.5f);
+		if (index != 0)
 		{
-			long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
-			if (index < nrOfShapes)
+			index--;
+			long indexInPickingQueue = 0;
+			bool found = false;
+
+			for (size_t i = 0; i < DX::g_instanceGroupsPicking.size() && !found; i++)
 			{
-				indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
-				found = true;
+				long nrOfShapes = static_cast<long>(DX::g_instanceGroupsPicking[i].index.size());
+				if (index < nrOfShapes)
+				{
+					indexInPickingQueue = DX::g_instanceGroupsPicking[i].index[index];
+					found = true;
+				}
+				else
+					index -= nrOfShapes;
 			}
-			else
-				index -= nrOfShapes;
+			returnValue = DX::g_pickingQueue[indexInPickingQueue];
 		}
-		returnValue = DX::g_pickingQueue[indexInPickingQueue];
+
+		DX::g_pickingQueue.clear();
+		DX::g_instanceGroupsPicking.clear();
+
+		return returnValue;
 	}
-
-	DX::g_pickingQueue.clear();
-	DX::g_instanceGroupsPicking.clear();
-
-	return returnValue;
+	return nullptr;
 }

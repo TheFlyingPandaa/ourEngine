@@ -2,11 +2,10 @@
 
 
 
-Wall::Wall(Tile* tile, Mesh * mesh)
+Wall::Wall(Mesh * mesh, XMFLOAT2 dir)
 {
-	this->m_tile = tile;
-	if (mesh)
-		this->m_wall.setMesh(mesh);
+	m_wall.setMesh(mesh);
+	m_direction = dir;
 }
 
 
@@ -14,37 +13,25 @@ Wall::~Wall()
 {
 }
 
-void Wall::setIsDoor(bool value)
-{
-	this->isDoor = value;
-}
-
-bool Wall::getIsDoor() const
-{
-	return isDoor;
-}
-
 void Wall::Draw()
 {
-	//TODO: Remove Debug
-	m_wall.Draw();
-		//m_wall.Scale(1, .2f, 1);
+	m_wall.Draw();		
 }
 
-bool Wall::getIsInner() const
+void Wall::setPosition(float x, float y)
 {
-	return m_innerWall;
-}
-
-void Wall::setIsInner(bool isInner)
-{
-	m_innerWall = isInner;
+	setPosition(XMFLOAT2(x, y));
 }
 
 void Wall::setPosition(DirectX::XMFLOAT2 position)
 {
-	this->position = DirectX::XMINT2(static_cast<int>(position.x + 0.5f), static_cast<int>(position.y + 0.5f));
-	this->m_wall.setPos(position.x, 0, position.y);
+	XMFLOAT2 position2 = DirectX::XMFLOAT2(position.x, position.y);
+	this->m_wall.setPos(position2.x, 0, position2.y);
+}
+
+void Wall::setRotation(float x, float y, float z)
+{
+	setRotation(XMFLOAT3(x, y, z));
 }
 
 void Wall::setRotation(DirectX::XMFLOAT3 rotation)
@@ -57,20 +44,21 @@ void Wall::setScale(float x, float y, float z)
 	this->m_wall.setScale(x, y, z);
 }
 
-DirectX::XMINT2 Wall::getPosition() const
-{
-	return position;
-}
-
 void Wall::setMesh(Mesh * mesh)
 {
 	this->m_wall.setMesh(mesh);
 }
 
-Tile * Wall::getTile() const
+void Wall::setIsShared(bool isShared)
 {
-	return m_tile;
+	m_sharedWall = isShared;
 }
+
+bool Wall::isShared() const
+{
+	return m_sharedWall;
+}
+
 
 bool Wall::operator==(const Wall & other)
 {
@@ -79,14 +67,7 @@ bool Wall::operator==(const Wall & other)
 	
 }
 
-
-
-Object3D & Wall::getObject3D()
+XMFLOAT2 Wall::getDirection() const
 {
-	return m_wall;
-}
-
-bool Wall::getDir(Direction dir) const
-{
-	return m_wallDir[dir];
+	return m_direction;
 }

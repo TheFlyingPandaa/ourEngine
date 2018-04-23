@@ -5,7 +5,7 @@ Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, Mesh * m) : Room(posX
 {
 
 }
-Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, std::vector<std::vector<Tile*>> tiles) : Room(posX, posY, sizeX, sizeY, tiles)
+Kitchen::Kitchen(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles) : Room(posX, posY, sizeX, sizeY, tiles)
 {
 }
 Kitchen::~Kitchen()
@@ -16,17 +16,22 @@ Kitchen::~Kitchen()
 
 void Kitchen::Draw()
 {
-	/*for (size_t x = 0; x < down.size(); x++)
+	m_wholeFloor.Draw();
+
+	for (auto& fur : m_roomObjects)
+		fur.Draw();
+
+	for (auto& tile : m_roomTiles)
 	{
-		down[x]->Draw();
-		down[x]->CheckPick();
-		up[x]->Draw();
+		if (tile->getQuad().getColor().x != 1.0f)
+			tile->getQuad().Draw();
 	}
-	for (size_t y = 0; y < left.size(); y++)
+
+	for (auto& wall : m_allWalls)
 	{
-		left[y]->Draw();
-		right[y]->Draw();
-	}*/
+		wall->Draw();
+	}
+
 }
 std::string Kitchen::toString() const
 {

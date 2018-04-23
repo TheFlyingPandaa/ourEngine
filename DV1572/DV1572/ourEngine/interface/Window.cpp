@@ -606,23 +606,11 @@ void Window::_shadowPass(Camera* c)
 {
 
 	XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
-	XMFLOAT4 lookAt = XMFLOAT4(16, 0, 16, 1);
+	XMFLOAT4 lookAt = XMFLOAT4(10, 0, 16, 1);
 	XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
-	XMVECTOR p;
-	XMVECTOR l;
-	//p = XMLoadFloat4(&pos);
-	//l = XMLoadFloat4(&lookAt);
 
-	//p = XMLoadFloat4(&DX::g_lightPos);
-	l = XMVector3Normalize(XMLoadFloat4(&DX::g_lightDir));
-	XMVECTOR look = XMLoadFloat4(&lookAt);
 
-	XMVECTOR u = XMLoadFloat4(&up);
-	p =  look + (-l *20.0f);
-	p = XMVectorSetW(p, 1.0f);
-	
-
-	XMMATRIX view = XMMatrixLookAtLH(p, look, u);
+	XMMATRIX view = XMMatrixLookAtLH(XMLoadFloat4(&pos), XMLoadFloat4(&lookAt), XMLoadFloat4(&up));
 	
 	SHADOW_MATRIX_BUFFER meshBuffer;
 
@@ -1447,7 +1435,9 @@ void Window::FullReset()
 
 Shape * Window::getPicked(Camera* c)
 {
-	return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	//if(Input::isMouseLeftPressed())
+		return Picking::getPicked(c, m_pickingTexture.RTV, m_depthStencilView, m_projectionMatrix, DirectX::XMMatrixIdentity(), m_pickingBuffer, m_pickingVertexShader, m_pickingPixelShader, m_pickingTexture.TextureMap, m_pickingReadBuffer, m_meshConstantBuffer, m_computeConstantBuffer);
+	return nullptr;
 }
 
 void Window::Present()

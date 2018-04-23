@@ -25,6 +25,7 @@ private:
 	BuildStage	m_buildStage;
 	bool		m_roomPlaceable;
 	Grid *		grid;
+	RoomCtrl*  m_roomCtrl;
 
 	HUD			m_roomHUD;
 	HUD			m_doorHUD;
@@ -63,7 +64,8 @@ public:
 
 	BuildState(Camera * cam, 
 	std::stack<Shape *>* pickingEvent,
-	Grid * grid);
+	Grid * grid,
+	RoomCtrl* roomCtrl);
 	~BuildState();
 
 	
