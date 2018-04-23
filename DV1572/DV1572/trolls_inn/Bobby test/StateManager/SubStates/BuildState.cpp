@@ -49,6 +49,8 @@ void BuildState::_buildInput()
 				grid->PickTiles();
 			if (m_currentBuildType == CurrentBuildType::Door)
 				m_roomCtrl->PickWalls();
+			if (m_currentBuildType == CurrentBuildType::Furniture)
+				m_roomCtrl->PickRoomTiles();
 
 			
 		}
@@ -57,6 +59,7 @@ void BuildState::_buildInput()
 			//This runs when we are in the selection Face.
 			//aka when you are dragin and droping.
 			grid->PickTiles(m_selectedTile);
+			m_roomCtrl->PickRoomTiles();
 
 			if (m_startTile && m_selectedTile)
 			{
@@ -98,7 +101,7 @@ void BuildState::_buildInput()
 				else if (m_currentBuildType == CurrentBuildType::Furniture)
 				{
 					//THIS WILL BE CHANGED WHEN WE HAVE A OBJECTLOADER
-					m_canBuildFurniture = this->grid->CheckAndMarkTilesObject(start, 1, 0);
+					m_canBuildFurniture = this->m_roomCtrl->CheckAndMarkTilesObject(start, 2, 0);
 				}
 
 			}
@@ -183,8 +186,8 @@ void BuildState::_objectBuildInput()
 	this->grid->ResetTileColor(start, start);
 	if (m_canBuildFurniture)
 	{
+		m_roomCtrl->AddRoomObject(fut);
 	
-		//this->grid->AddRoomObject(fut);
 	}
 	m_buildStage = BuildStage::None;
 	m_startTile = nullptr;

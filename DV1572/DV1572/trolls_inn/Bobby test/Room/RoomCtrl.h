@@ -58,7 +58,7 @@ private:
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
 	std::vector<std::vector<int>> m_roomConnectionMap;
-	std::vector<Furniture> m_roomObjects;
+
 
 	std::vector<int>	m_tempPath;
 	
@@ -74,6 +74,10 @@ public:
 	RoomCtrl();
 	~RoomCtrl();
 
+	/*
+	
+}*/
+
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture furniture);
 	
@@ -83,7 +87,7 @@ public:
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
-//	void				AddRoomObject(Furniture furniture);
+	bool				CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle = 0);
 	void				PickRoomTiles();
 	void				PickWalls();
 	void				Update(Camera * cam);

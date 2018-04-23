@@ -2,7 +2,7 @@
 
 Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh) : Furniture(pos, mesh)
 {
-	p_gridSize = 1;
+	p_gridSize = 2;
 	p_rot = 0;
 
 	p_object.setMesh(mesh);

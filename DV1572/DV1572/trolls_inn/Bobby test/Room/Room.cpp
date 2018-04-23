@@ -30,28 +30,7 @@ void Room::_createLight(int x, int y, int sx, int sy, int level)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	//if (!s_isLoaded)
-	//	_loadStatic();
-	//m_index = s_index++;
-	//_initAABB(posX, posY, sizeX, sizeY);
-	//_createLight(posX, posY, sizeX, sizeY);
-
-	//this->m_posX = posX;
-	//this->m_posY = posY;
-	//this->m_sizeX = sizeX;
-	//this->m_sizeY = sizeY;
-	//
-	////this->m_hasDoor = false;
-	//m_roomTiles.push_back()
-	//for (unsigned short x = 0; x < m_tiles.size(); x++)
-	//{
-	//	for (unsigned short y = 0; y < m_tiles[x].size(); y++)
-	//	{
-	//		
-	//		m_tiles[x][y]->setMesh(m);
-	//	}
-	//}
-	//TODO: Dont forget to send the tiles you lil cunt :D
+	
 }
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
@@ -69,7 +48,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 
 	this->m_roomTiles = tiles;
 
-	m_wholeFloor.setPos(posX, 0.0f, posY);
+	m_wholeFloor.setPos(posX, -0.001f, posY);
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 
@@ -210,6 +189,11 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 	}
 }
 
+void Room::AddRoomObject(Furniture fut)
+{
+	m_roomObjects.push_back(fut);
+}
+
 void Room::PickTiles()
 {
 	for (auto& rTile : m_roomTiles)
@@ -234,6 +218,11 @@ std::vector<Tile*> Room::ReturnTiles()
 		t = nullptr;
 	}
 	return tiles;
+}
+
+std::vector<Tile*> Room::getTiles()
+{
+	return m_roomTiles;
 }
 
 int Room::getX() const

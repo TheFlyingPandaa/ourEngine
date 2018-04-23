@@ -48,14 +48,23 @@ class Tile {
 
 private:
 	Object3D quad;
+	bool m_hasObject;
+
 public:
-	Tile(int sizeX = 0, int sizeY = 0, Mesh * mesh = nullptr)
+	Tile(int sizeX = 0, int sizeY = 0, Mesh * mesh = nullptr) : m_hasObject(false)
 	{
 		quad.setMesh(mesh);
 		quad.setPos(static_cast<float>(sizeX), 0.0f, static_cast<float>(sizeY));
 		quad.setRotation(90.0f, 0.0f, 0.0f);		
 	}
-
+	bool getHasObject() const
+	{
+		return m_hasObject;
+	}
+	void setHasObject(bool iujm)
+	{
+		m_hasObject = iujm;
+	}
 	int	getPosX() const
 	{
 		return quad.getPosition().x;

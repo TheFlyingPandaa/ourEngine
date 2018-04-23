@@ -4,6 +4,7 @@
 #include "../../../ourEngine/interface/Interface.h"
 #include "Structure.h"
 #include "../../../ourEngine/interface/light/PointLight.h"
+#include "../../Furniture/Furniture.h"
 
 class Room
 {
@@ -24,7 +25,7 @@ protected:
 	std::vector<PointLight> m_lights;
 	std::vector<Tile*> m_roomTiles;
 	Object3D m_wholeFloor;
-	std::vector<Object3D> m_roomObjects;
+	std::vector<Furniture> m_roomObjects;
 
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
@@ -48,10 +49,12 @@ public:
 
 	virtual void		setFloorMesh(Mesh * mesh);
 	virtual void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
+	virtual void		AddRoomObject(Furniture fut);
 	virtual void		PickTiles();
 	virtual void		PickWalls();
 	
 	std::vector<Tile*>	ReturnTiles();
+	std::vector<Tile*>	getTiles();
 
 	virtual int			getX() const; 
 	virtual int			getY() const;

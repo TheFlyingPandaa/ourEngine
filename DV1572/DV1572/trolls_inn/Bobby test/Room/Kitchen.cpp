@@ -17,6 +17,16 @@ Kitchen::~Kitchen()
 void Kitchen::Draw()
 {
 	m_wholeFloor.Draw();
+
+	for (auto& fur : m_roomObjects)
+		fur.Draw();
+
+	for (auto& tile : m_roomTiles)
+	{
+		if (tile->getQuad().getColor().x != 1.0f)
+			tile->getQuad().Draw();
+	}
+
 	for (auto& wall : m_allWalls)
 	{
 		wall->Draw();
