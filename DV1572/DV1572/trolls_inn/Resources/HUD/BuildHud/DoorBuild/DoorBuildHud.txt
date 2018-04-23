@@ -21,14 +21,10 @@ r 228 120 216 72 -1 0.1 0
 # Hit box for buttons
 hr 228 120 216 72 0
 
-# Kitchen
-tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Kitchen.png
-r 236 124 64 64 0 0 0 circle
+# LogDoor
+tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/LogDoor.png
+r 236 124 64 64 0 0 0 rectangle
 
-# Hallway
-tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Hallway.png
-r 304 124 64 64 1 0 0 circle
-
-# BedRoom
-tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/BedRoom.png
-r 372 124 64 64 2 0 0 circle
+# Window
+tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/ClassicWindow.png
+r 304 124 64 64 1 0 0 rectangle
