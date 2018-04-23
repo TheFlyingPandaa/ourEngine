@@ -97,6 +97,18 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	{
 	case Thinking:
 		//getPath(customer, desiredAction);
+		switch (desiredAction)
+		{
+		case DrinkAction:
+			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			break;
+		case EatAction:
+			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			break;
+		case SleepAction:
+			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			break;
+		}
 		//roomCtrl need action and spots open for customers (?)
 		customer.PopToNextState(); // pop Thinking state
 		customer.PopToNextState(); // pop Idle state
