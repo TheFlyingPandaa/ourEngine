@@ -1,7 +1,7 @@
 #pragma once
 #include "SubState.h"
 #include "../../Room/Grid.h"
-
+#include "../../../Furniture/Table.h"
 class BuildState :
 	public SubState
 {
@@ -13,6 +13,10 @@ private:
 		Selection,
 		End
 	};
+
+	//TEMP
+	Mesh table;
+	//-----
 
 
 	RoomType	m_selectedRoomType;
@@ -38,9 +42,21 @@ private:
 	bool m_readyToPick;
 
 	bool m_doorBuild = false;
+	bool m_canBuildFurniture = false;
+	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
+	{
+		Room,
+		Door,
+		Furniture,
+		NONE
+	};
+	CurrentBuildType m_currentBuildType;
+
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
 	void	_doorBuildInput();
+	void	_roomBuildInput();
+	void	_objectBuildInput();
 	bool	_handleHUDPicking();
 
 public:

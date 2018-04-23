@@ -209,7 +209,7 @@ void GameState::_handlePicking()
 			ss->HandlePicking(obj);
 		}
 		
-		if (Input::isKeyPressed('G'))
+		/*if (Input::isKeyPressed('G'))
 		{
 			Table fut = Table(obj->getPosition(), &table);
 			bool test = this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), fut.getGridSize(), fut.getRotation());
@@ -218,7 +218,7 @@ void GameState::_handlePicking()
 				this->grid->AddRoomObject(fut);
 			}
 			
-		}
+		}*/
 
 		using namespace std::chrono_literals;
 
