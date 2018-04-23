@@ -20,7 +20,7 @@ private:
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
-	std::chrono::duration<double, std::ratio<1, 1>> time_span;
+	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
 	
 
 public:

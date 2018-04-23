@@ -1,8 +1,9 @@
 #include "AISolver.h"
-#include "Inn.h"
+
 AISolver::AISolver(Grid* grid)
 {
-	m_grid = grid;
+	this->m_grid = grid;
+	this->m_start = this->m_clock.now();
 }
 
 AISolver::~AISolver()
@@ -12,15 +13,20 @@ AISolver::~AISolver()
 
 void AISolver::Update(Customer& customer)
 {
+	// Get the elapsed time
+	this->m_now = this->m_clock.now();
+	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
+
 	CustomerState currentState = customer.GetState();
 	customer.Update();
+
 	if (currentState == WalkingToInn)
 	{
 		if (customer.walkQueueDone())
 		{
 			if (customer.getPosition().y < 0)
 			{
-				// walk along the catwalk then upwards towards the gridsystem where the rooms are located
+				// Walk along the catwalk then upwards towards the gridsystem where the rooms are located
 				for (int i = 0; i < 16; ++i)
 					customer.Move(Character::WalkDirection::RIGHT);
 				for (int i = 0; i < 3; ++i)
@@ -64,26 +70,41 @@ void AISolver::Update(Customer& customer)
 		case Drinking:
 			// Reduce how thirsty the customer is
 			// Base this on time somehow
-			if (customer.GetThirsty() > 0)
-				customer.DoDrinking();
-			else
-				customer.PopToNextState();
+			if (this->m_time_span.count() > 3)
+			{
+				if (customer.GetThirsty() > 0)
+					customer.DoDrinking();
+				else
+					customer.PopToNextState();
+
+				this->m_start = this->m_clock.now();
+			}
 			break;
 		case Eating:
 			// Reduce how hungry the customer is
 			// Base this on time somehow
-			if (customer.GetHungry() > 0)
-				customer.DoEating();
-			else
-				customer.PopToNextState();
+			if (this->m_time_span.count() > 3)
+			{
+				if (customer.GetHungry() > 0)
+					customer.DoEating();
+				else
+					customer.PopToNextState();
+
+				this->m_start = this->m_clock.now();
+			}
 			break;
 		case Sleeping:
 			// Reduce how tired the customer is
 			// Base this on time somehow
-			if (customer.GetTired() > 0)
-				customer.DoSleeping();
-			else
-				customer.PopToNextState();
+			if (this->m_time_span.count() > 3)
+			{
+				if (customer.GetTired() > 0)
+					customer.DoSleeping();
+				else
+					customer.PopToNextState();
+
+				this->m_start = this->m_clock.now();
+			}
 			break;
 		}
 	}
@@ -101,12 +122,15 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		{
 		case DrinkAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case EatAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			//this->m_grid->generatePath(customer, RoomType::bedroom);
 			break;
 		}
 		//roomCtrl need action and spots open for customers (?)

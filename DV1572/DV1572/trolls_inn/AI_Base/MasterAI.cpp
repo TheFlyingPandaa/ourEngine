@@ -21,12 +21,12 @@ void MasterAI::Update(Camera* cam)
 {
 	// Get the elapsed time
 	this->m_now = this->m_clock.now();
-	this->time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
+	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
 	
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
-	if (this->time_span.count() > 10)
+	if (this->m_time_span.count() > 10)
 	{
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
