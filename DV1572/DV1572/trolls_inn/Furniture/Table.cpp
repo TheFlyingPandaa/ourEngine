@@ -1,10 +1,14 @@
 #include "Table.h"
 
-Table::Table(DirectX::XMINT2 pos, Mesh * mesh) : Furniture()
+Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh) : Furniture(pos, mesh)
 {
-	m_gridSize = 1;
-	
+	p_gridSize = 2;
+	p_rot = 180;
 
+	p_object.setMesh(mesh);
+	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
+	//Set Whatever suits
+	//p_attributes
 }
 
 Table::~Table()
