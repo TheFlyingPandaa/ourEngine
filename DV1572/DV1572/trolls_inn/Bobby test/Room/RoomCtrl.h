@@ -75,10 +75,7 @@ public:
 	void				addRoomObject(DirectX::XMINT2 pos, Mesh * mesh);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
-	bool				_intersect(Room * room);
 	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
-	bool				isPlaceable(DirectX::XMINT2 pos, DirectX::XMINT2 size);
-	void				setMesh(Mesh * mesh);
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
@@ -90,20 +87,10 @@ public:
 	//This is a expensiv function many many many for loops
 	//Be conservative when calling
 	void				CreateWalls(Room* currentRoom);
-	void				CreateDoors(Room * room);
-	DirectX::XMINT2		CreateMainDoor(Room * room);
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(XMFLOAT3 wallPosition);
-	void				CreateMainDoor(Tile * tile1, Tile * tile2);
 
 	std::vector<int>	roomTraversal(Tile* roomTile1, Tile * roomTile2);
-
-	Room*				getMainRoom() const;
-	XMINT2				getMainDoorPosEnter() const;
-	XMINT2				getMainDoorPosLeave() const;
-
-	XMINT2				getRoomEnterPos(Room* startRoom, int roomDstIndex);
-	XMINT2				getRoomLeavePos(Room* startRoom, int roomDstIndex);
 
 	Room*				getRoomAt(int index);
 
