@@ -18,7 +18,8 @@ struct INPUT {
 float4 main(INPUT input) : SV_TARGET
 {
 	float3 down = float3(0,-1.0f,0);
-	float angle = max(dot(down, normalize(sunDir.xyz)), 0.0f);
+	float3 direction = float3(16, 0, 16) - sunLightPos.xyz;
+	float angle = max(dot(down, normalize(direction)), 0.0f);
 	float4 diffuseTexture = tDiffuse.Sample(SampleType, input.tex);
 	float4 ambient = diffuseTexture * 0.1f;
 	ambient.a = 1.0f;

@@ -1,11 +1,12 @@
 SamplerState sampAni : register(s0);
-SamplerState sampPoint : register(s1);
+SamplerComparisonState sampAniPoint : register(s1);
 
 Texture2D tDiffuse : register(t0);
 Texture2D tNormal : register(t1);
 Texture2D tPosition : register(t2);
 Texture2D tLIndex : register(t3);
 Texture2D tShadow : register(t4);
+Texture2D tWindow : register(t5);
 
 cbuffer CAMERA_POS_BUFFER : register(b1)
 {
@@ -30,8 +31,8 @@ cbuffer POINT_LIGHT_COLLECTION_BUFFER : register (b6)
 {
 	float4 pointLPos[100];
 	float4 pointLColor[100];
-	float4 lightSetup[100]; 
-	float4 nrOfLights; 
+	float4 lightSetup[100];
+	float4 nrOfLights;
 }
 
 struct Input
@@ -54,17 +55,13 @@ float4 main(Input input) : SV_Target
 	float3 finalColorForSun; 
 	//SUN//
 
-	
-	
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-    float3 sunLightToObject = normalize(-sunDir.xyz);
-	//TODO:Hey Future me Remove this
-	//return float4(diffuseSample,1);
+	float3 sunLightToObject = normalize(sunLightPos.xyz  - wordPos);
 	float3 diffuse = diffuseSample * max(dot(normal, sunLightToObject), 0.0f);
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-																																				
+
 
 	//Specular calculation//////////////////////////////////////////////////////////////////////
 	float3 viewer = normalize(camPos.xyz - wordPos);
@@ -77,32 +74,51 @@ float4 main(Input input) : SV_Target
 
 	float3 finalSpec = spec * specLevel;
 	///////////////////////////////////////////////////////////////////////////////////////////
-    
+
 	//float4 lightPos = view[3];
 	float4 posLightH = mul(float4(wordPos, 1.0f), mul(view, projection));
-	float2 smTex = float2(0.5f * posLightH.x + 0.5f, -0.5f * posLightH.y + 0.5f);
-	float depth = posLightH.z;
-	float SHADOW_EPSILON = 0.0001;
-	float shadowDepthLinear = tShadow.Sample(sampAni, smTex).r;
-	float shadowDepthPoint = tShadow.Sample(sampPoint, smTex).r;
-
-	float optimalDepth = abs(shadowDepthLinear - shadowDepthPoint);
-
-	float adaptiveDepthBias = optimalDepth + SHADOW_EPSILON;
-
-	float angle = max(dot(sunLightToObject, float3(0, 1, 0)), 0.0f);
 	float shadowCoeff = 1;
-	shadowCoeff = (shadowDepthLinear + adaptiveDepthBias < depth) ? 0.0 : 1.0f;	// If the depth from camera is larger than depth from light,
+	float2 shadowTexCoords;
+	shadowTexCoords.x = 0.5f + (posLightH.x * 0.5f);
+	shadowTexCoords.y = 0.5f - (posLightH.y * 0.5f);
+	float pixelDepth = posLightH.z;
+
+	float window = 1.0f;
 	
-	shadowCoeff = min(shadowCoeff, 1.0f);
+	// If we are in shadow
+	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
+		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
+		pixelDepth > 0)
+	{
 
-	finalColorForSun = ambient + (diffuse + finalSpec) * sunColor.rgb * shadowCoeff;
+		float margin = acos(saturate(dot(normal,sunLightToObject)));
+
+		float epsilon = 0.001 / margin;
+
+		epsilon = clamp(epsilon, 0, 0.1);
+		float width;
+		tShadow.GetDimensions(width, width);
+		float texelSize = 1.0f / width;
+
+		for (int x = -3; x <= 3; ++x)
+		{
+			for (int y = -3; y <= 3; ++y)
+			{
+				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
+				window += float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
+			}
+		}
+		shadowCoeff /= 36.0f;
+		shadowCoeff = max(shadowCoeff, 0.2);
+		window /= 36.0f;
+		window = 1 - window;
+
+	}
+
+//	return float4(window, window, window, 1.0f);
 	
-
-
-
-
-
+	finalColorForSun = ambient + (diffuse + finalSpec)* sunColor.xyz * shadowCoeff;
+	
 	float3 finalColorForPointLights = float3(0,0,0);
 	float3 tempColor = float3(0,0,0);
 	float3 diffuseForPointLight = float3(0,0,0); 
@@ -135,7 +151,7 @@ float4 main(Input input) : SV_Target
 
 			tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i].xyz;
 
-			finalColorForPointLights += tempColor;
+			finalColorForPointLights += tempColor + (finalColorForSun * window);// (window == 1) ? tempColor : 0;
 		}
 	}
 

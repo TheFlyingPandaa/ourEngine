@@ -73,12 +73,20 @@ bool Room::Inside(Tile * t)
 	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
 			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
-
+#include <iostream>
 void Room::Update(Camera * cam)
 {
-	XMVECTOR xmCamDir = XMLoadFloat3(&cam->getLookAt());
+	XMFLOAT3 test = { cam->getLookAt().x , 0.0f , cam->getLookAt().z };
+	XMVECTOR xmCamDir = XMLoadFloat3(&test);
+	xmCamDir = XMVector3Normalize(xmCamDir);
+	XMVECTOR xmCamPos = XMLoadFloat3(&cam->getPosition());
+	
 	for (auto& wall : m_allWalls)
 	{
+
+		XMVECTOR wallPosition = XMLoadFloat3(&getPosition());
+		
+		float distance = XMVectorGetX(XMVector3Length(wallPosition - xmCamPos));
 		if (wall->isShared())
 		{
 			wall->setScale(1, 0.05f, 1.0f);
@@ -88,10 +96,15 @@ void Room::Update(Camera * cam)
 			XMFLOAT3 wallDir = { wall->getDirection().x, 0, wall->getDirection().y };
 			XMVECTOR xmWallDir = XMLoadFloat3(&wallDir);
 			float angleDegrees = XMConvertToDegrees(XMVectorGetX(XMVector3AngleBetweenNormals(xmCamDir, xmWallDir)));
+			
 			if (angleDegrees < 90)
-				wall->setScale(1, 0.05f, 1.0f);
-			else 
+			{
+				float funcy = (2.0f * (angleDegrees / 90) ) - 1.0f;
+				wall->setScale(1, funcy < 0.05f ? 0.05f : funcy, 1.0f);
+			}
+			else
 				wall->setScale(1, 1.0f, 1.0f);
+				//std::cout << (angleDegrees/90.0f) << std::endl
 		}
 	}
 }

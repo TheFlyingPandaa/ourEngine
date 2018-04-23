@@ -60,12 +60,13 @@ namespace DX
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
 
-	extern std::vector<INSTANCE_GROUP> g_instanceGroups;
-	extern std::vector<INSTANCE_GROUP> g_instanceGroupsSkyBox;
-	extern std::vector<INSTANCE_GROUP> g_instanceGroupsHUD;
-	extern std::vector<INSTANCE_GROUP> g_instanceGroupsTransparancy;
-	extern std::vector<INSTANCE_GROUP_INDEXED> g_instanceGroupsPicking;
-	extern std::vector<INSTANCE_GROUP>	g_InstanceGroupsShadow;
+	extern std::vector<INSTANCE_GROUP>			g_instanceGroups;
+	extern std::vector<INSTANCE_GROUP>			g_instanceGroupsSkyBox;
+	extern std::vector<INSTANCE_GROUP>			g_instanceGroupsHUD;
+	extern std::vector<INSTANCE_GROUP>			g_instanceGroupsTransparancy;
+	extern std::vector<INSTANCE_GROUP_INDEXED>	g_instanceGroupsPicking;
+	extern std::vector<INSTANCE_GROUP>			g_InstanceGroupsShadow;
+	extern std::vector<INSTANCE_GROUP>			g_instanceGroupWindows;
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);

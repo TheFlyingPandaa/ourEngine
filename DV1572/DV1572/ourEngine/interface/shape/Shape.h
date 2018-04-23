@@ -70,7 +70,8 @@ public:
 	void ApplyMaterials(int i = 0);
 
 	void CheckPick();
-	void CastShadow();
+	void	CastShadow();
+	void WindowDraw();
 	//void setScale(float x, float y, float z);
 	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;

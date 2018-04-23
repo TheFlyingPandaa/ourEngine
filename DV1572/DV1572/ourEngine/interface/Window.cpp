@@ -37,6 +37,7 @@ std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
+std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
@@ -267,6 +268,7 @@ HRESULT Window::_initDirect3DContext()
 		//we are creating the standard depth buffer here.
 		_createDepthBuffer();
 		_loadShadowBuffers();
+		_loadWindowBuffers();
 		DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);	//As a standard we set the rendertarget. But it will be changed in the prepareGeoPass
 		pBackBuffer->Release();
 	}
@@ -554,8 +556,8 @@ void Window::_loadShadowBuffers()
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_shadowBuffer);
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = m_width * 1.0;
-	texDesc.Height = m_height * 1.0;
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -575,6 +577,7 @@ void Window::_loadShadowBuffers()
 	dsvDesc.Texture2D.MipSlice = 0;
 
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, &dsvDesc, &m_depthStencilViewShad);
+	
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
@@ -585,7 +588,7 @@ void Window::_loadShadowBuffers()
 	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexShad, &srvDesc, &m_shadowDepthTexture);
 
 	//m_shadowProjMatrix = XMMatrixPerspectiveFovLH(XM_PI * 0.75f, 16.0f / 9.0f, 0.5f, 500.0f);
-	m_shadowProjMatrix = XMMatrixOrthographicLH(m_width * 0.05f, m_height * 0.05f, 1.0f, 50.0f);
+	m_shadowProjMatrix = XMMatrixOrthographicLH(10, 10, 1.0f, 50.0f);
 }
 
 void Window::_prepareShadow()
@@ -600,22 +603,44 @@ void Window::_prepareShadow()
 	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
 	DX::g_deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilViewShad);
+
+	D3D11_RASTERIZER_DESC wfdesc;
+	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	wfdesc.FillMode = D3D11_FILL_SOLID;
+	wfdesc.CullMode = D3D11_CULL_BACK;
+	wfdesc.DepthClipEnable = true;
+	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+	DX::g_deviceContext->RSSetState(m_WireFrame);
+
+	m_viewport.Height = 2048;
+	m_viewport.Width = 2048;
+	m_viewport.MinDepth = 0.f;
+	m_viewport.MaxDepth = 1.f;
+
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 void Window::_shadowPass(Camera* c)
 {
 
-	XMFLOAT4 pos = XMFLOAT4(0, 10, 0, 1);
-	XMFLOAT4 lookAt = XMFLOAT4(10, 0, 16, 1);
-	XMFLOAT4 up = XMFLOAT4(0, 1, 0, 0);
+	static XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
 
+	const XMVECTORF32 eye = { DX::g_lightPos.x, DX::g_lightPos.y, DX::g_lightPos.z, 0.0f };
+	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
+	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-	XMMATRIX view = XMMatrixLookAtLH(XMLoadFloat4(&pos), XMLoadFloat4(&lookAt), XMLoadFloat4(&up));
-	
 	SHADOW_MATRIX_BUFFER meshBuffer;
 
-	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(view));
-	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(m_shadowProjMatrix));
+	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(lightPerspectiveMatrix));
+
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
+	DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
+
+	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 	for (auto& instance : DX::g_InstanceGroupsShadow)
@@ -630,16 +655,6 @@ void Window::_shadowPass(Camera* c)
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
-
-		D3D11_MAPPED_SUBRESOURCE dataPtr;
-		DX::g_deviceContext->Map(m_shadowBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-		memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
-		DX::g_deviceContext->Unmap(m_shadowBuffer, 0);
-		
-		DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
-
-
-	
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
@@ -656,8 +671,6 @@ void Window::_shadowPass(Camera* c)
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		
-
 		Mesh* mesh = instance.shape->getMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
@@ -669,6 +682,138 @@ void Window::_shadowPass(Camera* c)
 	}
 
 	
+}
+
+void Window::_loadWindowBuffers()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(SHADOW_MATRIX_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
+
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_windowsBuffer);
+
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	hr = DX::g_device->CreateTexture2D(&texDesc, NULL, &m_depthBufferTexWindow);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	dsvDesc.Flags = 0;
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Texture2D.MipSlice = 0;
+
+	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexWindow, &dsvDesc, &m_depthStencilViewWindow);
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexWindow, &srvDesc, &m_windowDepthTexture);
+}
+
+void Window::_windowPass(Camera * c)
+{
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
+	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->DSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->GSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->PSSetShader(nullptr, nullptr, 0);
+	DX::g_deviceContext->OMSetRenderTargets(0, nullptr, m_depthStencilViewWindow);
+
+	D3D11_RASTERIZER_DESC wfdesc;
+	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	wfdesc.FillMode = D3D11_FILL_SOLID;
+	wfdesc.CullMode = D3D11_CULL_BACK;
+	wfdesc.DepthClipEnable = true;
+	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+	DX::g_deviceContext->RSSetState(m_WireFrame);
+
+	m_viewport.Height = 2048;
+	m_viewport.Width = 2048;
+	m_viewport.MinDepth = 0.f;
+	m_viewport.MaxDepth = 1.f;
+
+	DX::g_deviceContext->RSSetViewports(1, &m_viewport);
+
+	static XMMATRIX lightPerspectiveMatrix = XMMatrixOrthographicLH(50, 50, 1.0f, 200.0f);
+
+	const XMVECTORF32 eye = { DX::g_lightPos.x, DX::g_lightPos.y, DX::g_lightPos.z, 0.0f };
+	static const XMVECTORF32 at = { 16.0f, 0.0f, 16.0f, 0.0f };
+	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+	SHADOW_MATRIX_BUFFER meshBuffer;
+
+	XMStoreFloat4x4A(&meshBuffer.view, XMMatrixTranspose(XMMatrixLookAtLH(eye, at, up)));
+	XMStoreFloat4x4A(&meshBuffer.projection, XMMatrixTranspose(lightPerspectiveMatrix));
+
+
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	DX::g_deviceContext->Map(m_windowsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	memcpy(dataPtr.pData, &meshBuffer, sizeof(SHADOW_MATRIX_BUFFER));
+	DX::g_deviceContext->Unmap(m_windowsBuffer, 0);
+
+	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_windowsBuffer);
+
+	ID3D11Buffer* instanceBuffer = nullptr;
+	for (auto& instance : DX::g_instanceGroupWindows)
+	{
+		D3D11_BUFFER_DESC instBuffDesc;
+		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
+		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA instData;
+		memset(&instData, 0, sizeof(instData));
+		instData.pSysMem = &instance.attribs[0];
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
+
+		UINT32 vertexSize = sizeof(VERTEX);
+		UINT offset = 0;
+		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer * bufferPointers[2];
+		bufferPointers[0] = v;
+		bufferPointers[1] = instanceBuffer;
+
+		unsigned int strides[2];
+		strides[0] = sizeof(VERTEX);
+		strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+
+		unsigned int offsets[2];
+		offsets[0] = 0;
+		offsets[1] = 0;
+
+		Mesh* mesh = instance.shape->getMesh();
+		ID3D11Buffer* indices = mesh->getIndicesBuffer();
+
+		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
+		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		instanceBuffer->Release();
+	}
+
+
 }
 
 void Window::_initFonts()
@@ -739,24 +884,25 @@ void Window::_setSamplerState()
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	DX::g_device->CreateSamplerState(&samplerDesc, &m_samplerState);
-	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	
 
 	D3D11_SAMPLER_DESC samplerDescPoint;
-	samplerDescPoint.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	samplerDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDescPoint.MipLODBias = 0.0f;
-	samplerDescPoint.MaxAnisotropy = 1;
-	samplerDescPoint.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDescPoint.BorderColor[0] = 0;
-	samplerDescPoint.BorderColor[1] = 0;
-	samplerDescPoint.BorderColor[2] = 0;
-	samplerDescPoint.BorderColor[3] = 0;
-	samplerDescPoint.MinLOD = 0;
+	samplerDescPoint.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	samplerDescPoint.BorderColor[0] = 1.0f;
+	samplerDescPoint.BorderColor[1] = 1.0f;
+	samplerDescPoint.BorderColor[2] = 1.0f;
+	samplerDescPoint.BorderColor[3] = 1.0f;
+	samplerDescPoint.MinLOD = 0.f;
 	samplerDescPoint.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDescPoint.MipLODBias = 0.f;
+	samplerDescPoint.MaxAnisotropy = 0;
+	samplerDescPoint.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	samplerDescPoint.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+
 	DX::g_device->CreateSamplerState(&samplerDescPoint, &m_samplerStatePoint);
-	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
+
 }
 
 void Window::_createConstantBuffers()
@@ -880,10 +1026,6 @@ void Window::_initGBuffer()
 
 void Window::_prepareGeometryPass()
 {
-	/*float c[4] = { 0.0f,0.0f,0.0f,1.0f };
-	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
-	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);*/
-
 	//The patchlist is used for tessellation, the tessellator takes patches not points
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
@@ -895,6 +1037,12 @@ void Window::_prepareGeometryPass()
 		renderTargets[i] = m_gbuffer[i].RTV;
 	}
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, m_depthStencilView);
+
+	_initViewPort();
+	_setViewport();
+
+	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	DX::g_deviceContext->PSSetSamplers(1, 1, &m_samplerStatePoint);
 }
 
 void Window::_geometryPass(const Camera &cam)
@@ -1079,6 +1227,38 @@ void Window::_preparePostLight()
 
 void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 {
+
+	// WE DO NOT PASS sun buffer correctly
+
+	static bool lol = false;
+	static ID3D11Buffer* m_pSunBuffer;
+
+	static DIRECTIONAL_LIGHT_BUFFER m_sunBuffer;
+	if (!lol)
+	{
+		HRESULT hr;
+		D3D11_BUFFER_DESC sunBdesc;
+		sunBdesc.Usage = D3D11_USAGE_DYNAMIC;
+		sunBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
+		sunBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		sunBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		sunBdesc.MiscFlags = 0;
+		sunBdesc.StructureByteStride = 0;
+
+		hr = DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer);
+		lol = true;
+
+	}
+
+	m_sunBuffer.pos = DX::g_lightPos;
+	m_sunBuffer.color = DX::g_lightDir;
+
+	D3D11_MAPPED_SUBRESOURCE sunLightData;
+	DX::g_deviceContext->Map(m_pSunBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sunLightData);
+	memcpy(sunLightData.pData, &(m_sunBuffer), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+	DX::g_deviceContext->Unmap(m_pSunBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer);
+
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DX::g_deviceContext->VSSetShader(m_deferredVertexShader, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -1093,6 +1273,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	DX::g_deviceContext->PSSetShaderResources(4, 1, &m_shadowDepthTexture);
+	DX::g_deviceContext->PSSetShaderResources(5, 1, &m_windowDepthTexture);
 	DX::g_deviceContext->PSSetConstantBuffers(9, 1, &m_shadowBuffer);
 	
 	//Send lights to GPU
@@ -1368,10 +1549,16 @@ void Window::Clear()
 	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
 	DX::g_InstanceGroupsShadow.clear();
+
+	// WINDOW Test
+	DX::g_instanceGroupWindows.clear();
+	// end window test
+
 	DX::g_textQueue.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewWindow, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
 	//DX::g_lightsPos.clear();
 	//DX::g_lightsDir.clear();
@@ -1392,6 +1579,7 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
+	_windowPass(c);
 	_prepareShadow();
 	_shadowPass(c);
 	if (DEBUG == 1)

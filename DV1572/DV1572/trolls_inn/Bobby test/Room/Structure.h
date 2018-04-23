@@ -24,6 +24,7 @@ public:
 	~Wall();
 
 	void	Draw();
+	void	WindowDraw();
 
 	void	setPosition(float x, float y);
 	void	setPosition(DirectX::XMFLOAT2 position);

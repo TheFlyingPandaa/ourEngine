@@ -171,7 +171,7 @@ void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 	
 	m_tempPath.push_back(j);
 }
-
+#include <iostream>
 void RoomCtrl::_printRoomConnections() const
 {
 	

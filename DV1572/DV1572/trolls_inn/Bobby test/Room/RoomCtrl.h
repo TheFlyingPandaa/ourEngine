@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <iostream>
 #include "Room.h"
 #include "Structure.h"
 #include "Kitchen.h"

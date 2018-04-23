@@ -18,6 +18,11 @@ void Wall::Draw()
 	m_wall.Draw();		
 }
 
+void Wall::WindowDraw()
+{
+	m_wall.WindowDraw();
+}
+
 void Wall::setPosition(float x, float y)
 {
 	setPosition(XMFLOAT2(x, y));
