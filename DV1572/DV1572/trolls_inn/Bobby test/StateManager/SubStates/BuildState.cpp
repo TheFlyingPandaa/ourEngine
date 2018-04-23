@@ -37,7 +37,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 
 void BuildState::_buildInput()
 {
-	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE || m_currentBuildType == CurrentBuildType::Door))
+	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE))
 	{
 		if (m_buildStage == BuildStage::None)
 		{
@@ -83,6 +83,11 @@ void BuildState::_buildInput()
 				{
 					this->grid->CheckIfDoorCanBeBuilt(start, end);
 				}
+				else if (m_currentBuildType == CurrentBuildType::Furniture)
+				{
+					//THIS WILL BE CHANGED WHEN WE HAVE A OBJECTLOADER
+					m_canBuildFurniture = this->grid->CheckAndMarkTilesObject(start, 1, 0);
+				}
 
 			}
 		}
@@ -100,6 +105,10 @@ void BuildState::_buildInput()
 	{
 		//All the code that was here is now in this neet function wop wop
 		_roomBuildInput();
+	}
+	else if (m_buildStage == BuildStage::End && m_currentBuildType == CurrentBuildType::Furniture)
+	{
+		_objectBuildInput();
 	}
 	else {
 		m_buildStage = BuildStage::None;
@@ -168,6 +177,26 @@ void BuildState::_roomBuildInput()
 	m_selectedTile = nullptr;
 	m_roomPlaceable = false;
 	this->grid->AddRoom(start, end, m_selectedRoomType);
+}
+
+void BuildState::_objectBuildInput()
+{
+	XMFLOAT3 s = m_startTile->getPosition();
+	XMINT2 start;
+	start.x = static_cast<int>(s.x + 0.5f);
+	start.y = static_cast<int>(s.z + 0.5f);
+	Table fut = Table(DirectX::XMFLOAT3(start.x,0,start.y), &table);
+	this->grid->ResetTileColor(start, start);
+	if (m_canBuildFurniture)
+	{
+	
+		this->grid->AddRoomObject(fut);
+	}
+	m_buildStage = BuildStage::None;
+	m_startTile = nullptr;
+	m_selectedTile = nullptr;
+	m_roomPlaceable = false;
+	
 }
 
 bool BuildState::_handleHUDPicking()
@@ -285,6 +314,9 @@ BuildState::BuildState(Camera * cam,
 	m_priceOfRoom.setTextString("");
 	m_priceOfRoom.setAllignment(TXT::Center);
 	m_currentBuildType = CurrentBuildType::NONE;
+
+	//TEMP
+	table.LoadModel("trolls_inn/Resources/Stol.obj");
 }
 
 BuildState::~BuildState()
