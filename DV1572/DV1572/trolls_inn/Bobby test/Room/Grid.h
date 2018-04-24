@@ -67,6 +67,8 @@ public:
 	std::vector<Tile*> extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size);
 	void insertTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size, std::vector<Tile*>& tiles);
 
+	Tile* getTile(int x, int y);
+
 	void	Draw();
 
 	void	PickTiles(Shape* selectionTile = nullptr);

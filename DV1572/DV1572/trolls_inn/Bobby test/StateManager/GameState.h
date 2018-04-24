@@ -32,6 +32,7 @@ private:
 	GameTime gameTime; 
 	GameStage m_stage;
 
+	Character c;
 
 	int previousKey;
 	bool m_Rpressed;
