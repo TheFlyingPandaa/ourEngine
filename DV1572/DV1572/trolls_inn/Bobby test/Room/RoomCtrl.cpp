@@ -553,6 +553,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 				if (wall->getObject3D().getPosition().x == wallPosition.x && wall->getObject3D().getPosition().z == wallPosition.z)
 				{
 					wall->getObject3D().setMesh(m_doorMesh);
+					wall->setIsDoor(true);
 					if (wall->isShared())
 					{
 						std::cout << "This door is inside->Inside";

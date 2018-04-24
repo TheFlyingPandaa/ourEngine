@@ -19,6 +19,7 @@ private:
 	Object3D			m_wall;
 	XMFLOAT2			m_direction;
 	bool				m_sharedWall;
+	bool				m_isDoor = false;
 public:
 	Wall(Mesh * mesh, XMFLOAT2 dir);
 	~Wall();
@@ -35,6 +36,9 @@ public:
 	void	setMesh(Mesh * mesh);
 	void	setIsShared(bool shared);
 	bool	isShared() const;
+
+	bool	getIsDoor() const;
+	bool	setIsDoor(const bool tjue);
 
 	XMFLOAT2 getDirection() const;
 	bool	operator==(const Wall& other);
