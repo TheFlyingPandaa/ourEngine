@@ -32,8 +32,12 @@ OUTPUT main(INPUT input)// : SV_TARGET
 	normal = normalize(mul(normal, input.TBN));
 	output.normal = float4(normalize(input.normal + normal), 1.0f);
 	output.diffuse = tDiffuse.Sample(sampAni, input.tex);
+	if (output.diffuse.r == 0 && output.diffuse.g == 1 && output.diffuse.b == 0)
+		discard;
 	output.diffuse = output.diffuse * input.color;
 	output.pos = input.worldPos;
+
+	
 
     uint index = round(input.lIndex);
 	output.lIndex.a = 1.0f;

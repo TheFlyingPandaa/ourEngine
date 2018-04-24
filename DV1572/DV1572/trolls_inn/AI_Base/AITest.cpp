@@ -240,7 +240,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	customers.push_back(cFL.update());
 
-	std::cout << customers.back().getRaceStr() << " is " << customers.back().getActionStr() << std::endl;
+	std::cout << customers.back().GetRaceStr() << " is " << customers.back().GetActionStr() << std::endl;
 
 	int entanceIndex = getEntrance();
 

@@ -30,6 +30,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	this->m_sizeX = sizeX;
 	this->m_sizeY = sizeY;
 	
+	m_catWalkMesh = new Mesh();
 	this->m_gridMesh = new Mesh();
 	m_tileMesh = new Mesh();
 
@@ -40,13 +41,24 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	m_tileMesh->MakeRectangle();
 	m_tileMesh->setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	m_tileMesh->setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+
+	m_catWalkMesh->MakeRectangle();
 	
+	m_catWalkMesh->setDiffuseTexture("trolls_inn/Resources/Brickfloor/brickwall.png");
+	m_catWalkMesh->setNormalTexture("trolls_inn/Resources/Brickfloor/brickwall_normal.png");
 
 	m_wholeGrid.setMesh(m_gridMesh);
 	m_wholeGrid.setScale(sizeX *2.0f);
 	m_wholeGrid.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posY));
 	m_wholeGrid.setRotation(90.0f, 0.0f, 0.0f);
-	m_wholeGrid.setGridScale(sizeX);
+	m_wholeGrid.setUVScale(sizeX);
+
+	m_catWalkTile.setMesh(m_catWalkMesh);
+	m_catWalkTile.setScale(sizeX*2.0f, 1, 10.0f);
+	m_catWalkTile.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posY - 5));
+	m_catWalkTile.setRotation(90.0f, 0.0f, 0.0f);
+	m_catWalkTile.setUVScaleX(sizeX);
+	m_catWalkTile.setUVScaleY(10);
 
 	this->m_tiles.reserve(sizeX * sizeY);
 
@@ -58,7 +70,8 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 			t->getQuad().setScale(2.0f);
 			t->getQuad().setPos(static_cast<float>(j + posX), 0, static_cast<float>(i + posY));
-			t->getQuad().setGridScale(1);
+			t->getQuad().setUVScaleX(1.0f);
+			t->getQuad().setUVScaleY(1.0f);
 
 			this->m_tiles.push_back(t);
 		}
@@ -71,6 +84,7 @@ Grid::~Grid()
 
 	delete m_gridMesh;
 	delete m_tileMesh;
+	delete m_catWalkMesh;
 }
 
 
@@ -169,7 +183,7 @@ void Grid::Draw()
 
 		}
 	}
-	
+	m_catWalkTile.Draw();
 	m_wholeGrid.Draw();
 
 }
@@ -285,6 +299,39 @@ void Grid::DrawString()
 {
 	
 }
+void Grid::generatePath(Character& character, RoomType targetRoom)
+{
+	auto round_n = [&](float num, int dec) -> float
+	{
+		float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+		float pwr = pow(10.0f, dec);
+		return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+	};
+	XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
+
+	XMFLOAT3 targetPosition;
+	/*if (targetRoom == randomStupid)
+		targetPosition = { float(rand() % 31), 0.0f, float(rand() % 31) };
+	else
+		targetPosition = m_roomCtrl.getClosestRoom(charPos, targetRoom);*/
+
+
+	int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+	int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+
+//	std::vector<std::shared_ptr<Node>> path = findPathHighLevel(m_tiles[xTile][yTile], m_tiles[targetPosition.x][targetPosition.z]);
+
+	XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+	//if (path.size() != 0)
+	//{
+
+	//	character.Move(character.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+	//	for (int i = 0; i < path.size() - 1; i++)
+	//		character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+	//}
+}
 
 float Grid::getDistance(Tile* t1, Tile* t2)
 {
@@ -307,6 +354,12 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 
 		- If both start and end is inside then we perform djikstra first with the rooms and A* between 
 		the room doors. 
+
+		vt 1 1
+		vt 0 1
+		vt 0 0
+		vt 1 0
+
 		
 	*/
 

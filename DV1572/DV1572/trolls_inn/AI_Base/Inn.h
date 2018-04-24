@@ -1,5 +1,6 @@
 #pragma once
 #include "Attributes.h"
+#include "../Bobby test/Room/Grid.h"
 
 struct innUpdateAttributes
 {
@@ -14,19 +15,28 @@ struct innUpdateAttributes
 
 class Inn
 {
+	friend class AISolver;
 private:
-	Attributes innAttributes;
-	innUpdateAttributes iUA;
-	int foodPrice;
-	int sleepPrice;
-	int drinkPrice;
+	
+	Mesh m_m;
+	Mesh m_kitchenTile;
+	Mesh m_rect;
+	Mesh m_door;
 
-	void addStatsToInn(Attributes type);
-	void checkInnStatUpdate();
+	// Inn stuff
+	Attributes m_innAttributes;
+	innUpdateAttributes m_iUA;
+	int m_foodPrice;
+	int m_sleepPrice;
+	int m_drinkPrice;
+
+	void _addStatsToInn(Attributes type);
+	void _checkInnStatUpdate();
 
 public:
 	Inn();
 	~Inn();
+
 
 	int getFoodPrice() const;
 	int getSleepPrice() const;
@@ -39,4 +49,6 @@ public:
 	// Add stats to the inn based on the furniture placed
 	void furnitureStatAdd(Attributes furnitureStats);
 
+	void Update(Camera* cam);
+	void Draw();
 };

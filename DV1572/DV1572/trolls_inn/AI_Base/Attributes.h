@@ -3,35 +3,35 @@
 class Attributes
 {
 private:
-	int reputation;
-	int standard;
-	int prices;
-	int creepy;
-	int shady;
-	int drinkQuality;
-	int foodQuality;
+	int m_reputation;
+	int m_standard;
+	int m_prices;
+	int m_creepy;
+	int m_shady;
+	int m_drinkQuality;
+	int m_foodQuality;
 
 public:
 	Attributes();
 	Attributes(int rep, int sta, int pri, int cre, int shad, int drin, int fod);
 	~Attributes();
 
-	int getReputation() const;
-	int getStandard() const;
-	int getPrices() const;
-	int getCreepy() const;
-	int getShady() const;
-	int getDrinkQuality() const;
-	int getFoodQuality() const;
+	int GetReputation() const;
+	int GetStandard() const;
+	int GetPrices() const;
+	int GetCreepy() const;
+	int GetShady() const;
+	int GetDrinkQuality() const;
+	int GetFoodQuality() const;
 
 	// Adds the function argument to the attribute
-	void setReputation(int value);
-	void setStandard(int value);
-	void setPrices(int value);
-	void setCreepy(int value);
-	void setShady(int value);
-	void setDrinkQuality(int value);
-	void setFoodQuality(int value);
+	void SetReputation(int value);
+	void SetStandard(int value);
+	void SetPrices(int value);
+	void SetCreepy(int value);
+	void SetShady(int value);
+	void SetDrinkQuality(int value);
+	void SetFoodQuality(int value);
 
 };
 

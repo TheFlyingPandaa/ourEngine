@@ -20,19 +20,14 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	_setHud();
 
 	int nrOfButtons = m_stateHUD.getNrOfPickableButtons();
-	for (int i = 0; i < nrOfButtons; i++)
 	{
+	for (int i = 0; i < nrOfButtons; i++)
 		m_hudButtonsPressed.push_back(false);
 	}
 
 
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
-	box.LoadModel("trolls_inn/Resources/Box.obj");
-
-	c.setModel(&box);
-	c.setPosition( 10+0.5, 2+0.5);
-	c.setFloor(0);
-
+	
 	int startSize = 32;
 	int firstRoomSizeX = 4;
 	int firstRoomSizeY = 3;
@@ -42,28 +37,20 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 	this->_init();
-	grid = new Grid(0, 0, startSize, startSize);	
+	m_grid = new Grid(0, 0, startSize, startSize);	
 	m_roomctrl = new RoomCtrl();
-	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
+	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 
-	//grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
-	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
-	//grid->getRoomCtrl().CreateMainDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
-	
-	posX = 1;
-	posY = 1;
-	//grid->getRoomCtrl().CreateDoors();
+	m_mai = new MasterAI(m_roomctrl, m_grid);
 	previousKey = -1;	
-
-
-	
 
 }
 
 GameState::~GameState()
 {
 	delete m_roomctrl;
-	delete grid;
+	delete m_grid;
+	delete m_mai;
 	while (!m_subStates.empty())
 	{
 		delete m_subStates.top();
@@ -82,6 +69,14 @@ void GameState::Update(double deltaTime)
 {
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
+	
+	static bool lol = false;
+	bool lol2 = Input::isKeyPressed('L');
+	if (lol2 && !lol)
+	{
+		this->m_mai->spawn();	
+	}
+	lol = lol2;
 
 
 	this->m_cam->update();
@@ -102,7 +97,9 @@ void GameState::Update(double deltaTime)
 				m_subStates.push(ref);
 		}
 		return;
+		
 	}
+	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
@@ -126,7 +123,7 @@ void GameState::Update(double deltaTime)
 	
 
 	//<TEMP>
-	c.Update();
+	/*c.Update();
 	if (c.walkQueueDone())
 	{
 		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
@@ -141,7 +138,7 @@ void GameState::Update(double deltaTime)
 			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
 			m_justMoved = true;
 		}
-	}
+	}*/
 }
 
 void GameState::Draw()
@@ -149,12 +146,13 @@ void GameState::Draw()
 	gameTime.m_cpyLightToGPU();
 	
 	m_roomctrl->Draw();
-	this->grid->Draw();
+	this->m_grid->Draw();
 
 	//TEST
-	c.Draw();
+	//c.Draw();
 	//this->grid2->Draw();
 
+	//m_mai.Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 }
@@ -189,8 +187,8 @@ void GameState::_init()
 	rect.MakeRectangle();
 	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
 	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
-	door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
+	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
+	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 }
@@ -283,32 +281,32 @@ void GameState::_handlePicking()
 void GameState::_handlePickingAi(Shape * obj)
 {
 
-	if (m_stage == GameStage::Play)
-	{
-		if (c.walkQueueDone() && m_move)
-		{
-			////Shape * obj = this->p_pickingEvent->top();
-			//XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+	//if (m_stage == GameStage::Play)
+	//{
+	//	if (c.walkQueueDone() && m_move)
+	//	{
+	//		////Shape * obj = this->p_pickingEvent->top();
+	//		//XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
 
-			//int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			//int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
+	//		//int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
+	//		//int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
-			//std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
+	//		//std::vector<std::shared_ptr<Node>> path = grid->findPathHighLevel(grid->getTile(xTile, yTile), grid->getTile((int)obj->getPosition().x, (int)obj->getPosition().z));
 
-			//XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+	//		//XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
 
-			//if (path.size() != 0)
-			//{
-			//	m_justMoved = false;
+	//		//if (path.size() != 0)
+	//		//{
+	//		//	m_justMoved = false;
 
-			//	c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+	//		//	c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
-			//	for (int i = 0; i < path.size() - 1; i++)
-			//		c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-			//}
+	//		//	for (int i = 0; i < path.size() - 1; i++)
+	//		//		c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+	//		//}
 
-		}
-	}
+	//	}
+	//}
 }
 
 
@@ -352,7 +350,7 @@ bool GameState::_handleHUDPicking()
 				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index])
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, grid, m_roomctrl));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
 				break;
 			case 2:
 				// Event Button

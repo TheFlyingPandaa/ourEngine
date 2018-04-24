@@ -21,6 +21,7 @@ private:
 	int										m_uniqueID;
 public:
 	Mesh();
+	Mesh(const std::string& path);
 	~Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(std::vector<VERTEX> &v);
@@ -35,5 +36,6 @@ public:
 	ID3D11Buffer* getIndicesBuffer(int i = 0) const;
 	int getNrOfIndices(int i = 0) const;
 	int getNumberOfParts() const;
+
 	bool CheckID(const Mesh& other) const;
 };

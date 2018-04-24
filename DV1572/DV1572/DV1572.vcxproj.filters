@@ -18,6 +18,8 @@
     <FxCompile Include="ourEngine\shaders\skyBoxPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl" />
     <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl" />
+    <FxCompile Include="ourEngine\shaders\billboardVertex.hlsl" />
+    <FxCompile Include="ourEngine\shaders\billboardPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
@@ -40,6 +42,7 @@
     <ClCompile Include="trolls_inn\main.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
     <ClCompile Include="ourEngine\core\FileReader.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
@@ -65,6 +68,7 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
+    <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -91,6 +95,7 @@
     <ClInclude Include="trolls_inn\AI_Base\MasterAI.h" />
     <ClInclude Include="trolls_inn\AI_Base\CustomerFlowControl.h" />
     <ClInclude Include="trolls_inn\AI_Base\RandomNumberGenerator.h" />
+    <ClInclude Include="trolls_inn\AI_Base\InnDummyFile.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
@@ -120,6 +125,9 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
+    <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
+    <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
+    <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

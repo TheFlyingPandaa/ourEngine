@@ -67,6 +67,8 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP_INDEXED>	g_instanceGroupsPicking;
 	extern std::vector<INSTANCE_GROUP>			g_InstanceGroupsShadow;
 	extern std::vector<INSTANCE_GROUP>			g_instanceGroupWindows;
+	extern ID3D11VertexShader* g_billboardVertexShader;
+	extern ID3D11PixelShader* g_billboardPixelShader;
 
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);

@@ -45,7 +45,8 @@ void Shape::setPixelShader(ID3D11PixelShader * s)
 Shape::Shape()
 {
 	m_lightIndex = 0;
-	m_gridscale = 1;
+	m_gridscaleX = 1;
+	m_gridscaleY = 1;
 	m_mesh	= nullptr;
 	m_vs	= nullptr;
 	m_hs	= nullptr;
@@ -262,20 +263,36 @@ void Shape::Draw()
 	{
 		DX::submitToInstance(this, DX::g_instanceGroupsTransparancy);
 	}
-	else 
+	else
 	{
 		DX::submitToInstance(this, DX::g_instanceGroups);
 	}
+
 }
 
-void Shape::setGridScale(int scale)
+void Shape::setUVScale(int scale)
 {
-	m_gridscale = scale;
+	m_gridscaleX = m_gridscaleY = scale;
 }
 
-int Shape::getGridScale() const
+void Shape::setUVScaleX(int x)
 {
-	return m_gridscale;
+	m_gridscaleX = x;
+}
+
+void Shape::setUVScaleY(int y)
+{
+	m_gridscaleX = y;
+}
+
+int Shape::getGridScaleX() const
+{
+	return m_gridscaleX;
+}
+
+int Shape::getGridScaleY() const
+{
+	return m_gridscaleY;
 }
 
 void Shape::TEMPTRANS()

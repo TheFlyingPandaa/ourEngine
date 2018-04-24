@@ -34,7 +34,17 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
-	float gridscale;
+	float gridscaleX;
+	float gridscaleY;
+};
+
+struct BILLBOARD_MESH_BUFFER
+{
+	DirectX::XMFLOAT4X4A View;
+	DirectX::XMFLOAT4X4A Projection;
+	DirectX::XMFLOAT4A direction;
+	DirectX::XMFLOAT4A chardir;
+	float spriteIndex;
 };
 
 struct PICK_BUFFER

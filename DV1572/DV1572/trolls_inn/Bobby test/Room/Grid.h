@@ -4,6 +4,7 @@
 #include "RoomCtrl.h"
 #include <algorithm>
 #include <memory>
+#include "../Character.h"
 
 struct Node
 {
@@ -47,9 +48,11 @@ private:
 
 	Mesh*				m_tileMesh;
 	Mesh*				m_gridMesh;
+	Mesh*				m_catWalkMesh;
 	Object3D			m_wholeGrid;
 
 	std::vector<Tile*> m_tiles;
+	Object3D			m_catWalkTile;
 
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
@@ -73,6 +76,7 @@ public:
 
 	void	DrawString();
 
+	void generatePath(Character& character, RoomType targetRoom);
 	float getDistance(Tile* t1, Tile* t2);
 	std::vector<std::shared_ptr<Node>> findPathHighLevel(Tile* startTile, Tile* endTile);
 	std::vector<std::shared_ptr<Node>> findPath(Tile* startTile, Tile* endTile, bool outside);
