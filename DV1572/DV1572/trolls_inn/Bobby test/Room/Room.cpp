@@ -51,6 +51,8 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 	m_wholeFloor.setPos(posX, -0.001f, posY);
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
+	//TODO 
+	m_wholeFloor.setUVScale(sizeX);
 
 }
 

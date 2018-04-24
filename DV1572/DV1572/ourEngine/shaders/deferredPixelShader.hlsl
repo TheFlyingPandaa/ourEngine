@@ -99,17 +99,17 @@ float4 main(Input input) : SV_Target
 		tShadow.GetDimensions(width, width);
 		float texelSize = 1.0f / width;
 
-		for (int x = -3; x <= 3; ++x)
+		for (int x = -1; x <= 1; ++x)
 		{
-			for (int y = -3; y <= 3; ++y)
+			for (int y = -1; y <= 1; ++y)
 			{
 				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
 				window += float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
 			}
 		}
-		shadowCoeff /= 36.0f;
+		shadowCoeff /= 9.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
-		window /= 36.0f;
+		window /= 9.0f;
 		window = 1 - window;
 
 	}
