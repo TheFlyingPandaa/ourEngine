@@ -81,9 +81,29 @@ void AISolver::update(Customer& customer, Action desiredAction)
 
 void AISolver::update(Staff& staff)
 {
+	
 }
 
-void AISolver::update(Staff& staff, Action desiredAction)
+void AISolver::update(Staff& staff, StaffAction desiredAction)
 {
+	if (desiredAction == Idle)
+	{
+		staff.setDurationOfActivity(staff.getTimer().now()); 
+		/* if duration is met */
+	}
 
+	
+
+}
+
+void AISolver::update(Staff & staff, StaffAction desiredAction, Customer & customer)
+{
+	if (staff.getProfession() == Thief)
+	{
+
+	}
+	else if (staff.getProfession() == Assassin)
+	{
+
+	}
 }

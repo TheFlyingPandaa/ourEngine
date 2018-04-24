@@ -99,4 +99,67 @@ void MasterAI::update()
 	for (int i = 0; i < goneCustomers.size(); i++)
 		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
 
+	for (auto& currentStaffMember : this->staff)
+	{
+		//Check wether circumstances are met for certain actions to be enqueued. 
+		if (currentStaffMember.getProfession() == Maid)
+		{
+			
+		}
+		else if (currentStaffMember.getProfession() == Thief)
+		{
+
+		}
+		else if (currentStaffMember.getProfession() == Cook)
+		{
+			if (currentStaffMember.getQueueEmpty())
+			{
+				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
+
+				if (rndNumber <= 30)
+				{
+					currentStaffMember.getActionQueue().push(Idle); 
+					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front()); 
+					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+				}
+				else
+				{
+					currentStaffMember.getActionQueue().push(Cooking);
+					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
+					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+					solver.update(currentStaffMember, Cooking);
+				}
+			}
+		}
+		else if (currentStaffMember.getProfession() == Assassin)
+		{
+
+		}
+		else if (currentStaffMember.getProfession() == Bartender)
+		{
+			if (currentStaffMember.getQueueEmpty())
+			{
+				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
+
+				if (rndNumber <= 30)
+				{
+					currentStaffMember.getActionQueue().push(Idle);
+					/*currentStaffMember start timer and set duration*/
+					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
+					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+				}
+				else if (rndNumber > 30)
+				{
+					currentStaffMember.getActionQueue().push(Cooking);
+					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
+					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+				}
+			}
+		}
+		//Guard
+		else
+		{
+
+		}
+	}
 }

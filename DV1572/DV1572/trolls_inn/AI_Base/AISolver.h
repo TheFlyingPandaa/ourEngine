@@ -16,7 +16,8 @@ public:
 	void update(Customer& customer);
 	void update(Customer& customer, Action desiredAction);
 	void update(Staff& staff);
-	void update(Staff& staff, Action desiredAction);
+	void update(Staff& staff, StaffAction desiredAction);
+	void update(Staff& staff, StaffAction desiredAction, Customer& customer); 
 	// Get Path function (?)
 
 	// Add update for Inn

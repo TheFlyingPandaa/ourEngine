@@ -5,6 +5,7 @@
 #include "CustomerFlowControl.h"
 #include "Inn.h"
 #include <vector>
+#include "RandomNumberGenerator.h"
 
 class MasterAI
 {
@@ -15,6 +16,7 @@ private:
 	std::vector<Staff> staff;
 	CustomerFlowControl cFL;
 	Inn inn;
+	RandomNumberGenerator m_rndNumGen; 
 	// get day/night cycle to update customer needs
 
 public:
