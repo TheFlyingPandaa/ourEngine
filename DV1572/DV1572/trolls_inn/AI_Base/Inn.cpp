@@ -100,21 +100,21 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 
 
 		if (m_profit > 0)
-			m_economy->deposit(std::abs(m_profit));
+			m_economy->Deposit(std::abs(m_profit));
 		else
-			m_economy->withdraw(std::abs(m_profit));
+			m_economy->Withdraw(std::abs(m_profit));
 
 		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
 			m_staffSalaryApplyed = false;
 
 		m_profit = 0;
-		std::cout << m_economy->getGold() << std::endl;
+		std::cout << m_economy->GetGold() << std::endl;
 	}
 }
 
 int Inn::getMoney() const
 {
-	return m_economy->getGold();
+	return m_economy->GetGold();
 }
 
 void Inn::Deposit(int amount)
@@ -124,7 +124,7 @@ void Inn::Deposit(int amount)
 
 void Inn::Withdraw(int amount)
 {
-	m_economy->withdraw(amount);
+	m_economy->Withdraw(amount);
 }
 
 void Inn::changeStaffSalary(int amount)

@@ -21,11 +21,11 @@ void Economy::Deposit(int amount)
 	this->m_transactionsDocumentation.push_back("Deposited: ");
 }
 
-void Economy::withdraw(int amount)
+void Economy::Withdraw(int amount)
 {
-	this->gold -= amount;
-	this->transactions.push_back(amount);
-	this->transactionsDocumentation.push_back("Withdrew: ");
+	this->m_gold -= amount;
+	this->m_transactions.push_back(amount);
+	this->m_transactionsDocumentation.push_back("Withdrew: ");
 }
 
 int Economy::GetGold() const
