@@ -171,6 +171,7 @@ void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 	
 	m_tempPath.push_back(j);
 }
+
 #include <iostream>
 void RoomCtrl::_printRoomConnections() const
 {
@@ -314,7 +315,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		for (size_t i = 0; i < size; i++)
 		{
 			int ii = _index(start.x, start.y + i);
-			if (ii >= tiles.size()) return false;
+
+			if (ii >= tiles.size()) 
+				return false;
+
 			if (angle == 0)
 			{
 				Tile* t = tiles[ii];
