@@ -151,7 +151,7 @@ case EVENINGTONIGHT:
 	
 }
 
-GameTime::TIMEOFDAY GameTime::getTimePeriod()
+TIMEOFDAY GameTime::getTimePeriod()
 {
 	return m_currentTime;
 }
