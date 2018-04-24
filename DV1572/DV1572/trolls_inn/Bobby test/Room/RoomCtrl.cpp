@@ -316,6 +316,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
  {
 	 bool isFalse = false;
 	 int index = _intersect(start, XMINT2(1, 1));
+	 if (index == -1)
+	 {
+		 return false;
+	 }
 	 Room*  cr = m_rooms[index];
 	 auto tiles = cr->getTiles();
 
@@ -330,8 +334,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		{
 			int ii = _index(start.x, start.y + i);
 
-			if (ii >= tiles.size()) 
+			if (ii >= tiles.size()) {
+				tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				return false;
+			}
 
 			if (angle == 0)
 			{
@@ -399,9 +405,16 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 	else
 	{
-		tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-
-		return !isFalse;
+		if (isFalse == true)
+		{
+			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+			return false;
+		}
+		else
+		{
+			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+			return true;
+		}
 	}
 	return true;
  }

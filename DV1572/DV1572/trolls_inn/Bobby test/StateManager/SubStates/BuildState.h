@@ -24,7 +24,7 @@ private:
 	BuildStage	m_buildStage;
 	bool		m_roomPlaceable;
 	Grid *		grid;
-	RoomCtrl*  m_roomCtrl;
+	RoomCtrl*	m_roomCtrl;
 
 
 	// <Main HUD>
@@ -45,8 +45,8 @@ private:
 	int					m_selectedDoor;
 	// </Create Room HUD>
 
-	HUD			m_furnitureHUD;
-	
+	HUD		m_furnitureHUD;
+	int		m_selectedFurniture = -1;
 	
 	Text m_priceOfRoom;
 	

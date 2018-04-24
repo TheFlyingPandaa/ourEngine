@@ -37,7 +37,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 
 void BuildState::_buildInput()
 {
-	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE && (m_selectedRoomType != RoomType::UNDEFINED || m_selectedDoor != -1)))
+	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE && (m_selectedRoomType != RoomType::UNDEFINED || m_selectedDoor != -1 || m_selectedFurniture != -1)))
 	{
 		//this->grid->PickTiles();
 		if (m_buildStage == BuildStage::None)
@@ -246,6 +246,7 @@ bool BuildState::_mainHudPick()
 				else
 				{
 					m_selectedDoor = -1;
+					m_selectedFurniture = -1;
 					m_currentBuildType = CurrentBuildType::Room;
 				}
 				break;
@@ -254,6 +255,7 @@ bool BuildState::_mainHudPick()
 				std::cout << "Build Furniutre Button Pressed\n";
 				p_HUD.SetColorOnButton(index, cHL, cC, cHL);
 				m_currentBuildType = CurrentBuildType::Furniture;
+				m_selectedFurniture = 1;
 				break;
 			case 2:
 				// Door Button
@@ -262,6 +264,7 @@ bool BuildState::_mainHudPick()
 				if (!m_hudButtonsPressed[index])
 				{
 					m_selectedDoor = -1;
+					m_selectedFurniture = -1;
 					m_currentBuildType = CurrentBuildType::NONE;
 				}
 				else
