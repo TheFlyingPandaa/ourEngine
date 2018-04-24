@@ -4,6 +4,7 @@
 #include "Economy.h"
 #include <iostream>
 #include "../Time Management/GameTime.h"
+#include "../Bobby test/StateManager/HUD/HUD.h"
 struct innUpdateAttributes
 {
 	float creepy;
@@ -41,6 +42,8 @@ private:
 	int				m_profit,	m_staffSalary = 420;
 	bool			m_staffSalaryApplyed;
 	double			m_timer;
+
+	Text*			m_text;
 public:
 	Inn();
 	~Inn();
@@ -60,6 +63,7 @@ public:
 
 	void changeStaffSalary(int amount);
 	
+	Text* GetText();
 
 	// Add a customers review to the inn stats
 	void customerReview(Attributes review);

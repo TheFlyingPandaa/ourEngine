@@ -58,7 +58,7 @@ tx trolls_inn/Resources/HUD/MainHud/P-Frame.png
 r 8 8 158 158 -1 0 1
 
 # Money text
-txt 198 32 0.4 0 0 1 1 0 R 1
-$10000
+# txt 198 32 0.4 0 0 1 1 0 R 1
+# $100430
 
 
