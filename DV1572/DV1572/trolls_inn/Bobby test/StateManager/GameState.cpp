@@ -102,8 +102,14 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn.Update(deltaTime, gameTime.getTimePeriod());
+	if (Input::isKeyPressed('Y'))
+		inn.Deposit(500);
+	if (Input::isKeyPressed('U'))
+		inn.Withdraw(500);
+
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
+	
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {
 		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
@@ -199,6 +205,7 @@ void GameState::_init()
 void GameState::_setHud()
 {
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/MainHud/MainHud.txt");
+	m_stateHUD.addText(inn.GetText());
 }
 
 void GameState::_handlePicking()

@@ -12,6 +12,16 @@ void HUD::_cleanUp()
 		delete m_mesh[i];
 	m_mesh.clear();
 	m_texts.clear();
+
+	for (size_t i = 0; i < m_texts.size(); i++)
+	{
+		if (m_texts[i] != nullptr)
+		{
+			delete m_texts[i];
+			m_texts[i] = nullptr;
+		}
+	}
+	m_texts.clear();
 }
 
 void HUD::_setupAPotentialAreaCircle(int x, int y, int r, int relative)
@@ -203,24 +213,24 @@ bool HUD::LoadHud(const std::string & path)
 
 				stream >> x >> y >> scl >> r >> g >> b >> a >> rot >> allignment >> relativeTo;
 				std::getline(inputFile, text);
-				Text t;
-				t.setColor(r, g, b, a);
-				t.setRelative(static_cast<Text::RelativeTo>(relativeTo));
-				t.setPosition(x, y);
-				t.setScale(scl);
-				t.setRotation(rot);
-				t.setTextString(text);
+				Text* t = new Text();
+				t->setColor(r, g, b, a);
+				t->setRelative(static_cast<Text::RelativeTo>(relativeTo));
+				t->setPosition(x, y);
+				t->setScale(scl);
+				t->setRotation(rot);
+				t->setTextString(text);
 
 				switch (allignment)
 				{
 				case 'R':
-					t.setAllignment(TXT::Right);
+					t->setAllignment(TXT::Right);
 					break;
 				case 'C':
-					t.setAllignment(TXT::Center);
+					t->setAllignment(TXT::Center);
 					break;
 				default:
-					t.setAllignment(TXT::Left);
+					t->setAllignment(TXT::Left);
 					break;
 				}
 
@@ -413,6 +423,11 @@ void HUD::Draw()
 	
 	for (auto& t : m_texts)
 	{
-		t.Draw();
+		t->Draw();
 	}
+}
+
+void HUD::addText(Text * text)
+{
+	m_texts.push_back(text);
 }
