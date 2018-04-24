@@ -5,7 +5,7 @@
 #include "Structure.h"
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../Furniture/Furniture.h"
-
+#include "Node.h"
 class Room
 {
 private:
@@ -20,6 +20,9 @@ private:
 	void _loadStatic();
 	void _initAABB(int x, int y, int sx, int sy, int level = 0);
 	void _createLight(int x, int y, int sx, int sy, int level = 0);
+
+	//bool _findInVec(std::vector<RoomNode*>& list, RoomNode* node) const;
+	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
 
 protected:
 	std::vector<PointLight> m_lights;
@@ -37,6 +40,7 @@ protected:
 	std::vector<Wall*> m_rightWalls;
 	std::vector<Wall*> m_leftWalls;
 
+	int _index(int x, int y);
 
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
@@ -78,9 +82,13 @@ public:
 
 	bool operator==(const Room& other) const;
 
+	Tile* getTile(int x, int y);
+
 	void ApplyIndexOnMesh();
 
 	void CastShadow();
+	float getDistance(Tile* t1, Tile* t2);
+	std::vector<std::shared_ptr<Node>> findPath(Tile* startTile, Tile* endTile);
 
 };
 

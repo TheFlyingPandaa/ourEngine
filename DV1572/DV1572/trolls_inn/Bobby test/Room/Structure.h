@@ -36,6 +36,9 @@ public:
 	void	setIsShared(bool shared);
 	bool	isShared() const;
 
+	XMINT2		getNormalPosition();
+	XMINT2		getNegativeNormalPosition();
+
 	XMFLOAT2 getDirection() const;
 	bool	operator==(const Wall& other);
 

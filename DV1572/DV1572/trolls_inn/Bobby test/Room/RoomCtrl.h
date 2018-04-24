@@ -8,6 +8,7 @@
 #include "../../Furniture/Furniture.h"
 
 
+
 const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
@@ -50,10 +51,17 @@ public:
 			return *otherRoom == *other;
 		}
 	};
+	struct DoorPassage
+	{
+		XMINT2 one;
+		XMINT2 two;
+	};
 private:
+
 	std::vector<Room*>	m_rooms;
 
 	Room*				m_entrance;
+	std::vector<DoorPassage> m_outsideDoorPos;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wallMesh;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
@@ -84,7 +92,7 @@ public:
 	void				AddRoomObject(Furniture furniture);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
-	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size);
+	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size = { 1, 1 });
 	bool				isPlaceableObject(DirectX::XMINT2 pos, int size);
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
@@ -94,12 +102,16 @@ public:
 	void				PickWalls();
 	void				Update(Camera * cam);
 	void				Draw();
+
+	int					getRoomConnections(int index) const;
 	
 	//This is a expensiv function many many many for loops
 	//Be conservative when calling
 	void				CreateWalls(Room* currentRoom);
 	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(XMFLOAT3 wallPosition);
+	
+	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;
 
 	std::vector<int>	roomTraversal(Tile* roomTile1, Tile * roomTile2);
 

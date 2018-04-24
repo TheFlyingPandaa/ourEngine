@@ -437,6 +437,17 @@ void RoomCtrl::Draw()
 
 }
 
+int RoomCtrl::getRoomConnections(int index) const
+{
+	
+	int connections = 0;
+	for (int i = 0; i < m_roomConnectionMap.size(); i++)
+	{
+		connections += m_roomConnectionMap[index][i];
+	}
+	return ++connections;
+}
+
 void RoomCtrl::CreateWalls(Room* currentRoom)
 {
 		
@@ -553,12 +564,38 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 				if (wall->getObject3D().getPosition().x == wallPosition.x && wall->getObject3D().getPosition().z == wallPosition.z)
 				{
 					wall->getObject3D().setMesh(m_doorMesh);
-					if (wall->isShared())
+					if (wall->isShared()) // This door is Inside->inside
 					{
-						std::cout << "This door is inside->Inside";
+						// Create connection between rooms
+						XMINT2 room1 = wall->getNormalPosition();
+						XMINT2 room2 = wall->getNegativeNormalPosition();
+						int room1Index = _intersect(room1);
+						int room2Index = _intersect(room2);
+
+						_makeRoomConnection(room1Index, room2Index);
+						_printRoomConnections();
 					}
 					else
 					{
+						DoorPassage dp;
+
+						XMINT2 room1 = wall->getNormalPosition();
+						XMINT2 room2 = wall->getNegativeNormalPosition();
+						int room1Index = _intersect(room1);
+						int room2Index = _intersect(room2);
+						if (room2Index == -1) // This is the entrance from grid
+						{
+							dp.one = room2;
+							dp.two = room1;
+							m_outsideDoorPos.push_back(dp);
+						}
+						else
+						{
+							dp.one = room1;
+							dp.two = room2;
+							m_outsideDoorPos.push_back(dp);
+						}
+
 						std::cout << "This door is Outside->Inside || Inside->Outside";
 					}
 
@@ -568,6 +605,11 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 
 		}
 	}
+}
+
+RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
+{
+	return m_outsideDoorPos[0];
 }
 
 std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)

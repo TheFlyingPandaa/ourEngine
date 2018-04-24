@@ -28,6 +28,20 @@ void Room::_createLight(int x, int y, int sx, int sy, int level)
 	m_lights[0].addToLightQueue();
 }
 
+
+bool Room::_findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const
+{
+	for (auto& cur : list)
+		if (*cur == *node)
+			return true;
+	return false;
+}
+
+int Room::_index(int x, int y)
+{
+	return((x - getPosition().x) + (y - getPosition().z) * getSize().x);
+}
+
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
 	
@@ -132,9 +146,156 @@ void Room::CastShadow()
 	//m_AABB.Draw();
 }
 
+float Room::getDistance(Tile * t1, Tile * t2)
+{
+	XMVECTOR xmTile = XMLoadFloat3(&t1->getQuad().getPosition());
+	XMVECTOR xmGoal = XMLoadFloat3(&t2->getQuad().getPosition());
+	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
+}
+
+std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTile)
+{
+	std::vector<std::shared_ptr<Node>> openList;
+	std::vector<std::shared_ptr<Node>> closedList;
+
+	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
+
+	openList.push_back(current);
+
+	while (openList.size() > 0)
+	{
+		std::sort(openList.begin(), openList.end(), [](std::shared_ptr<Node> a1, std::shared_ptr<Node> a2) {return a1->fCost < a2->fCost; });
+		current = openList.at(0);
+
+		if (*current == *endTile)
+		{
+			std::vector<std::shared_ptr<Node>> path;
+			while (current->parent != nullptr)
+			{
+				path.push_back(current);
+				std::shared_ptr<Node> t(current->parent);
+				current = t;
+
+			}
+
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		closedList.push_back(current);		// add the entry to the closed list
+		openList.erase(openList.begin());   // Remove the entry
+
+		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
+		{
+
+			Direction dir = static_cast<Direction>(dirIndex);
+
+			XMFLOAT2 dirFloat;
+			switch (dir)
+			{
+			case up:
+				dirFloat = XMFLOAT2(0, 1);
+				break;
+			case down:
+				dirFloat = XMFLOAT2(0, -1);
+				break;
+			case left:
+				dirFloat = XMFLOAT2(-1, 0);
+				break;
+			case right:
+				dirFloat = XMFLOAT2(1, 0);
+				break;
+			case upright:
+				dirFloat = XMFLOAT2(1, 1);
+				break;
+			case upleft:
+				dirFloat = XMFLOAT2(-1, 1);
+				break;
+			case downright:
+				dirFloat = XMFLOAT2(1, -1);
+				break;
+			case downleft:
+				dirFloat = XMFLOAT2(-1, -1);
+				break;
+			case noneSpecial:
+				break;
+			default:
+				break;
+			}
+			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
+			if (index < 0) continue;
+			Tile* currentTile = m_roomTiles[index];
+
+			// Rules here
+
+			if (currentTile == nullptr)
+				continue;
+
+			/*if (dir == Direction::downleft)
+			{
+			if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+			continue;
+			if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+			continue;
+			}
+			else if (dir == Direction::downright)
+			{
+			if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+			continue;
+			if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+			continue;
+			}
+			else if (dir == Direction::upright)
+			{
+			if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+			continue;
+			if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+			continue;
+			}
+			else if (dir == Direction::upleft)
+			{
+			if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+			continue;
+			if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+			continue;
+			}*/
+
+
+
+
+			//--Rules End Here--
+
+			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
+
+			float hCost = getDistance(currentTile, endTile);
+			std::shared_ptr<Node> newNode(new Node(currentTile, current, gCost, hCost));
+			//pointerBank.push_back(newNode);
+
+			if (_findInVec(closedList, newNode) && gCost >= newNode->gCost)
+				continue;
+			if (!_findInVec(openList, newNode) || gCost < newNode->gCost)
+			{
+				openList.push_back(newNode);
+
+			}
+
+
+		}
+
+
+	}
+
+	return std::vector<std::shared_ptr<Node>>();
+}
+
 bool Room::operator==(const Room & other) const
 {
 	return m_posX == other.m_posX && m_posY == other.m_posY;
+}
+
+Tile * Room::getTile(int x, int y)
+{
+	return m_roomTiles[_index(x,y)];
 }
 
 void Room::setFloorMesh(Mesh * mesh)

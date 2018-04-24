@@ -72,6 +72,20 @@ bool Wall::operator==(const Wall & other)
 	
 }
 
+XMINT2 Wall::getNormalPosition()
+{
+	XMINT2 position = { (int)m_wall.getPosition().x, (int)m_wall.getPosition().z };
+
+	return XMINT2(position.x + m_direction.x, position.y + m_direction.y);
+}
+
+XMINT2 Wall::getNegativeNormalPosition()
+{
+	XMINT2 position = { (int)m_wall.getPosition().x, (int)m_wall.getPosition().z };
+
+	return XMINT2(position.x - m_direction.x, position.y - m_direction.y);
+}
+
 XMFLOAT2 Wall::getDirection() const
 {
 	return m_direction;
