@@ -460,8 +460,7 @@ void RoomCtrl::Draw()
 }
 
 int RoomCtrl::getRoomConnections(int index) const
-{
-	
+{	
 	int connections = 0;
 	for (int i = 0; i < m_roomConnectionMap.size(); i++)
 	{

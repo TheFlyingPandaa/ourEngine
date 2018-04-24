@@ -81,19 +81,39 @@ bool Wall::operator==(const Wall & other)
 
 	
 }
-
+// round float to n decimals precision
+float round2_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 XMINT2 Wall::getNormalPosition()
 {
-	XMINT2 position = { (int)m_wall.getPosition().x, (int)m_wall.getPosition().z };
-
-	return XMINT2(position.x + m_direction.x, position.y + m_direction.y);
+	XMINT2 position;
+	if(m_direction.x == 1.0 && m_direction.y == 0)
+		position = { (int)(round2_n(m_wall.getPosition().x,1)), (int)(round2_n(m_wall.getPosition().z ,1))};
+	else if (m_direction.x == 0.0 && m_direction.y == -1)
+		position = { (int)(round2_n(m_wall.getPosition().x,1)), (int)(round2_n(m_wall.getPosition().z - 1 ,1)) };
+	else if (m_direction.x == 0.0 && m_direction.y == 1)
+		position = { (int)(round2_n(m_wall.getPosition().x,1)), (int)(round2_n(m_wall.getPosition().z ,1)) };
+	else
+		position = { (int)(round2_n(m_wall.getPosition().x - 1,1)), (int)(round2_n(m_wall.getPosition().z ,1)) };
+	return position;
 }
 
 XMINT2 Wall::getNegativeNormalPosition()
 {
-	XMINT2 position = { (int)m_wall.getPosition().x, (int)m_wall.getPosition().z };
-
-	return XMINT2(position.x - m_direction.x, position.y - m_direction.y);
+	XMINT2 position;
+	if (m_direction.x == 1.0 && m_direction.y == 0)
+		position = { (int)(round2_n(m_wall.getPosition().x - m_direction.x,1)), (int)(round2_n(m_wall.getPosition().z + m_direction.y ,1)) };
+	else if (m_direction.x == 0.0 && m_direction.y == -1)
+		position = { (int)(round2_n(m_wall.getPosition().x,1)), (int)(round2_n(m_wall.getPosition().z ,1)) };
+	else if (m_direction.x == 0.0 && m_direction.y == 1)
+		position = { (int)(round2_n(m_wall.getPosition().x,1)), (int)(round2_n(m_wall.getPosition().z - 1,1)) };
+	else
+		position = { (int)(round2_n(m_wall.getPosition().x ,1)), (int)(round2_n(m_wall.getPosition().z  ,1)) };
+	return position;
 }
 
 XMFLOAT2 Wall::getDirection() const

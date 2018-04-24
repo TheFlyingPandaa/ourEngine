@@ -39,7 +39,9 @@ bool Room::_findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<
 
 int Room::_index(int x, int y)
 {
-	return((x - getPosition().x) + (y - getPosition().z) * getSize().x);
+	int xCoord = (x - m_posX); if (xCoord < 0 || xCoord >= m_sizeX) return -1;
+	int yCoord = (y - m_posY); if (yCoord < 0 || yCoord >= m_sizeY) return -1;
+	return(xCoord + yCoord * m_sizeX);
 }
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
@@ -222,13 +224,11 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 			case downleft:
 				dirFloat = XMFLOAT2(-1, -1);
 				break;
-			case noneSpecial:
-				break;
-			default:
-				break;
 			}
+
 			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
-			if (index < 0) continue;
+			if (index < 0 || index >= m_roomTiles.size()) 
+				continue;
 			Tile* currentTile = m_roomTiles[index];
 
 			// Rules here
@@ -264,9 +264,6 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 			if (current->tile->getAdjacent(left)->getRoom() != nullptr)
 			continue;
 			}*/
-
-
-
 
 			//--Rules End Here--
 

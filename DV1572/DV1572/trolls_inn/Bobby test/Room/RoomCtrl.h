@@ -56,16 +56,17 @@ public:
 		XMINT2 one;
 		XMINT2 two;
 	};
+	
 private:
 
 	std::vector<Room*>	m_rooms;
 
 	Room*				m_entrance;
-	std::vector<DoorPassage> m_outsideDoorPos;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wallMesh;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
+	std::vector<DoorPassage> m_outsideDoorPos;
 	std::vector<std::vector<int>> m_roomConnectionMap;
 
 	std::vector<int>	m_tempPath;

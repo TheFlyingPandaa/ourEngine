@@ -507,14 +507,14 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		auto walkThroughDoor = targetRoom->findPath(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
 		path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
 
-		//// Easy check, if its the main room we are wanting then we only need to perform pathfinding inside that room
-		//// and not start the higher level room path finding
-		//if (*endTile->getRoom() == *m_roomCtrl.getMainRoom())
-		//{
-		//	auto doorToEndTile = findPath(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], endTile, false);
-		//	path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
+		// Easy check, if its the main room we are wanting then we only need to perform pathfinding inside that room
+		// and not start the higher level room path finding
+		/*if (*endTile->getRoom() == *m_roomCtrl.getMainRoom())
+		{*/
+			auto doorToEndTile = targetRoom->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), targetRoom->getTile(pos.x, pos.y));
+			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
 		//}
-		//// We want to be advanced :P
+		// We want to be advanced :P
 		//else
 		//{
 		//	std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], endTile);
@@ -546,100 +546,109 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		//}
 
 	}
-	//// Inside -> Inside
-	//else if (1 == startTile->getIsInside() && 1 == endTile->getIsInside())
-	//{
-	//	if (0 == endTile->getRoom()->hasConnectedRooms())
-	//		return std::vector<std::shared_ptr<Node>>();
+	// Inside -> Inside
+	else if (0 == startTile && 0 ==  targetTile)
+	{
+		//if (0 == endTile->getRoom()->hasConnectedRooms())
+		//	return std::vector<std::shared_ptr<Node>>();
 
-	//	if (*startTile->getRoom() == *endTile->getRoom())
-	//	{
-	//		auto doorToEndTile = findPath(startTile, endTile, false);
-	//		path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
-	//	}
-	//	else
-	//	{
-	//		std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, endTile);
+		//if (*startTile->getRoom() == *endTile->getRoom())
+		//{
+		//	auto doorToEndTile = findPath(startTile, endTile, false);
+		//	path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
+		//}
+		//else
+		//{
+		//	std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, endTile);
 
-	//		Room* startRoom = startTile->getRoom();
-	//		roomIndexes.erase(roomIndexes.begin());
-	//		XMINT2 DoorLeavePos;
-	//		XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
-	//		for (auto index : roomIndexes)
-	//		{
-	//			// Between this rooms leave door and other rooms enter door
-	//			XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
-	//			auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
-	//			path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
+		//	Room* startRoom = startTile->getRoom();
+		//	roomIndexes.erase(roomIndexes.begin());
+		//	XMINT2 DoorLeavePos;
+		//	XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
+		//	for (auto index : roomIndexes)
+		//	{
+		//		// Between this rooms leave door and other rooms enter door
+		//		XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
+		//		auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
+		//		path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
 
-	//			// Smooth Entering
-	//			DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
-	//			auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
-	//			path.insert(path.end(), dontAsk.begin(), dontAsk.end());
-	//			startRoom = m_roomCtrl.getRoomAt(index);
-	//			startPosition = DoorLeavePos;
+		//		// Smooth Entering
+		//		DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
+		//		auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
+		//		path.insert(path.end(), dontAsk.begin(), dontAsk.end());
+		//		startRoom = m_roomCtrl.getRoomAt(index);
+		//		startPosition = DoorLeavePos;
 
-	//		}
-	//		auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], endTile, false);
-	//		path.insert(path.end(), toTarget.begin(), toTarget.end());
-	//	}
+		//	}
+		//	auto toTarget = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], endTile, false);
+		//	path.insert(path.end(), toTarget.begin(), toTarget.end());
+		//}
 
-	//}
-	////Inside to outside
-	//else
-	//{
-	//	if (*startTile->getRoom() == *m_roomCtrl.getMainRoom())
-	//	{
-	//		// Path to door
-	//		auto toDoor = findPath(startTile, m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], false);
-	//		path.insert(path.end(), toDoor.begin(), toDoor.end());
+	}
+	//Inside to outside
+	else
+	{
+		//if (*startTile->getRoom() == *m_roomCtrl.getMainRoom())
+		//{
 
-	//		//Lets not talk about this one(This is so we walk straight through the door...)
-	//		auto walkThroughDoor = findPath(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], false);
-	//		path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
+			XMINT2 pos = startPosition;
+			int index = m_roomctrl->_intersect(pos);
+			Room* targetRoom = m_roomctrl->getRoomAt(index);
 
-	//		auto walkToTarget = findPath(m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], endTile, true);
-	//		path.insert(path.end(), walkToTarget.begin(), walkToTarget.end());
-	//	}
-	//	else
-	//	{
-	//		// We need to find the entrace from inside then we path to the destination
-	//		std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y]);
+			if (0 == m_roomctrl->getRoomConnections(index))
+				return std::vector<std::shared_ptr<Node>>();
 
-	//		Room* startRoom = startTile->getRoom();
-	//		roomIndexes.erase(roomIndexes.begin());
-	//		XMINT2 DoorLeavePos;
-	//		XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
-	//		for (auto index : roomIndexes)
-	//		{
-	//			// Between this rooms leave door and other rooms enter door
-	//			XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
-	//			auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
-	//			path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
+			RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
+			// Path to door
+			auto toDoor = targetRoom->findPath(targetRoom->getTile(startPosition.x, startPosition.y), targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
+			path.insert(path.end(), toDoor.begin(), toDoor.end());
 
-	//			// Smooth Entering
-	//			DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
-	//			auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
-	//			path.insert(path.end(), dontAsk.begin(), dontAsk.end());
+			//Lets not talk about this one(This is so we walk straight through the door...)
+			auto walkThroughDoor = m_grid->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y));
+			path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
 
-	//			startRoom = m_roomCtrl.getRoomAt(index);
-	//			startPosition = DoorLeavePos;
+			auto walkToTarget = m_grid->findPath(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), targetTile);
+			path.insert(path.end(), walkToTarget.begin(), walkToTarget.end());
+		//}
+		//else
+		//{
+		//	// We need to find the entrace from inside then we path to the destination
+		//	std::vector<int> roomIndexes = m_roomCtrl.roomTraversal(startTile, m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y]);
 
-	//		}
-	//		auto toMainLeave = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], false);
-	//		path.insert(path.end(), toMainLeave.begin(), toMainLeave.end());
+		//	Room* startRoom = startTile->getRoom();
+		//	roomIndexes.erase(roomIndexes.begin());
+		//	XMINT2 DoorLeavePos;
+		//	XMINT2 startPosition = { startTile->getPosX(), startTile->getPosY() };
+		//	for (auto index : roomIndexes)
+		//	{
+		//		// Between this rooms leave door and other rooms enter door
+		//		XMINT2 DoorEnterPos = m_roomCtrl.getRoomEnterPos(startRoom, index);
+		//		auto toOtherRoom = findPath(m_tiles[startPosition.x][startPosition.y], m_tiles[DoorEnterPos.x][DoorEnterPos.y], false);
+		//		path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
 
-	//		auto smooth = findPath(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], false);
-	//		path.insert(path.end(), smooth.begin(), smooth.end());
+		//		// Smooth Entering
+		//		DoorLeavePos = m_roomCtrl.getRoomLeavePos(startRoom, index);
+		//		auto dontAsk = findPath(m_tiles[DoorEnterPos.x][DoorEnterPos.y], m_tiles[DoorLeavePos.x][DoorLeavePos.y], false);
+		//		path.insert(path.end(), dontAsk.begin(), dontAsk.end());
 
-	//		auto finallyTarget = findPath(m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], endTile, true);
-	//		path.insert(path.end(), finallyTarget.begin(), finallyTarget.end());
+		//		startRoom = m_roomCtrl.getRoomAt(index);
+		//		startPosition = DoorLeavePos;
 
-	//	}
+		//	}
+		//	auto toMainLeave = findPath(m_tiles[DoorLeavePos.x][DoorLeavePos.y], m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], false);
+		//	path.insert(path.end(), toMainLeave.begin(), toMainLeave.end());
+
+		//	auto smooth = findPath(m_tiles[m_roomCtrl.getMainDoorPosLeave().x][m_roomCtrl.getMainDoorPosLeave().y], m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], false);
+		//	path.insert(path.end(), smooth.begin(), smooth.end());
+
+		//	auto finallyTarget = findPath(m_tiles[m_roomCtrl.getMainDoorPosEnter().x][m_roomCtrl.getMainDoorPosEnter().y], endTile, true);
+		//	path.insert(path.end(), finallyTarget.begin(), finallyTarget.end());
+
+		//}
 
 
 
-	//}
+	}
 	return path;
 }
 
