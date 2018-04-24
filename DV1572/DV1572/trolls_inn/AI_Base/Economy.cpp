@@ -2,54 +2,54 @@
 
 Economy::Economy()
 {
-	this->gold = 0;
+	this->m_gold = 0;
 }
 
 Economy::Economy(int startGold)
 {
-	this->gold = startGold;
+	this->m_gold = startGold;
 }
 
 Economy::~Economy()
 {
 }
 
-void Economy::deposit(int amount)
+void Economy::Deposit(int amount)
 {
-	this->gold += amount;
-	this->transactions.push_back(amount);
-	this->transactionsDocumentation.push_back("Deposited: ");
+	this->m_gold += amount;
+	this->m_transactions.push_back(amount);
+	this->m_transactionsDocumentation.push_back("Deposited: ");
 }
 
-bool Economy::withdraw(int amount)
+bool Economy::Withdraw(int amount)
 {
 	bool enoughGold = false;
 
-	if (this->gold >= amount)
+	if (this->m_gold >= amount)
 	{
 		enoughGold = true;
-		this->gold -= amount;
-		this->transactions.push_back(amount);
-		this->transactionsDocumentation.push_back("Withdrew: ");
+		this->m_gold -= amount;
+		this->m_transactions.push_back(amount);
+		this->m_transactionsDocumentation.push_back("Withdrew: ");
 	}
 
 	return enoughGold;
 }
 
-int Economy::getGold() const
+int Economy::GetGold() const
 {
-	return this->gold;
+	return this->m_gold;
 }
 
-std::vector<std::string> Economy::getTransactionHistory() const
+std::vector<std::string> Economy::GetTransactionHistory() const
 {
 	std::vector<std::string> completeTransactions;
 	std::string mergeTransactions;
 
-	for (int i = 0; i < this->transactions.size(); i++)
+	for (int i = 0; i < this->m_transactions.size(); i++)
 	{
-		mergeTransactions = this->transactionsDocumentation[i];
-		mergeTransactions += std::to_string(this->transactions[i]);
+		mergeTransactions = this->m_transactionsDocumentation[i];
+		mergeTransactions += std::to_string(this->m_transactions[i]);
 		completeTransactions.push_back(mergeTransactions);
 	}
 

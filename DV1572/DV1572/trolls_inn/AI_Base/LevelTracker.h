@@ -3,23 +3,23 @@
 class LevelTracker
 {
 private:
-	int experience;
-	int level;
-	int experienceToNextLevel;
+	int m_experience;
+	int m_level;
+	int m_experienceToNextLevel;
 
-	int calculateExperienceToNextLevel() const;
-	void setExperienceToNextLevel(int requiredExperience);
+	int _calculateExperienceToNextLevel() const;
+	void _setExperienceToNextLevel(int requiredExperience);
 
-	void levelUp();
+	void _levelUp();
 
 public:
 	LevelTracker();
 	~LevelTracker();
 
-	int getExperience() const;
-	int getLevel() const;
-	int getExperienceToNextLevel() const;
+	int GetExperience() const;
+	int GetLevel() const;
+	int GetExperienceToNextLevel() const;
 
-	bool increaseExperienceBy(int experienceGain);
-	void setLevel(int newLevel);
+	bool IncreaseExperienceBy(int experienceGain);
+	void SetLevel(int newLevel);
 };

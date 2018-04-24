@@ -2,37 +2,49 @@
 
 Customer::Customer()
 {
+	int i = 0;
 }
 
 Customer::Customer(Race race, int gold)
 {
-	this->race = race;
-	this->economy = Economy(gold);
-	this->setAction(WalkAction);
+	this->m_race = race;
+	this->m_economy = Economy(gold);
+	this->SetAction(WalkToInn);
+}
+
+Customer::Customer(const Customer& other) : Character(other)
+{
+	this->m_stats = other.m_stats;
+	this->m_economy = other.m_economy;
+	this->m_race = other.m_race;
+	this->m_stateQueue = other.m_stateQueue;
+	this->m_hungry = other.m_hungry;
+	this->m_tired = other.m_tired;
+	this->m_thirsty = other.m_thirsty;
 }
 
 Customer::~Customer()
 {
 }
 
-Attributes& Customer::getAttributes()
+Attributes& Customer::GetAttributes()
 {
-	return this->stats;
+	return this->m_stats;
 }
 
-Economy& Customer::getEconomy()
+Economy& Customer::GetEconomy()
 {
-	return this->economy;
+	return this->m_economy;
 }
 
-Race Customer::getRace() const
+Race Customer::GetRace() const
 {
-	return this->race;
+	return this->m_race;
 }
 
-const char* Customer::getRaceStr() const
+const char* Customer::GetRaceStr() const
 {
-	switch (race)
+	switch (m_race)
 	{
 	case Human:
 		return "Human";
@@ -47,67 +59,70 @@ const char* Customer::getRaceStr() const
 	return "NO RACE!";
 }
 
-Action Customer::getAction() const
+Action Customer::GetAction() const
 {
 	Action action;
 	//std namespace max breaks code
-	int value = max(max(this->tired, this->hungry), this->thirsty);
-	action = (value == this->tired) ? SleepAction : (value == this->hungry) ? EatAction : DrinkAction;
+	int value = max(max(this->m_tired, this->m_hungry), this->m_thirsty);
+	action = (value == this->m_tired) ? SleepAction : (value == this->m_hungry) ? EatAction : DrinkAction;
 	
 	return action;
 }
 
-int Customer::getQueueEmpty() const
+int Customer::GetQueueEmpty() const
 {
-	return this->stateQueue.empty();
+	return this->m_stateQueue.empty();
 }
 
-CustomerState Customer::getState() const
+CustomerState Customer::GetState() const
 {
-	return this->stateQueue.front();
+	return this->m_stateQueue.front();
 }
 
-void Customer::popToNextState()
+void Customer::PopToNextState()
 {
-	this->stateQueue.pop();
+	this->m_stateQueue.pop();
 }
 
-void Customer::setAction(Action nextAction)
+void Customer::SetAction(Action nextAction)
 {
 	switch (nextAction)
 	{
 	case WalkAction:
-		this->stateQueue.push(Walking);
+		this->m_stateQueue.push(Walking);
 		break;
 	case ThinkingAction:
-		this->stateQueue.push(Thinking);
+		this->m_stateQueue.push(Thinking);
 		break;
 	case DrinkAction:
-		this->stateQueue.push(Drinking);
+		this->m_stateQueue.push(Drinking);
 		break;
 	case EatAction:
-		this->stateQueue.push(Eating);
+		this->m_stateQueue.push(Eating);
 		break;
 	case SleepAction:
-		this->stateQueue.push(Sleeping);
+		this->m_stateQueue.push(Sleeping);
 		break;
 	case LeavingInnAction:
-		this->stateQueue.push(LeavingInn);
+		this->m_stateQueue.push(LeavingInn);
+		break;
+	case WalkToInn:
+		this->m_stateQueue.push(WalkingToInn);
 		break;
 	}
 	// To return the customer to idle after it executed its action
-	this->stateQueue.push(Idle);
+	this->m_stateQueue.push(Idle);
 }
 
-void Customer::gotPathSetNextAction(Action nextAction)
+void Customer::GotPathSetNextAction(Action nextAction)
 {
-	this->stateQueue.push(Walking);
-	this->setAction(nextAction);
+	this->m_stateQueue.push(Walking);
+	this->SetAction(nextAction);
 }
 
-const char* Customer::getActionStr() const
+const char* Customer::GetActionStr() const
 {
-	Action action = getAction();
+	Action action = this->GetAction();
 
 	switch (action)
 	{
@@ -128,70 +143,81 @@ const char* Customer::getActionStr() const
 	return "Idle";
 }
 
-const char* Customer::getNextActionStr() const
+const char * Customer::GetStateStr() const
 {
-	Action action = getAction();
+	CustomerState state = this->GetState();
 
-	switch (action)
+	switch (state)
 	{
-	case WalkAction:
+	case WalkingToInn:
+		return "Walking towards Trolls Inn";
+	case Walking:
 		return "Walking";
-	case ThinkingAction:
+	case Thinking:
 		return "Thinking";
-	case DrinkAction:
+	case Drinking:
 		return "Drink";
-	case EatAction:
+	case Eating:
 		return "Eat";
-	case SleepAction:
+	case Sleeping:
 		return "Sleep";
-	case LeavingInnAction:
+	case LeavingInn:
 		return "Leaving Trolls Inn";
 	}
 
 	return "Idle";
 }
 
-int Customer::getHungry() const
+int Customer::GetHungry() const
 {
-	return this->hungry;
+	return this->m_hungry;
 }
 
-int Customer::getTired() const
+int Customer::GetTired() const
 {
-	return this->tired;
+	return this->m_tired;
 }
 
-int Customer::getThirsty() const
+int Customer::GetThirsty() const
 {
-	return this->thirsty;
+	return this->m_thirsty;
 }
 
-void Customer::setHungry(int value)
+void Customer::SetHungry(int value)
 {
-	this->hungry = value;
+	//this->m_hungry = value;
+	this->m_hungry = min(max(value, 0), 10);
 }
 
-void Customer::setTired(int value)
+void Customer::SetTired(int value)
 {
-	this->tired = value;
+	//this->m_tired = value;
+	this->m_tired = min(max(value, 0), 10);
 }
 
-void Customer::setThirsty(int value)
+void Customer::SetThirsty(int value)
 {
-	this->thirsty = value;
+	//this->m_thirsty = value;
+	this->m_thirsty = min(max(value, 0), 10);
 }
 
-void Customer::eating()
+void Customer::DoEating()
 {
-	this->hungry--;
+	this->m_hungry--;
 }
 
-void Customer::sleeping()
+void Customer::DoSleeping()
 {
-	this->tired--;
+	this->m_tired--;
 }
 
-void Customer::drinking()
+void Customer::DoDrinking()
 {
-	this->thirsty--;
+	this->m_thirsty--;
+}
+
+void Customer::Update()
+{
+	// Character update
+	Character::Update();
 }

@@ -16,8 +16,10 @@ private:
 
 	DirectX::XMMATRIX		m_worldMatrix;
 	DirectX::XMFLOAT4A		m_highLightColor;
-	int						m_gridscale;
+	int						m_gridscaleX;
+	int						m_gridscaleY;
 	int						m_lightIndex;
+	
 
 
 private: 
@@ -30,7 +32,6 @@ protected:
 	void setDomainShader(ID3D11DomainShader* s);
 	void setGeometryShader(ID3D11GeometryShader* s);
 	void setPixelShader(ID3D11PixelShader* s);
-	
 
 public:
 	Shape();
@@ -82,7 +83,10 @@ public:
 	void setColor(DirectX::XMFLOAT4A color);
 
 	virtual void Draw();
-	void setGridScale(int scale);
-	int getGridScale() const;
+	void setUVScale(int scale);
+	void setUVScaleX(int x);
+	void setUVScaleY(int y);
+	int getGridScaleX() const;
+	int getGridScaleY() const;
 	void TEMPTRANS();
 };

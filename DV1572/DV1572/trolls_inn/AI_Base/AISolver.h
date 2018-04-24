@@ -1,23 +1,32 @@
 #pragma once
 #include "Customer.h"
+#include "..\Bobby test\Room\RoomCtrl.h"
 #include "..\Bobby test\Room\Grid.h"
 #include "Staff.h"
+#include "Inn.h"
+#include <chrono>
 
 class AISolver
 {
 private:
-	Grid* map;
+	Grid * m_grid;
+	RoomCtrl* m_roomctrl;
+	// Customer needs update variables
+	std::chrono::high_resolution_clock m_clock;
+	std::chrono::high_resolution_clock::time_point m_start, m_now;
+	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
+
 
 public:
-	AISolver();
-	AISolver(Grid* grid);
+	AISolver(RoomCtrl *roomctrl, Grid* grid);
 	~AISolver();
 
-	void update(Customer& customer);
-	void update(Customer& customer, Action desiredAction);
-	void update(Staff& staff);
-	void update(Staff& staff, Action desiredAction);
-	// Get Path function (?)
+	std::chrono::duration<double> getTimeSpan() const;
+	void restartClock();
 
-	// Add update for Inn
+	void Update(Customer& customer, std::chrono::duration<double> time_span);
+	void Update(Customer& customer, Action desiredAction);
+	void Update(Staff& staff);
+	void Update(Staff& staff, Action desiredAction);
+	// Get Path function (?)
 };

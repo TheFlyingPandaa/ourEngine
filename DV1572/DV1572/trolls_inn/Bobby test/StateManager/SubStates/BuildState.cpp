@@ -84,11 +84,11 @@ void BuildState::_buildInput()
 				//Don't forget to declare the new state in the update
 				if (m_currentBuildType == CurrentBuildType::Room && m_selectedRoomType != RoomType::UNDEFINED)
 				{
-					/*int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
+					int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
 					std::string textString = "Area: " + std::to_string(area);
 					m_priceOfRoom.setTextString(textString);
 					DirectX::XMFLOAT2 mp = Input::getMousePositionLH();
-					m_priceOfRoom.setPosition(mp.x, mp.y + 20);*/
+					m_priceOfRoom.setPosition(mp.x, mp.y + 20);
 					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
 				}
 				else if(m_currentBuildType == CurrentBuildType::Door && m_selectedDoor != -1)

@@ -10,5 +10,5 @@ public:
 	RandomNumberGenerator();
 	~RandomNumberGenerator();
 
-	int generateRandomNumber(int lowerBound, int upperBound);
+	int GenerateRandomNumber(int lowerBound, int upperBound);
 };

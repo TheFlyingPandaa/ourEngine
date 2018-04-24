@@ -1,7 +1,7 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
 
-Customer CustomerFlowControl::evaluate(Attributes innAttributes)
+Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
 	// Update inn attributes
 	auto getPoints = [&](Race atri) 
@@ -23,13 +23,13 @@ Customer CustomerFlowControl::evaluate(Attributes innAttributes)
 			break;
 		}
 		int points = 0;
-		points += ((10 + attributes.getCreepy()) > (innAttributes.getCreepy() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getDrinkQuality()) > (innAttributes.getDrinkQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getFoodQuality()) > (innAttributes.getFoodQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getPrices()) > (innAttributes.getPrices() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getReputation()) > (innAttributes.getReputation() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getShady()) > (innAttributes.getShady() + 10)) ? 1 : 0;
-		points += ((10 + attributes.getStandard()) > (innAttributes.getStandard() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetCreepy()) > (innAttributes.GetCreepy() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetDrinkQuality()) > (innAttributes.GetDrinkQuality() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetFoodQuality()) > (innAttributes.GetFoodQuality() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetPrices()) > (innAttributes.GetPrices() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetReputation()) > (innAttributes.GetReputation() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetShady()) > (innAttributes.GetShady() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetStandard()) > (innAttributes.GetStandard() + 10)) ? 1 : 0;
 
 		return points;
 	};
@@ -50,38 +50,38 @@ Customer CustomerFlowControl::evaluate(Attributes innAttributes)
 		}
 	}
 
-	return Customer(race, this->rNG.generateRandomNumber(50, 150));
+	return new Customer(race, this->m_rNG.GenerateRandomNumber(50, 150));
 }
 
-Customer CustomerFlowControl::generateCustomer(Race race)
+Customer CustomerFlowControl::_generateCustomer(Race race)
 {
 	// Generate a customer with the desired race and a random amount of gold
-	Customer newCustomer(race, this->rNG.generateRandomNumber(50, 150));
-	newCustomer.setHungry(this->rNG.generateRandomNumber(-10, 10));
-	newCustomer.setThirsty(this->rNG.generateRandomNumber(-10, 10));
-	newCustomer.setTired(this->rNG.generateRandomNumber(-10, 10));
+	Customer newCustomer(race, this->m_rNG.GenerateRandomNumber(50, 150));
+	newCustomer.SetHungry(this->m_rNG.GenerateRandomNumber(-10, 10));
+	newCustomer.SetThirsty(this->m_rNG.GenerateRandomNumber(-10, 10));
+	newCustomer.SetTired(this->m_rNG.GenerateRandomNumber(-10, 10));
 
 	return newCustomer;
 }
 
-Customer CustomerFlowControl::generateRandomCustomer()
+Customer* CustomerFlowControl::_generateRandomCustomer()
 {
-	Customer newCustomer;
-	int randomRace = this->rNG.generateRandomNumber(1, 4);
+	Customer* newCustomer;
+	int randomRace = this->m_rNG.GenerateRandomNumber(1, 4);
 
 	switch (randomRace)
 	{
 	case 1:
-		newCustomer = Customer(Troll, this->rNG.generateRandomNumber(50, 150));
-		break;
-	case 2:
-		newCustomer = Customer(Orc, this->rNG.generateRandomNumber(50, 150));
-		break;
-	case 3:
-		newCustomer = Customer(Dwarf, this->rNG.generateRandomNumber(50, 150));
-		break;
-	default:
-		newCustomer = Customer(Human, this->rNG.generateRandomNumber(50, 150));
+		newCustomer = new Customer(Troll, this->m_rNG.GenerateRandomNumber(50, 150));
+		break;		  
+	case 2:			  
+		newCustomer = new Customer(Orc, this->m_rNG.GenerateRandomNumber(50, 150));
+		break;		  
+	case 3:			  
+		newCustomer = new Customer(Dwarf, this->m_rNG.GenerateRandomNumber(50, 150));
+		break;		  
+	default:		  
+		newCustomer = new Customer(Human, this->m_rNG.GenerateRandomNumber(50, 150));
 		break;
 	}
 
@@ -90,23 +90,34 @@ Customer CustomerFlowControl::generateRandomCustomer()
 
 CustomerFlowControl::CustomerFlowControl()
 {
+	box.LoadModel("trolls_inn/Resources/box.obj");
 }
 
 CustomerFlowControl::~CustomerFlowControl()
 {
 }
 
-Customer CustomerFlowControl::update(Attributes innAttributes)
+Customer* CustomerFlowControl::Update(Attributes innAttributes)
 {
-	Customer nextCustomer;
+	Customer* nextCustomer;
 
 	// Evaluate what customer to spawn next
-	if (this->rNG.generateRandomNumber(1, 100) > 1)
-		nextCustomer = this->evaluate(innAttributes);
+	if (this->m_rNG.GenerateRandomNumber(1, 100) > 1)
+		nextCustomer = this->_evaluate(innAttributes);
 	else
-		nextCustomer = this->generateRandomCustomer();
+		nextCustomer = this->_generateRandomCustomer();
 
-	std::cout << "A " << nextCustomer.getRaceStr()<< " has arrived!" << std::endl;
+	std::cout << "A " << nextCustomer->GetRaceStr()<< " has arrived!" << std::endl;
+
+	// Set this to path entrance
+	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
+	nextCustomer->setModel(&box);
+	nextCustomer->setFloor(0);
+
+	// Set needs for the customer
+	nextCustomer->SetHungry(this->m_rNG.GenerateRandomNumber(0, 4));
+	nextCustomer->SetTired(this->m_rNG.GenerateRandomNumber(0, 4));
+	nextCustomer->SetThirsty(this->m_rNG.GenerateRandomNumber(0, 4));
 
 	return nextCustomer;
 }

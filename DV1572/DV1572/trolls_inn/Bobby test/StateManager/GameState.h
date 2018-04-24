@@ -2,13 +2,12 @@
 #include "../Room/Grid.h"
 #include "State.h"
 #include "MainMenu.h"
-#include "../Character.h"
 #include <vector>
 #include <algorithm>
 #include "HUD/HUD.h"
 #include <thread>
 #include <future>
-
+#include "../../AI_Base/MasterAI.h"
 
 class GameState : public State {
 private:
@@ -23,20 +22,11 @@ private:
 	Mesh m;
 	Mesh kitchenTile;
 	Mesh rect;
-	Grid* grid;
+	
+	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
-
-
-	DirectX::XMINT2 m_mainDoorPos;
-
-	Mesh door;
-
-	Object3D test;
-
-	Object3D d;
-
-	int posX;
-	int posY;
+	
+	MasterAI* m_mai;
 
 	GameTime gameTime; 
 	GameStage m_stage;
@@ -51,11 +41,6 @@ private:
 	int m_lastClickedIndex;
 	std::vector<bool> m_hudButtonsPressed;
 	void _resetHudButtonPressedExcept(int index);
-
-
-	//TEST
-	Mesh box;
-	Character c;
 	
 	bool m_move = false;
 	bool m_justMoved = false;
