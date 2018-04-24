@@ -2,21 +2,21 @@
 #include "Attributes.h"
 #include "../Bobby test/Room/Grid.h"
 
-struct innUpdateAttributes
-{
-	float creepy;
-	float drinkQuality;
-	float foodQuality;
-	float prices;
-	float reputation;
-	float shady;
-	float standard;
-};
-
 class Inn
 {
 	friend class AISolver;
 private:
+	struct innUpdateAttributes
+	{
+		float creepy;
+		float drinkQuality;
+		float foodQuality;
+		float prices;
+		float reputation;
+		float shady;
+		float standard;
+	};
+
 	// Grid stuff
 	Grid* m_grid;
 	Mesh m_m;

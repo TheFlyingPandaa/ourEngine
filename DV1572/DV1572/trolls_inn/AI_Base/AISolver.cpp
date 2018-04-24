@@ -44,7 +44,6 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			}
 			else
 			{
-				m_grid->generatePath(customer, RoomType::randomStupid);
 				customer.PopToNextState();
 				currentState = customer.GetState();
 			}
@@ -79,8 +78,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			// Update animations drink, eat, sleep (?)
 		case Drinking:
 			// Reduce how thirsty the customer is
-			// Base this on time somehow
-			if (this->m_time_span.count() > 3)
+			if (this->m_time_span.count() > 2)
 			{
 				if (customer.GetThirsty() > 0)
 					customer.DoDrinking();
@@ -90,8 +88,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			break;
 		case Eating:
 			// Reduce how hungry the customer is
-			// Base this on time somehow
-			if (this->m_time_span.count() > 3)
+			if (this->m_time_span.count() > 2)
 			{
 				if (customer.GetHungry() > 0)
 					customer.DoEating();
@@ -101,8 +98,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			break;
 		case Sleeping:
 			// Reduce how tired the customer is
-			// Base this on time somehow
-			if (this->m_time_span.count() > 3)
+			if (this->m_time_span.count() > 2)
 			{
 				if (customer.GetTired() > 0)
 					customer.DoSleeping();

@@ -89,7 +89,6 @@ void MasterAI::Update(Camera* cam)
 				this->m_solver.Update(*customer, desiredAction);
 			}
 		}
-
 		else
 		{
 			if (updateCustomerNeeds)
@@ -102,7 +101,8 @@ void MasterAI::Update(Camera* cam)
 
 		loopCounter++;
 	}
-	if (this->m_solver.getTimeSpan().count() > 3)
+
+	if (this->m_solver.getTimeSpan().count() > 2)
 		this->m_solver.restartClock();
 
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
