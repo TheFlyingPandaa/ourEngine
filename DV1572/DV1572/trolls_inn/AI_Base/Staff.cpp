@@ -2,13 +2,13 @@
 
 Staff::Staff()
 {
-	m_currentAction = Idle; 
+	m_currentAction = IdleStaff; 
 }
 
 Staff::Staff(Professions profession)
 {
 	m_profession = profession;
-	m_currentAction = Idle;
+	m_currentAction = IdleStaff;
 	m_timeStart = m_timer.now(); 
 }
 
@@ -16,7 +16,7 @@ Staff::Staff(Professions profession, int level)
 {
 	m_profession = profession;
 	m_level.setLevel(level);
-	m_currentAction = Idle;
+	m_currentAction = IdleStaff;
 	m_timeStart = m_timer.now(); 
 }
 
@@ -57,12 +57,22 @@ std::queue<StaffAction>& Staff::getActionQueue()
 
 void Staff::setCurrentAction(StaffAction staffAction)
 {
-	m_currentAction = staffAction; 
+	m_staffActionQueue.push(staffAction);
+}
+
+void Staff::setTaskCompleted(bool taskCompleted)
+{
+	m_taskCompleted = taskCompleted; 
 }
 
 void Staff::resetClock()
 {
 	m_timeStart = m_timer.now(); 
+}
+
+bool Staff::getTaskCompleted()
+{
+	return m_taskCompleted; 
 }
 
 std::chrono::duration<double, std::ratio<1, 1>> Staff::getDuration()

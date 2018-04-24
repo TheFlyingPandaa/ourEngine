@@ -101,65 +101,70 @@ void MasterAI::update()
 
 	for (auto& currentStaffMember : this->staff)
 	{
-		//Check wether circumstances are met for certain actions to be enqueued. 
-		if (currentStaffMember.getProfession() == Maid)
+		if (currentStaffMember.getQueueEmpty())
 		{
-			
-		}
-		else if (currentStaffMember.getProfession() == Thief)
-		{
-
-		}
-		else if (currentStaffMember.getProfession() == Cook)
-		{
-			if (currentStaffMember.getQueueEmpty())
+			//Check wether circumstances are met for certain actions to be enqueued. 
+			if (currentStaffMember.getProfession() == Maid)
 			{
+
+			}
+			else if (currentStaffMember.getProfession() == Thief)
+			{
+
+			}
+			else if (currentStaffMember.getProfession() == Cook)
+			{
+
 				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
 
 				if (rndNumber <= 30)
 				{
-					currentStaffMember.getActionQueue().push(Idle); 
-					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front()); 
-					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+					currentStaffMember.setCurrentAction(IdleStaff);
 				}
 				else
 				{
-					currentStaffMember.getActionQueue().push(Cooking);
-					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
-					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
-					solver.update(currentStaffMember, Cooking);
+					currentStaffMember.setCurrentAction(Cooking);
+				}
+
+			}
+			else if (currentStaffMember.getProfession() == Assassin)
+			{
+				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
+
+				if (!currentStaffMember.getTaskCompleted())
+				{
+					currentStaffMember.setCurrentAction(Murdering); 
+				}
+				else if (rndNumber <= 50 && currentStaffMember.getTaskCompleted())
+				{
+					currentStaffMember.setCurrentAction(PatrollingWalk); 
+				}
+				else if (rndNumber > 50 && currentStaffMember.getTaskCompleted())
+				{
+					currentStaffMember.setCurrentAction(IdleStaff);
 				}
 			}
-		}
-		else if (currentStaffMember.getProfession() == Assassin)
-		{
-
-		}
-		else if (currentStaffMember.getProfession() == Bartender)
-		{
-			if (currentStaffMember.getQueueEmpty())
+			else if (currentStaffMember.getProfession() == Bartender)
 			{
 				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
 
 				if (rndNumber <= 30)
 				{
-					
+
 					/*currentStaffMember start timer and set duration*/
-					currentStaffMember.setCurrentAction(Idle);
-					solver.update(currentStaffMember); 
+					currentStaffMember.setCurrentAction(IdleStaff);
 				}
 				else if (rndNumber > 30)
 				{
-					currentStaffMember.getActionQueue().push(Cooking);
-					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
-					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
-				}
+					currentStaffMember.setCurrentAction(Cooking);
+				}	
+			}
+			//Guard
+			else
+			{
+
 			}
 		}
-		//Guard
-		else
-		{
-
-		}
+		solver.update(currentStaffMember);
 	}
 }

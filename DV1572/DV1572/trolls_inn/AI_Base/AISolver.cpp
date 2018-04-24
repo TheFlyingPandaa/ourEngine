@@ -81,21 +81,41 @@ void AISolver::update(Customer& customer, Action desiredAction)
 
 void AISolver::update(Staff& staff)
 {
-	if(staff.getActionQueue().front() == Idle)
+	if(staff.getActionQueue().front() == IdleStaff)
 	{
 		if (staff.getDuration().count() >= 6)
 		{
 			staff.getActionQueue().pop();
 			staff.resetClock(); 
 		}
+		//Add idle logic here 
 	}
 	else if (staff.getActionQueue().front() == Cooking)
 	{
-		if (staff.getDuration().count >= 10)
+		if (staff.getDuration().count() >= 10)
 		{
 			staff.getActionQueue().pop();
 			staff.resetClock(); 
 		}
+		//Add cooking logic here 
+	}
+	else if (staff.getActionQueue().front() == Murdering)
+	{
+		if (staff.getTaskCompleted())
+		{
+			staff.getActionQueue().pop();
+			staff.resetClock();
+		}
+		//Add murder logic here
+	}
+	else if (staff.getActionQueue().front() == PatrollingWalk)
+	{
+		if (!staff.getTaskCompleted())
+		{
+			staff.getActionQueue().pop(); 
+			staff.resetClock(); 
+		}
+		//Add patrolling logic 
 	}
 }
 
@@ -103,7 +123,7 @@ void AISolver::update(Staff& staff, StaffAction desiredAction)
 {
 	if (desiredAction == Idle)
 	{
-		staff.getActionQueue().push(desiredAction); 
+		//staff.getActionQueue().push(desiredAction); 
 
 		/* if duration is met */
 	}

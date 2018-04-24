@@ -15,8 +15,8 @@ enum Professions
 
 enum StaffAction
 {
-	Idle, 
-	Thinking,
+	IdleStaff, 
+	StaffThinking,
 	Cleaning,
 	Murdering,
 	Stealing,
@@ -33,6 +33,7 @@ private:
 	std::queue<StaffAction> m_staffActionQueue; 
 	StaffAction m_currentAction; 
 
+	bool m_taskCompleted; 
 
 	std::chrono::high_resolution_clock m_timer; 
 	std::chrono::high_resolution_clock::time_point m_timeStart, m_timeNow;
@@ -49,12 +50,13 @@ public:
 	bool getQueueEmpty(); 
 	
 	Professions getProfession() const;
-	StaffAction getCurrentAction() const;
 	StaffAction getCurrentAction() const; 
 	LevelTracker& getLevelTracker();
 	std::queue<StaffAction>& getActionQueue();
+	bool getTaskCompleted();
 
-	void setCurrentAction(StaffAction staffAction); 
+	void setCurrentAction(StaffAction staffAction);
+	void setTaskCompleted(bool taskCompleted); 
 	void resetClock(); 
 
 	std::chrono::duration<double, std::ratio<1, 1>> getDuration();
