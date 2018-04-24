@@ -15,7 +15,7 @@ public:
 	~Economy();
 
 	void Deposit(int amount);
-	bool Withdraw(int amount);
+	void Withdraw(int amount);
 	
 	int GetGold() const;
 

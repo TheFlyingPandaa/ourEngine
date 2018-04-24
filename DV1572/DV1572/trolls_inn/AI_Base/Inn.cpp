@@ -54,12 +54,14 @@ void Inn::_checkInnStatUpdate()
 
 Inn::Inn()
 {
-	
+	m_economy = new Economy(START_MONEY);
+	m_profit = 0;
+	m_timer = 0;
 }
 
 Inn::~Inn()
 {
-
+	delete m_economy;
 }
 
 int Inn::getFoodPrice() const
@@ -80,6 +82,56 @@ int Inn::getDrinkPrice() const
 Attributes Inn::getInnAttributes() const
 {
 	return this->m_innAttributes;
+}
+
+void Inn::Update(double deltaTime, TIMEOFDAY TOD)
+{
+	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
+		m_profit -= m_staffSalary;
+		m_staffSalaryApplyed = true;
+	}
+	
+
+	m_timer += deltaTime;
+	if (m_timer > UPDATE_FREQ)
+	{
+		m_timer = 0;
+
+
+
+		if (m_profit > 0)
+			m_economy->Deposit(std::abs(m_profit));
+		else
+			m_economy->Withdraw(std::abs(m_profit));
+
+		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
+			m_staffSalaryApplyed = false;
+
+		m_profit = 0;
+		std::cout << m_economy->GetGold() << std::endl;
+	}
+}
+
+int Inn::getMoney() const
+{
+	return m_economy->GetGold();
+}
+
+void Inn::Deposit(int amount)
+{
+	m_profit += amount;
+}
+
+void Inn::Withdraw(int amount)
+{
+	m_economy->Withdraw(amount);
+}
+
+void Inn::changeStaffSalary(int amount)
+{
+	m_staffSalary += amount;
+	if (m_staffSalary < 0)
+		m_staffSalary = 0;
 }
 
 // Change to one standard function for all stat adds?
