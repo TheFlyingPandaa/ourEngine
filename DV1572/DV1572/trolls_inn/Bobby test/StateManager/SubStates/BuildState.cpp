@@ -523,6 +523,14 @@ void BuildState::_init()
 
 void BuildState::Update(double deltaTime)
 {
+	if (m_selectedDoor != -1)
+	{
+		m_roomCtrl->setIsBuildingDoor(true);
+	}
+	else
+	{
+		m_roomCtrl->setIsBuildingDoor(false);
+	}
 	//m_doorBuild = m_hudButtonsPressed[2];
 	
 	//m_currentBuildType = m_hudButtonsPressed[2];

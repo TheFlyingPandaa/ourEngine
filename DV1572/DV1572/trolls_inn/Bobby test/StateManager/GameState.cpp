@@ -69,6 +69,11 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	if (m_subStates.empty())
+	{
+		m_stage = GameStage::Play;
+	}
+
 	_handlePicking();	// It's important this is before handleInput();
 	_handleInput();		// It's important this is after handlePicking();
 	
@@ -366,6 +371,7 @@ bool GameState::_handleHUDPicking()
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index])
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
+					m_stage = GameStage::BuildRoom;
 				break;
 			case 2:
 				// Event Button

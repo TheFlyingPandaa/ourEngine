@@ -227,6 +227,7 @@ RoomCtrl::RoomCtrl()
 	m_doorMesh = new Mesh();
 	m_doorMesh->LoadModel("trolls_inn/Resources/door/Door.obj");
 
+	m_buildingDoors = false;
 }
 
 
@@ -437,6 +438,14 @@ void RoomCtrl::Update(Camera * cam)
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
 		m_rooms[i]->Update(cam);
+		if (m_buildingDoors)
+		{
+			m_rooms[i]->setIsBuildingDoor(true);
+		}
+		else
+		{
+			m_rooms[i]->setIsBuildingDoor(false);
+		}
 	}
 }
 
@@ -712,6 +721,18 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 
 	return dir;
 }
+
+bool RoomCtrl::getIsBuildingDoor()
+{
+	return m_buildingDoors;
+}
+
+void RoomCtrl::setIsBuildingDoor(bool tje)
+{
+	m_buildingDoors = tje;
+}
+
+
 
 
 

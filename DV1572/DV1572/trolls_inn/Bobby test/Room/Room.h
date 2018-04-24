@@ -37,6 +37,7 @@ protected:
 	std::vector<Wall*> m_rightWalls;
 	std::vector<Wall*> m_leftWalls;
 
+	bool m_isBuildingDoor = false;
 
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
@@ -81,6 +82,8 @@ public:
 	void ApplyIndexOnMesh();
 
 	void CastShadow();
+
+	void setIsBuildingDoor(bool tje);
 
 };
 
