@@ -84,9 +84,11 @@ void BuildState::_buildInput()
 				//Don't forget to declare the new state in the update
 				if (m_currentBuildType == CurrentBuildType::Room && m_selectedRoomType != RoomType::UNDEFINED)
 				{
-					int area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
-					std::string textString = "Area: " + std::to_string(area);
+					m_area = (abs(end.x -start.x) + 1) * (abs(end.y - start.y) + 1);
+					std::string textString = "Area: " + std::to_string(m_area);
 					m_priceOfRoom.setTextString(textString);
+					m_priceOfRoom.setTextString("$" + std::to_string(m_area * 420));
+
 					DirectX::XMFLOAT2 mp = Input::getMousePositionLH();
 					m_priceOfRoom.setPosition(mp.x, mp.y + 20);
 					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
@@ -170,8 +172,10 @@ void BuildState::_roomBuildInput()
 	m_buildStage = BuildStage::None;
 	m_startTile = nullptr;
 	m_selectedTile = nullptr;
-	if(m_roomPlaceable)
-		m_roomCtrl->AddRoom(start, end, RoomType::reception, grid->extractTiles(start, end));
+	if (m_roomPlaceable && inn->Withdraw(m_area * 420, false)) {
+		m_roomCtrl->AddRoom(start, end, m_selectedRoomType, grid->extractTiles(start, end));
+		
+	}
 	m_roomPlaceable = false;
 	
 }
@@ -476,7 +480,7 @@ bool BuildState::_doorBuildHudPick()
 
 BuildState::BuildState(Camera * cam,
 	std::stack<Shape *>* pickingEvent,
-	Grid * grid, RoomCtrl* roomCtrl) : SubState(cam, pickingEvent)
+	Grid * grid, RoomCtrl* roomCtrl, Inn * inn) : SubState(cam, pickingEvent)
 {
 	this->grid = grid;
 	m_roomCtrl = roomCtrl;
@@ -491,7 +495,7 @@ BuildState::BuildState(Camera * cam,
 	m_priceOfRoom.setTextString("");
 	m_priceOfRoom.setAllignment(TXT::Center);
 	m_currentBuildType = CurrentBuildType::NONE;
-
+	this->inn = inn;
 	//TEMP
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
 }

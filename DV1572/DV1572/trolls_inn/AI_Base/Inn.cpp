@@ -108,7 +108,7 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 		if (m_profit > 0)
 			m_economy->Deposit(std::abs(m_profit));
 		else
-			m_economy->Withdraw(std::abs(m_profit));
+			m_economy->Withdraw(std::abs(m_profit), true);
 
 		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
 			m_staffSalaryApplyed = false;
@@ -129,9 +129,11 @@ void Inn::Deposit(int amount)
 	m_profit += amount;
 }
 
-void Inn::Withdraw(int amount)
+bool Inn::Withdraw(int amount, bool hardWithdraw)
 {
-	m_economy->Withdraw(amount);
+	bool b = m_economy->Withdraw(amount, hardWithdraw);
+	m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
+	return b;
 }
 
 void Inn::changeStaffSalary(int amount)

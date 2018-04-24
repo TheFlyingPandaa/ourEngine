@@ -238,7 +238,14 @@ RoomCtrl::~RoomCtrl()
 	}
 
 	delete m_wallMesh;
-	delete m_tileMesh[0];
+	for (int i = 0; i < ROOM_TYPE_SIZE; i++)
+	{
+		if (m_tileMesh[i] != nullptr)
+		{
+			//delete m_tileMesh[i];
+		}
+
+	}
 	delete m_doorMesh;
 	m_rooms.clear();
 }
@@ -255,21 +262,31 @@ void RoomCtrl::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
 	Room * currentRoom = nullptr;
-
+	
 	switch (roomType)
 	{
 	case kitchen:
 		currentRoom = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
+		currentRoom->setFloorMesh(m_tileMesh[RoomType::kitchen]);
+		//if (m_tileMesh[RoomType::kitchen])
 		break;
 	case bedroom:
 		break;
+	case hallway:
+		break;
+	case UNDEFINED:
+		break;
 	case reception:
 		currentRoom = new Reception(pos.x, pos.y, size.x, size.y, tiles);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
-		break;
-	}
+		if (m_tileMesh[RoomType::reception])
+			currentRoom->setFloorMesh(m_tileMesh[RoomType::reception]);
+		else
+			currentRoom->setFloorMesh(m_tileMesh[RoomType::kitchen]);
 
+	break;
+	}
+	if (currentRoom == nullptr)
+		return;
 	CreateWalls(currentRoom);
 	currentRoom->ApplyIndexOnMesh();
 	m_rooms.push_back(currentRoom);
@@ -439,7 +456,7 @@ void RoomCtrl::Draw()
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
 {
-		
+	
 	XMFLOAT3 currentRoomPos = { currentRoom->getPosition().x + 0.5f, 0.0f, currentRoom->getPosition().z + 0.5f };
 
 	int currentRoomSizeY = currentRoom->getSize().y;

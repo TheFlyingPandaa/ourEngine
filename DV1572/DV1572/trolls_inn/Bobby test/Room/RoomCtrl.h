@@ -8,7 +8,7 @@
 #include "../../Furniture/Furniture.h"
 
 
-const unsigned short ROOM_TYPE_SIZE = 2;
+const unsigned short ROOM_TYPE_SIZE = 3;
 enum RoomType {
 	kitchen,
 	bedroom,
@@ -56,7 +56,7 @@ private:
 	Room*				m_entrance;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wallMesh;
-	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
+	Mesh*				m_tileMesh[ROOM_TYPE_SIZE]{nullptr};
 
 	std::vector<std::vector<int>> m_roomConnectionMap;
 
@@ -75,11 +75,7 @@ private:
 public:
 	RoomCtrl();
 	~RoomCtrl();
-
-	/*
 	
-}*/
-
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture furniture);
 	

@@ -41,6 +41,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);	
 	m_roomctrl = new RoomCtrl();
+	m_roomctrl->setTileMesh(&kitchenTile, RoomType::kitchen);
+	m_roomctrl->setTileMesh(&kitchenTile, RoomType::reception);
 	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 
 	m_mai = new MasterAI(m_roomctrl, m_grid);
@@ -365,7 +367,7 @@ bool GameState::_handleHUDPicking()
 				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index])
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, &inn));
 				break;
 			case 2:
 				// Event Button

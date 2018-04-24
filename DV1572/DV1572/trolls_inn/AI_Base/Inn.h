@@ -59,7 +59,7 @@ public:
 	int getMoney() const;
 
 	void Deposit(int amount);
-	void Withdraw(int amount);
+	bool Withdraw(int amount, bool hardWithdraw = false);
 
 	void changeStaffSalary(int amount);
 	

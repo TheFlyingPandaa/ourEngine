@@ -2,6 +2,7 @@
 #include "SubState.h"
 #include "../../Room/Grid.h"
 #include "../../../Furniture/Table.h"
+#include "../../../AI_Base/Inn.h"
 class BuildState :
 	public SubState
 {
@@ -14,6 +15,8 @@ private:
 		End
 	};
 
+	Inn * inn;
+	int m_area = 0;
 	//TEMP
 	Mesh table;
 	//-----
@@ -80,7 +83,8 @@ public:
 	BuildState(Camera * cam, 
 	std::stack<Shape *>* pickingEvent,
 	Grid * grid,
-	RoomCtrl* roomCtrl);
+	RoomCtrl* roomCtrl,
+	Inn * inn = nullptr);
 	~BuildState();
 
 	
