@@ -1,6 +1,6 @@
 #pragma once
 #include "Attributes.h"
-
+#include "Economy.h"
 struct innUpdateAttributes
 {
 	float creepy;
@@ -11,6 +11,8 @@ struct innUpdateAttributes
 	float shady;
 	float standard;
 };
+
+const int START_MONEY = 500;
 
 class Inn
 {
@@ -24,6 +26,8 @@ private:
 	void addStatsToInn(Attributes type);
 	void checkInnStatUpdate();
 
+	Economy*		m_economy;
+
 public:
 	Inn();
 	~Inn();
@@ -33,6 +37,9 @@ public:
 	int getDrinkPrice() const;
 
 	Attributes getInnAttributes() const;
+
+	void Update();
+	int getMoney() const;
 
 	// Add a customers review to the inn stats
 	void customerReview(Attributes review);

@@ -16,6 +16,8 @@ public:
 
 	void deposit(int amount);
 	bool withdraw(int amount);
+
+	void update();
 	
 	int getGold() const;
 

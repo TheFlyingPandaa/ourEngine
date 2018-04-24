@@ -52,6 +52,7 @@ void Inn::checkInnStatUpdate()
 
 Inn::Inn()
 {
+	m_economy = new Economy(START_MONEY);
 }
 
 Inn::~Inn()
@@ -76,6 +77,15 @@ int Inn::getDrinkPrice() const
 Attributes Inn::getInnAttributes() const
 {
 	return this->innAttributes;
+}
+
+void Inn::Update()
+{
+}
+
+int Inn::getMoney() const
+{
+	return m_economy->getGold();
 }
 
 // Change to one standard function for all stat adds?
