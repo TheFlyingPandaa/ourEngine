@@ -12,6 +12,7 @@
 
 #include "../Time Management/GameTime.h"
 #include "../../ourEngine/interface/light/PointLight.h"
+#include "../Mesh Manager/MeshManager.h"
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
@@ -87,6 +88,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	SkyBoxObject boxy;
 	boxy.setMesh(&box);
 
+	Object3D table; 
+	table.setMesh(MeshHandler::getTable()); 
+	table.setPos(20, 0, 20);
+
+	Object3D wallWithWindow; 
+	wallWithWindow.setMesh(MeshHandler::getWallWithWindow()); 
+	wallWithWindow.setPos(18, 0, 20); 
 
 	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
 
@@ -190,6 +198,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 		gameState->Draw();
+		table.Draw();
+		wallWithWindow.Draw(); 
+
 		if (!gameStates.empty())
 		{
 			gameStates.top()->Draw();
@@ -231,5 +242,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	delete cam;
 	delete gameState;
+	MeshHandler::cleanAll(); 
+
 	return 0;
 }

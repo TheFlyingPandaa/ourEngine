@@ -53,6 +53,7 @@
     <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
+    <ClCompile Include="trolls_inn\Mesh Manager\MeshManager.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
+    <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
