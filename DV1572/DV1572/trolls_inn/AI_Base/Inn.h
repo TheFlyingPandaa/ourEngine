@@ -1,6 +1,8 @@
 #pragma once
 #include "Attributes.h"
 #include "Economy.h"
+#include <iostream>
+#include "../Time Management/GameTime.h"
 struct innUpdateAttributes
 {
 	float creepy;
@@ -13,6 +15,7 @@ struct innUpdateAttributes
 };
 
 const int START_MONEY = 500;
+const double UPDATE_FREQ = 0.420;
 
 class Inn
 {
@@ -27,6 +30,9 @@ private:
 	void checkInnStatUpdate();
 
 	Economy*		m_economy;
+	int				m_profit,	m_staffSalary = 420;
+	bool			m_staffSalaryApplyed;
+	double			m_timer;
 
 public:
 	Inn();
@@ -38,8 +44,14 @@ public:
 
 	Attributes getInnAttributes() const;
 
-	void Update();
+	void Update(double deltaTime, TIMEOFDAY TOD);
 	int getMoney() const;
+
+	void Deposit(int amount);
+	void Withdraw(int amount);
+
+	void changeStaffSalary(int amount);
+	
 
 	// Add a customers review to the inn stats
 	void customerReview(Attributes review);

@@ -8,7 +8,7 @@
 #include "HUD/HUD.h"
 #include <thread>
 #include <future>
-
+#include "../../AI_Base/Inn.h"
 
 class GameState : public State {
 private:
@@ -65,7 +65,7 @@ private:
 
 	Mesh table;
 	
-
+	Inn inn;
 
 	void			_init() override;
 	void			_setHud();

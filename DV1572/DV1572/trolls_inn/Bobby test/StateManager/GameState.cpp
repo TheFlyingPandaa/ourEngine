@@ -103,6 +103,9 @@ void GameState::Update(double deltaTime)
 		}
 		return;
 	}
+	inn.Update(deltaTime, gameTime.getTimePeriod());
+	
+
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	//auto currentTime = std::chrono::high_resolution_clock::now();
 	if (Input::isKeyPressed('N')) {

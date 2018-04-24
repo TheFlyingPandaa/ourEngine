@@ -21,19 +21,11 @@ void Economy::deposit(int amount)
 	this->transactionsDocumentation.push_back("Deposited: ");
 }
 
-bool Economy::withdraw(int amount)
+void Economy::withdraw(int amount)
 {
-	bool enoughGold = false;
-
-	if (this->gold >= amount)
-	{
-		enoughGold = true;
-		this->gold -= amount;
-		this->transactions.push_back(amount);
-		this->transactionsDocumentation.push_back("Withdrew: ");
-	}
-
-	return enoughGold;
+	this->gold -= amount;
+	this->transactions.push_back(amount);
+	this->transactionsDocumentation.push_back("Withdrew: ");
 }
 
 int Economy::getGold() const

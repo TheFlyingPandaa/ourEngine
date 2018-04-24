@@ -5,17 +5,17 @@
 #include <cmath>
 #include <vector>
 #include <d3d11.h>
+enum TIMEOFDAY
+{
+	MORNINGTONOON,
+	NOONTOEVENING,
+	EVENINGTONIGHT,
+	NIGHTTOMID,
+	NIGHTTOMORNING
+};
 class GameTime
 {
 private:
-	enum TIMEOFDAY
-	{
-		MORNINGTONOON,
-		NOONTOEVENING,
-		EVENINGTONIGHT,
-		NIGHTTOMID,
-		NIGHTTOMORNING
-	};
 
 	TIMEOFDAY m_currentTime;
 	float m_currentClockValue;
