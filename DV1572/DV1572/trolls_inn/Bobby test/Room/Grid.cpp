@@ -172,6 +172,11 @@ void Grid::insertTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size, std::vector<Ti
 	}
 }
 
+Tile * Grid::getTile(int x, int y)
+{
+	return m_tiles[_index(x,y)];
+}
+
 void Grid::Draw()
 {
 	for (auto& tile : m_tiles)
@@ -363,11 +368,11 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 		
 	*/
 
-	//std::vector<std::shared_ptr<Node>> path;
+	std::vector<std::shared_ptr<Node>> path;
 	//// Outside -> OutSide
 	//if (0 == startTile->getIsInside() && 0 == endTile->getIsInside())
 	//{
-	//	path = findPath(startTile, endTile, true);
+	path = findPath(startTile, endTile, true);
 	//} 
 	//// Outside -> inside
 	//else if (0 == startTile->getIsInside() && 1 == endTile->getIsInside())
@@ -516,112 +521,140 @@ std::vector<std::shared_ptr<Node>> Grid::findPathHighLevel(Tile * startTile, Til
 	//	
 	//}
 
-	return std::vector<std::shared_ptr<Node>>();
+	return path;
 }
 
 std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile, bool outside)
 {
-	//std::vector<std::shared_ptr<Node>> openList;
-	//std::vector<std::shared_ptr<Node>> closedList;
+	std::vector<std::shared_ptr<Node>> openList;
+	std::vector<std::shared_ptr<Node>> closedList;
 
-	//std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
-	//
-	//openList.push_back(current);
+	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
+	
+	openList.push_back(current);
 
-	//while (openList.size() > 0)
-	//{
-	//	std::sort(openList.begin(), openList.end(), [](std::shared_ptr<Node> a1, std::shared_ptr<Node> a2) {return a1->fCost < a2->fCost; });
-	//	current = openList.at(0);
+	while (openList.size() > 0)
+	{
+		std::sort(openList.begin(), openList.end(), [](std::shared_ptr<Node> a1, std::shared_ptr<Node> a2) {return a1->fCost < a2->fCost; });
+		current = openList.at(0);
 
-	//	if (*current == *endTile)
-	//	{
-	//		std::vector<std::shared_ptr<Node>> path;
-	//		while (current->parent != nullptr)
-	//		{
-	//			path.push_back(current);
-	//			std::shared_ptr<Node> t(current->parent);
-	//			current = t;
-	//			
-	//		}
+		if (*current == *endTile)
+		{
+			std::vector<std::shared_ptr<Node>> path;
+			while (current->parent != nullptr)
+			{
+				path.push_back(current);
+				std::shared_ptr<Node> t(current->parent);
+				current = t;
+				
+			}
 
-	//		std::reverse(path.begin(), path.end());
-	//		return path;
-	//	}
-	//	
-	//	closedList.push_back(current);		// add the entry to the closed list
-	//	openList.erase(openList.begin());   // Remove the entry
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+		
+		closedList.push_back(current);		// add the entry to the closed list
+		openList.erase(openList.begin());   // Remove the entry
 
-	//	for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
-	//	{
-	//		
-	//		Direction dir = static_cast<Direction>(dirIndex);
+		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
+		{
+			
+			Direction dir = static_cast<Direction>(dirIndex);
 
-	//		Tile* currentTile = current->tile->getAdjacent(dir);
-	//		
-	//		// Rules here
+			XMFLOAT2 dirFloat;
+			switch (dir)
+			{
+			case up:
+				dirFloat = XMFLOAT2(0, 1);
+				break;
+			case down:
+				dirFloat = XMFLOAT2(0, -1);
+				break;
+			case left:
+				dirFloat = XMFLOAT2(-1, 0);
+				break;
+			case right:
+				dirFloat = XMFLOAT2(1, 0);
+				break;
+			case upright:
+				dirFloat = XMFLOAT2(1, 1);
+				break;
+			case upleft:
+				dirFloat = XMFLOAT2(-1, 1);
+				break;
+			case downright:
+				dirFloat = XMFLOAT2(1, -1);
+				break;
+			case downleft:
+				dirFloat = XMFLOAT2(-1, -1);
+				break;
+			case noneSpecial:
+				break;
+			default:
+				break;
+			}
+			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
+			if (index < 0) continue;
+			Tile* currentTile = m_tiles[index];
+			
+			// Rules here
 
-	//		if (currentTile == nullptr)
-	//			continue;
-	//		if (current->tile->getIsInside() && outside)
-	//			continue;
-	//		if (!currentTile->getIsWalkeble())
-	//			continue;
-	//		
-	//		if (outside)
-	//		{
-	//			if (dir == Direction::downleft)
-	//			{
-	//				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-	//					continue;
-	//				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-	//					continue;
-	//			}
-	//			else if (dir == Direction::downright)
-	//			{
-	//				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-	//					continue;
-	//				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-	//					continue;
-	//			}
-	//			else if (dir == Direction::upright)
-	//			{
-	//				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-	//					continue;
-	//				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-	//					continue;
-	//			}
-	//			else if (dir == Direction::upleft)
-	//			{
-	//				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-	//					continue;
-	//				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-	//					continue;
-	//			}
-	//		}
-	//		
+			if (currentTile == nullptr)
+				continue;
+			
+			/*if (dir == Direction::downleft)
+			{
+				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+					continue;
+				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+					continue;
+			}
+			else if (dir == Direction::downright)
+			{
+				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+					continue;
+				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
+					continue;
+			}
+			else if (dir == Direction::upright)
+			{
+				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+					continue;
+				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
+					continue;
+			}
+			else if (dir == Direction::upleft)
+			{
+				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
+					continue;
+				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
+					continue;
+			}*/
+		
+			
 
 
-	//		//--Rules End Here--
+			//--Rules End Here--
 
-	//		float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
+			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
 
-	//		float hCost = getDistance(currentTile, endTile);
-	//		std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
-	//		//pointerBank.push_back(newNode);
+			float hCost = getDistance(currentTile, endTile);
+			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
+			//pointerBank.push_back(newNode);
 
-	//		if (_findInVec(closedList,newNode) && gCost >= newNode->gCost)
-	//			continue;
-	//		if (!_findInVec(openList, newNode) || gCost < newNode->gCost)
-	//		{
-	//			openList.push_back(newNode);
-	//			
-	//		}
-	//		
-	//		
-	//	}
-	//	
-	//	
-	//}
+			if (_findInVec(closedList,newNode) && gCost >= newNode->gCost)
+				continue;
+			if (!_findInVec(openList, newNode) || gCost < newNode->gCost)
+			{
+				openList.push_back(newNode);
+				
+			}
+			
+			
+		}
+		
+		
+	}
 	
 	return std::vector<std::shared_ptr<Node>>();
 }
