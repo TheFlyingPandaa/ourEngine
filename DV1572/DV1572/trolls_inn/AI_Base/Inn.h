@@ -17,7 +17,7 @@ struct innUpdateAttributes
 };
 
 const int START_MONEY = 500;
-const double UPDATE_FREQ = 0.420;
+const double UPDATE_FREQ = 2.0;
 
 class Inn
 {
