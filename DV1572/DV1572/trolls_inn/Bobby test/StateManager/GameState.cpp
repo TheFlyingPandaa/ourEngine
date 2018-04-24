@@ -101,6 +101,7 @@ void GameState::Update(double deltaTime)
 		return;
 		
 	}
+	inn.Update(deltaTime, gameTime.getTimePeriod());
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	//auto currentTime = std::chrono::high_resolution_clock::now();
