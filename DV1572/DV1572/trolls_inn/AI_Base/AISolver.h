@@ -24,7 +24,7 @@ public:
 	void restartClock();
 
 	void Update(Customer& customer, std::chrono::duration<double> time_span);
-	void Update(Customer& customer, Action desiredAction);
+	void Update(Customer& customer, Action desiredAction, int price = 0);
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);
 	// Get Path function (?)

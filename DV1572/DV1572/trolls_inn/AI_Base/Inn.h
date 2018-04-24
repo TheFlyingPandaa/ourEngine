@@ -39,17 +39,17 @@ public:
 	~Inn();
 
 
-	int getFoodPrice() const;
-	int getSleepPrice() const;
-	int getDrinkPrice() const;
+	int GetFoodPrice() const;
+	int GetSleepPrice() const;
+	int GetDrinkPrice() const;
 
-	Attributes getInnAttributes() const;
-	Grid* getGrid();
+	Attributes GetInnAttributes() const;
+	Grid* GetGrid();
 
 	// Add a customers review to the inn stats
-	void customerReview(Attributes review);
+	void CustomerReview(Attributes review);
 	// Add stats to the inn based on the furniture placed
-	void furnitureStatAdd(Attributes furnitureStats);
+	void FurnitureStatAdd(Attributes furnitureStats);
 
 	void Update(Camera* cam);
 	void Draw();

@@ -59,6 +59,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			currentState = customer.GetState();
 		}
 	}
+
 	if (currentState != Walking)
 	{
 		switch (currentState)
@@ -110,7 +111,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 	}
 }
 
-void AISolver::Update(Customer& customer, Action desiredAction)
+void AISolver::Update(Customer& customer, Action desiredAction, int price)
 {
 	CustomerState currentState = customer.GetState();
 
@@ -122,18 +123,20 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		{
 		case DrinkAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			customer.GetEconomy().Withdraw(price);
 			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case EatAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			customer.GetEconomy().Withdraw(price);
 			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
 			this->m_grid->generatePath(customer, RoomType::randomStupid);
+			customer.GetEconomy().Withdraw(price);
 			//this->m_grid->generatePath(customer, RoomType::bedroom);
 			break;
 		}
-		//roomCtrl need action and spots open for customers (?)
 		customer.PopToNextState(); // pop Thinking state
 		customer.PopToNextState(); // pop Idle state
 		customer.GotPathSetNextAction(desiredAction);

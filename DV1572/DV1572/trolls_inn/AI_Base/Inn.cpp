@@ -80,6 +80,10 @@ Inn::Inn()
 	m_grid->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::kitchen, true);
 	////grid->getRoomCtrl().CreateDoor(grid->getGrid()[(startSize / 2)][4], grid->getGrid()[(startSize / 2)][3]);
 	m_grid->getRoomCtrl().CreateMainDoor(m_grid->getGrid()[(startSize / 2)][4], m_grid->getGrid()[(startSize / 2)][3]);	//This will create the main door and place the pos in in m_mainDoorPos 
+
+	this->m_foodPrice = 10;
+	this->m_drinkPrice = 15;
+	this->m_sleepPrice = 20;
 }
 
 Inn::~Inn()
@@ -87,39 +91,39 @@ Inn::~Inn()
 	delete m_grid;
 }
 
-int Inn::getFoodPrice() const
+int Inn::GetFoodPrice() const
 {
 	return this->m_foodPrice;
 }
 
-int Inn::getSleepPrice() const
+int Inn::GetSleepPrice() const
 {
 	return this->m_sleepPrice;
 }
 
-int Inn::getDrinkPrice() const
+int Inn::GetDrinkPrice() const
 {
 	return this->m_drinkPrice;
 }
 
-Attributes Inn::getInnAttributes() const
+Attributes Inn::GetInnAttributes() const
 {
 	return this->m_innAttributes;
 }
 
-Grid * Inn::getGrid()
+Grid * Inn::GetGrid()
 {
 	return m_grid;
 }
 
 // Change to one standard function for all stat adds?
-void Inn::customerReview(Attributes review)
+void Inn::CustomerReview(Attributes review)
 {
 	this->_addStatsToInn(review);
 	this->_checkInnStatUpdate();
 }
 
-void Inn::furnitureStatAdd(Attributes furnitureStats)
+void Inn::FurnitureStatAdd(Attributes furnitureStats)
 {
 	this->_addStatsToInn(furnitureStats);
 	this->_checkInnStatUpdate();

@@ -1,7 +1,7 @@
 #include "MasterAI.h"
 
 MasterAI::MasterAI()
-	: m_solver(m_inn.getGrid())
+	: m_solver(m_inn.GetGrid())
 {
 	this->m_start = this->m_clock.now();
 }
@@ -14,7 +14,7 @@ MasterAI::~MasterAI()
 
 Grid * MasterAI::GetGrid()
 {
-	return m_inn.getGrid();
+	return m_inn.GetGrid();
 }
 
 void MasterAI::Update(Camera* cam)
@@ -51,6 +51,7 @@ void MasterAI::Update(Camera* cam)
 			std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
 			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
 			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
+			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;
 			customer->SetHungry(customer->GetHungry() + 1);
 			customer->SetTired(customer->GetTired() + 1);
 			customer->SetThirsty(customer->GetThirsty() + 1);
@@ -66,13 +67,13 @@ void MasterAI::Update(Camera* cam)
 			switch (desiredAction)
 			{
 			case EatAction:
-				price = m_inn.getFoodPrice();
+				price = m_inn.GetFoodPrice();
 				break;
 			case DrinkAction:
-				price = m_inn.getDrinkPrice();
+				price = m_inn.GetDrinkPrice();
 				break;
 			case SleepAction:
-				price = m_inn.getSleepPrice();
+				price = m_inn.GetSleepPrice();
 				break;
 			}
 
@@ -86,7 +87,7 @@ void MasterAI::Update(Camera* cam)
 			{
 				// Customer wants path to Action area
 				customer->SetAction(ThinkingAction);
-				this->m_solver.Update(*customer, desiredAction);
+				this->m_solver.Update(*customer, desiredAction, price);
 			}
 		}
 		else
@@ -120,6 +121,13 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
+			leavingCustomer->setPosition(16.5, 0.5); // TEST TEST GLOBAL VARIABLE BTW, JK
+			
+			for (int i = 0; i < 3; ++i)
+				leavingCustomer->Move(Character::WalkDirection::DOWN);
+			for (int i = 0; i < 16; ++i)
+				leavingCustomer->Move(Character::WalkDirection::LEFT);
+			
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else
@@ -129,7 +137,7 @@ void MasterAI::Update(Camera* cam)
 				leavingCustomer->PopToNextState();
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
-				this->m_inn.customerReview(leavingCustomer->GetAttributes());
+				this->m_inn.CustomerReview(leavingCustomer->GetAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}
@@ -154,5 +162,5 @@ void MasterAI::Draw()
 
 void MasterAI::spawn()
 {
-	m_customers.push_back(this->m_cFC.Update(this->m_inn.getInnAttributes()));
+	m_customers.push_back(this->m_cFC.Update(this->m_inn.GetInnAttributes()));
 }
