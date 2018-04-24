@@ -227,6 +227,7 @@ RoomCtrl::RoomCtrl()
 	m_doorMesh = new Mesh();
 	m_doorMesh->LoadModel("trolls_inn/Resources/door/Door.obj");
 
+	m_buildingDoors = false;
 }
 
 
@@ -316,6 +317,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
  {
 	 bool isFalse = false;
 	 int index = _intersect(start, XMINT2(1, 1));
+	 if (index == -1)
+	 {
+		 return false;
+	 }
 	 Room*  cr = m_rooms[index];
 	 auto tiles = cr->getTiles();
 
@@ -330,8 +335,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		{
 			int ii = _index(start.x, start.y + i);
 
-			if (ii >= tiles.size()) 
+			if (ii >= tiles.size()) {
+				tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				return false;
+			}
 
 			if (angle == 0)
 			{
@@ -399,9 +406,16 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 	else
 	{
-		tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-
-		return !isFalse;
+		if (isFalse == true)
+		{
+			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+			return false;
+		}
+		else
+		{
+			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+			return true;
+		}
 	}
 	return true;
  }
@@ -424,6 +438,14 @@ void RoomCtrl::Update(Camera * cam)
 	for (int i = 0; i < m_rooms.size(); i++)
 	{
 		m_rooms[i]->Update(cam);
+		if (m_buildingDoors)
+		{
+			m_rooms[i]->setIsBuildingDoor(true);
+		}
+		else
+		{
+			m_rooms[i]->setIsBuildingDoor(false);
+		}
 	}
 }
 
@@ -564,7 +586,8 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 				if (wall->getObject3D().getPosition().x == wallPosition.x && wall->getObject3D().getPosition().z == wallPosition.z)
 				{
 					wall->getObject3D().setMesh(m_doorMesh);
-					if (wall->isShared()) // This door is Inside->inside
+					wall->setIsDoor(true);
+					if (wall->isShared())
 					{
 						// Create connection between rooms
 						XMINT2 room1 = wall->getNormalPosition();
@@ -740,6 +763,18 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 
 	return dir;
 }
+
+bool RoomCtrl::getIsBuildingDoor()
+{
+	return m_buildingDoors;
+}
+
+void RoomCtrl::setIsBuildingDoor(bool tje)
+{
+	m_buildingDoors = tje;
+}
+
+
 
 
 

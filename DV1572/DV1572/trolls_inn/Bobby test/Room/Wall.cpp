@@ -64,6 +64,16 @@ bool Wall::isShared() const
 	return m_sharedWall;
 }
 
+bool Wall::getIsDoor() const
+{
+	return m_isDoor;
+}
+
+bool Wall::setIsDoor(const bool tjue)
+{
+	return m_isDoor = tjue;
+}
+
 
 bool Wall::operator==(const Wall & other)
 {

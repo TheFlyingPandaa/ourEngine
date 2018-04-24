@@ -68,8 +68,9 @@ private:
 
 	std::vector<std::vector<int>> m_roomConnectionMap;
 
-
 	std::vector<int>	m_tempPath;
+
+	bool				m_buildingDoors;
 	
 	bool				_checkLegal(Room * room);
 	bool				_checkRoomType(Room* room, RoomType type);
@@ -83,10 +84,6 @@ private:
 public:
 	RoomCtrl();
 	~RoomCtrl();
-
-	/*
-	
-}*/
 
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture furniture);
@@ -122,5 +119,8 @@ public:
 	Direction			getDirection(Tile*, Tile*);
 	XMINT2				getDirection2i(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
+
+	bool getIsBuildingDoor();
+	void setIsBuildingDoor(bool tje);
 };
 

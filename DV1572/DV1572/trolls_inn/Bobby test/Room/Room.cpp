@@ -96,14 +96,14 @@ void Room::Update(Camera * cam)
 	XMVECTOR xmCamDir = XMLoadFloat3(&test);
 	xmCamDir = XMVector3Normalize(xmCamDir);
 	XMVECTOR xmCamPos = XMLoadFloat3(&cam->getPosition());
-	
+
 	for (auto& wall : m_allWalls)
 	{
 
 		XMVECTOR wallPosition = XMLoadFloat3(&getPosition());
 		
 		float distance = XMVectorGetX(XMVector3Length(wallPosition - xmCamPos));
-		if (wall->isShared())
+		if (wall->isShared() && false == wall->getIsDoor() && m_isBuildingDoor == false)
 		{
 			wall->setScale(1, 0.05f, 1.0f);
 		}
@@ -113,7 +113,7 @@ void Room::Update(Camera * cam)
 			XMVECTOR xmWallDir = XMLoadFloat3(&wallDir);
 			float angleDegrees = XMConvertToDegrees(XMVectorGetX(XMVector3AngleBetweenNormals(xmCamDir, xmWallDir)));
 			
-			if (angleDegrees < 90)
+			if (angleDegrees < 90 && false == wall->getIsDoor() && m_isBuildingDoor == false)
 			{
 				float funcy = (2.0f * (angleDegrees / 90) ) - 1.0f;
 				wall->setScale(1, funcy < 0.05f ? 0.05f : funcy, 1.0f);
@@ -144,6 +144,11 @@ void Room::CastShadow()
 {
 	m_AABB.CastShadow();
 	//m_AABB.Draw();
+}
+
+void Room::setIsBuildingDoor(bool tje)
+{
+	m_isBuildingDoor = tje;
 }
 
 float Room::getDistance(Tile * t1, Tile * t2)

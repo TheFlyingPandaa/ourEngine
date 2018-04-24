@@ -41,6 +41,7 @@ protected:
 	std::vector<Wall*> m_leftWalls;
 
 	int _index(int x, int y);
+	bool m_isBuildingDoor = false;
 
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
@@ -89,6 +90,8 @@ public:
 	void CastShadow();
 	float getDistance(Tile* t1, Tile* t2);
 	std::vector<std::shared_ptr<Node>> findPath(Tile* startTile, Tile* endTile);
+
+	void setIsBuildingDoor(bool tje);
 
 };
 

@@ -20,7 +20,7 @@ private:
 	std::vector<RectangleShape*>	m_quadsClickAble;
 	std::vector<PotentialAreaCircle>	m_potentialAreasCircle;
 	std::vector<PotentialAreaRect>	m_potentialAreasRect;
-	std::vector<Text>				m_texts;
+	std::vector<Text*>				m_texts;
 
 private:
 	void _cleanUp();
@@ -43,4 +43,7 @@ public:
 	void	ResetColorsExcept(int index);
 	//void CheckIfPicked();
 	void Draw();
+
+	//THIS CAN BE CHANGED
+	void addText(Text * text);
 };

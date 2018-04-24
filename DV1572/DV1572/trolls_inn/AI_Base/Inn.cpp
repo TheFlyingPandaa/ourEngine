@@ -57,11 +57,21 @@ Inn::Inn()
 	m_economy = new Economy(START_MONEY);
 	m_profit = 0;
 	m_timer = 0;
+	m_text = new Text();
+	m_text->setColor(0.0f, 1.0f, 0.0f);
+	m_text->setRelative(static_cast<Text::RelativeTo>(1));
+	m_text->setPosition(198.0f, 32.0f);
+	m_text->setScale(0.4f);
+	m_text->setRotation(0.0f);
+	m_text->setTextString("");
+	m_text->setAllignment(TXT::Right);
 }
 
 Inn::~Inn()
 {
 	delete m_economy;
+	delete m_text;
+	m_text = nullptr;
 }
 
 int Inn::getFoodPrice() const
@@ -90,15 +100,11 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 		m_profit -= m_staffSalary;
 		m_staffSalaryApplyed = true;
 	}
-	
 
 	m_timer += deltaTime;
 	if (m_timer > UPDATE_FREQ)
 	{
 		m_timer = 0;
-
-
-
 		if (m_profit > 0)
 			m_economy->Deposit(std::abs(m_profit));
 		else
@@ -108,7 +114,8 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 			m_staffSalaryApplyed = false;
 
 		m_profit = 0;
-		std::cout << m_economy->GetGold() << std::endl;
+		m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
+		
 	}
 }
 
@@ -132,6 +139,11 @@ void Inn::changeStaffSalary(int amount)
 	m_staffSalary += amount;
 	if (m_staffSalary < 0)
 		m_staffSalary = 0;
+}
+
+Text * Inn::GetText()
+{
+	return m_text;
 }
 
 // Change to one standard function for all stat adds?
