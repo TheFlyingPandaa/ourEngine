@@ -8,13 +8,13 @@ class Inn
 private:
 	struct innUpdateAttributes
 	{
-		float creepy;
-		float drinkQuality;
-		float foodQuality;
-		float prices;
-		float reputation;
-		float shady;
-		float standard;
+		int creepy;
+		int drinkQuality;
+		int foodQuality;
+		int prices;
+		int reputation;
+		int shady;
+		int standard;
 	};
 
 	// Grid stuff
@@ -27,6 +27,7 @@ private:
 	// Inn stuff
 	Attributes m_innAttributes;
 	innUpdateAttributes m_iUA;
+	Attributes m_innUpdateAttributes;
 	int m_foodPrice;
 	int m_sleepPrice;
 	int m_drinkPrice;

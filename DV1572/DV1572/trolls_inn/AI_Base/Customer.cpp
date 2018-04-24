@@ -10,6 +10,8 @@ Customer::Customer(Race race, int gold)
 	this->m_race = race;
 	this->m_economy = Economy(gold);
 	this->SetAction(WalkToInn);
+	this->m_stats.SetDrinkQuality(2); // TEST
+	this->m_stats.SetFoodQuality(1); // TEST
 }
 
 Customer::Customer(const Customer& other) : Character(other)
@@ -131,11 +133,11 @@ const char* Customer::GetActionStr() const
 	case ThinkingAction:
 		return "Thinking";
 	case DrinkAction:
-		return "Drink";
+		return "Drinking";
 	case EatAction:
-		return "Eat";
+		return "Eating";
 	case SleepAction:
-		return "Sleep";
+		return "Sleeping";
 	case LeavingInnAction:
 		return "Leaving Trolls Inn";
 	}
@@ -156,11 +158,11 @@ const char * Customer::GetStateStr() const
 	case Thinking:
 		return "Thinking";
 	case Drinking:
-		return "Drink";
+		return "Drinking";
 	case Eating:
-		return "Eat";
+		return "Eating";
 	case Sleeping:
-		return "Sleep";
+		return "Sleeping";
 	case LeavingInn:
 		return "Leaving Trolls Inn";
 	}

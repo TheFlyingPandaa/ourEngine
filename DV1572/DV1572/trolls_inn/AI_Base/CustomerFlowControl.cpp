@@ -23,13 +23,13 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 			break;
 		}
 		int points = 0;
-		points += ((10 + attributes.GetCreepy()) > (innAttributes.GetCreepy() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetDrinkQuality()) > (innAttributes.GetDrinkQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetFoodQuality()) > (innAttributes.GetFoodQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetPrices()) > (innAttributes.GetPrices() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetReputation()) > (innAttributes.GetReputation() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetShady()) > (innAttributes.GetShady() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetStandard()) > (innAttributes.GetStandard() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetCreepy()) >= (innAttributes.GetCreepy() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetDrinkQuality()) >= (innAttributes.GetDrinkQuality() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetFoodQuality()) >= (innAttributes.GetFoodQuality() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetPrices()) >= (innAttributes.GetPrices() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetReputation()) >= (innAttributes.GetReputation() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetShady()) >= (innAttributes.GetShady() + 10)) ? 1 : 0;
+		points += ((10 + attributes.GetStandard()) >= (innAttributes.GetStandard() + 10)) ? 1 : 0;
 
 		return points;
 	};

@@ -8,8 +8,8 @@ MasterAI::MasterAI()
 
 MasterAI::~MasterAI()
 {
-	for (auto& cust : m_customers)
-		delete cust;
+	for (auto& customer : m_customers)
+		delete customer;
 }
 
 Grid * MasterAI::GetGrid()
@@ -103,9 +103,10 @@ void MasterAI::Update(Camera* cam)
 		loopCounter++;
 	}
 
-	if (this->m_solver.getTimeSpan().count() > 2)
+	if (this->m_solver.getTimeSpan().count() > 1)
 		this->m_solver.restartClock();
 
+	// BROKEN, subscript changes when first customer is deleted
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
@@ -121,12 +122,7 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			leavingCustomer->setPosition(16.5, 0.5); // TEST TEST GLOBAL VARIABLE BTW, JK
-			
-			for (int i = 0; i < 3; ++i)
-				leavingCustomer->Move(Character::WalkDirection::DOWN);
-			for (int i = 0; i < 16; ++i)
-				leavingCustomer->Move(Character::WalkDirection::LEFT);
+
 			
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
@@ -145,6 +141,7 @@ void MasterAI::Update(Camera* cam)
 		loopCounter++;
 	}
 	// Delete customers that left the inn area
+	// BROKEN, same as previous
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
 		int index = goneCustomers[i];

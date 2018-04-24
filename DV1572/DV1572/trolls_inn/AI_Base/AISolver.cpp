@@ -79,7 +79,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			// Update animations drink, eat, sleep (?)
 		case Drinking:
 			// Reduce how thirsty the customer is
-			if (this->m_time_span.count() > 2)
+			if (this->m_time_span.count() > 1)
 			{
 				if (customer.GetThirsty() > 0)
 					customer.DoDrinking();
@@ -89,7 +89,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			break;
 		case Eating:
 			// Reduce how hungry the customer is
-			if (this->m_time_span.count() > 2)
+			if (this->m_time_span.count() > 1)
 			{
 				if (customer.GetHungry() > 0)
 					customer.DoEating();
@@ -99,7 +99,7 @@ void AISolver::Update(Customer& customer, std::chrono::duration<double> time_spa
 			break;
 		case Sleeping:
 			// Reduce how tired the customer is
-			if (this->m_time_span.count() > 2)
+			if (this->m_time_span.count() > 1)
 			{
 				if (customer.GetTired() > 0)
 					customer.DoSleeping();
