@@ -81,14 +81,30 @@ void AISolver::update(Customer& customer, Action desiredAction)
 
 void AISolver::update(Staff& staff)
 {
-	
+	if(staff.getActionQueue().front() == Idle)
+	{
+		if (staff.getDuration().count() >= 6)
+		{
+			staff.getActionQueue().pop();
+			staff.resetClock(); 
+		}
+	}
+	else if (staff.getActionQueue().front() == Cooking)
+	{
+		if (staff.getDuration().count >= 10)
+		{
+			staff.getActionQueue().pop();
+			staff.resetClock(); 
+		}
+	}
 }
 
 void AISolver::update(Staff& staff, StaffAction desiredAction)
 {
 	if (desiredAction == Idle)
 	{
-		staff.setDurationOfActivity(staff.getTimer().now()); 
+		staff.getActionQueue().push(desiredAction); 
+
 		/* if duration is met */
 	}
 

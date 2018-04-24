@@ -143,10 +143,10 @@ void MasterAI::update()
 
 				if (rndNumber <= 30)
 				{
-					currentStaffMember.getActionQueue().push(Idle);
+					
 					/*currentStaffMember start timer and set duration*/
-					currentStaffMember.setCurrentAction(currentStaffMember.getActionQueue().front());
-					solver.update(currentStaffMember, currentStaffMember.getCurrentAction());
+					currentStaffMember.setCurrentAction(Idle);
+					solver.update(currentStaffMember); 
 				}
 				else if (rndNumber > 30)
 				{

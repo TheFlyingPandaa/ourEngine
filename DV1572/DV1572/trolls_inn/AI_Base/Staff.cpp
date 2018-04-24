@@ -9,6 +9,7 @@ Staff::Staff(Professions profession)
 {
 	m_profession = profession;
 	m_currentAction = Idle;
+	m_timeStart = m_timer.now(); 
 }
 
 Staff::Staff(Professions profession, int level)
@@ -16,10 +17,17 @@ Staff::Staff(Professions profession, int level)
 	m_profession = profession;
 	m_level.setLevel(level);
 	m_currentAction = Idle;
+	m_timeStart = m_timer.now(); 
 }
 
 Staff::~Staff()
 {
+}
+
+void Staff::update()
+{
+	m_timeNow = m_timer.now(); 
+	m_duration = std::chrono::duration_cast<std::chrono::duration<double>>(m_timeNow - m_timeStart); 
 }
 
 bool Staff::getQueueEmpty()
@@ -47,28 +55,19 @@ std::queue<StaffAction>& Staff::getActionQueue()
 	return m_staffActionQueue; 
 }
 
-std::chrono::high_resolution_clock & Staff::getTimer()
-{
-	return m_timer; 
-}
-
 void Staff::setCurrentAction(StaffAction staffAction)
 {
 	m_currentAction = staffAction; 
 }
 
-void Staff::setDurationOfActivity(std::chrono::time_point <std::chrono::high_resolution_clock> durration)
+void Staff::resetClock()
 {
-	m_durrationStart = durration; 
+	m_timeStart = m_timer.now(); 
 }
 
-void Staff::setTimerAndDuration(int duration)
+std::chrono::duration<double, std::ratio<1, 1>> Staff::getDuration()
 {
-
-	m_timePoint = m_timer.now();
+	return m_duration;
 }
 
-std::chrono::time_point <std::chrono::high_resolution_clock> Staff::getDurration()
-{
-	return m_durrationStart;
-}
+

@@ -44,6 +44,8 @@ public:
 	Staff(Professions profession, int level);
 	~Staff();
 
+	void update(); 
+
 	bool getQueueEmpty(); 
 	
 	Professions getProfession() const;
@@ -51,13 +53,10 @@ public:
 	StaffAction getCurrentAction() const; 
 	LevelTracker& getLevelTracker();
 	std::queue<StaffAction>& getActionQueue();
-	std::chrono::high_resolution_clock& getTimer(); 
 
 	void setCurrentAction(StaffAction staffAction); 
-	void setDurationOfActivity(std::chrono::time_point <std::chrono::high_resolution_clock> durration);
+	void resetClock(); 
 
 	std::chrono::duration<double, std::ratio<1, 1>> getDuration();
 
-
-	std::chrono::time_point <std::chrono::high_resolution_clock> getDurration(); 
 };
