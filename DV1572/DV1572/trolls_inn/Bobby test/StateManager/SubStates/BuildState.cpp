@@ -281,13 +281,13 @@ bool BuildState::_mainHudPick()
 					m_selectedDoor = -1;
 					m_selectedFurniture = -1;
 					m_currentBuildType = CurrentBuildType::NONE;
-					
+					m_roomCtrl->setIsBuildingDoor(false);
 				}
 				else
 				{
 					m_selectedRoomType = RoomType::UNDEFINED;
 					m_currentBuildType = CurrentBuildType::Door;
-					
+					m_roomCtrl->setIsBuildingDoor(true);
 					for (size_t i = 0; i < m_roomHUDButtonsPressed.size(); i++)
 						m_roomHUDButtonsPressed[i] = false;
 				}
@@ -547,11 +547,11 @@ void BuildState::Update(double deltaTime)
 {
 	if (m_selectedDoor != -1)
 	{
-		m_roomCtrl->setIsBuildingDoor(true);//TODO: SET THIS AS A BUTTON, NO NEED TO UPDATE ALL THE TIME
+		//m_roomCtrl->setIsBuildingDoor(true);//TODO: SET THIS AS A BUTTON, NO NEED TO UPDATE ALL THE TIME
 	}
 	else
 	{
-		m_roomCtrl->setIsBuildingDoor(false);
+		//m_roomCtrl->setIsBuildingDoor(false);
 	}
 	//m_doorBuild = m_hudButtonsPressed[2];
 	
