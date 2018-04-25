@@ -16,8 +16,9 @@ private:
 
 	//TEMP
 	Mesh table;
+	Object3D test;
 	//-----
-
+	int is = 0;
 
 	Shape *		m_startTile;
 	Shape *		m_selectedTile;

@@ -225,6 +225,9 @@ void GameState::_handlePicking()
 	if (hudWasPicked)
 		while (!p_pickingEvent->empty()) this->p_pickingEvent->pop();
 
+	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
+		m_grid->PickTiles();
+
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
@@ -312,7 +315,7 @@ void GameState::_handlePickingAi(Shape * obj)
 			//int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
 
 
-			//// Ta reda på om det är outside -> inside
+			//// Ta reda pï¿½ om det ï¿½r outside -> inside
 			//
 			//
 			//XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
