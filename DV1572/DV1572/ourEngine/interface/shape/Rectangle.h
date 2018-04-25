@@ -31,6 +31,9 @@ private:
 	RelativeTo m_rt;
 	ShapeType m_shape;
 
+	DirectX::XMFLOAT3 m_hoverColor;
+	DirectX::XMFLOAT3 m_pressColor;
+
 private:
 	void _buildRectangle();
 
@@ -40,6 +43,12 @@ public:
 	void setScreenPos(float x, float y, float depth = 0.0f);
 	void setScreenPos(DirectX::XMFLOAT3 pos);
 	DirectX::XMFLOAT3 getScreenPos() const;
+
+	void setHoverColor(DirectX::XMFLOAT3 hoverColor);
+	void setPressColor(DirectX::XMFLOAT3 pressColor);
+	DirectX::XMFLOAT3 getHoverColor() const;
+	DirectX::XMFLOAT3 getPressedColor() const;
+
 
 	void setShapeType(ShapeType t);
 	ShapeType getShapeType() const;

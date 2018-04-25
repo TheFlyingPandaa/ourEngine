@@ -85,7 +85,7 @@ Mesh * MeshHandler::getDoor()
 	if (door == nullptr)
 	{
 		door = new Mesh();
-		door->LoadModel("trolls_inn/Resources/door.obj");
+		door->LoadModel("trolls_inn/Resources/door/Door.obj");
 	}
 	return door;
 }

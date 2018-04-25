@@ -16,15 +16,15 @@
 
 # Button Background
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/ButtonBackground.png
-r 228 120 216 72 -1 0.1 0
+r 228 120 216 148 -1 0.1 0
 
 # Hit box for buttons
-hr 228 120 216 72 0
+hr 228 120 216 148 0
 
 # LogDoor
 tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/LogDoor.png
-r 236 124 64 64 0 0 0 rectangle
+r 236 128 64 64 0 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 # Window
 tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/ClassicWindow.png
-r 304 124 64 64 1 0 0 rectangle
+r 236 196 64 64 1 0 0 rectangle

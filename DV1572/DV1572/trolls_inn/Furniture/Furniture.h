@@ -12,10 +12,14 @@ public:
 	Attributes&	getAttributes();
 	int	getGridSize(); //gets the size this furniture will take up
 
+	void			setPosition(DirectX::XMFLOAT3 pos);
+	void			setPosition(float x, float y, float z);
+	void			setRotation(int rot);
+
 	DirectX::XMINT3 getPosition();
 	int				getRotation();
 	
-	void Draw();
+	void			Draw();
 
 private:
 	DirectX::XMINT3 pos;
