@@ -216,11 +216,13 @@ void GameState::_setHud()
 void GameState::_handlePicking()
 {
 	bool hudWasPicked = _handleHUDPicking();
-	if (m_stage == GameStage::Play)
-		m_grid->PickTiles();
+	
 
 	if (hudWasPicked)
 		while (!p_pickingEvent->empty()) this->p_pickingEvent->pop();
+
+	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
+		m_grid->PickTiles();
 
 	while (!p_pickingEvent->empty())
 	{
