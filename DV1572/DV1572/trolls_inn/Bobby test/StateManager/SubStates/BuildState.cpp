@@ -463,6 +463,7 @@ BuildState::BuildState(Camera * cam,
 
 BuildState::~BuildState()
 {
+	delete table;
 }
 
 void BuildState::_init()
