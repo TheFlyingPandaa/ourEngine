@@ -71,6 +71,10 @@
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
+    <ClCompile Include="trolls_inn\Events\Events.cpp" />
+    <ClCompile Include="trolls_inn\Events\Reward.cpp" />
+    <ClCompile Include="trolls_inn\Events\EventCollection.cpp" />
+    <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -132,6 +136,10 @@
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
     <ClInclude Include="trolls_inn\Furniture\Bed.h" />
+    <ClInclude Include="trolls_inn\Events\Events.h" />
+    <ClInclude Include="trolls_inn\Events\Reward.h" />
+    <ClInclude Include="trolls_inn\Events\EventCollection.h" />
+    <ClInclude Include="trolls_inn\Events\EventHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
