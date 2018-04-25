@@ -157,6 +157,8 @@ void MasterAI::Update(Camera* cam)
 			// Send review to inn if customer reached end of path
 			if (leavingCustomer->walkQueueDone())
 				leavingCustomer->PopToNextState();
+			else
+				this->m_solver.Update(*leavingCustomer, this->m_time_span);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
 				this->m_inn.CustomerReview(leavingCustomer->GetAttributes());
@@ -181,8 +183,10 @@ void MasterAI::Update(Camera* cam)
 void MasterAI::Draw()
 {
 	m_inn.Draw();
-	for (auto& customer : m_customers)
+	for (auto& customer : this->m_customers)
 		customer->Draw();
+	for (auto& leavingCustomer : this->m_leavingCustomers)
+		leavingCustomer->Draw();
 }
 
 void MasterAI::spawn()
