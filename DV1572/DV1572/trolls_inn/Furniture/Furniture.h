@@ -9,12 +9,16 @@ public:
 	~Furniture();
 
 	Object3D	getObject3D();
+
 	Attributes&	getAttributes();
+
 	int	getGridSize(); //gets the size this furniture will take up
 
 	DirectX::XMINT3 getPosition();
 	int				getRotation();
 	
+	void LoadFurnitureStats(std::string path);
+
 	void Draw();
 
 private:
