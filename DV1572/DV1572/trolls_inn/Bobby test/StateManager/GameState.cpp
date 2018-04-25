@@ -327,7 +327,11 @@ void GameState::_handlePickingAi(Shape * obj)
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
+				{
+					float lol = 255 * (float(i) / float(path.size()));
+					path[i + 1]->tile->getQuad().setColor(0, 0, lol);
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+				}
 			}
 
 		}

@@ -350,6 +350,13 @@ float Grid::getDistance(Tile* t1, Tile* t2)
 
 std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile)
 {
+	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
+	{
+		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
+		if (index < 0 || index >= m_tiles.size()) return nullptr;;
+		return m_tiles[index];
+	};
+
 	std::vector<std::shared_ptr<Node>> openList;
 	std::vector<std::shared_ptr<Node>> closedList;
 
@@ -384,7 +391,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		{
 			
 			Direction dir = static_cast<Direction>(dirIndex);
-
+			float addedCost = (dirIndex > 3) ? 1.414 : 1;
 			XMFLOAT2 dirFloat;
 			switch (dir)
 			{
@@ -426,41 +433,47 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			if (currentTile == nullptr)
 				continue;
 			
-			/*if (dir == Direction::downleft)
+			if (dir == Direction::downleft)
 			{
-				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-					continue;
-				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-					continue;
+				Tile* leftTile = getAdjacentTile(current, -1, 0);
+				if (leftTile == nullptr) continue;
+
+				Tile* downTile = getAdjacentTile(current, 0, -1);
+				if (downTile == nullptr) continue;
 			}
 			else if (dir == Direction::downright)
 			{
-				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-					continue;
-				if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-					continue;
+				Tile* rightTile = getAdjacentTile(current, 1, 0);
+				if (rightTile == nullptr) continue;
+
+				Tile* downTile = getAdjacentTile(current, 0, -1);
+				if (downTile == nullptr) continue;
 			}
 			else if (dir == Direction::upright)
 			{
-				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-					continue;
-				if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-					continue;
+
+				Tile* upTile = getAdjacentTile(current, 0, 1);
+				if (upTile == nullptr) continue;
+
+				Tile* rightTile = getAdjacentTile(current, 1, 0);
+				if (rightTile == nullptr) continue;
 			}
 			else if (dir == Direction::upleft)
 			{
-				if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-					continue;
-				if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-					continue;
-			}*/
+
+				Tile* upTile = getAdjacentTile(current, 0, 1);
+				if (upTile == nullptr) continue;
+
+				Tile* leftTile = getAdjacentTile(current, -1, 0);
+				if (leftTile == nullptr) continue;
+			}
 		
 			
 
 
 			//--Rules End Here--
 
-			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
+			float gCost = current->gCost + addedCost;
 
 			float hCost = getDistance(currentTile, endTile);
 			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));

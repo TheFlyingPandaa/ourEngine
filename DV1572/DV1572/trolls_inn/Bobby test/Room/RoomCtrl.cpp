@@ -232,7 +232,6 @@ void RoomCtrl::_printRoomConnections() const
 
 RoomCtrl::RoomCtrl()
 {
-	m_entrance = nullptr;
 	
 	m_tileMesh[0] = new Mesh();
 	m_tileMesh[0]->MakeRectangle();
@@ -307,9 +306,38 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				j++;
 		}
 	}
+
+	int lastDoorIndex = m_rooms.size() - 1;
+
+	for (int i = 0; i < m_outsideDoorPos.size(); ++i)
+	{
+		int currentIndex = _intersect(m_outsideDoorPos[i].one);
+		if (lastDoorIndex == currentIndex)
+		{
+			DoorPassage dp;
+			dp.one = m_outsideDoorPos[i].one;
+			dp.two = m_outsideDoorPos[i].two;
+			dp.roomIndexes[0] = currentIndex;
+			dp.roomIndexes[1] = m_outsideDoorPos[i].roomIndexes[1];
+
+			DoorPassage dp2;
+			dp2.one = dp.two;
+			dp2.two = dp.one;
+			dp2.roomIndexes[0] = dp.roomIndexes[1];
+			dp2.roomIndexes[1] = dp.roomIndexes[0];
+
+			m_roomToRoom.push_back(dp);
+			m_roomToRoom.push_back(dp2);
+			_makeRoomConnection(currentIndex, m_outsideDoorPos[i].roomIndexes[1]);
+			m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
+			i = 0;
+
+		}
+	}
+
+
 	_printRoomConnections();
 
-	if (!m_entrance) m_entrance = m_rooms.back();
 
 	
 }
@@ -484,7 +512,11 @@ int RoomCtrl::getRoomConnections(int index) const
 	{
 		connections += m_roomConnectionMap[index][i];
 	}
-	return ++connections;
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		connections += (m_outsideDoorPos[i].roomIndexes[i] == index);
+	}
+	return connections;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -641,8 +673,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room1;
 							dp.roomIndexes[0] = room2Index;
 							dp.roomIndexes[1] = room1Index;
-
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+							
+							if(it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 						else
 						{
@@ -650,7 +684,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room2;
 							dp.roomIndexes[0] = room1Index;
 							dp.roomIndexes[1] = room2Index;
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+
+							if (it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 
 						std::cout << "This door is Outside->Inside || Inside->Outside";
