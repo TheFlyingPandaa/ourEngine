@@ -1,4 +1,5 @@
 #include "BuildState.h"
+#include "../../../Mesh Manager/MeshManager.h"
 
 void BuildState::_resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud)
 {
@@ -197,7 +198,8 @@ void BuildState::_objectBuildInput()
 	XMINT2 start;
 	start.x = static_cast<int>(s.x + 0.5f);
 	start.y = static_cast<int>(s.z + 0.5f);
-	Table fut = Table(DirectX::XMFLOAT3(start.x,0,start.y), &table,1);
+	//Mesh* temp = MeshHandler::getBed();
+	Table fut = Table(DirectX::XMFLOAT3(start.x,0,start.y),MeshHandler::getTable() ,1);
 	this->grid->ResetTileColor(start, start);
 	if (m_canBuildFurniture)
 	{

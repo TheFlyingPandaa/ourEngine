@@ -22,6 +22,8 @@ private:
 public:
 	Mesh();
 	Mesh(const std::string& path);
+	Mesh(const Mesh& mesh);
+	
 	~Mesh();
 	void LoadModel(const std::string &path);
 	void LoadModel(std::vector<VERTEX> &v);
@@ -32,8 +34,19 @@ public:
 	void setHighlightTexture(const std::string &path);
 	
 	Material* getMaterial(int i = 0);
-	ID3D11Buffer* getVertices(int i = 0) const;
-	ID3D11Buffer* getIndicesBuffer(int i = 0) const;
+	std::vector<Material*> getMaterials() const;
+
+	ID3D11Buffer*				getVertices(int i = 0) const;
+	std::vector<ID3D11Buffer*>	getVerticesBuffers()const;
+	std::vector<int>			getNrOfVerticesPerMaterials() const;
+
+	ID3D11Buffer* getIndicesBuffer(int i = 0) const;	//But you only get 1 buffer :c
+	std::vector<ID3D11Buffer*> getIndicesBuffers() const;
+
+	int getNrOfVertices() const;
+	int getIdCounter() const;
+	int getUniqueID() const;
+
 	int getNrOfIndices(int i = 0) const;
 	int getNumberOfParts() const;
 
