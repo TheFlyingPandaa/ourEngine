@@ -98,3 +98,38 @@ void Attributes::SetFoodQuality(int value)
 	this->m_foodQuality += value;
 	this->m_foodQuality = std::min(std::max(this->m_foodQuality, -10), 10);
 }
+
+void Attributes::SetReviewReputation(int value)
+{
+	this->m_reputation += value;
+}
+
+void Attributes::SetReviewStandard(int value)
+{
+	this->m_standard += value;
+}
+
+void Attributes::SetReviewPrices(int value)
+{
+	this->m_prices += value;
+}
+
+void Attributes::SetReviewCreepy(int value)
+{
+	this->m_creepy += value;
+}
+
+void Attributes::SetReviewShady(int value)
+{
+	this->m_shady += value;
+}
+
+void Attributes::SetReviewDrinkQuality(int value)
+{
+	this->m_drinkQuality += value;
+}
+
+void Attributes::SetReviewFoodQuality(int value)
+{
+	this->m_foodQuality += value;
+}

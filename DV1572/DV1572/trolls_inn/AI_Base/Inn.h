@@ -5,23 +5,12 @@
 #include <iostream>
 #include "../Time Management/GameTime.h"
 #include "../Bobby test/StateManager/HUD/HUD.h"
-struct innUpdateAttributes
-{
-	float creepy;
-	float drinkQuality;
-	float foodQuality;
-	float prices;
-	float reputation;
-	float shady;
-	float standard;
-};
 
 const int START_MONEY = 500;
 const double UPDATE_FREQ = 2.0;
 
 class Inn
 {
-	friend class AISolver;
 private:
 	
 	Mesh m_m;
@@ -31,7 +20,7 @@ private:
 
 	// Inn stuff
 	Attributes m_innAttributes;
-	innUpdateAttributes m_iUA;
+	Attributes m_innUpdateAttributes;
 	int m_foodPrice;
 	int m_sleepPrice;
 	int m_drinkPrice;
@@ -49,11 +38,11 @@ public:
 	~Inn();
 
 
-	int getFoodPrice() const;
-	int getSleepPrice() const;
-	int getDrinkPrice() const;
+	int GetFoodPrice() const;
+	int GetSleepPrice() const;
+	int GetDrinkPrice() const;
 
-	Attributes getInnAttributes() const;
+	Attributes GetInnAttributes() const;
 
 	void Update(double deltaTime, TIMEOFDAY TOD);
 	int getMoney() const;
@@ -66,9 +55,9 @@ public:
 	Text* GetText();
 
 	// Add a customers review to the inn stats
-	void customerReview(Attributes review);
+	void CustomerReview(Attributes review);
 	// Add stats to the inn based on the furniture placed
-	void furnitureStatAdd(Attributes furnitureStats);
+	void FurnitureStatAdd(Attributes furnitureStats);
 
 	void Update(Camera* cam);
 	void Draw();

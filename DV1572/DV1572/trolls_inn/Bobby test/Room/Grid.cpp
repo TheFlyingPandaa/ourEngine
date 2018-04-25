@@ -415,7 +415,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				break;
 			}
 			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
-			if (index < 0) continue;
+			if (index < 0 || index >= m_tiles.size()) continue;
 			Tile* currentTile = m_tiles[index];
 			
 			// Rules here
