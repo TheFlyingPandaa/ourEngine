@@ -12,9 +12,9 @@
 const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
+	hallway,
 	bedroom,
 	reception,
-	hallway,
 	randomStupid,
 	UNDEFINED
 };

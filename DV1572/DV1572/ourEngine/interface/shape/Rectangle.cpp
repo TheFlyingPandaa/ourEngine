@@ -15,6 +15,9 @@ RectangleShape::RectangleShape(float w, float h)
 	m_height = (h / s.y) * 4;
 	m_width = (w / s.x) * 4;
 
+	m_hoverColor = DirectX::XMFLOAT3{ 0,0,0 };
+	m_pressColor = DirectX::XMFLOAT3{ 0,0,0 };
+
 	_buildRectangle();
 	m_shape = ShapeType::Rectangle;
 	
@@ -110,6 +113,26 @@ DirectX::XMFLOAT3 RectangleShape::getScreenPos() const
 	pos.y = ((scrnPos.y + 1.0f) * s.y) * 0.5f;
 
 	return pos;
+}
+
+void RectangleShape::setHoverColor(DirectX::XMFLOAT3 hoverColor)
+{
+	m_hoverColor = hoverColor;
+}
+
+void RectangleShape::setPressColor(DirectX::XMFLOAT3 pressColor)
+{
+	m_pressColor = pressColor;
+}
+
+DirectX::XMFLOAT3 RectangleShape::getHoverColor() const
+{
+	return m_hoverColor;
+}
+
+DirectX::XMFLOAT3 RectangleShape::getPressedColor() const
+{
+	return m_pressColor;
 }
 
 void RectangleShape::setShapeType(ShapeType t)
