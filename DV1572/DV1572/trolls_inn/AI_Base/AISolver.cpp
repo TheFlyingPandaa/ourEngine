@@ -379,7 +379,7 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 		XMINT2 targetPosition = { (int)character.getPosition().x , (int)character.getPosition().y };
 
 		if (targetRoom == RoomType::randomStupid)
-			targetPosition = { (int)rand() % 31, (int)rand() % 31 };
+			targetPosition = { (int)rand() % 32, (int)rand() % 32 };
 		
 		
 

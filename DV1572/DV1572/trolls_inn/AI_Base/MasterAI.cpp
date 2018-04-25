@@ -169,7 +169,7 @@ void MasterAI::Update(Camera* cam)
 	// Delete customers that left the inn area
 	if (goneCustomers.size() > 0)
 		this->_sortVectorID(goneCustomers);
-	// BROKEN, same as previous
+	// BROKEN, same as previous (?)
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
 		int index = goneCustomers[i];
