@@ -20,7 +20,7 @@ bool Grid::_findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<
 int Grid::_index(int x, int y) const
 {
 	if (x < 0 || x >= m_sizeX) return -1;
-	else if (y < 0 || y >= m_sizeY) return -1;
+	if (y < 0 || y >= m_sizeY) return -1;
 
 	return x + (y * m_sizeY);
 }
