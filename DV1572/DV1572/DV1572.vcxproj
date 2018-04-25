@@ -165,6 +165,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\main.cpp">
@@ -227,6 +228,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
+    <ClInclude Include="trolls_inn\Furniture\Bed.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
@@ -374,6 +376,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="trolls_inn\Furniture\FurnitureStats\TableCreepyStats.txt" />
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableNormalStats.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />

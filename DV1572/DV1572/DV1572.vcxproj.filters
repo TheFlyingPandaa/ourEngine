@@ -70,6 +70,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
+    <ClInclude Include="trolls_inn\Furniture\Bed.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -139,6 +141,7 @@
     <Text Include="trolls_inn\Resources\cube.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableNormalStats.txt" />
+    <Text Include="trolls_inn\Furniture\FurnitureStats\TableCreepyStats.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
