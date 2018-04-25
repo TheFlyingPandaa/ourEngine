@@ -51,8 +51,8 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 		}
 	}
 
-	return new Customer(race, this->m_rNG.GenerateRandomNumber(20, 50));
-	//return new Customer(race, this->m_rNG.GenerateRandomNumber(50, 150));
+	//return new Customer(race, this->m_rNG.GenerateRandomNumber(20, 50));
+	return new Customer(race, this->m_rNG.GenerateRandomNumber(50, 150));
 }
 
 Customer* CustomerFlowControl::_generateRandomCustomer()

@@ -334,17 +334,14 @@ void AISolver::Update(Customer& customer, Action desiredAction, int price)
 		case DrinkAction:
 			GetPath(customer, RoomType::randomStupid);
 			customer.GetEconomy().Withdraw(price);
-			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case EatAction:
 			GetPath(customer, RoomType::randomStupid);
 			customer.GetEconomy().Withdraw(price);
-			//this->m_grid->generatePath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
 			GetPath(customer, RoomType::randomStupid);
 			customer.GetEconomy().Withdraw(price);
-			//this->m_grid->generatePath(customer, RoomType::bedroom);
 			break;
 		}
 		customer.PopToNextState(); // pop Thinking state
