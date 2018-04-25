@@ -131,6 +131,7 @@ void MasterAI::Update(Camera* cam)
 		this->m_solver.restartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
+	
 	// BROKEN, subscript changes when first customer is deleted. Fixed(?)
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
@@ -147,7 +148,8 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-
+			m_solver.GetPath(*leavingCustomer, randomStupid);
+			std::cout << "!!!!!!!!!!!!!!!!!!!!!!!This customer is now leaving!!!!!!!!!!!!!!!!!!!!\n";
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else

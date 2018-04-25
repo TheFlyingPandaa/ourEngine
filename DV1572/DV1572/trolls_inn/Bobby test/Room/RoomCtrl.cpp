@@ -219,8 +219,8 @@ void RoomCtrl::_printRoomConnections() const
 				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
 				{
 					std::cout << "Room " << i << "-> " << ii << "\n";
-					std::cout << "One door Pos: (" << m_roomToRoom[i].one.x << "," << m_roomToRoom[i].one.y << ")\n";
-					std::cout << "Two door Pos: (" << m_roomToRoom[i].two.x << "," << m_roomToRoom[i].two.y << ")\n";
+					std::cout << "One door Pos: (" << m_roomToRoom[j].one.x << "," << m_roomToRoom[j].one.y << ")\n";
+					std::cout << "Two door Pos: (" << m_roomToRoom[j].two.x << "," << m_roomToRoom[j].two.y << ")\n";
 				}
 			}
 
