@@ -23,36 +23,9 @@ const float WALLOFFSET = 0.5f;
 class RoomCtrl
 {
 public:
-	struct RoomConnection
-	{
-		Room* otherRoom; // if nullptr, then the connection is to the outside
-		XMINT2 connectingDoor;
-		XMINT2 direction;
-
-		bool operator==(const RoomConnection& other)
-		{
-			return *otherRoom == *other.otherRoom;
-		}
-		bool operator==(const Room& other)
-		{
-			return *otherRoom == other;
-		}
-		bool operator==(const Room* other)
-		{
-			if (other == nullptr)
-			{
-				if (otherRoom == nullptr)
-					return true;
-				return false;
-			}
-			if (otherRoom == nullptr)
-				return false;
-
-			return *otherRoom == *other;
-		}
-	};
 	struct DoorPassage
 	{
+		int roomIndexes[2];
 		XMINT2 one;
 		XMINT2 two;
 	};
@@ -67,6 +40,7 @@ private:
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
 
 	std::vector<DoorPassage> m_outsideDoorPos;
+	std::vector<DoorPassage> m_roomToRoom;
 	std::vector<std::vector<int>> m_roomConnectionMap;
 
 	std::vector<int>	m_tempPath;
@@ -110,10 +84,12 @@ public:
 	void				CreateDoor(XMFLOAT3 wallPosition);
 	
 	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;
+	DoorPassage			getDoorPassage(int index1, int index2) const;
 
 	std::vector<int>	roomTraversal(Tile* roomTile1, Tile * roomTile2);
 
 	Room*				getRoomAt(int index);
+	Room*				getRoomAtPos(XMINT2 pos);
 
 	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 

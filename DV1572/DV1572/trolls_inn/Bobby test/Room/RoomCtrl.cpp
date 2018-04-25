@@ -210,6 +210,23 @@ void RoomCtrl::_printRoomConnections() const
 	for (int i = 0; i < m_tempPath.size(); i++)
 		std::cout << m_tempPath[i] << " ";
 	std::cout << std::endl;
+	for (int i = 0; i < m_roomConnectionMap.size(); i++)
+	{
+		for (int ii = 0; ii < m_roomConnectionMap[i].size(); ii++)
+		{
+			for (int j = 0; j < m_roomToRoom.size(); j++)
+			{
+				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
+				{
+					std::cout << "Room " << i << "-> " << ii << "\n";
+					std::cout << "One door Pos: (" << m_roomToRoom[i].one.x << "," << m_roomToRoom[i].one.y << ")\n";
+					std::cout << "Two door Pos: (" << m_roomToRoom[i].two.x << "," << m_roomToRoom[i].two.y << ")\n";
+				}
+			}
+
+		}
+	}
+
 
 }
 
@@ -588,11 +605,20 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 					wall->setIsDoor(true);
 					if (wall->isShared())
 					{
+						DoorPassage dp;
+
 						// Create connection between rooms
 						XMINT2 room1 = wall->getNormalPosition();
 						XMINT2 room2 = wall->getNegativeNormalPosition();
 						int room1Index = _intersect(room1);
 						int room2Index = _intersect(room2);
+
+						dp.one = room1;
+						dp.two = room2;
+						dp.roomIndexes[0] = room1Index;
+						dp.roomIndexes[1] = room2Index;
+
+						m_roomToRoom.push_back(dp);
 
 						_makeRoomConnection(room1Index, room2Index);
 						_printRoomConnections();
@@ -609,12 +635,17 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 						{
 							dp.one = room2;
 							dp.two = room1;
+							dp.roomIndexes[0] = room2Index;
+							dp.roomIndexes[1] = room1Index;
+
 							m_outsideDoorPos.push_back(dp);
 						}
 						else
 						{
 							dp.one = room1;
 							dp.two = room2;
+							dp.roomIndexes[0] = room1Index;
+							dp.roomIndexes[1] = room2Index;
 							m_outsideDoorPos.push_back(dp);
 						}
 
@@ -634,26 +665,40 @@ RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) con
 	return m_outsideDoorPos[0];
 }
 
+RoomCtrl::DoorPassage RoomCtrl::getDoorPassage(int index1, int index2) const
+{
+	for (int i = 0; i < m_roomToRoom.size(); i++)
+	{
+		if (m_roomToRoom[i].roomIndexes[0] == index1 && m_roomToRoom[i].roomIndexes[1] == index2)
+			return m_roomToRoom[i];
+	}
+	return DoorPassage();
+}
+
 std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 {
 	m_tempPath.clear();
-	/*int indexes[2] = { -1 };
-	for (int i = 0; i < m_rooms.size(); i++)
-	{
-		if (*m_rooms[i] == *roomTile1->getRoom())
-			indexes[0] = i;
-		if (*m_rooms[i] == *roomTile2->getRoom())
-			indexes[1] = i;
-	}
+	int indexes[2] = { -1 };
+	XMINT2 room1Pos = { (int)roomTile1->getQuad().getPosition().x, (int)roomTile1->getQuad().getPosition().z };
+	XMINT2 room2Pos = { (int)roomTile2->getQuad().getPosition().x, (int)roomTile2->getQuad().getPosition().z };
+	indexes[0] = _intersect(room1Pos);
+	indexes[1] = _intersect(room2Pos);
 
 	_dijkstra(indexes[0], indexes[1]);
-		*/
+		
 	return m_tempPath;
 }
 
 Room * RoomCtrl::getRoomAt(int index)
 {
 	return m_rooms[index];
+}
+
+Room * RoomCtrl::getRoomAtPos(XMINT2 pos)
+{
+	int index = _intersect(pos);
+	Room* targetRoom = getRoomAt(index);
+	return targetRoom;
 }
 
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
