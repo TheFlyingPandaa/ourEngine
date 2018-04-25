@@ -16,7 +16,7 @@ private:
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
 
-
+	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
 	~AISolver();
@@ -25,8 +25,10 @@ public:
 	void restartClock();
 
 	void Update(Customer& customer, std::chrono::duration<double> time_span);
-	void Update(Customer& customer, Action desiredAction);
+	void Update(Customer& customer, Action desiredAction, int price = 0);
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);
 	// Get Path function (?)
+
+	void GetPath(Character& character, RoomType targetRoom);
 };

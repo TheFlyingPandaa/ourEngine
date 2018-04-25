@@ -135,24 +135,6 @@ void GameState::Update(double deltaTime)
 		m_roomctrl->PickWalls();
 	}
 	
-
-	//<TEMP>
-	/*c.Update();
-	if (c.walkQueueDone())
-	{
-		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
-		{
-			c.Move(Character::UP);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
-		{
-			c.Move(Character::DOWN);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-	}*/
 }
 
 void GameState::Draw()
@@ -166,7 +148,7 @@ void GameState::Draw()
 	c.Draw();
 	//this->grid2->Draw();
 
-	//m_mai.Draw();
+	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 }
