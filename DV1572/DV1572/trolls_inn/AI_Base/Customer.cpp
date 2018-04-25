@@ -12,6 +12,7 @@ Customer::Customer(Race race, int gold)
 	this->SetAction(WalkToInn);
 	this->m_stats.SetDrinkQuality(2); // TEST
 	this->m_stats.SetFoodQuality(1); // TEST
+	this->m_stats.SetShady(8);
 }
 
 Customer::Customer(const Customer& other) : Character(other)

@@ -72,7 +72,7 @@ void Inn::_checkInnStatUpdate()
 		//this->m_iUA.standard -= 10;
 	}
 	std::cout << "Creepy: " << this->m_innAttributes.GetCreepy() << std::endl;
-	std::cout << "Drink Quality: " << this->m_innAttributes.GetCreepy() << std::endl;
+	std::cout << "Drink Quality: " << this->m_innAttributes.GetDrinkQuality() << std::endl;
 	std::cout << "Food Quality: " << this->m_innAttributes.GetFoodQuality() << std::endl;
 	std::cout << "Prices: " << this->m_innAttributes.GetPrices() << std::endl;
 	std::cout << "Reputation: " << this->m_innAttributes.GetReputation() << std::endl;

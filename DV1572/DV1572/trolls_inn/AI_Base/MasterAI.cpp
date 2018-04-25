@@ -1,5 +1,33 @@
 #include "MasterAI.h"
 
+void MasterAI::_sortVectorID(std::vector<int>& ID)
+{
+	int highestValueIndex;
+
+	for (int i = 0; i < ID.size(); i++)
+	{
+		highestValueIndex = i;
+		for (int k = i + 1; k < ID.size(); k++)
+		{
+			if (ID[k] > ID[highestValueIndex])
+			{
+				highestValueIndex = k;
+			}
+		}
+		this->_swap(i, highestValueIndex, ID);
+	}
+
+	for (int i = 0; i < ID.size(); i++)
+		std::cout << ID[i] << std::endl;
+}
+
+void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
+{
+	int temp = ID[index1];
+	ID[index1] = ID[index2];
+	ID[index2] = temp;
+}
+
 MasterAI::MasterAI()
 	: m_solver(m_inn.GetGrid())
 {
@@ -105,14 +133,15 @@ void MasterAI::Update(Camera* cam)
 
 	if (this->m_solver.getTimeSpan().count() > 1)
 		this->m_solver.restartClock();
-
+	if (leavingCustomersIDs.size() > 0)
+		this->_sortVectorID(leavingCustomersIDs);
 	// BROKEN, subscript changes when first customer is deleted
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
 		this->m_customers.erase(this->m_customers.begin() + leavingCustomersIDs[i]);
 	}
-	
+
 	std::vector<int> goneCustomers;
 	loopCounter = 0;
 
@@ -141,6 +170,8 @@ void MasterAI::Update(Camera* cam)
 		loopCounter++;
 	}
 	// Delete customers that left the inn area
+	if (goneCustomers.size() > 0)
+		this->_sortVectorID(goneCustomers);
 	// BROKEN, same as previous
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
