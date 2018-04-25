@@ -4,18 +4,7 @@
 
 class Inn
 {
-	friend class AISolver;
 private:
-	struct innUpdateAttributes
-	{
-		int creepy;
-		int drinkQuality;
-		int foodQuality;
-		int prices;
-		int reputation;
-		int shady;
-		int standard;
-	};
 
 	// Grid stuff
 	Grid* m_grid;
@@ -26,7 +15,6 @@ private:
 
 	// Inn stuff
 	Attributes m_innAttributes;
-	innUpdateAttributes m_iUA;
 	Attributes m_innUpdateAttributes;
 	int m_foodPrice;
 	int m_sleepPrice;

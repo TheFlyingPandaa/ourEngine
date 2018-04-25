@@ -34,6 +34,15 @@ public:
 	void SetDrinkQuality(int value);
 	void SetFoodQuality(int value);
 
+	// Same as previous sets, but for reviews
+	void SetReviewReputation(int value);
+	void SetReviewStandard(int value);
+	void SetReviewPrices(int value);
+	void SetReviewCreepy(int value);
+	void SetReviewShady(int value);
+	void SetReviewDrinkQuality(int value);
+	void SetReviewFoodQuality(int value);
+
 };
 
 static Attributes orcAtr = { -5, -5, 2, -7, -7, 4, 6 };

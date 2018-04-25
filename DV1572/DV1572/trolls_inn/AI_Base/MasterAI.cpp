@@ -4,7 +4,7 @@ void MasterAI::_sortVectorID(std::vector<int>& ID)
 {
 	int highestValueIndex;
 
-	for (int i = 0; i < ID.size(); i++)
+	for (int i = 0; i < ID.size() - 1; i++)
 	{
 		highestValueIndex = i;
 		for (int k = i + 1; k < ID.size(); k++)
@@ -19,6 +19,7 @@ void MasterAI::_sortVectorID(std::vector<int>& ID)
 
 	for (int i = 0; i < ID.size(); i++)
 		std::cout << ID[i] << std::endl;
+	std::cout << std::endl;
 }
 
 void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
@@ -135,7 +136,7 @@ void MasterAI::Update(Camera* cam)
 		this->m_solver.restartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
-	// BROKEN, subscript changes when first customer is deleted
+	// BROKEN, subscript changes when first customer is deleted. Fixed(?)
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
@@ -152,7 +153,6 @@ void MasterAI::Update(Camera* cam)
 		{
 			// Customer wants path to exit
 
-			
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else

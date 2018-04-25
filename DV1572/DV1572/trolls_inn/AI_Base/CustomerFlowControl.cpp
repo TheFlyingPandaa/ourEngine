@@ -23,45 +23,36 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 			break;
 		}
 		int points = 0;
-		points += ((10 + attributes.GetCreepy()) >= (innAttributes.GetCreepy() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetDrinkQuality()) >= (innAttributes.GetDrinkQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetFoodQuality()) >= (innAttributes.GetFoodQuality() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetPrices()) >= (innAttributes.GetPrices() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetReputation()) >= (innAttributes.GetReputation() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetShady()) >= (innAttributes.GetShady() + 10)) ? 1 : 0;
-		points += ((10 + attributes.GetStandard()) >= (innAttributes.GetStandard() + 10)) ? 1 : 0;
+
+		points += abs((10 + attributes.GetCreepy()) - (10 + innAttributes.GetCreepy()));
+		points += abs((10 + attributes.GetDrinkQuality()) - (10 + innAttributes.GetDrinkQuality()));
+		points += abs((10 + attributes.GetFoodQuality()) - (10 + innAttributes.GetFoodQuality()));
+		points += abs((10 + attributes.GetPrices()) - (10 + innAttributes.GetPrices()));
+		points += abs((10 + attributes.GetReputation()) - (10 + innAttributes.GetReputation()));
+		points += abs((10 + attributes.GetShady()) - (10 + innAttributes.GetShady()));
+		points += abs((10 + attributes.GetStandard()) - (10 + innAttributes.GetStandard()));
 
 		return points;
 	};
+
 	Race race;
 	race = Orc;
-	
-	int highestScore = 0;
+	int closestMatch = 200;
 	// Human is first and dwarf is the last in the enum structure. IMPORTANT
-	for (int currentRace = Human; currentRace != Dwarf; currentRace++)
+	for (int currentRace = Human; currentRace <= Dwarf; currentRace++)
 	{
 		Race cr = static_cast<Race>(currentRace);
 		int cp = getPoints(cr);
 
-		if (highestScore < cp)
+		if (closestMatch > cp)
 		{
 			race = cr;
-			highestScore = cp;
+			closestMatch = cp;
 		}
 	}
 
-	return new Customer(race, this->m_rNG.GenerateRandomNumber(50, 150));
-}
-
-Customer CustomerFlowControl::_generateCustomer(Race race)
-{
-	// Generate a customer with the desired race and a random amount of gold
-	Customer newCustomer(race, this->m_rNG.GenerateRandomNumber(50, 150));
-	newCustomer.SetHungry(this->m_rNG.GenerateRandomNumber(-10, 10));
-	newCustomer.SetThirsty(this->m_rNG.GenerateRandomNumber(-10, 10));
-	newCustomer.SetTired(this->m_rNG.GenerateRandomNumber(-10, 10));
-
-	return newCustomer;
+	return new Customer(race, this->m_rNG.GenerateRandomNumber(20, 50));
+	//return new Customer(race, this->m_rNG.GenerateRandomNumber(50, 150));
 }
 
 Customer* CustomerFlowControl::_generateRandomCustomer()
@@ -90,6 +81,7 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 
 CustomerFlowControl::CustomerFlowControl()
 {
+	// Load all race models
 	box.LoadModel("trolls_inn/Resources/box.obj");
 }
 

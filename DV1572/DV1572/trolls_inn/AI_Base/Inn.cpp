@@ -3,73 +3,86 @@
 
 void Inn::_addStatsToInn(Attributes type)
 {
-	/*this->m_iUA.creepy += type.GetCreepy();
-	this->m_iUA.drinkQuality += type.GetDrinkQuality();
-	this->m_iUA.foodQuality += type.GetFoodQuality();
-	this->m_iUA.prices += type.GetPrices();
-	this->m_iUA.reputation += type.GetReputation();
-	this->m_iUA.shady += type.GetShady();
-	this->m_iUA.standard += type.GetStandard();*/
-	this->m_innUpdateAttributes.SetCreepy(type.GetCreepy());
-	this->m_innUpdateAttributes.SetDrinkQuality(type.GetDrinkQuality());
-	this->m_innUpdateAttributes.SetFoodQuality(type.GetFoodQuality());
-	this->m_innUpdateAttributes.SetPrices(type.GetPrices());
-	this->m_innUpdateAttributes.SetReputation(type.GetReputation());
-	this->m_innUpdateAttributes.SetShady(type.GetShady());
-	this->m_innUpdateAttributes.SetStandard(type.GetStandard());
+	this->m_innUpdateAttributes.SetReviewCreepy(type.GetCreepy());
+	this->m_innUpdateAttributes.SetReviewDrinkQuality(type.GetDrinkQuality());
+	this->m_innUpdateAttributes.SetReviewFoodQuality(type.GetFoodQuality());
+	this->m_innUpdateAttributes.SetReviewPrices(type.GetPrices());
+	this->m_innUpdateAttributes.SetReviewReputation(type.GetReputation());
+	this->m_innUpdateAttributes.SetReviewShady(type.GetShady());
+	this->m_innUpdateAttributes.SetReviewStandard(type.GetStandard());
 }
 
 void Inn::_checkInnStatUpdate()
 {
-	//if (this->m_iUA.creepy >= 10)
 	if (this->m_innUpdateAttributes.GetCreepy() >= 10)
 	{
 		this->m_innAttributes.SetCreepy(1);
-		this->m_innUpdateAttributes.SetCreepy(-10);
-		//this->m_innAttributes.SetCreepy((int)(this->m_iUA.creepy * 0.1));
-		//this->m_iUA.creepy -= 10;
+		this->m_innUpdateAttributes.SetReviewCreepy(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetDrinkQuality() >= 10)
-	//else if (this->m_iUA.drinkQuality >= 10)
+	else if (this->m_innUpdateAttributes.GetCreepy() <= -10)
+	{
+		this->m_innAttributes.SetCreepy(-1);
+		this->m_innUpdateAttributes.SetReviewCreepy(10);
+	}
+	if (this->m_innUpdateAttributes.GetDrinkQuality() >= 10)
 	{
 		this->m_innAttributes.SetDrinkQuality(1);
-		this->m_innUpdateAttributes.SetDrinkQuality(-10);
-		//this->m_iUA.drinkQuality -= 10;
+		this->m_innUpdateAttributes.SetReviewDrinkQuality(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetFoodQuality() >= 10)
-	//else if (this->m_iUA.foodQuality >= 10)
+	else if (this->m_innUpdateAttributes.GetDrinkQuality() <= -10)
+	{
+		this->m_innAttributes.SetDrinkQuality(-1);
+		this->m_innUpdateAttributes.SetReviewDrinkQuality(10);
+	}
+	if (this->m_innUpdateAttributes.GetFoodQuality() >= 10)
 	{
 		this->m_innAttributes.SetFoodQuality(1);
-		this->m_innUpdateAttributes.SetFoodQuality(-10);
-		//this->m_iUA.foodQuality -= 10;
+		this->m_innUpdateAttributes.SetReviewFoodQuality(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetPrices() >= 10)
-	//else if (this->m_iUA.prices >= 10)
+	else if (this->m_innUpdateAttributes.GetFoodQuality() <= -10)
+	{
+		this->m_innAttributes.SetFoodQuality(-1);
+		this->m_innUpdateAttributes.SetReviewFoodQuality(10);
+	}
+	if (this->m_innUpdateAttributes.GetPrices() >= 10)
 	{
 		this->m_innAttributes.SetPrices(1);
-		this->m_innUpdateAttributes.SetPrices(-10);
-		//this->m_iUA.prices -= 10;
+		this->m_innUpdateAttributes.SetReviewPrices(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetReputation() >= 10)
-	//else if (this->m_iUA.reputation >= 10)
+	else if (this->m_innUpdateAttributes.GetPrices() <= -10)
+	{
+		this->m_innAttributes.SetPrices(-1);
+		this->m_innUpdateAttributes.SetReviewPrices(10);
+	}
+	if (this->m_innUpdateAttributes.GetReputation() >= 10)
 	{
 		this->m_innAttributes.SetReputation(1);
-		this->m_innUpdateAttributes.SetReputation(-10);
-		//this->m_iUA.reputation -= 10;
+		this->m_innUpdateAttributes.SetReviewReputation(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetShady() >= 10)
-	//else if (this->m_iUA.shady >= 10)
+	else if (this->m_innUpdateAttributes.GetReputation() <= -10)
+	{
+		this->m_innAttributes.SetReputation(-1);
+		this->m_innUpdateAttributes.SetReviewReputation(10);
+	}
+	if (this->m_innUpdateAttributes.GetShady() >= 10)
 	{
 		this->m_innAttributes.SetShady(1);
-		this->m_innUpdateAttributes.SetShady(-10);
-		//this->m_iUA.shady -= 10;
+		this->m_innUpdateAttributes.SetReviewShady(-10);
 	}
-	else if (this->m_innUpdateAttributes.GetStandard() >= 10)
-	//else if (this->m_iUA.standard >= 10)
+	else if (this->m_innUpdateAttributes.GetShady() <= -10)
+	{
+		this->m_innAttributes.SetShady(-1);
+		this->m_innUpdateAttributes.SetReviewShady(10);
+	}
+	if (this->m_innUpdateAttributes.GetStandard() >= 10)
 	{
 		this->m_innAttributes.SetStandard(1);
-		this->m_innUpdateAttributes.SetStandard(-10);
-		//this->m_iUA.standard -= 10;
+		this->m_innUpdateAttributes.SetReviewStandard(-10);
+	}
+	else if (this->m_innUpdateAttributes.GetStandard() <= -10)
+	{
+		this->m_innAttributes.SetStandard(-1);
+		this->m_innUpdateAttributes.SetReviewStandard(10);
 	}
 	std::cout << "Creepy: " << this->m_innAttributes.GetCreepy() << std::endl;
 	std::cout << "Drink Quality: " << this->m_innAttributes.GetDrinkQuality() << std::endl;
