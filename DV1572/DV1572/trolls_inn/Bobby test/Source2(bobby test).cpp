@@ -198,8 +198,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		//boxy.setPos(cam->getPosition());
 		boxy.Draw();
-		if (Input::isMouseLeftPressed())
-		{
+		
 			Shape* picked = nullptr;
 			picked = wnd.getPicked(cam);
 
@@ -207,7 +206,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			if (picked) {
 				pickingEvents.push(picked);
 			}
-		}
+		
 
 		fpsCounter++;
 		gameState->Draw();

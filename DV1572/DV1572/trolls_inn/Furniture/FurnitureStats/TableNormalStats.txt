@@ -1,0 +1,7 @@
+Reputation 0
+Standard 0
+Prices 100
+Creepy 0
+Shady 0
+DrinkQuality 0
+FoodQuality 0

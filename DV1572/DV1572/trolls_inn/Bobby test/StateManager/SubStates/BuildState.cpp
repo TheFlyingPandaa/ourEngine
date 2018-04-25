@@ -16,6 +16,10 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 {
 	if (dynamic_cast<RectangleShape*>(pickedShape) == nullptr)
 	{
+		if (m_currentBuildType == CurrentBuildType::Furniture)
+		{
+			m_startTile = pickedShape;
+		}
 		switch (m_buildStage)
 		{
 		case BuildStage::Start:
@@ -37,9 +41,20 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 
 void BuildState::_buildInput()
 {
+	if (m_currentBuildType == CurrentBuildType::Furniture)
+	{
+		m_roomCtrl->PickRoomTiles();
+		if (m_startTile)
+		{
+			test.setPos(m_startTile->getPosition().x + 0.5f, m_startTile->getPosition().y - 0.20f, m_startTile->getPosition().z + 0.5f);
+		}
+			
+	}
 	if (Input::isMouseLeftPressed() && (m_currentBuildType != CurrentBuildType::NONE && (m_selectedRoomType != RoomType::UNDEFINED || m_selectedDoor != -1 || m_selectedFurniture != -1)))
 	{
 		//this->grid->PickTiles();
+		
+
 		if (m_buildStage == BuildStage::None)
 		{
 			m_buildStage = BuildStage::Start;
@@ -49,8 +64,8 @@ void BuildState::_buildInput()
 				grid->PickTiles();
 			if (m_currentBuildType == CurrentBuildType::Door)
 				m_roomCtrl->PickWalls();
-			if (m_currentBuildType == CurrentBuildType::Furniture)
-				m_roomCtrl->PickRoomTiles();
+			//if (m_currentBuildType == CurrentBuildType::Furniture)
+				//m_roomCtrl->PickRoomTiles();
 
 			
 		}
@@ -182,7 +197,7 @@ void BuildState::_objectBuildInput()
 	XMINT2 start;
 	start.x = static_cast<int>(s.x + 0.5f);
 	start.y = static_cast<int>(s.z + 0.5f);
-	Table fut = Table(DirectX::XMFLOAT3(start.x,0,start.y), &table);
+	Table fut = Table(DirectX::XMFLOAT3(start.x,0,start.y), &table,1);
 	this->grid->ResetTileColor(start, start);
 	if (m_canBuildFurniture)
 	{
@@ -266,11 +281,13 @@ bool BuildState::_mainHudPick()
 					m_selectedDoor = -1;
 					m_selectedFurniture = -1;
 					m_currentBuildType = CurrentBuildType::NONE;
+					m_roomCtrl->setIsBuildingDoor(false);
 				}
 				else
 				{
 					m_selectedRoomType = RoomType::UNDEFINED;
 					m_currentBuildType = CurrentBuildType::Door;
+					m_roomCtrl->setIsBuildingDoor(true);
 					for (size_t i = 0; i < m_roomHUDButtonsPressed.size(); i++)
 						m_roomHUDButtonsPressed[i] = false;
 				}
@@ -497,10 +514,13 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
+	test.setMesh(&table);
 }
 
 BuildState::~BuildState()
 {
+	//This is to reset the Walls, so they go down if you where in the buildMode
+	m_roomCtrl->setIsBuildingDoor(false);
 }
 
 void BuildState::_init()
@@ -519,17 +539,19 @@ void BuildState::_init()
 		m_roomHUDButtonsPressed.push_back(false);
 
 	m_doorHUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/DoorBuild/DoorBuildHud.txt");
+	
+	
 }
 
 void BuildState::Update(double deltaTime)
 {
 	if (m_selectedDoor != -1)
 	{
-		m_roomCtrl->setIsBuildingDoor(true);
+		//m_roomCtrl->setIsBuildingDoor(true);//TODO: SET THIS AS A BUTTON, NO NEED TO UPDATE ALL THE TIME
 	}
 	else
 	{
-		m_roomCtrl->setIsBuildingDoor(false);
+		//m_roomCtrl->setIsBuildingDoor(false);
 	}
 	//m_doorBuild = m_hudButtonsPressed[2];
 	
@@ -543,6 +565,11 @@ void BuildState::Draw()
 {
 	if (!m_hudButtonsPressed[2] && m_buildStage == BuildStage::Selection)
 		m_priceOfRoom.Draw();
+
+	if (m_currentBuildType == CurrentBuildType::Furniture)
+	{
+		test.Draw();
+	}
 }
 
 void BuildState::DrawHUD()

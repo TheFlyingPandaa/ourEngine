@@ -606,6 +606,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 					if (wall->isShared())
 					{
 						DoorPassage dp;
+						DoorPassage dp2;
 
 						// Create connection between rooms
 						XMINT2 room1 = wall->getNormalPosition();
@@ -613,12 +614,14 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 						int room1Index = _intersect(room1);
 						int room2Index = _intersect(room2);
 
-						dp.one = room1;
-						dp.two = room2;
+						dp.one = dp2.two = room1;
+						dp.two = dp2.one = room2;
 						dp.roomIndexes[0] = room1Index;
 						dp.roomIndexes[1] = room2Index;
-
+						dp2.roomIndexes[0] = dp.roomIndexes[1];
+						dp2.roomIndexes[1] = dp.roomIndexes[0];
 						m_roomToRoom.push_back(dp);
+						m_roomToRoom.push_back(dp2);
 
 						_makeRoomConnection(room1Index, room2Index);
 						_printRoomConnections();

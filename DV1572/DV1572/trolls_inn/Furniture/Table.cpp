@@ -1,6 +1,6 @@
 #include "Table.h"
 
-Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh) : Furniture(pos, mesh)
+Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos, mesh)
 {
 	p_gridSize = 2;
 	p_rot = 0;
@@ -9,6 +9,18 @@ Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh) : Furniture(pos, mesh)
 	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
 	//Set Whatever suits
 	//p_attributes
+	if (setting == 0)
+	{
+		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
+	
+	}
+	else if(setting == 1)
+	{
+		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
+		
+		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
+	}
+
 }
 
 Table::~Table()
