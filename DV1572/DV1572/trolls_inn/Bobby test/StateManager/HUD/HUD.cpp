@@ -169,13 +169,17 @@ bool HUD::LoadHud(const std::string & path)
 				r = new RectangleShape();
 				r->setMesh(m_mesh[m_mesh.size() - 1]);
 				
-				float pX, pY, sX, sY = 0.0f;
+				float pX, pY, sX, sY;
 				int relativeTo;
 				std::string shape = "";
+
+				DirectX::XMFLOAT3 hover;
+				DirectX::XMFLOAT3 press;
+
 				int index = 0;
 				float d = 0;
 
-				stream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo >> shape;
+				stream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo >> shape >> hover.x >> hover.y >> hover.z >> press.x >> press.y >> press.z;
 
 				d *= 0.00001f;
 				if (static_cast<int>(sX) == 0)
@@ -197,10 +201,14 @@ bool HUD::LoadHud(const std::string & path)
 					r->setShapeType(RectangleShape::ShapeType::Rectangle);
 				
 				if (index < 0)
+				{
 					m_quadsNonClickAble.push_back(r);
+				}
 				else
 				{
 					r->setIndex(index);
+					r->setHoverColor(hover);
+					r->setPressColor(press);
 					m_quadsClickAble.push_back(r);
 				}
 			}
@@ -389,7 +397,38 @@ int HUD::PickHud(DirectX::XMFLOAT2 mousePos) const
 
 void HUD::SetColorOnButton(int index, float r, float g, float b)
 {
-	m_quadsClickAble[index]->setColor(r, g, b);
+	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
+	{
+		if (m_quadsClickAble[i]->getIndex() == index)
+		{
+			m_quadsClickAble[i]->setColor(r, g, b);
+			return;
+		}
+	}
+}
+
+void HUD::SetHoverColorOnButton(int index)
+{
+	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
+	{
+		if (m_quadsClickAble[i]->getIndex() == index)
+		{
+			m_quadsClickAble[i]->setColor(m_quadsClickAble[i]->getHoverColor());
+			return;
+		}
+	}
+}
+
+void HUD::SetPressColorOnButton(int index)
+{
+	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
+	{
+		if (m_quadsClickAble[i]->getIndex() == index)
+		{
+			m_quadsClickAble[i]->setColor(m_quadsClickAble[i]->getPressedColor());
+			return;
+		}
+	}
 }
 
 void HUD::ResetColorsExcept(int index)

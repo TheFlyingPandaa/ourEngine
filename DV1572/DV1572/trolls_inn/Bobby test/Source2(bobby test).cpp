@@ -198,15 +198,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		//boxy.setPos(cam->getPosition());
 		boxy.Draw();
-		
-			Shape* picked = nullptr;
-			picked = wnd.getPicked(cam);
 
-
-			if (picked) {
-				pickingEvents.push(picked);
-			}
-		
+		Shape* picked = nullptr;
+		picked = wnd.getPicked(cam);
+		if (picked)
+			pickingEvents.push(picked);
 
 		fpsCounter++;
 		gameState->Draw();

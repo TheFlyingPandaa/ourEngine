@@ -237,6 +237,7 @@ RoomCtrl::RoomCtrl()
 	m_tileMesh[0] = new Mesh();
 	m_tileMesh[0]->MakeRectangle();
 	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/wood.png");
+	m_tileMesh[0]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");

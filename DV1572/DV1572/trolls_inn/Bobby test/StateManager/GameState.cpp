@@ -198,14 +198,25 @@ void GameState::_setHud()
 void GameState::_handlePicking()
 {
 	bool hudWasPicked = _handleHUDPicking();
-	if (m_stage == GameStage::Play)
+	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 	{
 		m_grid->PickTiles();
 		m_roomctrl->PickRoomTiles();
 	}
 
 	if (hudWasPicked)
+	{
 		while (!p_pickingEvent->empty()) this->p_pickingEvent->pop();
+	}
+
+	if (p_pickingEvent->empty())
+	{
+		if (!m_subStates.empty())
+		{
+			SubState* ss = m_subStates.top();
+			ss->HandlePicking(nullptr);
+		}
+	}
 
 	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 		m_grid->PickTiles();
