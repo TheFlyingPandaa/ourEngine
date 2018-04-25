@@ -15,6 +15,18 @@ Mesh::Mesh(const std::string & path)
 	m_uniqueID = m_idCounter++;
 }
 
+Mesh::Mesh(const Mesh & mesh)
+{
+	m_vertexBuffers = mesh.getVerticesBuffers();
+	m_indexBuffers = mesh.getIndicesBuffers();
+	m_materials = mesh.getMaterials();
+	m_nrOfVerticesPerMaterials = mesh.getNrOfVerticesPerMaterials();
+	m_nrOfVertices = mesh.getNrOfVertices();
+	m_idCounter = mesh.getIdCounter();
+	m_uniqueID = mesh.getUniqueID();
+
+}
+
 Mesh::~Mesh()
 {	
 	// Sometimes are there copies of the same materials. Better solutions please!
@@ -356,14 +368,49 @@ Material* Mesh::getMaterial(int i)
 	return m_materials[i];
 }
 
+std::vector<Material*> Mesh::getMaterials() const
+{
+	return m_materials;
+}
+
 ID3D11Buffer * Mesh::getVertices(int i) const
 {
 	return m_vertexBuffers[i];
 }
 
+std::vector<ID3D11Buffer*> Mesh::getVerticesBuffers() const
+{
+	return m_vertexBuffers;
+}
+
+std::vector<int> Mesh::getNrOfVerticesPerMaterials() const
+{
+	return m_nrOfVerticesPerMaterials;
+}
+
 ID3D11Buffer * Mesh::getIndicesBuffer(int i) const
 {
 	return m_indexBuffers[i];
+}
+
+std::vector<ID3D11Buffer*> Mesh::getIndicesBuffers() const
+{
+	return m_indexBuffers;
+}
+
+int Mesh::getNrOfVertices() const
+{
+	return m_nrOfVertices;
+}
+
+int Mesh::getIdCounter() const
+{
+	return m_idCounter;
+}
+
+int Mesh::getUniqueID() const
+{
+	return m_uniqueID;
 }
 
 int Mesh::getNrOfIndices(int i) const
