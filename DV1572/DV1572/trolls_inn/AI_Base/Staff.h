@@ -3,59 +3,45 @@
 #include <queue>
 #include <chrono>
 
-enum Professions
+enum StaffProfession
 {
+	Unassigned, 
 	Maid,
-	Assassin,
-	Thief,
-	Cook,
-	Bartender,
-	Guard
-};
-
-enum StaffAction
-{
-	IdleStaff, 
-	StaffThinking,
-	Cleaning,
-	Murdering,
-	Stealing,
-	Arresting,
-	PatrollingWalk,
-	Cooking
+	Assasin,
+	Theif,
+	Guard,
+	Chef,
+	Bartender
 };
 
 class Staff
 {
 private:
 	LevelTracker m_level;
-	Professions m_profession;
-	std::queue<StaffAction> m_staffActionQueue; 
-	StaffAction m_currentAction; 
+
+	std::queue<StaffProfession> m_staffActionQueue; 
+	StaffProfession m_currentProfession; 
 
 	bool m_taskCompleted; 
 
 	std::chrono::high_resolution_clock m_timer; 
 	std::chrono::high_resolution_clock::time_point m_timeStart, m_timeNow;
-	std::chrono::duration<double, std::ratio<1,1>> m_duration;
+	std::chrono::duration<double, std::ratio<1, 1>> m_duration; 
 	
 public:
 	Staff();
-	Staff(Professions profession);
-	Staff(Professions profession, int level);
+	Staff(int startLevel);
 	~Staff();
 
 	void update(); 
 
 	bool getQueueEmpty(); 
 	
-	Professions getProfession() const;
-	StaffAction getCurrentAction() const; 
+	StaffProfession getCurrentProfession() const; 
 	LevelTracker& getLevelTracker();
-	std::queue<StaffAction>& getActionQueue();
 	bool getTaskCompleted();
 
-	void setCurrentAction(StaffAction staffAction);
+	void setCurrentProfession(StaffProfession staffProfession);
 	void setTaskCompleted(bool taskCompleted); 
 	void resetClock(); 
 

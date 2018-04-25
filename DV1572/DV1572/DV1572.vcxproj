@@ -150,6 +150,7 @@
     <ClCompile Include="trolls_inn\AI_Base\MasterAI.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\RandomNumberGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Staff.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\StaffController.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Character.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Grid.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="ourEngine\Structs.h" />
     <ClInclude Include="trolls_inn\AI_Base\Attributes.h" />
     <ClInclude Include="trolls_inn\AI_Base\LevelTracker.h" />
+    <ClInclude Include="trolls_inn\AI_Base\StaffController.h" />
     <ClInclude Include="trolls_inn\Bobby test\Character.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Grid.h" />

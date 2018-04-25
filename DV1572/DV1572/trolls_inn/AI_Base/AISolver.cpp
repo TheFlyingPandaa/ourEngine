@@ -1,4 +1,5 @@
 #include "AISolver.h"
+#include "RandomNumberGenerator.h"
 
 AISolver::AISolver()
 {
@@ -79,7 +80,7 @@ void AISolver::update(Customer& customer, Action desiredAction)
 	}
 }
 
-void AISolver::update(Staff& staff)
+void AISolver::update(Staff& staff, std::vector<Customer>& customers)
 {
 	if(staff.getActionQueue().front() == IdleStaff)
 	{
@@ -101,12 +102,24 @@ void AISolver::update(Staff& staff)
 	}
 	else if (staff.getActionQueue().front() == Murdering)
 	{
+		RandomNumberGenerator rndNumberGen; 
 		if (staff.getTaskCompleted())
 		{
 			staff.getActionQueue().pop();
 			staff.resetClock();
 		}
-		//Add murder logic here
+		std::vector<Customer*> customerOfChoice;
+		for (int i = 0; i < customers.size(); i++)
+		{
+			if (customers[i].getEconomy().getGold() > 200)
+			{
+				customerOfChoice.push_back(&customers[i]); 
+			}
+		}
+		int rndNum = rndNumberGen.generateRandomNumber(0, customers.size()); 
+		Customer* = customerOfChoice[rndNum];
+
+
 	}
 	else if (staff.getActionQueue().front() == PatrollingWalk)
 	{

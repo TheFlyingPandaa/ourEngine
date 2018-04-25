@@ -165,6 +165,6 @@ void MasterAI::update()
 
 			}
 		}
-		solver.update(currentStaffMember);
+		solver.update(currentStaffMember, customers);
 	}
 }

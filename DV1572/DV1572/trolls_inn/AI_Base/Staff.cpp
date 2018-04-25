@@ -2,21 +2,15 @@
 
 Staff::Staff()
 {
-	m_currentAction = IdleStaff; 
+	m_level.setLevel(1); 
+	m_currentProfession = Unassigned; 
+	m_timeStart = m_timer.now();
 }
 
-Staff::Staff(Professions profession)
+Staff::Staff(int startLevel)
 {
-	m_profession = profession;
-	m_currentAction = IdleStaff;
-	m_timeStart = m_timer.now(); 
-}
-
-Staff::Staff(Professions profession, int level)
-{
-	m_profession = profession;
-	m_level.setLevel(level);
-	m_currentAction = IdleStaff;
+	m_level.setLevel(startLevel);
+	m_currentProfession = Unassigned;
 	m_timeStart = m_timer.now(); 
 }
 
@@ -35,14 +29,9 @@ bool Staff::getQueueEmpty()
 	return m_staffActionQueue.empty(); 
 }
 
-Professions Staff::getProfession() const
+StaffProfession Staff::getCurrentProfession() const
 {
-	return m_profession;
-}
-
-StaffAction Staff::getCurrentAction() const
-{
-	return m_currentAction; 
+	return 	m_currentProfession;
 }
 
 LevelTracker& Staff::getLevelTracker()
@@ -50,14 +39,9 @@ LevelTracker& Staff::getLevelTracker()
 	return m_level;
 }
 
-std::queue<StaffAction>& Staff::getActionQueue()
+void Staff::setCurrentProfession(StaffProfession staffProfession)
 {
-	return m_staffActionQueue; 
-}
-
-void Staff::setCurrentAction(StaffAction staffAction)
-{
-	m_staffActionQueue.push(staffAction);
+	m_currentProfession = staffProfession; 
 }
 
 void Staff::setTaskCompleted(bool taskCompleted)
