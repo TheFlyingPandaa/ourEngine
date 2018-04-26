@@ -68,6 +68,8 @@ public:
 
 	virtual std::vector<Wall*>*	getAllWalls();
 	virtual std::vector<Wall*>	getWalls(Direction dir);
+
+	int getAmountOfObjects();
 		
 	virtual void		move(int x, int y);
 

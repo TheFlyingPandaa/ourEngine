@@ -7,11 +7,11 @@ class EventHandler
 {
 private:
 	std::stack<EventCollection> m_currentCollectEvents;
-
-	Inn * inn;
+	Inn * m_inn;
+	RoomCtrl * m_roomCtrl;
 
 public:
-	EventHandler(Inn * inn);
+	EventHandler(Inn * inn, RoomCtrl * roomCtrl);
 	~EventHandler();
 	
 	void Update();
