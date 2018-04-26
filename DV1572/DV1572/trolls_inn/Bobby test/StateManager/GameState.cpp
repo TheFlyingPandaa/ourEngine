@@ -126,14 +126,14 @@ void GameState::Update(double deltaTime)
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	
 
-	if (Input::isKeyPressed('D'))
-	{
-		m_roomctrl->PickRoomTiles();
-	}
-	if (Input::isKeyPressed('C'))
-	{
-		m_roomctrl->PickWalls();
-	}
+	//if (Input::isKeyPressed('D'))
+	//{
+	//	m_roomctrl->PickRoomTiles();
+	//}
+	//if (Input::isKeyPressed('C'))
+	//{
+	//	m_roomctrl->PickWalls();
+	//}
 	
 }
 
@@ -296,7 +296,6 @@ void GameState::_handlePicking()
 
 void GameState::_handlePickingAi(Shape * obj)
 {
-	if(Input::isMouseLeftPressed())
 	if (m_stage == GameStage::Play)
 	{
 		if (c.walkQueueDone())

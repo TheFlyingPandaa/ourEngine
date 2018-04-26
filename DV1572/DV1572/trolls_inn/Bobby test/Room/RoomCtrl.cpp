@@ -514,7 +514,7 @@ int RoomCtrl::getRoomConnections(int index) const
 	}
 	for (int i = 0; i < m_outsideDoorPos.size(); i++)
 	{
-		connections += (m_outsideDoorPos[i].roomIndexes[i] == index);
+		connections += (m_outsideDoorPos[i].roomIndexes[1] == index);
 	}
 	return connections;
 }
