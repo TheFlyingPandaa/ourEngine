@@ -1,5 +1,34 @@
 #include "MasterAI.h"
 
+void MasterAI::_sortVectorID(std::vector<int>& ID)
+{
+	int highestValueIndex;
+
+	for (int i = 0; i < ID.size() - 1; i++)
+	{
+		highestValueIndex = i;
+		for (int k = i + 1; k < ID.size(); k++)
+		{
+			if (ID[k] > ID[highestValueIndex])
+			{
+				highestValueIndex = k;
+			}
+		}
+		this->_swap(i, highestValueIndex, ID);
+	}
+
+	for (int i = 0; i < ID.size(); i++)
+		std::cout << ID[i] << std::endl;
+	std::cout << std::endl;
+}
+
+void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
+{
+	int temp = ID[index1];
+	ID[index1] = ID[index2];
+	ID[index2] = temp;
+}
+
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid)
 	: m_solver(roomCtrl,grid)
 {
@@ -8,8 +37,8 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid)
 
 MasterAI::~MasterAI()
 {
-	for (auto& cust : m_customers)
-		delete cust;
+	for (auto& customer : m_customers)
+		delete customer;
 }
 
 void MasterAI::Update(Camera* cam)
@@ -46,6 +75,7 @@ void MasterAI::Update(Camera* cam)
 			std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
 			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
 			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
+			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;
 			customer->SetHungry(customer->GetHungry() + 1);
 			customer->SetTired(customer->GetTired() + 1);
 			customer->SetThirsty(customer->GetThirsty() + 1);
@@ -61,13 +91,13 @@ void MasterAI::Update(Camera* cam)
 			switch (desiredAction)
 			{
 			case EatAction:
-				price = m_inn.getFoodPrice();
+				price = m_inn.GetFoodPrice();
 				break;
 			case DrinkAction:
-				price = m_inn.getDrinkPrice();
+				price = m_inn.GetDrinkPrice();
 				break;
 			case SleepAction:
-				price = m_inn.getSleepPrice();
+				price = m_inn.GetSleepPrice();
 				break;
 			}
 
@@ -81,10 +111,9 @@ void MasterAI::Update(Camera* cam)
 			{
 				// Customer wants path to Action area
 				customer->SetAction(ThinkingAction);
-				this->m_solver.Update(*customer, desiredAction);
+				this->m_solver.Update(*customer, desiredAction, price);
 			}
 		}
-
 		else
 		{
 			if (updateCustomerNeeds)
@@ -97,15 +126,19 @@ void MasterAI::Update(Camera* cam)
 
 		loopCounter++;
 	}
-	if (this->m_solver.getTimeSpan().count() > 3)
-		this->m_solver.restartClock();
 
+	if (this->m_solver.getTimeSpan().count() > 1)
+		this->m_solver.restartClock();
+	if (leavingCustomersIDs.size() > 0)
+		this->_sortVectorID(leavingCustomersIDs);
+	
+	// BROKEN, subscript changes when first customer is deleted. Fixed(?)
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
 		this->m_customers.erase(this->m_customers.begin() + leavingCustomersIDs[i]);
 	}
-	
+
 	std::vector<int> goneCustomers;
 	loopCounter = 0;
 
@@ -115,6 +148,8 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
+			m_solver.GetPath(*leavingCustomer, randomStupid);
+			std::cout << "!!!!!!!!!!!!!!!!!!!!!!!This customer is now leaving!!!!!!!!!!!!!!!!!!!!\n";
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else
@@ -124,7 +159,7 @@ void MasterAI::Update(Camera* cam)
 				leavingCustomer->PopToNextState();
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
-				this->m_inn.customerReview(leavingCustomer->GetAttributes());
+				this->m_inn.CustomerReview(leavingCustomer->GetAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}
@@ -132,6 +167,9 @@ void MasterAI::Update(Camera* cam)
 		loopCounter++;
 	}
 	// Delete customers that left the inn area
+	if (goneCustomers.size() > 0)
+		this->_sortVectorID(goneCustomers);
+	// BROKEN, same as previous
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
 		int index = goneCustomers[i];
@@ -149,5 +187,5 @@ void MasterAI::Draw()
 
 void MasterAI::spawn()
 {
-	m_customers.push_back(this->m_cFC.Update(this->m_inn.getInnAttributes()));
+	m_customers.push_back(this->m_cFC.Update(this->m_inn.GetInnAttributes()));
 }

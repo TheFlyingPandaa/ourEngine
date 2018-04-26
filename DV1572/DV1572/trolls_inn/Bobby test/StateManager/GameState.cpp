@@ -140,33 +140,15 @@ void GameState::Update(double deltaTime)
 	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
 	
 
-	if (Input::isKeyPressed('D'))
-	{
-		m_roomctrl->PickRoomTiles();
-	}
-	if (Input::isKeyPressed('C'))
-	{
-		m_roomctrl->PickWalls();
-	}
+	//if (Input::isKeyPressed('D'))
+	//{
+	//	m_roomctrl->PickRoomTiles();
+	//}
+	//if (Input::isKeyPressed('C'))
+	//{
+	//	m_roomctrl->PickWalls();
+	//}
 	
-
-	//<TEMP>
-	/*c.Update();
-	if (c.walkQueueDone())
-	{
-		if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y && m_justMoved == false)
-		{
-			c.Move(Character::UP);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-		else if ((int)((c.getPosition().x - 0.5) / 1) == m_mainDoorPos.x && (int)(round_n(c.getPosition().y, 1)) == m_mainDoorPos.y + 1 && m_justMoved == false)
-		{
-			c.Move(Character::DOWN);
-			std::cout << " " << c.getPosition().x << " " << c.getPosition().y << std::endl;
-			m_justMoved = true;
-		}
-	}*/
 }
 
 void GameState::Draw()
@@ -180,7 +162,7 @@ void GameState::Draw()
 	c.Draw();
 	//this->grid2->Draw();
 
-	//m_mai.Draw();
+	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 }
@@ -232,14 +214,25 @@ void GameState::_setHud()
 void GameState::_handlePicking()
 {
 	bool hudWasPicked = _handleHUDPicking();
-	if (m_stage == GameStage::Play)
+	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 	{
 		m_grid->PickTiles();
 		m_roomctrl->PickRoomTiles();
 	}
 
 	if (hudWasPicked)
+	{
 		while (!p_pickingEvent->empty()) this->p_pickingEvent->pop();
+	}
+
+	if (p_pickingEvent->empty())
+	{
+		if (!m_subStates.empty())
+		{
+			SubState* ss = m_subStates.top();
+			ss->HandlePicking(nullptr);
+		}
+	}
 
 	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 		m_grid->PickTiles();
@@ -319,7 +312,6 @@ void GameState::_handlePicking()
 
 void GameState::_handlePickingAi(Shape * obj)
 {
-	if(Input::isMouseLeftPressed())
 	if (m_stage == GameStage::Play)
 	{
 		if (c.walkQueueDone())
@@ -350,7 +342,11 @@ void GameState::_handlePickingAi(Shape * obj)
 				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 				for (int i = 0; i < path.size() - 1; i++)
+				{
+					float lol = 255 * (float(i) / float(path.size()));
+					path[i + 1]->tile->getQuad().setColor(0, 0, lol);
 					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+				}
 			}
 
 		}

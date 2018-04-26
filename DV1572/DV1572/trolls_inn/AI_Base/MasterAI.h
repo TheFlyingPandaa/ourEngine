@@ -22,11 +22,12 @@ private:
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
 	
+	void _sortVectorID(std::vector<int>& ID);
+	void _swap(int index1, int index2, std::vector<int>& ID);
 
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid);
 	~MasterAI();
-	Grid* GetGrid();
 	
 	void Update(Camera* cam);
 	void Draw();

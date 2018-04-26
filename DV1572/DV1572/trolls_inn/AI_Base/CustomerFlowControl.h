@@ -20,7 +20,6 @@ private:
 
 	// Determine what customers the inn attract
 	Customer* _evaluate(Attributes innAttributes);
-	Customer _generateCustomer(Race race);
 	Customer* _generateRandomCustomer();
 
 

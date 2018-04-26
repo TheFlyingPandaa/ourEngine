@@ -12,9 +12,10 @@
 const unsigned short ROOM_TYPE_SIZE = 2;
 enum RoomType {
 	kitchen,
+	hallway,
 	bedroom,
 	reception,
-	hallway,
+	randomStupid,
 	UNDEFINED
 };
 
@@ -28,13 +29,16 @@ public:
 		int roomIndexes[2];
 		XMINT2 one;
 		XMINT2 two;
+		bool operator==(const DoorPassage& other)const
+		{
+			return one.x == other.one.x && one.y == other.one.y;
+		}
 	};
 	
 private:
 
 	std::vector<Room*>	m_rooms;
 
-	Room*				m_entrance;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wallMesh;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];

@@ -219,8 +219,8 @@ void RoomCtrl::_printRoomConnections() const
 				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
 				{
 					std::cout << "Room " << i << "-> " << ii << "\n";
-					std::cout << "One door Pos: (" << m_roomToRoom[i].one.x << "," << m_roomToRoom[i].one.y << ")\n";
-					std::cout << "Two door Pos: (" << m_roomToRoom[i].two.x << "," << m_roomToRoom[i].two.y << ")\n";
+					std::cout << "One door Pos: (" << m_roomToRoom[j].one.x << "," << m_roomToRoom[j].one.y << ")\n";
+					std::cout << "Two door Pos: (" << m_roomToRoom[j].two.x << "," << m_roomToRoom[j].two.y << ")\n";
 				}
 			}
 
@@ -232,11 +232,11 @@ void RoomCtrl::_printRoomConnections() const
 
 RoomCtrl::RoomCtrl()
 {
-	m_entrance = nullptr;
 	
 	m_tileMesh[0] = new Mesh();
 	m_tileMesh[0]->MakeRectangle();
 	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/wood.png");
+	m_tileMesh[0]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
@@ -306,9 +306,38 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				j++;
 		}
 	}
+
+	int lastDoorIndex = m_rooms.size() - 1;
+
+	for (int i = 0; i < m_outsideDoorPos.size(); ++i)
+	{
+		int currentIndex = _intersect(m_outsideDoorPos[i].one);
+		if (lastDoorIndex == currentIndex)
+		{
+			DoorPassage dp;
+			dp.one = m_outsideDoorPos[i].one;
+			dp.two = m_outsideDoorPos[i].two;
+			dp.roomIndexes[0] = currentIndex;
+			dp.roomIndexes[1] = m_outsideDoorPos[i].roomIndexes[1];
+
+			DoorPassage dp2;
+			dp2.one = dp.two;
+			dp2.two = dp.one;
+			dp2.roomIndexes[0] = dp.roomIndexes[1];
+			dp2.roomIndexes[1] = dp.roomIndexes[0];
+
+			m_roomToRoom.push_back(dp);
+			m_roomToRoom.push_back(dp2);
+			_makeRoomConnection(currentIndex, m_outsideDoorPos[i].roomIndexes[1]);
+			m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
+			i = 0;
+
+		}
+	}
+
+
 	_printRoomConnections();
 
-	if (!m_entrance) m_entrance = m_rooms.back();
 
 	
 }
@@ -483,7 +512,11 @@ int RoomCtrl::getRoomConnections(int index) const
 	{
 		connections += m_roomConnectionMap[index][i];
 	}
-	return ++connections;
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		connections += (m_outsideDoorPos[i].roomIndexes[1] == index);
+	}
+	return connections;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -640,8 +673,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room1;
 							dp.roomIndexes[0] = room2Index;
 							dp.roomIndexes[1] = room1Index;
-
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+							
+							if(it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 						else
 						{
@@ -649,7 +684,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room2;
 							dp.roomIndexes[0] = room1Index;
 							dp.roomIndexes[1] = room2Index;
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+
+							if (it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 
 						std::cout << "This door is Outside->Inside || Inside->Outside";
@@ -665,7 +703,20 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 
 RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
 {
-	return m_outsideDoorPos[0];
+	XMVECTOR  ourPos = XMLoadSInt2(&startPosition);
+	int index = 0;
+	int length = 1000;
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		XMVECTOR door1 = XMLoadSInt2(&m_outsideDoorPos[i].one);
+		int c = XMVectorGetX(XMVector2Length(ourPos - door1));
+		if (length > c)
+		{
+			length = c;
+			index = i;
+		}
+	}
+	return m_outsideDoorPos[index];
 }
 
 RoomCtrl::DoorPassage RoomCtrl::getDoorPassage(int index1, int index2) const
