@@ -147,7 +147,8 @@ void GameState::Draw()
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
-
+	bed3D.Draw();
+	//bed3D.TEMPTRANS();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -187,6 +188,9 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+	bed.LoadModel("trolls_inn/Resources/Reception/Reception.obj");
+	//bed.setDiffuseTexture("trolls_inn/Resources/Reception/Untitled.bmp");
+	bed3D.setMesh(&bed);
 }
 
 void GameState::_setHud()
