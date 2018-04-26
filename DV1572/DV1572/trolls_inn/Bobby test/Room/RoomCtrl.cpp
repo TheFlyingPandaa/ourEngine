@@ -342,6 +342,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 }
 
+// Recieves tile pos, it knows what room you picked.
+// returns the room tiles and position and size
+// sent these into grid->insertTiles();
+
  bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
 {
 	int index = _intersect(pos, XMINT2(1, 1));
