@@ -59,6 +59,7 @@ GameState::~GameState()
 		delete m_subStates.top();
 		m_subStates.pop();
 	}
+	delete inn;
 }
 
 // round float to n decimals precision
