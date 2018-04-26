@@ -309,9 +309,6 @@ void GameState::_handlePickingAi(Shape * obj)
 
 			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-
-			// Ta reda p� om det �r outside -> inside
 			
 			
 			XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
