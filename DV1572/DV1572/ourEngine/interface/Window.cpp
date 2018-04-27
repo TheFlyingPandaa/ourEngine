@@ -429,7 +429,7 @@ void Window::_drawHUD()
 
 		instance.shape->ApplyMaterials();	//Applymaterials won't change the shaders, it will only copy the textures and whatever to the gpu
 
-		UINT32 vertexSize = sizeof(VERTEX);
+		
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
@@ -800,7 +800,6 @@ void Window::_windowPass(Camera * c)
 		instData.pSysMem = &instance.attribs[0];
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 
-		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
@@ -1053,7 +1052,8 @@ void Window::_initGBuffer()
 void Window::_prepareGeometryPass()
 {
 	//The patchlist is used for tessellation, the tessellator takes patches not points
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	//DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	//This commented out cuz of the billboarding pass. This will never be fixed lol
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
@@ -1239,7 +1239,6 @@ void Window::_geometryPass(const Camera &cam)
 		{
 			instance.shape->ApplyMaterials(i);
 
-			UINT32 vertexSize = sizeof(VERTEX);
 			UINT offset = 0;
 			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
 			ID3D11Buffer * bufferPointers[2];
@@ -1321,7 +1320,6 @@ void Window::_skyBoxPass(const Camera& cam)
 		instance.shape->ApplyShaders(); 
 		instance.shape->ApplyMaterials();
 
-		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
@@ -1373,7 +1371,6 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	static DIRECTIONAL_LIGHT_BUFFER m_sunBuffer;
 	if (!lol)
 	{
-		HRESULT hr;
 		D3D11_BUFFER_DESC sunBdesc;
 		sunBdesc.Usage = D3D11_USAGE_DYNAMIC;
 		sunBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
@@ -1382,7 +1379,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		sunBdesc.MiscFlags = 0;
 		sunBdesc.StructureByteStride = 0;
 
-		hr = DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer);
+		DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer);
 		lol = true;
 
 	}
@@ -1493,7 +1490,6 @@ void Window::_transparencyPass(const Camera & cam)
 		DX::g_deviceContext->Unmap(m_meshConstantBuffer, 0);
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
-		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
 		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
@@ -1734,7 +1730,7 @@ void Window::Flush(Camera* c)
 	
 
 	_prepareGeometryPass();
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
 	_billboardPass(*c);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
@@ -1750,7 +1746,7 @@ void Window::Flush(Camera* c)
 	if(DX::g_instanceGroupsHUD.size() > 0)
 		_drawHUD();
 	if(m_computeShader != nullptr)
-		_runComputeShader();
+		//_runComputeShader();
 	if(DX::g_textQueue.size() > 0)
 		_drawText();
 }

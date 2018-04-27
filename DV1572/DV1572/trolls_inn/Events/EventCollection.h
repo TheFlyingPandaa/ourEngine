@@ -26,7 +26,7 @@ public:
 		 MoneyCollection = 0
 		 ObjectCollection = 1
 	*/
-	EventCollection(const int decider ,const int money = 0);
+	EventCollection(const int decider ,const int goal = 0, const int reward = 0,const int money = 0);
 	~EventCollection();
 
 	void Update(const int currentMoney);

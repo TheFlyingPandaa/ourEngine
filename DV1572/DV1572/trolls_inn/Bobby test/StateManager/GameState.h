@@ -11,6 +11,7 @@
 #include "../../AI_Base/Inn.h"
 #include "../../Events/EventCollection.h"
 #include "../../Events/EventHandler.h"
+#include "../../Furniture/Table.h"
 
 class GameState : public State {
 private:
@@ -55,7 +56,7 @@ private:
 	Mesh table;
 	
 	Inn * inn;
-	
+
 
 	//EventCollection testtt;
 	EventHandler * m_eventHandle;

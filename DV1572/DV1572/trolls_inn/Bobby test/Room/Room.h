@@ -70,6 +70,7 @@ public:
 	virtual std::vector<Wall*>	getWalls(Direction dir);
 
 	int getAmountOfObjects();
+	int getAmountOfSpecificObjects(Furniture compare);
 		
 	virtual void		move(int x, int y);
 

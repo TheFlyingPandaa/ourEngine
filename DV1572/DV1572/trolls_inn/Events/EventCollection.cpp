@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-EventCollection::EventCollection(const int decider,const int money)
+EventCollection::EventCollection(const int decider,const int goal, const int reward,const int money)
 {
 	m_EventType = CollectionTypes::FUCKSHIT;
 	if (decider == 0)
@@ -11,9 +11,9 @@ EventCollection::EventCollection(const int decider,const int money)
 		m_EventType = CollectionTypes::ObjectCollection;
 
 	//TODO: Change to suit a more flexible system
-	p_reward.setGoldReward(100);
+	p_reward.setGoldReward(reward);
 	m_currentCollected = 0;
-	m_goalCollection = 3;
+	m_goalCollection = goal;
 	m_totalMoney = money;
 
 }

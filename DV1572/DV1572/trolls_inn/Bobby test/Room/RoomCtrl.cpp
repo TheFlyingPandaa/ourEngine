@@ -877,7 +877,3 @@ void RoomCtrl::setIsBuildingDoor(bool tje)
 	m_buildingDoors = tje;
 }
 
-
-
-
-
