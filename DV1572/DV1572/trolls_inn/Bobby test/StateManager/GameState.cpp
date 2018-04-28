@@ -18,6 +18,30 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_lastClickedIndex = -1;
 	// Building END
 	m_Rpressed = false;
+
+	int startSize = 32;
+	int firstRoomSizeX = 4;
+	int firstRoomSizeY = 3;
+
+	int secondRoomSizeX = 4;
+	int secondRoomSizeY = 2;
+
+	m_grid = new Grid(0, 0, startSize, startSize);
+	m_roomctrl = new RoomCtrl();
+	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
+
+	this->_init();
+
+	inn = new Inn();
+
+	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
+	XMINT2 startPosition = { 0, 0 };
+	auto path1 = getPathAndEatAss(startPosition, targetPosition);
+	XMINT2 targetPosition2 = { 32, 0 };
+	XMINT2 startPosition2 = { inn->getReceptionPos().x , inn->getReceptionPos().y };
+	auto path2 = getPathAndEatAss(startPosition, targetPosition);
+
+	m_eventHandle = new EventHandler(inn, m_roomctrl,path1,path2);
 	_setHud();
 
 	int nrOfButtons = m_stateHUD.getNrOfPickableButtons();
@@ -29,23 +53,13 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
-	
-	int startSize = 32;
-	int firstRoomSizeX = 4;
-	int firstRoomSizeY = 3;
-
-	int secondRoomSizeX = 4;
-	int secondRoomSizeY = 2;
 
 	this->m_cam = cam;
-	this->_init();
-	m_grid = new Grid(0, 0, startSize, startSize);	
-	m_roomctrl = new RoomCtrl();
-	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 
 	m_mai = new MasterAI(m_roomctrl, m_grid);
 	previousKey = -1;	
 
+	
 }
 
 GameState::~GameState()
@@ -58,6 +72,7 @@ GameState::~GameState()
 		delete m_subStates.top();
 		m_subStates.pop();
 	}
+	delete inn;
 }
 
 // round float to n decimals precision
@@ -69,6 +84,19 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+	if (Input::isKeyPressed('Q'))
+	{
+		//std::cout << "EventStarted" << std::endl;
+		m_eventHandle->StartCollectEvent();
+	}
+	if (Input::isKeyPressed('Z'))
+	{
+		std::cout << "EventEnded" << std::endl;
+		m_eventHandle->EndEvent();
+	}
+	m_eventHandle->Update();
+	//std::cout << inn.getMoney() << std::endl;
+
 	if (m_subStates.empty())
 	{
 		m_stage = GameStage::Play;
@@ -106,11 +134,11 @@ void GameState::Update(double deltaTime)
 		return;
 		
 	}
-	inn.Update(deltaTime, gameTime.getTimePeriod());
+	inn->Update(deltaTime, gameTime.getTimePeriod());
 	if (Input::isKeyPressed('Y'))
-		inn.Deposit(500);
+		inn->Deposit(500);
 	if (Input::isKeyPressed('U'))
-		inn.Withdraw(500);
+		inn->Withdraw(500);
 
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
@@ -147,6 +175,7 @@ void GameState::Draw()
 	//TEST
 	c.Draw();
 	//this->grid2->Draw();
+	m_eventHandle->Draw();
 
 	m_mai->Draw();
 	if (!m_subStates.empty())
@@ -187,12 +216,13 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+	
 }
 
 void GameState::_setHud()
 {
 	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/MainHud/MainHud.txt");
-	m_stateHUD.addText(inn.GetText());
+	m_stateHUD.addText(inn->GetText());
 }
 
 void GameState::_handlePicking()

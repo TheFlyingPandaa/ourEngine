@@ -755,6 +755,11 @@ Room * RoomCtrl::getRoomAtPos(XMINT2 pos)
 	return targetRoom;
 }
 
+std::vector<Room*> RoomCtrl::getAllTheRooms() const
+{
+	return m_rooms;
+}
+
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
 {
 	auto getLength = [&](XMFLOAT2 pos, XMFLOAT3 roomPos)->int {
@@ -871,8 +876,4 @@ void RoomCtrl::setIsBuildingDoor(bool tje)
 {
 	m_buildingDoors = tje;
 }
-
-
-
-
 

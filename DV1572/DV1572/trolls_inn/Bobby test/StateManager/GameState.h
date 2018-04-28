@@ -9,6 +9,9 @@
 #include <future>
 #include "../../AI_Base/MasterAI.h"
 #include "../../AI_Base/Inn.h"
+#include "../../Events/EventCollection.h"
+#include "../../Events/EventHandler.h"
+#include "../../Furniture/Table.h"
 
 class GameState : public State {
 private:
@@ -52,7 +55,11 @@ private:
 
 	Mesh table;
 	
-	Inn inn;
+	Inn * inn;
+
+
+	//EventCollection testtt;
+	EventHandler * m_eventHandle;
 
 	void			_init() override;
 	void			_setHud();

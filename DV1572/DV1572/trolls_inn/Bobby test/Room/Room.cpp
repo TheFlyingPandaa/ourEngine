@@ -525,6 +525,16 @@ std::vector<Wall*> Room::getWalls(Direction dir)
 	return std::vector<Wall*>();
 }
 
+int Room::getAmountOfObjects()
+{
+	return m_roomObjects.size();
+}
+
+int Room::getAmountOfSpecificObjects(Furniture compare)
+{
+	return 0;
+}
+
 void Room::move(int x, int y)
 {
 	this->m_posX += x;

@@ -407,6 +407,7 @@ void BuildState::_inputFurniture()
 			m_selectedTile = nullptr;
 			m_roomPlaceable = false;
 			drawSelectedThing = true;
+			m_canBuildFurniture = false;
 		}
 		else if (m_startTile)
 		{
