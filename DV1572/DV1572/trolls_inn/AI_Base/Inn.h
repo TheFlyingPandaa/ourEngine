@@ -33,10 +33,13 @@ private:
 	double			m_timer;
 
 	Text*			m_text;
+
+	DirectX::XMINT2 m_receptionPos;	//The way we set this will be changed
 public:
 	Inn();
 	~Inn();
 
+	DirectX::XMINT2 getReceptionPos();
 
 	int GetFoodPrice() const;
 	int GetSleepPrice() const;

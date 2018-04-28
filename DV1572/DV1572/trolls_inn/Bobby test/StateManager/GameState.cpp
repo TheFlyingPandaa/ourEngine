@@ -32,14 +32,15 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->_init();
 
-	XMINT2 targetPosition = { 16, 0 };
+	inn = new Inn();
+
+	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
 	XMINT2 startPosition = { 0, 0 };
 	auto path1 = getPathAndEatAss(startPosition, targetPosition);
-	XMINT2 targetPosition2 = { 31, 0 };
-	XMINT2 startPosition2 = { 16, 0 };
+	XMINT2 targetPosition2 = { 32, 0 };
+	XMINT2 startPosition2 = { inn->getReceptionPos().x , inn->getReceptionPos().y };
 	auto path2 = getPathAndEatAss(startPosition, targetPosition);
 
-	inn = new Inn();
 	m_eventHandle = new EventHandler(inn, m_roomctrl,path1,path2);
 	_setHud();
 

@@ -18,16 +18,29 @@ EventHandler::~EventHandler()
 	
 }
 
-void EventHandler::Update()
+void EventHandler::_queueMailManPath(const bool inOrOut)
 {
-	m_mailMan.Update();
-	if ((int)m_mailMan.getPosition().x == 16 && (int)m_mailMan.getPosition().y == 0 && m_eventStart == true)
+	if (inOrOut)
 	{
-		std::cout << "event Actualy started" << std::endl;
-		m_currentCollectEvents.push(EventCollection(0, 3, 100, m_inn->getMoney()));
-		m_eventStart = false;
+		XMFLOAT3 oldPos = { 0.0f,0.0f, 0.0f };
 
-		XMFLOAT3 oldPos = { 16.0f,0.0f, 0.0f };
+		if (m_pathToInn.size() != 0)
+		{
+			//m_justMoved = false;
+
+			m_mailMan.Move(m_mailMan.getDirectionFromPoint(oldPos, m_pathToInn[0]->tile->getQuad().getPosition()));
+
+			for (int i = 0; i < m_pathToInn.size() - 1; i++)
+			{
+				//float lol = 255 * (float(i) / float(m_pathToInn.size()));
+				//m_pathToInn[i + 1]->tile->getQuad().setColor(0, 0, lol);
+				m_mailMan.Move(m_mailMan.getDirectionFromPoint(m_pathToInn[i]->tile->getQuad().getPosition(), m_pathToInn[i + 1]->tile->getQuad().getPosition()));
+			}
+		}
+	}
+	else
+	{
+		XMFLOAT3 oldPos = { (float)m_inn->getReceptionPos().x  ,0.0f, (float)m_inn->getReceptionPos().y };
 
 		if (m_pathOutInn.size() != 0)
 		{
@@ -42,6 +55,20 @@ void EventHandler::Update()
 				m_mailMan.Move(m_mailMan.getDirectionFromPoint(m_pathOutInn[i]->tile->getQuad().getPosition(), m_pathOutInn[i + 1]->tile->getQuad().getPosition()));
 			}
 		}
+	}
+
+}
+
+void EventHandler::Update()
+{
+	m_mailMan.Update();
+	if ((int)m_mailMan.getPosition().x == m_inn->getReceptionPos().x && (int)m_mailMan.getPosition().y == m_inn->getReceptionPos().y && m_eventStart == true)
+	{
+		std::cout << "event Actualy started" << std::endl;
+		m_currentCollectEvents.push(EventCollection(0, 3, 100, m_inn->getMoney()));
+		m_eventStart = false;
+
+		_queueMailManPath(false);
 
 	}
 	if (!m_currentCollectEvents.empty())
@@ -87,26 +114,11 @@ void EventHandler::StartCollectEvent()
 		}
 
 		//TODO: Spawn a mailman
-		XMFLOAT3 oldPos = { 0.0f,0.0f, 0.0f };
+		m_mailMan.setPosition(0.5f, 0.5f);
+		_queueMailManPath(true);
 
-		if (m_pathToInn.size() != 0)
-		{
-			//m_justMoved = false;
-
-			m_mailMan.Move(m_mailMan.getDirectionFromPoint(oldPos, m_pathToInn[0]->tile->getQuad().getPosition()));
-
-			for (int i = 0; i < m_pathToInn.size() - 1; i++)
-			{
-				//float lol = 255 * (float(i) / float(m_pathToInn.size()));
-				//m_pathToInn[i + 1]->tile->getQuad().setColor(0, 0, lol);
-				m_mailMan.Move(m_mailMan.getDirectionFromPoint(m_pathToInn[i]->tile->getQuad().getPosition(), m_pathToInn[i + 1]->tile->getQuad().getPosition()));
-			}
-		}
 		//m_currentCollectEvents.push(EventCollection(1, 3, 100, amountOfObjects));
 	}
-
-	//if(mailMan.pos == receptionPos && eventStart == true)
-		//m_currentCollectEvents.push(EventCollection(1, 3, 100, amountOfObjects));
 	
 }
 

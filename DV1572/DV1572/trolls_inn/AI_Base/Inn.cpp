@@ -109,6 +109,8 @@ Inn::Inn()
 	this->m_foodPrice = 10;
 	this->m_drinkPrice = 15;
 	this->m_sleepPrice = 20;
+
+	m_receptionPos = DirectX::XMINT2(16, 1);
 }
 
 Inn::~Inn()
@@ -116,6 +118,11 @@ Inn::~Inn()
 	delete m_economy;
 	delete m_text;
 	m_text = nullptr;
+}
+
+DirectX::XMINT2 Inn::getReceptionPos()
+{
+	return m_receptionPos;
 }
 
 int Inn::GetFoodPrice() const
