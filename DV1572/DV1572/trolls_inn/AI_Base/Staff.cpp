@@ -54,6 +54,11 @@ void Staff::resetClock()
 	m_timeStart = m_timer.now(); 
 }
 
+std::queue<StaffProfession>& Staff::getActionQueue()
+{
+	return m_staffActionQueue; 
+}
+
 bool Staff::getTaskCompleted()
 {
 	return m_taskCompleted; 

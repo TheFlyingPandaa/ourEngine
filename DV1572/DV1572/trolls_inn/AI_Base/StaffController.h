@@ -1,5 +1,6 @@
 #pragma once
 #include "Staff.h"
+#include "RandomNumberGenerator.h"
 #include <queue>
 
 class StaffController
@@ -12,6 +13,7 @@ private:
 	float m_chanceOfGuarding;
 	float m_chanceOfCooking; 
 	float m_chanceOfMakingDrink; 
+	float m_chanceOfDoingNothing; 
 
 	class PriorityObject
 	{
@@ -22,7 +24,12 @@ private:
 		PriorityObject(std::string task = "None", int  priority = 0);
 		~PriorityObject();
 
-		bool operator>(const PriorityObject& other);
+		bool operator<(PriorityObject& other);
+		
+		friend bool operator<(const PriorityObject& Left, const PriorityObject& Right)
+		{
+			return Left < Right;
+		}
 	};
 
 	std::priority_queue<PriorityObject> m_concentrationQueue;
@@ -33,6 +40,7 @@ private:
 	PriorityObject m_guardPriority;
 	PriorityObject m_cookPriority;
 	PriorityObject m_makeDrinkPriority;
+	PriorityObject m_doNothing; 
 
 	std::vector<Staff*> m_staffMembers; 
 public:
@@ -45,4 +53,6 @@ public:
 	std::vector<Staff*> getStaffMembers();
 
 	void updateConcentration(PriorityObject& staffAction, int priorityPointsToAdd); 
+	void giveNewAction(Staff* staffMember); 
+	StaffProfession calculateNewStaffProfession(); 
 };

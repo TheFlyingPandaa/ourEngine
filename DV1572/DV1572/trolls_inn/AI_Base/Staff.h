@@ -45,6 +45,8 @@ public:
 	void setTaskCompleted(bool taskCompleted); 
 	void resetClock(); 
 
+	std::queue<StaffProfession>& getActionQueue(); 
+
 	std::chrono::duration<double, std::ratio<1, 1>> getDuration();
 
 };

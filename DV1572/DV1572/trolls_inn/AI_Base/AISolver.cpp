@@ -80,18 +80,20 @@ void AISolver::update(Customer& customer, Action desiredAction)
 	}
 }
 
-void AISolver::update(Staff& staff, std::vector<Customer>& customers)
+void AISolver::update(Staff& staff, std::vector<Customer>& customers, StaffController& staffController)
 {
-	if(staff.getActionQueue().front() == IdleStaff)
+	if(staff.getActionQueue().front() == Unassigned)
 	{
 		if (staff.getDuration().count() >= 6)
 		{
 			staff.getActionQueue().pop();
-			staff.resetClock(); 
+			staff.resetClock();  
+			staffController.giveNewAction(&staff); 
 		}
 		//Add idle logic here 
+		std::cout << "I am unassigned!" << std::endl;
 	}
-	else if (staff.getActionQueue().front() == Cooking)
+	else if (staff.getActionQueue().front() == Chef)
 	{
 		if (staff.getDuration().count() >= 10)
 		{
@@ -99,15 +101,19 @@ void AISolver::update(Staff& staff, std::vector<Customer>& customers)
 			staff.resetClock(); 
 		}
 		//Add cooking logic here 
+		std::cout << "I am cooking" << std::endl;
 	}
-	else if (staff.getActionQueue().front() == Murdering)
+	else if (staff.getActionQueue().front() == Assasin)
 	{
-		RandomNumberGenerator rndNumberGen; 
 		if (staff.getTaskCompleted())
 		{
 			staff.getActionQueue().pop();
 			staff.resetClock();
 		}
+		std::cout << "I am an assasin!" << std::endl;
+
+		//Add killing logic here. 
+		RandomNumberGenerator rndNumberGen;
 		std::vector<Customer*> customerOfChoice;
 		for (int i = 0; i < customers.size(); i++)
 		{
@@ -117,42 +123,36 @@ void AISolver::update(Staff& staff, std::vector<Customer>& customers)
 			}
 		}
 		int rndNum = rndNumberGen.generateRandomNumber(0, customers.size()); 
-		Customer* = customerOfChoice[rndNum];
+		Customer* customerPtr = customerOfChoice[rndNum];
 
 
 	}
-	else if (staff.getActionQueue().front() == PatrollingWalk)
+	else if (staff.getActionQueue().front() == Maid)
 	{
 		if (!staff.getTaskCompleted())
 		{
 			staff.getActionQueue().pop(); 
 			staff.resetClock(); 
 		}
-		//Add patrolling logic 
+		//Add cleaning logic 
+		std::cout << "I am a maid!" << std::endl;
+	}
+	else if (staff.getActionQueue().front() == Guard)
+	{
+		std::cout << "I am, a guard!" << std::endl; 
+	}
+	else if (staff.getActionQueue().front() == Theif)
+	{
+		std::cout << "I am a Theif!" << std::endl; 
+	}
+	else
+	{
+		std::cout << "I am a bartender!" << std::endl; 
 	}
 }
 
-void AISolver::update(Staff& staff, StaffAction desiredAction)
+void AISolver::update(Staff & staff)
 {
-	if (desiredAction == Idle)
-	{
-		//staff.getActionQueue().push(desiredAction); 
-
-		/* if duration is met */
-	}
-
-	
-
 }
 
-void AISolver::update(Staff & staff, StaffAction desiredAction, Customer & customer)
-{
-	if (staff.getProfession() == Thief)
-	{
 
-	}
-	else if (staff.getProfession() == Assassin)
-	{
-
-	}
-}

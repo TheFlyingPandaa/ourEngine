@@ -100,8 +100,9 @@ void MasterAI::update()
 	for (int i = 0; i < goneCustomers.size(); i++)
 		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
 
+	//Update staff members
 	for (auto& currentStaffMember : m_staffController.getStaffMembers())
 	{
-		solver.update(*currentStaffMember, customers);
+		solver.update(*currentStaffMember, customers, m_staffController);
 	}
 }
