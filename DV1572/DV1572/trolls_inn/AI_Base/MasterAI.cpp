@@ -2,6 +2,7 @@
 
 MasterAI::MasterAI()
 {
+	m_staffController = StaffController(); 
 }
 
 MasterAI::~MasterAI()
@@ -99,72 +100,8 @@ void MasterAI::update()
 	for (int i = 0; i < goneCustomers.size(); i++)
 		leavingCustomers.erase(this->leavingCustomers.begin() + goneCustomers[i]);
 
-	for (auto& currentStaffMember : this->staff)
+	for (auto& currentStaffMember : m_staffController.getStaffMembers())
 	{
-		if (currentStaffMember.getQueueEmpty())
-		{
-			//Check wether circumstances are met for certain actions to be enqueued. 
-			if (currentStaffMember.getProfession() == Maid)
-			{
-
-			}
-			else if (currentStaffMember.getProfession() == Thief)
-			{
-
-			}
-			else if (currentStaffMember.getProfession() == Cook)
-			{
-
-				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
-
-				if (rndNumber <= 30)
-				{
-					currentStaffMember.setCurrentAction(IdleStaff);
-				}
-				else
-				{
-					currentStaffMember.setCurrentAction(Cooking);
-				}
-
-			}
-			else if (currentStaffMember.getProfession() == Assassin)
-			{
-				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
-
-				if (!currentStaffMember.getTaskCompleted())
-				{
-					currentStaffMember.setCurrentAction(Murdering); 
-				}
-				else if (rndNumber <= 50 && currentStaffMember.getTaskCompleted())
-				{
-					currentStaffMember.setCurrentAction(PatrollingWalk); 
-				}
-				else if (rndNumber > 50 && currentStaffMember.getTaskCompleted())
-				{
-					currentStaffMember.setCurrentAction(IdleStaff);
-				}
-			}
-			else if (currentStaffMember.getProfession() == Bartender)
-			{
-				int rndNumber = m_rndNumGen.generateRandomNumber(0, 100);
-
-				if (rndNumber <= 30)
-				{
-
-					/*currentStaffMember start timer and set duration*/
-					currentStaffMember.setCurrentAction(IdleStaff);
-				}
-				else if (rndNumber > 30)
-				{
-					currentStaffMember.setCurrentAction(Cooking);
-				}	
-			}
-			//Guard
-			else
-			{
-
-			}
-		}
-		solver.update(currentStaffMember, customers);
+		solver.update(*currentStaffMember, customers);
 	}
 }

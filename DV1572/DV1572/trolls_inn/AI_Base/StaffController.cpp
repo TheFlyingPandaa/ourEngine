@@ -14,7 +14,16 @@ StaffController::StaffController()
 	m_stealPriority = PriorityObject("Steal", 0); 
 	m_guardPriority = PriorityObject("Guard", 0); 
 	m_cookPriority = PriorityObject("Cook", 0); 
-    m_makeDrinkPriority = PriorityObject("Make Drink", 0); 
+    m_makeDrinkPriority = PriorityObject("Make Drink", 0);
+
+	m_staffMembers.reserve(10); 
+	
+	m_concentrationQueue.push(m_cleanPriority); 
+	m_concentrationQueue.push(m_murderPriority);
+	m_concentrationQueue.push(m_stealPriority);
+	m_concentrationQueue.push(m_guardPriority);
+	m_concentrationQueue.push(m_cookPriority);
+	m_concentrationQueue.push(m_makeDrinkPriority);
 }
 
 StaffController::~StaffController()
@@ -31,6 +40,11 @@ void StaffController::addStaff(int startLevel)
 	m_staffMembers.push_back(&Staff(startLevel)); 
 }
 
+std::vector<Staff*> StaffController::getStaffMembers()
+{
+	return m_staffMembers; 
+}
+
 void StaffController::updateConcentration(PriorityObject& staffAction, int priorityPointsToAdd)
 {
 	bool replaceActionFound = false; 
@@ -45,42 +59,6 @@ void StaffController::updateConcentration(PriorityObject& staffAction, int prior
 		}
 	}
 	m_concentrationQueue.push(staffAction);
-}
-
-void StaffController::update(float dt)
-{
-	for (auto& member : m_staffMembers)
-	{
-		if (member->getCurrentProfession() == Maid)
-		{
-			//Find dirty rooms and clean them.
-		}
-		else if (member->getCurrentProfession() == Theif)
-		{
-			//Find customer with alot of gold and steal
-		}
-		else if (member->getCurrentProfession() == Assasin)
-		{
-			//Murder special victims or regular customers 
-			//to take their gold. 
-		}
-		else if (member->getCurrentProfession() == Guard)
-		{
-			//Look for outlaws or mischief.
-		}
-		else if (member->getCurrentProfession() == Chef)
-		{
-			//Cook food and and stuff
-		}
-		else if (member->getCurrentProfession() == Bartender)
-		{
-			//Make Drinks. 
-		}
-
-		//Check if activity is finnished, if so, check what the priorityQueue 
-		//says that the current staff member should be assigned to do. 
-		//If not, continue current task. 
-	}
 }
 
 StaffController::PriorityObject::PriorityObject(std::string task, int priority)

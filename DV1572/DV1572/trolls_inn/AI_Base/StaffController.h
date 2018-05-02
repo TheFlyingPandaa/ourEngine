@@ -5,12 +5,13 @@
 class StaffController
 {
 private:
-	bool m_pushExtraCleaning; 
-	bool m_pushExtraMureder; 
-	bool m_pushExtraStealing;
-	bool m_pushExtraGuarding; 
-	bool m_pushExtraCooking; 
-	bool m_pushExtraDrinkMaking; 
+	
+	float m_chanceOfCleaning; 
+	float m_chanceOfStealing; 
+	float m_chanceOfMurdering; 
+	float m_chanceOfGuarding;
+	float m_chanceOfCooking; 
+	float m_chanceOfMakingDrink; 
 
 	class PriorityObject
 	{
@@ -41,6 +42,7 @@ public:
 	void addStaff();
 	void addStaff(int startLevel); 
 
+	std::vector<Staff*> getStaffMembers();
+
 	void updateConcentration(PriorityObject& staffAction, int priorityPointsToAdd); 
-	void update(float dt); 
 };
