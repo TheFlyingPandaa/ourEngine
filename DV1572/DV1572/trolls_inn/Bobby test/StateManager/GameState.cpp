@@ -174,9 +174,9 @@ void GameState::Draw()
 	this->m_grid->Draw();
 
 	//TEST
-	c.Draw();
+	//c.Draw();
 	//this->grid2->Draw();
-	m_eventHandle->Draw();
+	//m_eventHandle->Draw();
 	bed3D.Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())

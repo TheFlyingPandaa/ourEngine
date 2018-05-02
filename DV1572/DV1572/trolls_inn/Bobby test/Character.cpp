@@ -176,6 +176,25 @@ Character::WalkDirection Character::getDirection() const
 {
 	return m_currentDir;
 }
+XMFLOAT3 Character::getDirection3f() const
+{
+	switch (m_currentDir)
+	{
+	case UP:
+	case UPRIGHT:
+	case UPLEFT:
+		return XMFLOAT3(0, 0, -1);
+	case RIGHT:
+		return XMFLOAT3(1, 0, 0);
+	case LEFT:
+		return XMFLOAT3(-1, 0, 0);
+	case DOWN:
+	case DOWNRIGHT:
+	case DOWNLEFT:
+		return XMFLOAT3(0, 0, 1);
+	}
+	return XMFLOAT3(0,0,0);
+}
 const char* printDir(Character::WalkDirection dir)
 {
 	switch (dir)
@@ -234,9 +253,15 @@ bool Character::walkQueueDone() const
 {
 	return m_goQueue.size() == 0;
 }
-
+#include <iostream>
 void Character::Draw()
 {
-	DX::submitToInstance(&m_model, DX::g_instanceGroupsBillboard);
-	DX::submitToInstance(&m_thinkingEmoji, DX::g_instanceGroupsBillboard);
+	std::cout << printDir(m_currentDir) << std::endl;
+	DX::submitToInstance(this);
+//	DX::submitToInstance(this);
+}
+
+Shape * Character::getShape()
+{
+	return &m_model;
 }

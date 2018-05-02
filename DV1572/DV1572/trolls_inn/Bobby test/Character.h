@@ -49,10 +49,12 @@ public:
 
 	virtual DirectX::XMFLOAT2 getPosition() const;
 
-
 	virtual WalkDirection getDirection() const;
+	virtual XMFLOAT3 getDirection3f()const;
 	virtual WalkDirection getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const;
 	virtual int getFloor() const;
 	virtual bool walkQueueDone() const;
 	virtual void Draw();
+
+	virtual Shape* getShape();
 };
