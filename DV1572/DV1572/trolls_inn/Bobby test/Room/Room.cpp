@@ -91,6 +91,8 @@ Room::~Room()
 		delete walls;
 	for (auto& tile : m_roomTiles)
 		delete tile;
+	for (auto& element : m_roomObjects)
+		delete element;
 }
 
 bool Room::Inside(int x, int y)
@@ -145,7 +147,7 @@ void Room::Draw()
 	m_wholeFloor.Draw();
 
 	for (auto& fur : m_roomObjects)
-		fur.Draw();
+		fur->Draw();
 
 	for (auto& tile : m_roomTiles)
 	{
@@ -157,6 +159,7 @@ void Room::Draw()
 	{
 		wall->Draw();
 	}
+	
 }
 
 std::string Room::toString() const
@@ -285,8 +288,8 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 			bool shouldContinue = false;
 			for (auto& object : m_roomObjects)
 			{
-				if (currentTile->getPosition().x == object.getPosition().x
-					&& currentTile->getPosition().y == object.getPosition().z)
+				if (currentTile->getPosition().x == object->getPosition().x
+					&& currentTile->getPosition().y == object->getPosition().z)
 					shouldContinue = true;
 
 			}
@@ -432,7 +435,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 
 void Room::AddRoomObject(Furniture fut)
 {
-	m_roomObjects.push_back(fut);
+	m_roomObjects.push_back(new Furniture(fut));
 }
 
 void Room::PickTiles()
@@ -575,12 +578,12 @@ RoomType Room::getRoomType()
 	return m_roomType;
 }
 
-std::vector<Furniture> Room::getNoneBusyFurnitures()
+std::vector<Furniture*> Room::getNoneBusyFurnitures()
 {
-	std::vector<Furniture> tempFurni;
+	std::vector<Furniture*> tempFurni;
 	for (int i = 0; i < m_roomObjects.size(); ++i)
 	{
-		if (false == m_roomObjects.at(i).getIsBusy())
+		if (false == m_roomObjects.at(i)->getIsBusy())
 		{
 			tempFurni.push_back(m_roomObjects.at(i));
 		}

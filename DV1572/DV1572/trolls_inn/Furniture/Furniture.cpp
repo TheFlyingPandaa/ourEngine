@@ -13,6 +13,7 @@ Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
 	p_isBusy = false;
 }
 
+
 Furniture::~Furniture()
 {
 }

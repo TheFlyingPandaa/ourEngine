@@ -39,7 +39,7 @@ private:
 	std::vector<PointLight> m_lights;
 	std::vector<Tile*> m_roomTiles;
 	Object3D m_wholeFloor;
-	std::vector<Furniture> m_roomObjects;
+	std::vector<Furniture*> m_roomObjects;
 
 	int		m_posX, m_posY;
 	int		m_sizeX, m_sizeY;
@@ -90,7 +90,7 @@ public:
 	RoomType getRoomType();
 
 	
-	std::vector<Furniture> getNoneBusyFurnitures();
+	std::vector<Furniture*> getNoneBusyFurnitures();
 		
 	void		move(int x, int y);
 
