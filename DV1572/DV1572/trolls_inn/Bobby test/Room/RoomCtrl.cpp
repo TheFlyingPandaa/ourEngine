@@ -23,7 +23,7 @@ int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 bool RoomCtrl::_checkLegal(Room * room)
 {
 
-	return dynamic_cast<Bedroom*>(room) == nullptr;
+	return dynamic_cast<Room*>(room) == nullptr;
 }
 
 bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
@@ -31,11 +31,11 @@ bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
 	switch (type)
 	{
 	case kitchen:
-		return dynamic_cast<Kitchen*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	case bedroom:
-		return dynamic_cast<Bedroom*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	case reception:
-		return dynamic_cast<Reception*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	}
 	return false;
 }
@@ -232,11 +232,26 @@ void RoomCtrl::_printRoomConnections() const
 
 RoomCtrl::RoomCtrl()
 {
-	m_entrance = nullptr;
 	
 	m_tileMesh[0] = new Mesh();
 	m_tileMesh[0]->MakeRectangle();
-	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/wood.png");
+	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/KitchenTile.jpg");
+	m_tileMesh[0]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[1] = new Mesh();
+	m_tileMesh[1]->MakeRectangle();
+	m_tileMesh[1]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
+	m_tileMesh[1]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[2] = new Mesh();
+	m_tileMesh[2]->MakeRectangle();
+	m_tileMesh[2]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
+	m_tileMesh[2]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[3] = new Mesh();
+	m_tileMesh[3]->MakeRectangle();
+	m_tileMesh[3]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
+	m_tileMesh[3]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
@@ -277,14 +292,21 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(m_tileMesh[0]);
 		break;
 	case bedroom:
+		//Duno just copied the 
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[1]);
 		break;
 	case reception:
-		currentRoom = new Reception(pos.x, pos.y, size.x, size.y, tiles);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[2]);
+		break;
+	case hallway:
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[3]);
 		break;
 	}
 
@@ -306,12 +328,45 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				j++;
 		}
 	}
+
+	int lastDoorIndex = m_rooms.size() - 1;
+
+	for (int i = 0; i < m_outsideDoorPos.size(); ++i)
+	{
+		int currentIndex = _intersect(m_outsideDoorPos[i].one);
+		if (lastDoorIndex == currentIndex)
+		{
+			DoorPassage dp;
+			dp.one = m_outsideDoorPos[i].one;
+			dp.two = m_outsideDoorPos[i].two;
+			dp.roomIndexes[0] = currentIndex;
+			dp.roomIndexes[1] = m_outsideDoorPos[i].roomIndexes[1];
+
+			DoorPassage dp2;
+			dp2.one = dp.two;
+			dp2.two = dp.one;
+			dp2.roomIndexes[0] = dp.roomIndexes[1];
+			dp2.roomIndexes[1] = dp.roomIndexes[0];
+
+			m_roomToRoom.push_back(dp);
+			m_roomToRoom.push_back(dp2);
+			_makeRoomConnection(currentIndex, m_outsideDoorPos[i].roomIndexes[1]);
+			m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
+			i = 0;
+
+		}
+	}
+
+
 	_printRoomConnections();
 
-	if (!m_entrance) m_entrance = m_rooms.back();
 
 	
 }
+
+// Recieves tile pos, it knows what room you picked.
+// returns the room tiles and position and size
+// sent these into grid->insertTiles();
 
  bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
 {
@@ -483,7 +538,11 @@ int RoomCtrl::getRoomConnections(int index) const
 	{
 		connections += m_roomConnectionMap[index][i];
 	}
-	return ++connections;
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		connections += (m_outsideDoorPos[i].roomIndexes[1] == index);
+	}
+	return connections;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -640,8 +699,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room1;
 							dp.roomIndexes[0] = room2Index;
 							dp.roomIndexes[1] = room1Index;
-
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+							
+							if(it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 						else
 						{
@@ -649,7 +710,10 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							dp.two = room2;
 							dp.roomIndexes[0] = room1Index;
 							dp.roomIndexes[1] = room2Index;
-							m_outsideDoorPos.push_back(dp);
+							std::vector<DoorPassage>::iterator it = std::find(m_outsideDoorPos.begin(), m_outsideDoorPos.end(), dp);
+
+							if (it == m_outsideDoorPos.end())
+								m_outsideDoorPos.push_back(dp);
 						}
 
 						std::cout << "This door is Outside->Inside || Inside->Outside";
@@ -715,6 +779,11 @@ Room * RoomCtrl::getRoomAtPos(XMINT2 pos)
 	int index = _intersect(pos);
 	Room* targetRoom = getRoomAt(index);
 	return targetRoom;
+}
+
+std::vector<Room*> RoomCtrl::getAllTheRooms() const
+{
+	return m_rooms;
 }
 
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
@@ -824,6 +893,19 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 	return dir;
 }
 
+std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos)
+{
+	return getRoomAtPos(pos)->getNoneBusyFurnitures();
+}
+std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos)
+{
+	return getRoomAtPos(XMINT2(pos.x,pos.y))->getNoneBusyFurnitures();
+}
+std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos)
+{
+	return getRoomAtPos(XMINT2(pos.x,pos.z))->getNoneBusyFurnitures();
+}
+
 bool RoomCtrl::getIsBuildingDoor()
 {
 	return m_buildingDoors;
@@ -833,8 +915,4 @@ void RoomCtrl::setIsBuildingDoor(bool tje)
 {
 	m_buildingDoors = tje;
 }
-
-
-
-
 

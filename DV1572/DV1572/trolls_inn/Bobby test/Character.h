@@ -47,7 +47,9 @@ public:
 	virtual void setSpeed(float spd);
 	virtual void castShadow();
 
-	virtual const DirectX::XMFLOAT2 getPosition() const;
+	virtual DirectX::XMFLOAT2 getPosition() const;
+
+
 	virtual WalkDirection getDirection() const;
 	virtual WalkDirection getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const;
 	virtual int getFloor() const;

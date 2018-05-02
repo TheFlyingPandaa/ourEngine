@@ -2,22 +2,12 @@
 #include <vector>
 #include "Room.h"
 #include "Structure.h"
-#include "Kitchen.h"
-#include "Bedroom.h"
-#include "Reception.h"
 #include "../../Furniture/Furniture.h"
 
 
 
-const unsigned short ROOM_TYPE_SIZE = 2;
-enum RoomType {
-	kitchen,
-	bedroom,
-	reception,
-	hallway,
-	randomStupid,
-	UNDEFINED
-};
+const unsigned short ROOM_TYPE_SIZE = 4;
+
 
 const float WALLOFFSET = 0.5f;
 
@@ -29,13 +19,16 @@ public:
 		int roomIndexes[2];
 		XMINT2 one;
 		XMINT2 two;
+		bool operator==(const DoorPassage& other)const
+		{
+			return one.x == other.one.x && one.y == other.one.y;
+		}
 	};
 	
 private:
 
 	std::vector<Room*>	m_rooms;
 
-	Room*				m_entrance;
 	Mesh*				m_doorMesh;
 	Mesh*				m_wallMesh;
 	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
@@ -91,12 +84,17 @@ public:
 
 	Room*				getRoomAt(int index);
 	Room*				getRoomAtPos(XMINT2 pos);
+	std::vector<Room*>	getAllTheRooms() const;
 
 	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 
 	Direction			getDirection(Tile*, Tile*);
 	XMINT2				getDirection2i(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
+
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos);
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos);
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos);
 
 	bool getIsBuildingDoor();
 	void setIsBuildingDoor(bool tje);

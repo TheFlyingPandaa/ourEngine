@@ -13,10 +13,17 @@ public:
 	Attributes&	getAttributes();
 
 	int	getGridSize(); //gets the size this furniture will take up
-
-	DirectX::XMINT3 getPosition();
-	int				getRotation();
 	
+	void			setRotation(int rot);
+	int				getRotation();
+
+	void			setPosition(DirectX::XMFLOAT3 pos);
+	void			setPosition(float x, float y, float z);
+	DirectX::XMINT3 getPosition();
+
+	bool			getIsBusy();
+	void			setIsBusy(bool busy);
+
 	void LoadFurnitureStats(std::string path);
 
 	void Draw();
@@ -28,4 +35,6 @@ protected:
 	Attributes	p_attributes;
 	int			p_gridSize;
 	int			p_rot;
+
+	bool		p_isBusy;
 };

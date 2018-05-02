@@ -20,12 +20,11 @@ void Room::_initAABB(int x, int y, int sx, int sy, int level)
 void Room::_createLight(int x, int y, int sx, int sy, int level)
 {
 	PointLight l;
-	l.setPosition(static_cast<float>(x) + ((float)sx / 2), static_cast<float>(level * 2 + 2), static_cast<float>(y) + ((float)sy / 2));
+	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 1, static_cast<float>(y) + ((float)sy / 2));
 	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
 	l.setSettingsForLight(1, 0.8f);
 	l.setIndex(m_index);
 	m_lights.push_back(l);
-	m_lights[0].addToLightQueue();
 }
 
 
@@ -46,16 +45,23 @@ int Room::_index(int x, int y)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	
+	// Do not use i guess
 }
 
-Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
+Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
 {
 	if (!s_isLoaded)
 		_loadStatic();
 	m_index = s_index++;
 	_initAABB(posX, posY, sizeX, sizeY);
 	_createLight(posX, posY, sizeX, sizeY);
+	m_selected = false;
+
+	for (auto &l : m_lights)
+	{
+		l.addToLightQueue();
+	}
+
 
 	this->m_posX = posX;
 	this->m_posY = posY;
@@ -63,13 +69,19 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 	this->m_sizeY = sizeY;
 
 	this->m_roomTiles = tiles;
-
+	for (auto *t : m_roomTiles)
+	{
+		t->getQuad().setLightIndex(m_index);
+	}
+	m_wholeFloor.setLightIndex(m_index);
 	m_wholeFloor.setPos(posX, -0.001f, posY);
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
-	//TODO //
+	//TODO //Fix scale?? CHEFEN GET ON IT
 	m_wholeFloor.setUVScale(sizeX);
+
+	m_roomType = roomType;
 
 }
 
@@ -128,6 +140,30 @@ void Room::Update(Camera * cam)
 	}
 }
 
+void Room::Draw()
+{
+	m_wholeFloor.Draw();
+
+	for (auto& fur : m_roomObjects)
+		fur.Draw();
+
+	for (auto& tile : m_roomTiles)
+	{
+		if (tile->getQuad().getColor().x != 1.0f)
+			tile->getQuad().Draw();
+	}
+
+	for (auto& wall : m_allWalls)
+	{
+		wall->Draw();
+	}
+}
+
+std::string Room::toString() const
+{
+	return "meh";
+}
+
 int Room::getRoomIndex() const
 {
 	return m_index;
@@ -146,7 +182,11 @@ void Room::ApplyIndexOnMesh()
 void Room::CastShadow()
 {
 	m_AABB.CastShadow();
-	//m_AABB.Draw();
+
+
+	/*Move To Draw*/
+	if (m_selected)
+		m_AABB.TEMPTRANS();
 }
 
 void Room::setIsBuildingDoor(bool tje)
@@ -163,6 +203,12 @@ float Room::getDistance(Tile * t1, Tile * t2)
 
 std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTile)
 {
+	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
+	{
+		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
+		if (index < 0 || index >= m_roomTiles.size()) return nullptr;;
+		return m_roomTiles[index];
+	};
 	std::vector<std::shared_ptr<Node>> openList;
 	std::vector<std::shared_ptr<Node>> closedList;
 
@@ -197,7 +243,7 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 		{
 
 			Direction dir = static_cast<Direction>(dirIndex);
-
+			float addedCost = (dirIndex > 3) ? 1.414 : 1;
 			XMFLOAT2 dirFloat;
 			switch (dir)
 			{
@@ -236,39 +282,55 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 
 			if (currentTile == nullptr)
 				continue;
-
-			/*if (dir == Direction::downleft)
+			bool shouldContinue = false;
+			for (auto& object : m_roomObjects)
 			{
-			if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-			continue;
-			if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-			continue;
+				if (currentTile->getPosition().x == object.getPosition().x
+					&& currentTile->getPosition().y == object.getPosition().z)
+					shouldContinue = true;
+
+			}
+
+			if (shouldContinue) continue;
+
+			if (dir == Direction::downleft)
+			{
+				Tile* leftTile = getAdjacentTile(current, -1, 0);
+				if (leftTile == nullptr) continue;
+
+				Tile* downTile = getAdjacentTile(current,0, -1);
+				if (downTile == nullptr) continue;
 			}
 			else if (dir == Direction::downright)
 			{
-			if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-			continue;
-			if (current->tile->getAdjacent(down)->getRoom() != nullptr)
-			continue;
+				Tile* rightTile = getAdjacentTile(current,1,0);
+				if (rightTile == nullptr) continue;
+
+				Tile* downTile = getAdjacentTile(current,0,-1);
+				if (downTile == nullptr) continue;
 			}
 			else if (dir == Direction::upright)
 			{
-			if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-			continue;
-			if (current->tile->getAdjacent(right)->getRoom() != nullptr)
-			continue;
+				
+				Tile* upTile = getAdjacentTile(current,0,1);
+				if (upTile == nullptr) continue;
+
+				Tile* rightTile = getAdjacentTile(current,1,0);
+				if (rightTile == nullptr) continue;
 			}
 			else if (dir == Direction::upleft)
 			{
-			if (current->tile->getAdjacent(up)->getRoom() != nullptr)
-			continue;
-			if (current->tile->getAdjacent(left)->getRoom() != nullptr)
-			continue;
-			}*/
+				
+				Tile* upTile = getAdjacentTile(current, 0, 1);
+				if (upTile == nullptr) continue;
+
+				Tile* leftTile = getAdjacentTile(current, -1, 0);
+				if (leftTile == nullptr) continue;
+			}
 
 			//--Rules End Here--
 
-			float gCost = current->gCost + (getDistance(current->tile, currentTile) == 1 ? 1 : 0.95f);
+			float gCost = current->gCost + addedCost;
 
 			float hCost = getDistance(currentTile, endTile);
 			std::shared_ptr<Node> newNode(new Node(currentTile, current, gCost, hCost));
@@ -388,6 +450,11 @@ void Room::PickWalls()
 		wall->getObject3D().CheckPick();
 }
 
+void Room::Select()
+{
+	m_selected = !m_selected;
+}
+
 std::vector<Tile*> Room::ReturnTiles()
 {
 	std::vector<Tile*> tiles;
@@ -491,6 +558,34 @@ std::vector<Wall*> Room::getWalls(Direction dir)
 		break;
 	}
 	return std::vector<Wall*>();
+}
+
+int Room::getAmountOfObjects()
+{
+	return m_roomObjects.size();
+}
+
+int Room::getAmountOfSpecificObjects(Furniture compare)
+{
+	return 0;
+}
+
+RoomType Room::getRoomType()
+{
+	return m_roomType;
+}
+
+std::vector<Furniture> Room::getNoneBusyFurnitures()
+{
+	std::vector<Furniture> tempFurni;
+	for (int i = 0; i < m_roomObjects.size(); ++i)
+	{
+		if (false == m_roomObjects.at(i).getIsBusy())
+		{
+			tempFurni.push_back(m_roomObjects.at(i));
+		}
+	}
+	return tempFurni;
 }
 
 void Room::move(int x, int y)

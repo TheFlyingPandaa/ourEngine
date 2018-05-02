@@ -6,12 +6,24 @@
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../Furniture/Furniture.h"
 #include "Node.h"
+
+enum RoomType {
+	kitchen,
+	hallway,
+	bedroom,
+	reception,
+	randomStupid,
+	UNDEFINED
+};
+
 class Room
 {
 private:
 	static Mesh s_AABB;
 	static bool s_isLoaded;
 	static int s_index;
+
+	bool m_selected;
 
 	int	m_index;
 
@@ -24,7 +36,6 @@ private:
 	//bool _findInVec(std::vector<RoomNode*>& list, RoomNode* node) const;
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
 
-protected:
 	std::vector<PointLight> m_lights;
 	std::vector<Tile*> m_roomTiles;
 	Object3D m_wholeFloor;
@@ -43,42 +54,54 @@ protected:
 	int _index(int x, int y);
 	bool m_isBuildingDoor = false;
 
+	RoomType m_roomType;
+
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
-	Room(int posX, int posY , int sizeX, int sizeY, std::vector<Tile*> tiles);
+	Room(int posX, int posY , int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType);
 
-	virtual ~Room();	
+	~Room();	
 
 	//virtual std::vector<std::vector<Tile*>>		getTiles() const; 
 	//virtual Tile*								getTiles(int x, int y) const;
 
-	virtual void		setFloorMesh(Mesh * mesh);
-	virtual void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
-	virtual void		AddRoomObject(Furniture fut);
-	virtual void		PickTiles();
-	virtual void		PickWalls();
+	void		setFloorMesh(Mesh * mesh);
+	void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
+	void		AddRoomObject(Furniture fut);
+	void		PickTiles();
+	void		PickWalls();
 	
+	void				Select();
+
 	std::vector<Tile*>	ReturnTiles();
 	std::vector<Tile*>	getTiles();
 
-	virtual int			getX() const; 
-	virtual int			getY() const;
+	int			getX() const; 
+	int			getY() const;
 	XMINT2				getSize() const;
-	virtual DirectX::XMFLOAT3	getPosition() const;
+	DirectX::XMFLOAT3	getPosition() const;
 
-	virtual std::vector<Wall*>*	getAllWalls();
-	virtual std::vector<Wall*>	getWalls(Direction dir);
+	std::vector<Wall*>*	getAllWalls();
+	std::vector<Wall*>	getWalls(Direction dir);
+
+	int getAmountOfObjects();
+	int getAmountOfSpecificObjects(Furniture compare);
+
+	RoomType getRoomType();
+
+	
+	std::vector<Furniture> getNoneBusyFurnitures();
 		
-	virtual void		move(int x, int y);
+	void		move(int x, int y);
 
-	virtual bool		Inside(int x, int y); 
-	virtual bool		Inside(Tile * t); 
+	bool		Inside(int x, int y); 
+	bool		Inside(Tile * t); 
 
-	virtual void Update(Camera * cam);
+	void Update(Camera * cam);
 
-	virtual void Draw() = 0;
+	void Draw();
 
-	virtual std::string	toString() const = 0;
+	std::string	toString() const;
 	int getRoomIndex() const;
 
 	bool operator==(const Room& other) const;

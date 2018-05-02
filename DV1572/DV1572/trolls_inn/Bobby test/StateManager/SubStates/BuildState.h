@@ -2,6 +2,7 @@
 #include "SubState.h"
 #include "../../Room/Grid.h"
 #include "../../../Furniture/Table.h"
+#include "../../../Mesh Manager/MeshManager.h"
 class BuildState :
 	public SubState
 {
@@ -15,8 +16,11 @@ private:
 	};
 
 	//TEMP
-	Mesh table;
-	Object3D test;
+	Object3D door;
+	Table* table;
+	
+	bool drawSelectedThing;
+	bool twoStepThingy = false;
 	//-----
 	int is = 0;
 
@@ -34,20 +38,13 @@ private:
 	std::vector<bool> m_hudButtonsPressed;
 	// </Main Hud>
 
-	// <Create Room HUD>
-	bool				m_madeFullResetRoomHud;
 	HUD					m_roomHUD;
-	std::vector<bool>	m_roomHUDButtonsPressed;
-	RoomType			m_selectedRoomType;
-	// </Create Room HUD>
-
-	// <Create Room HUD>
 	HUD					m_doorHUD;
-	int					m_selectedDoor;
+	HUD					m_furnitureHUD;
+	int					m_selectedThing;
+	Room*				m_selectedRoom;
 	// </Create Room HUD>
 
-	HUD		m_furnitureHUD;
-	int		m_selectedFurniture = -1;
 	
 	Text m_priceOfRoom;
 	
@@ -58,7 +55,7 @@ private:
 	bool m_canBuildFurniture = false;
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{
-		Room,
+		RoomBuild,
 		Door,
 		Furniture,
 		NONE
@@ -67,13 +64,17 @@ private:
 
 	void	_handleBuildRoom(Shape * pickedShape);
 	void	_buildInput();
-	void	_doorBuildInput();
-	void	_roomBuildInput();
 	void	_objectBuildInput();
 	bool	_handleHUDPicking();
 	bool	_mainHudPick();
-	bool	_roomBuildHudPick();
-	bool	_doorBuildHudPick();
+	bool	_selectionBuildHudPick(HUD & h);
+
+
+	void	_inputBuildRoom();
+	void	_buildRoom();
+	void	_inputDoor();
+
+	void	_inputFurniture();
 
 	void _resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
 public:
@@ -83,7 +84,7 @@ public:
 	Grid * grid,
 	RoomCtrl* roomCtrl);
 	~BuildState();
-
+	
 	
 
 	// Inherited via SubState
@@ -91,7 +92,6 @@ public:
 	virtual void Update(double deltaTime) override;
 	virtual void Draw() override;
 	virtual void DrawHUD() override;
-	
 
 	// Inherited via SubState
 	virtual void HandlePicking(Shape * pickedObject) override;
