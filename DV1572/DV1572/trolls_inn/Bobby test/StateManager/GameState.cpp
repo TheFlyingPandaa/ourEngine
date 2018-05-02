@@ -176,7 +176,7 @@ void GameState::Draw()
 	c.Draw();
 	//this->grid2->Draw();
 	m_eventHandle->Draw();
-
+	bed3D.Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -216,7 +216,8 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	
+	bed.LoadModel("trolls_inn/Resources/Reception/Reception.obj");
+	bed3D.setMesh(&bed);
 }
 
 void GameState::_setHud()
@@ -335,9 +336,6 @@ void GameState::_handlePickingAi(Shape * obj)
 
 			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-
-
-			// Ta reda p� om det �r outside -> inside
 			
 			
 			XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };

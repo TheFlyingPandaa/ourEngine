@@ -29,6 +29,9 @@ private:
 	
 	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
+
+	Mesh bed;
+	Object3D bed3D;
 	
 	MasterAI* m_mai;
 

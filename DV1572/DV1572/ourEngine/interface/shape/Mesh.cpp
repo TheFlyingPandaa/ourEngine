@@ -30,19 +30,32 @@ Mesh::Mesh(const Mesh & mesh)
 Mesh::~Mesh()
 {	
 	// Sometimes are there copies of the same materials. Better solutions please!
+
 	for (int i = 0; i < m_materials.size(); i++)
 	{
+		std::vector<int> copiesIndexes;
 		bool found = false;
-		for (int k = i + 1; k < m_materials.size() - 1; k++)
+		for (int k = i + 1; k <= m_materials.size() - 1; k++)
 		{
-			found = *m_materials.at(i) == *m_materials.at(k);
-			if (found) break;
+			found = m_materials.at(i) == m_materials.at(k);
+			if (found)
+			{
+				copiesIndexes.push_back(k);
+			}
 		}
-		if (!found)
+		if (copiesIndexes.size() == 0)
 		{
 			delete m_materials.at(i);
 			m_materials.erase(m_materials.begin() + i);
-			i = 0;
+			i = -1;
+		}
+		else
+		{
+			delete m_materials.at(i);
+			m_materials.erase(m_materials.begin() + i);
+			for (int deleteIndex = 0; deleteIndex < copiesIndexes.size(); deleteIndex++)
+				m_materials.erase(m_materials.begin() + (copiesIndexes[deleteIndex] - (deleteIndex + 1)));
+			i = -1;
 		}
 	}
 	for (auto& vBuffer : m_vertexBuffers)
