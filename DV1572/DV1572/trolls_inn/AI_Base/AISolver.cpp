@@ -4,6 +4,8 @@ void AISolver::_checkSpotInRoom(Inn& inn, Customer& customer)
 {
 	//customer.SetMovingTowardsActionArea(false);
 	// If spot is available in the room at customer position
+	//std::vector<Furniture> furnituresInRoom = this->m_roomctrl->getNoneBusyFurnitureInRoom(customer.getPosition());
+	
 	if (true)
 	{
 		// Get the seat/bed ID to lock it to the customer
@@ -46,7 +48,7 @@ void AISolver::_doWaiting(Customer& customer)
 		customer.GetAttributes().SetReputation(-5);
 		customer.SetWaitingForSpot(false);
 		// Do angry face emote
-
+		// Leave inn (?)
 	}
 	else
 	{
@@ -311,7 +313,6 @@ void AISolver::Update(Customer& customer, Inn& inn)
 				customer.PopToNextState();
 				currentState = customer.GetState();
 			}
-			
 		}
 	}
 
@@ -379,6 +380,7 @@ void AISolver::Update(Customer& customer, Inn& inn)
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
+				// Check if there is a spot open this time
 				this->_doWaiting(customer);
 			}
 			else
@@ -401,6 +403,7 @@ void AISolver::Update(Customer& customer, Inn& inn)
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
+				// Check if there is a spot open this time
 				this->_doWaiting(customer);
 			}
 			else
@@ -413,7 +416,6 @@ void AISolver::Update(Customer& customer, Inn& inn)
 	}
 }
 
-//void AISolver::Update(Customer& customer, Action desiredAction, int price)
 void AISolver::Update(Customer& customer, Action desiredAction)
 {
 	CustomerState currentState = customer.GetState();
@@ -439,11 +441,9 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		customer.PopToNextState(); // pop Thinking state
 		customer.PopToNextState(); // pop Idle state
 		customer.GotPathSetNextAction(desiredAction);
-		//customer.SetMovingTowardsActionArea(true);
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(false);
 		customer.SetWaitingForSpotMultiplier(1);
-		//customer.GetEconomy().Withdraw(price);
 		break;
 	}
 }
