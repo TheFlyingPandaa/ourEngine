@@ -42,6 +42,7 @@ private:
 	HUD					m_doorHUD;
 	HUD					m_furnitureHUD;
 	int					m_selectedThing;
+	Room*				m_selectedRoom;
 	// </Create Room HUD>
 
 	
@@ -54,7 +55,7 @@ private:
 	bool m_canBuildFurniture = false;
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{
-		Room,
+		RoomBuild,
 		Door,
 		Furniture,
 		NONE

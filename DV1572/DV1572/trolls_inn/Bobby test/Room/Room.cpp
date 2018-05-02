@@ -45,7 +45,7 @@ int Room::_index(int x, int y)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	
+	// Do not use i guess
 }
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
@@ -55,6 +55,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 	m_index = s_index++;
 	_initAABB(posX, posY, sizeX, sizeY);
 	_createLight(posX, posY, sizeX, sizeY);
+	m_selected = false;
 
 	for (auto &l : m_lights)
 	{
@@ -181,7 +182,11 @@ void Room::ApplyIndexOnMesh()
 void Room::CastShadow()
 {
 	m_AABB.CastShadow();
-	//m_AABB.Draw();
+
+
+	/*Move To Draw*/
+	if (m_selected)
+		m_AABB.TEMPTRANS();
 }
 
 void Room::setIsBuildingDoor(bool tje)
@@ -198,7 +203,6 @@ float Room::getDistance(Tile * t1, Tile * t2)
 
 std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTile)
 {
-
 	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
 	{
 		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
@@ -444,6 +448,11 @@ void Room::PickWalls()
 {
 	for (auto& wall : m_allWalls)
 		wall->getObject3D().CheckPick();
+}
+
+void Room::Select()
+{
+	m_selected = !m_selected;
 }
 
 std::vector<Tile*> Room::ReturnTiles()

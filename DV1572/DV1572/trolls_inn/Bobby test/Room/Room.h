@@ -23,6 +23,8 @@ private:
 	static bool s_isLoaded;
 	static int s_index;
 
+	bool m_selected;
+
 	int	m_index;
 
 	Object3D m_AABB;
@@ -69,6 +71,8 @@ public:
 	void		PickTiles();
 	void		PickWalls();
 	
+	void				Select();
+
 	std::vector<Tile*>	ReturnTiles();
 	std::vector<Tile*>	getTiles();
 

@@ -18,6 +18,12 @@ private:
 	~Input();
 
 public:
+	enum Key
+	{
+		Del = 46
+		// add more if needed
+	};
+
 	// Singleton class, only one instance
 	static Input& Instance()
 	{
