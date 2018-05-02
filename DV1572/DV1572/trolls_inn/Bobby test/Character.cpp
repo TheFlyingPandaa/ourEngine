@@ -237,6 +237,6 @@ bool Character::walkQueueDone() const
 
 void Character::Draw()
 {
-	m_model.Draw();
+	DX::submitToInstance(&m_model, DX::g_instanceGroupsBillboard);
 	DX::submitToInstance(&m_thinkingEmoji, DX::g_instanceGroupsBillboard);
 }

@@ -82,7 +82,8 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 CustomerFlowControl::CustomerFlowControl()
 {
 	// Load all race models
-	box.LoadModel("trolls_inn/Resources/box.obj");
+	//box.LoadModel("trolls_inn/Resources/box.obj");
+	m_boxBillboard.LoadModel("trolls_inn/resources/SpritesheetSample/floor.obj");
 }
 
 CustomerFlowControl::~CustomerFlowControl()
@@ -103,7 +104,7 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 
 	// Set this to path entrance
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
-	nextCustomer->setModel(&box);
+	nextCustomer->setModel(&m_boxBillboard);
 	nextCustomer->setFloor(0);
 
 	// Set needs for the customer

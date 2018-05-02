@@ -1080,19 +1080,16 @@ void Window::_billboardPass(const Camera & cam)
 	static bool pressed = false;
 	static float index = 1;
 
-	if (Input::isKeyPressed('L'))
+	if (Input::isKeyPressed('K'))
 	{
 		index = (int)index % 4;
 		index++;
 	}
-	
 
-	XMFLOAT4A lol(cam.getLookAt().x, cam.getLookAt().y, cam.getLookAt().z, 1.0f);
 	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
-	DirectX::XMStoreFloat4A(&buffer.direction, XMLoadFloat4A(&lol));
 	
 	
 	buffer.spriteIndex = index;
