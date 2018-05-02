@@ -566,7 +566,7 @@ RoomType Room::getRoomType()
 	return m_roomType;
 }
 
-std::vector<Furniture> Room::getNoneBusyFurniture()
+std::vector<Furniture> Room::getNoneBusyFurnitures()
 {
 	std::vector<Furniture> tempFurni;
 	for (int i = 0; i < m_roomObjects.size(); ++i)

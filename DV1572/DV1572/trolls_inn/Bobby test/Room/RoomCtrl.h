@@ -92,6 +92,10 @@ public:
 	XMINT2				getDirection2i(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
 
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos);
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos);
+	std::vector<Furniture> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos);
+
 	bool getIsBuildingDoor();
 	void setIsBuildingDoor(bool tje);
 };

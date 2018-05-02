@@ -85,7 +85,8 @@ public:
 
 	RoomType getRoomType();
 
-	std::vector<Furniture> getNoneBusyFurniture();
+	
+	std::vector<Furniture> getNoneBusyFurnitures();
 		
 	void		move(int x, int y);
 
