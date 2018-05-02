@@ -235,8 +235,23 @@ RoomCtrl::RoomCtrl()
 	
 	m_tileMesh[0] = new Mesh();
 	m_tileMesh[0]->MakeRectangle();
-	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/wood.png");
+	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/KitchenTile.jpg");
 	m_tileMesh[0]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[1] = new Mesh();
+	m_tileMesh[1]->MakeRectangle();
+	m_tileMesh[1]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
+	m_tileMesh[1]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[2] = new Mesh();
+	m_tileMesh[2]->MakeRectangle();
+	m_tileMesh[2]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
+	m_tileMesh[2]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	m_tileMesh[3] = new Mesh();
+	m_tileMesh[3]->MakeRectangle();
+	m_tileMesh[3]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
+	m_tileMesh[3]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
@@ -283,11 +298,15 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	case bedroom:
 		//Duno just copied the 
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
+		currentRoom->setFloorMesh(m_tileMesh[1]);
 		break;
 	case reception:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
+		currentRoom->setFloorMesh(m_tileMesh[2]);
+		break;
+	case hallway:
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[3]);
 		break;
 	}
 

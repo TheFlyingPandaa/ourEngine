@@ -84,6 +84,8 @@ public:
 	int getAmountOfSpecificObjects(Furniture compare);
 
 	RoomType getRoomType();
+
+	std::vector<Furniture> getNoneBusyFurniture();
 		
 	void		move(int x, int y);
 

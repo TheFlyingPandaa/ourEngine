@@ -566,6 +566,19 @@ RoomType Room::getRoomType()
 	return m_roomType;
 }
 
+std::vector<Furniture> Room::getNoneBusyFurniture()
+{
+	std::vector<Furniture> tempFurni;
+	for (int i = 0; i < m_roomObjects.size(); ++i)
+	{
+		if (false == m_roomObjects.at(i).getIsBusy())
+		{
+			tempFurni.push_back(m_roomObjects.at(i));
+		}
+	}
+	return tempFurni;
+}
+
 void Room::move(int x, int y)
 {
 	this->m_posX += x;
