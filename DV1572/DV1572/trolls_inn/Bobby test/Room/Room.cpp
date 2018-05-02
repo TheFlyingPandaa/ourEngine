@@ -20,9 +20,9 @@ void Room::_initAABB(int x, int y, int sx, int sy, int level)
 void Room::_createLight(int x, int y, int sx, int sy, int level)
 {
 	PointLight l;
-	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 1, static_cast<float>(y) + ((float)sy / 2));
+	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 2, static_cast<float>(y) + ((float)sy / 2));
 	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
-	l.setSettingsForLight(1, 0.8f);
+	l.setSettingsForLight(2.0f, 0.8f);
 	l.setIndex(m_index);
 	m_lights.push_back(l);
 }
