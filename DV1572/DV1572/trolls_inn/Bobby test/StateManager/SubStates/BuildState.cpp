@@ -19,7 +19,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 	{
 		switch (m_currentBuildType)
 		{
-		case BuildState::Room:
+		case BuildState::RoomBuild:
 			switch (m_buildStage)
 			{
 			case BuildStage::Start:
@@ -34,6 +34,27 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 			case BuildStage::Selection:
 				if (pickedShape)
 					m_selectedTile = pickedShape;
+				break;
+			case BuildStage::None:
+				if (pickedShape)
+				{
+					DirectX::XMINT2 pos(pickedShape->getPosition().x, pickedShape->getPosition().z);
+					Room* temp = m_roomCtrl->getRoomAtPos(pos);
+					if (temp != m_selectedRoom)
+					{
+						if (m_selectedRoom)
+							m_selectedRoom->Select();
+						m_selectedRoom = temp;
+						m_selectedRoom->Select();
+						
+					}
+					else
+					{
+						m_selectedRoom->Select();
+						m_selectedRoom = nullptr;
+					}
+					
+				}
 				break;
 			}
 			break;
@@ -55,7 +76,7 @@ void BuildState::_buildInput()
 {
 	switch (m_currentBuildType)
 	{
-	case CurrentBuildType::Room:
+	case CurrentBuildType::RoomBuild:
 		_inputBuildRoom();
 		break;
 	case CurrentBuildType::Door:
@@ -84,7 +105,7 @@ bool BuildState::_handleHUDPicking()
 	hudPicked = _mainHudPick();
 	if (!hudPicked)
 	{
-		if (m_currentBuildType == CurrentBuildType::Room)
+		if (m_currentBuildType == CurrentBuildType::RoomBuild)
 			hudPicked = _selectionBuildHudPick(m_roomHUD);
 		else if (m_currentBuildType == CurrentBuildType::Door)
 			hudPicked = _selectionBuildHudPick(m_doorHUD);
@@ -131,7 +152,7 @@ bool BuildState::_mainHudPick()
 				else
 				{
 					m_selectedThing = -1;
-					m_currentBuildType = CurrentBuildType::Room;
+					m_currentBuildType = CurrentBuildType::RoomBuild;
 				}
 				break;
 			case 1:
@@ -310,6 +331,15 @@ void BuildState::_inputBuildRoom()
 	{
 		_buildRoom();
 	}
+	else if (!m_clickedLastFrame && m_selectedThing == -1 && Input::isMouseLeftPressed())
+	{
+		m_roomCtrl->PickRoomTiles();
+		m_clickedLastFrame = true;
+	}
+	else if (m_clickedLastFrame && !Input::isMouseLeftPressed())
+	{
+		m_clickedLastFrame = false;
+	}
 }
 
 void BuildState::_buildRoom()
@@ -473,7 +503,7 @@ void BuildState::_init()
 {
 	m_madeFullResetMain = true;
 	m_selectedThing = -1;
-	
+	m_selectedRoom = nullptr;
 	p_HUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/BuildHud.txt");
 	for (int i = 0; i < p_HUD.getNrOfPickableButtons(); i++)
 		m_hudButtonsPressed.push_back(false);
@@ -487,13 +517,20 @@ void BuildState::_init()
 
 void BuildState::Update(double deltaTime)
 {
-	if (m_selectedThing != -1 && m_currentBuildType == CurrentBuildType::Door)
+	if (m_selectedRoom && Input::isKeyPressed(Input::Del))
 	{
-		//m_roomCtrl->setIsBuildingDoor(true);//TODO: SET THIS AS A BUTTON, NO NEED TO UPDATE ALL THE TIME
-	}
-	else
-	{
-		//m_roomCtrl->setIsBuildingDoor(false);
+		DirectX::XMFLOAT3 p = m_selectedRoom->getPosition();
+		DirectX::XMINT2 pos(p.x, p.z);
+		std::vector<Tile*> backtiles;
+		DirectX::XMINT2 delPos;
+		DirectX::XMINT2 delSize;
+		
+		if (m_roomCtrl->RemoveRoom(pos, backtiles, delPos, delSize));
+		{
+			m_selectedRoom->Select();
+			grid->insertTiles(delPos, delSize, backtiles);
+			m_selectedRoom = nullptr;
+		}
 	}
 
 }
@@ -503,7 +540,7 @@ void BuildState::Draw()
 	
 	switch (m_currentBuildType)
 	{
-	case BuildState::Room:
+	case BuildState::RoomBuild:
 		if (m_buildStage == BuildStage::Selection)
 			m_priceOfRoom.Draw();
 		break;
@@ -527,7 +564,7 @@ void BuildState::DrawHUD()
 
 	switch (m_currentBuildType)
 	{
-	case CurrentBuildType::Room:
+	case CurrentBuildType::RoomBuild:
 		m_roomHUD.Draw();
 		break;
 	case CurrentBuildType::Door:
