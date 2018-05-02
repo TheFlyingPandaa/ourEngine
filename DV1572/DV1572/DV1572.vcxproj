@@ -163,6 +163,9 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
     <ClCompile Include="trolls_inn\Events\EventCollection.cpp" />
     <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
     <ClCompile Include="trolls_inn\Events\Events.cpp" />
@@ -226,6 +229,9 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Events\EventCollection.h" />
     <ClInclude Include="trolls_inn\Events\EventHandler.h" />

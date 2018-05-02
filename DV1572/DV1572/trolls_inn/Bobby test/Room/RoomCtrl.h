@@ -6,7 +6,7 @@
 
 
 
-const unsigned short ROOM_TYPE_SIZE = 4;
+const unsigned short ROOM_TYPE_SIZE = 5;
 
 
 const float WALLOFFSET = 0.5f;

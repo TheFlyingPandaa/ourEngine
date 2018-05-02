@@ -241,17 +241,22 @@ RoomCtrl::RoomCtrl()
 	m_tileMesh[1] = new Mesh();
 	m_tileMesh[1]->MakeRectangle();
 	m_tileMesh[1]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
-	m_tileMesh[1]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+	m_tileMesh[1]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
 
 	m_tileMesh[2] = new Mesh();
 	m_tileMesh[2]->MakeRectangle();
 	m_tileMesh[2]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
-	m_tileMesh[2]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+	m_tileMesh[2]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
 
 	m_tileMesh[3] = new Mesh();
 	m_tileMesh[3]->MakeRectangle();
 	m_tileMesh[3]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
-	m_tileMesh[3]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+	m_tileMesh[3]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+
+	m_tileMesh[4] = new Mesh();
+	m_tileMesh[4]->MakeRectangle();
+	m_tileMesh[4]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/wood.png");
+	m_tileMesh[4]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
 	m_wallMesh = new Mesh();
 	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
@@ -307,6 +312,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	case hallway:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(m_tileMesh[3]);
+		break;
+	case bar:
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[4]);
 		break;
 	}
 
