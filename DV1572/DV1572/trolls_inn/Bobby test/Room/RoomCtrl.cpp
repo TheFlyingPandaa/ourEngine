@@ -271,8 +271,12 @@ RoomCtrl::~RoomCtrl()
 	}
 
 	delete m_wallMesh;
-	delete m_tileMesh[0];
+	//delete m_tileMesh[0];
 	delete m_doorMesh;
+	for (auto& element : m_tileMesh)
+	{
+		delete element;
+	}
 	m_rooms.clear();
 }
 
@@ -893,15 +897,15 @@ Direction RoomCtrl::getDirection(Room * r1, Room * r2)
 	return dir;
 }
 
-std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos)
+std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos)
 {
 	return getRoomAtPos(pos)->getNoneBusyFurnitures();
 }
-std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos)
+std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos)
 {
 	return getRoomAtPos(XMINT2(pos.x,pos.y))->getNoneBusyFurnitures();
 }
-std::vector<Furniture> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos)
+std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos)
 {
 	return getRoomAtPos(XMINT2(pos.x,pos.z))->getNoneBusyFurnitures();
 }

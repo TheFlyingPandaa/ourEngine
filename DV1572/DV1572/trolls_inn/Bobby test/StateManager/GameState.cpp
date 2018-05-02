@@ -73,6 +73,7 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
+	delete m_eventHandle;
 }
 
 // round float to n decimals precision
