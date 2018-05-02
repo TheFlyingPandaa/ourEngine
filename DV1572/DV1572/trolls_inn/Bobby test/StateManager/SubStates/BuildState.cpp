@@ -132,6 +132,8 @@ bool BuildState::_mainHudPick()
 		m_madeFullResetMain = false;
 		if (!m_clickedLastFrame && Input::isMouseLeftPressed())
 		{
+			if (m_roomCtrl->getIsBuildingDoor())
+				m_roomCtrl->setIsBuildingDoor(false);
 			m_selectedThing = -1;
 			_resetHudButtonPressedExcept(index, m_hudButtonsPressed, p_HUD);
 			// Clicked a button
@@ -178,12 +180,12 @@ bool BuildState::_mainHudPick()
 				{
 					m_selectedThing = -1;
 					m_currentBuildType = CurrentBuildType::NONE;
-					m_roomCtrl->setIsBuildingDoor(false);
 				}
 				else
 				{
 					m_selectedThing = -1;
 					m_currentBuildType = CurrentBuildType::Door;
+					m_roomCtrl->setIsBuildingDoor(true);
 				}
 				break;
 			}
@@ -496,6 +498,8 @@ BuildState::BuildState(Camera * cam,
 
 BuildState::~BuildState()
 {
+	if (m_roomCtrl->getIsBuildingDoor())
+		m_roomCtrl->setIsBuildingDoor(false);
 	delete table;
 }
 
@@ -520,7 +524,7 @@ void BuildState::Update(double deltaTime)
 	if (m_selectedRoom && Input::isKeyPressed(Input::Del))
 	{
 		DirectX::XMFLOAT3 p = m_selectedRoom->getPosition();
-		DirectX::XMINT2 pos(p.x, p.z);
+		DirectX::XMINT2 pos(p.x + 0.5f, p.z + 0.5f);
 		std::vector<Tile*> backtiles;
 		DirectX::XMINT2 delPos;
 		DirectX::XMINT2 delSize;
