@@ -7,22 +7,26 @@ Customer::Customer()
 
 Customer::Customer(Race race, int gold)
 {
+	this->m_availableSpotFound = false;
+	//this->m_movingTowardsActionArea = false;
 	this->m_race = race;
 	this->m_economy = Economy(gold);
 	this->SetAction(WalkToInn);
-	this->m_stats.SetReputation(-3);
-	this->m_stats.SetStandard(-5);
-	this->m_stats.SetDrinkQuality(2); // TEST
-	this->m_stats.SetFoodQuality(1); // TEST
-	this->m_stats.SetShady(8); // TEST
+	this->m_review.SetReputation(-3); // TEST
+	this->m_review.SetStandard(-5); // TEST
+	this->m_review.SetDrinkQuality(2); // TEST
+	this->m_review.SetFoodQuality(1); // TEST
+	this->m_review.SetShady(8); // TEST
 }
 
 Customer::Customer(const Customer& other) : Character(other)
 {
-	this->m_stats = other.m_stats;
+	this->m_review = other.m_review;
 	this->m_economy = other.m_economy;
 	this->m_race = other.m_race;
 	this->m_stateQueue = other.m_stateQueue;
+	this->m_availableSpotFound = other.m_availableSpotFound;
+	//this->m_movingTowardsActionArea = other.m_movingTowardsActionArea;
 	this->m_hungry = other.m_hungry;
 	this->m_tired = other.m_tired;
 	this->m_thirsty = other.m_thirsty;
@@ -34,7 +38,7 @@ Customer::~Customer()
 
 Attributes& Customer::GetAttributes()
 {
-	return this->m_stats;
+	return this->m_review;
 }
 
 Economy& Customer::GetEconomy()
@@ -171,6 +175,46 @@ const char * Customer::GetStateStr() const
 	}
 
 	return "Idle";
+}
+
+bool Customer::GetAvailableSpotFound() const
+{
+	return this->m_availableSpotFound;
+}
+
+//bool Customer::GetMovingTowardsActionArea() const
+//{
+//	return this->m_movingTowardsActionArea;
+//}
+
+bool Customer::GetWaitingForSpot() const
+{
+	return this->m_waitingForSpot;
+}
+
+int Customer::GetWaitingForSpotMultiplier() const
+{
+	return this->m_waitingForSpotMultiplier;
+}
+
+void Customer::SetAvailableSpotFound(bool spotFound)
+{
+	this->m_availableSpotFound = spotFound;
+}
+
+//void Customer::SetMovingTowardsActionArea(bool moving)
+//{
+//	this->m_movingTowardsActionArea = moving;
+//}
+
+void Customer::SetWaitingForSpot(bool waiting)
+{
+	this->m_waitingForSpot = waiting;
+}
+
+void Customer::SetWaitingForSpotMultiplier(int multiplier)
+{
+	this->m_waitingForSpotMultiplier = multiplier;
 }
 
 int Customer::GetHungry() const

@@ -3,7 +3,8 @@
 #include "../Bobby test/Character.h"
 #include "Economy.h"
 #include <queue>
-//#include <chrono>
+#include <stack>
+#include <chrono>
 
 enum Race
 {
@@ -40,10 +41,21 @@ enum CustomerState
 class Customer : public Character
 {
 private:
-	Attributes m_stats;
+	Attributes m_review;
 	Economy m_economy;
 	Race m_race;
 	std::queue<CustomerState> m_stateQueue;
+
+	// Add a room stack with all the rooms of a specific type (?)
+	// For pathfinding purposes
+
+	// Add angry face count (?)
+
+	// Needs variables
+	bool m_availableSpotFound;
+	//bool m_movingTowardsActionArea;
+	bool m_waitingForSpot;
+	int m_waitingForSpotMultiplier;
 
 	int m_hungry;
 	int m_tired;
@@ -73,6 +85,15 @@ public:
 	const char* GetActionStr() const;
 	const char* GetStateStr() const;
 
+	bool GetAvailableSpotFound() const;
+	//bool GetMovingTowardsActionArea() const;
+	bool GetWaitingForSpot() const;
+	int GetWaitingForSpotMultiplier() const;
+	void SetAvailableSpotFound(bool spotFound);
+	//void SetMovingTowardsActionArea(bool moving);
+	void SetWaitingForSpot(bool waiting);
+	void SetWaitingForSpotMultiplier(int multiplier);
+	
 	int GetHungry() const;
 	int GetTired() const;
 	int GetThirsty() const;

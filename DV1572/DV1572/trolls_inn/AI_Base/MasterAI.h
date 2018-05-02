@@ -7,6 +7,8 @@
 #include <vector>
 #include <chrono>
 
+const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
+
 class MasterAI
 {
 private:

@@ -50,7 +50,7 @@ void MasterAI::Update(Camera* cam)
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
-	if (this->m_time_span.count() > 10)
+	if (this->m_time_span.count() > UPDATE_FREQUENCY_CUSTOMER_NEEDS)
 	{
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
@@ -111,7 +111,7 @@ void MasterAI::Update(Camera* cam)
 			{
 				// Customer wants path to Action area
 				customer->SetAction(ThinkingAction);
-				this->m_solver.Update(*customer, desiredAction, price);
+				this->m_solver.Update(*customer, desiredAction);
 			}
 		}
 		else
@@ -121,18 +121,17 @@ void MasterAI::Update(Camera* cam)
 				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
 			}
 			// Execute the action queue
-			this->m_solver.Update(*customer, this->m_time_span);
+			this->m_solver.Update(*customer, this->m_inn);
 		}
 
 		loopCounter++;
 	}
 
-	if (this->m_solver.getTimeSpan().count() > 1)
+	if (this->m_solver.getTimeSpan().count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 		this->m_solver.restartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
 	
-	// BROKEN, subscript changes when first customer is deleted. Fixed(?)
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
@@ -158,7 +157,7 @@ void MasterAI::Update(Camera* cam)
 			if (leavingCustomer->walkQueueDone())
 				leavingCustomer->PopToNextState();
 			else
-				this->m_solver.Update(*leavingCustomer, this->m_time_span);
+				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
 				this->m_inn.CustomerReview(leavingCustomer->GetAttributes());
@@ -171,7 +170,7 @@ void MasterAI::Update(Camera* cam)
 	// Delete customers that left the inn area
 	if (goneCustomers.size() > 0)
 		this->_sortVectorID(goneCustomers);
-	// BROKEN, same as previous (?)
+
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
 		int index = goneCustomers[i];
