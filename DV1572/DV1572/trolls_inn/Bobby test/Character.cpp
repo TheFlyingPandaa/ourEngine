@@ -163,7 +163,7 @@ void Character::castShadow()
 	DX::submitToInstance(&m_model, DX::g_InstanceGroupsShadow);
 }
 
-const DirectX::XMFLOAT2 Character::getPosition() const
+ DirectX::XMFLOAT2 Character::getPosition() const
 {
 	DirectX::XMFLOAT3 p = m_model.getPosition();
 	DirectX::XMFLOAT2 position;

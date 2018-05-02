@@ -94,6 +94,7 @@ public:
 
 	Room*				getRoomAt(int index);
 	Room*				getRoomAtPos(XMINT2 pos);
+	std::vector<Room*>	getAllTheRooms() const;
 
 	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 
