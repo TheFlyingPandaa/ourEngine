@@ -29,6 +29,7 @@ private:
 	void _checkInnStatUpdate();
 	Economy*		m_economy;
 	int				m_profit,	m_staffSalary = 420;
+	int				m_rent;
 	bool			m_staffSalaryApplyed;
 	double			m_timer;
 
@@ -52,6 +53,9 @@ public:
 
 	void Deposit(int amount);
 	void Withdraw(int amount);
+
+	void IncreaseRent(int amount);
+	void DecreaseRent(int amount);
 
 	void changeStaffSalary(int amount);
 	

@@ -111,6 +111,8 @@ Inn::Inn()
 	this->m_sleepPrice = 20;
 
 	m_receptionPos = DirectX::XMINT2(16, 1);
+
+	m_rent = 0;
 }
 
 Inn::~Inn()
@@ -148,7 +150,7 @@ Attributes Inn::GetInnAttributes() const
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
-		m_profit -= m_staffSalary;
+		m_profit -= m_staffSalary - m_rent;
 		m_staffSalaryApplyed = true;
 	}
 
@@ -183,6 +185,16 @@ void Inn::Deposit(int amount)
 void Inn::Withdraw(int amount)
 {
 	m_economy->Withdraw(amount);
+}
+
+void Inn::IncreaseRent(int amount)
+{
+	m_rent += amount;
+}
+
+void Inn::DecreaseRent(int amount)
+{
+	m_rent -= amount;
 }
 
 void Inn::changeStaffSalary(int amount)
