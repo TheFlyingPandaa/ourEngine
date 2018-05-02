@@ -48,7 +48,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 	
 }
 
-Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
+Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
 {
 	if (!s_isLoaded)
 		_loadStatic();
@@ -77,8 +77,10 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
-	//TODO //
+	//TODO //Fix scale?? CHEFEN GET ON IT
 	m_wholeFloor.setUVScale(sizeX);
+
+	m_roomType = roomType;
 
 }
 
@@ -135,6 +137,30 @@ void Room::Update(Camera * cam)
 				//std::cout << (angleDegrees/90.0f) << std::endl
 		}
 	}
+}
+
+void Room::Draw()
+{
+	m_wholeFloor.Draw();
+
+	for (auto& fur : m_roomObjects)
+		fur.Draw();
+
+	for (auto& tile : m_roomTiles)
+	{
+		if (tile->getQuad().getColor().x != 1.0f)
+			tile->getQuad().Draw();
+	}
+
+	for (auto& wall : m_allWalls)
+	{
+		wall->Draw();
+	}
+}
+
+std::string Room::toString() const
+{
+	return "meh";
 }
 
 int Room::getRoomIndex() const
@@ -533,6 +559,11 @@ int Room::getAmountOfObjects()
 int Room::getAmountOfSpecificObjects(Furniture compare)
 {
 	return 0;
+}
+
+RoomType Room::getRoomType()
+{
+	return m_roomType;
 }
 
 void Room::move(int x, int y)

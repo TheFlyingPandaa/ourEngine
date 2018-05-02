@@ -23,7 +23,7 @@ int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 bool RoomCtrl::_checkLegal(Room * room)
 {
 
-	return dynamic_cast<Bedroom*>(room) == nullptr;
+	return dynamic_cast<Room*>(room) == nullptr;
 }
 
 bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
@@ -31,11 +31,11 @@ bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
 	switch (type)
 	{
 	case kitchen:
-		return dynamic_cast<Kitchen*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	case bedroom:
-		return dynamic_cast<Bedroom*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	case reception:
-		return dynamic_cast<Reception*>(room) == nullptr;
+		return dynamic_cast<Room*>(room) == nullptr;
 	}
 	return false;
 }
@@ -277,13 +277,16 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Kitchen(pos.x, pos.y, size.x, size.y, tiles);
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(m_tileMesh[0]);
 		break;
 	case bedroom:
+		//Duno just copied the 
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
+		currentRoom->setFloorMesh(m_tileMesh[0]);
 		break;
 	case reception:
-		currentRoom = new Reception(pos.x, pos.y, size.x, size.y, tiles);
+		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(m_tileMesh[0]);
 		break;
 	}

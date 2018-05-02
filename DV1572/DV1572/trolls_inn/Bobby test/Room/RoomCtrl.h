@@ -2,22 +2,12 @@
 #include <vector>
 #include "Room.h"
 #include "Structure.h"
-#include "Kitchen.h"
-#include "Bedroom.h"
-#include "Reception.h"
 #include "../../Furniture/Furniture.h"
 
 
 
 const unsigned short ROOM_TYPE_SIZE = 2;
-enum RoomType {
-	kitchen,
-	hallway,
-	bedroom,
-	reception,
-	randomStupid,
-	UNDEFINED
-};
+
 
 const float WALLOFFSET = 0.5f;
 
