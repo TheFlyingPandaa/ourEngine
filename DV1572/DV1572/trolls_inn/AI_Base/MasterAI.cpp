@@ -29,10 +29,16 @@ void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
 	ID[index2] = temp;
 }
 
+void MasterAI::_generateCustomer()
+{
+	m_nextCustomer = m_cFC.Update(m_inn.GetInnAttributes());
+}
+
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid)
 	: m_solver(roomCtrl,grid)
 {
-	this->m_start = this->m_clock.now();
+	m_customer_start = m_start = m_clock.now();
+	m_customerSpawned = true;
 }
 
 MasterAI::~MasterAI()
@@ -44,12 +50,49 @@ MasterAI::~MasterAI()
 void MasterAI::Update(Camera* cam)
 {
 	// Get the elapsed time
-	this->m_now = this->m_clock.now();
-	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
-	
+	m_customer_now = m_now = m_clock.now();
+	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
+	m_customer_spawn_timer = std::chrono::duration_cast<std::chrono::duration<double>>(m_customer_now - m_customer_start);
+
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
+	if (!m_customerSpawned)
+	{
+		double duration = m_nextCustomer->GetTimeSpan().count();
+		if (duration > CHECK_CUSTOMER_SPAWN)
+		{
+			if (m_nextCustomer->GetRace() == Elf)
+			{
+				if (duration > 30)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+			else
+			{
+				if (duration > 15)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (m_customer_spawn_timer.count() > 30)
+		{
+			m_customerSpawned = false;
+			_generateCustomer();
+		}
+	}
+
 	if (this->m_time_span.count() > UPDATE_FREQUENCY_CUSTOMER_NEEDS)
 	{
 		updateCustomerNeeds = true;
