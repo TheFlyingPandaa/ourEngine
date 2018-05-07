@@ -835,8 +835,9 @@ void Window::_initFonts()
 
 void Window::_drawText()
 {
-	DX::g_spriteBatch->Begin();
-
+	DX::g_spriteBatch->Begin(SpriteSortMode_Immediate, m_transBlendState);
+	//DX::g_spriteBatch->Begin();
+	//DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 	for (auto &t : DX::g_textQueue)
 	{
 		std::string str = t->getTextString();
@@ -861,7 +862,6 @@ void Window::_drawText()
 			origin = XMVectorSetX(origin, 0);
 			break;
 		}
-
 
 		DX::g_fonts[t->getFontType()]->DrawString(
 			DX::g_spriteBatch.get(),

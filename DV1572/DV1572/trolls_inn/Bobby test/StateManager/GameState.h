@@ -60,6 +60,7 @@ private:
 	
 	Inn * inn;
 
+	int m_in = 0;
 
 	//EventCollection testtt;
 	EventHandler * m_eventHandle;

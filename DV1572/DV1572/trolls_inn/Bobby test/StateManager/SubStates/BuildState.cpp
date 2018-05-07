@@ -384,7 +384,7 @@ void BuildState::_buildRoom()
 		
 		m_inn->Withdraw(area * 20);
 		//m_inn->Deposit(area);
-		m_inn->UpdateMoney();
+		//m_inn->UpdateMoney();
 		
 		m_startTile = nullptr;
 		m_selectedTile = nullptr;
@@ -446,7 +446,7 @@ void BuildState::_inputFurniture()
 			{
 				m_roomCtrl->AddRoomObject(*table);
 				m_inn->Withdraw(table->getPrice());
-				m_inn->UpdateMoney();
+				//m_inn->UpdateMoney();
 			}
 
 			m_buildStage = BuildStage::None;
@@ -583,6 +583,11 @@ void BuildState::Draw()
 		break;
 	default:
 		break;
+	}
+
+	if (m_inn)
+	{
+		m_inn->Draw();
 	}
 
 }

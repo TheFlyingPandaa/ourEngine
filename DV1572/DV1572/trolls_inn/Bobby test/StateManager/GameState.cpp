@@ -136,8 +136,10 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
-	if (Input::isKeyPressed('Y'))
+	if (Input::isKeyPressed('Y') ) {
 		inn->Deposit(500);
+		//m_in++;
+	}
 	if (Input::isKeyPressed('U'))
 		inn->Withdraw(500);
 
@@ -182,6 +184,9 @@ void GameState::Draw()
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
+
+	if (inn)
+		inn->Draw();
 }
 
 void GameState::DrawHUD()

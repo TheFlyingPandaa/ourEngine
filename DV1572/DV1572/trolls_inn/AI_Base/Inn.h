@@ -34,8 +34,14 @@ private:
 	double			m_timer;
 
 	Text*			m_text;
+	std::vector<Text> m_withdrawText;
+	std::vector<Text> m_depositText;
+	std::vector<int> m_depositAmount;
+	std::vector<int> m_removeVec;
 
 	DirectX::XMINT2 m_receptionPos;	//The way we set this will be changed
+
+	void WithdrawText();
 public:
 	Inn();
 	~Inn();
