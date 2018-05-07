@@ -29,12 +29,12 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	int secondRoomSizeX = 4;
 	int secondRoomSizeY = 2;
 
+	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
 	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	hardBed = new Furniture(bed3D.getPosition(), bed3D.getMesh());
+	hardBed = new Furniture(bed3D->getPosition(), bed);
 	//m_roomctrl->AddRoomObject(*hardBed);
-	this->_init();
 
 	inn = new Inn();
 
@@ -78,6 +78,8 @@ GameState::~GameState()
 	}
 	delete inn;
 	delete m_eventHandle;
+	delete bed;
+	delete bed3D;
 	delete hardBed;
 }
 
@@ -183,7 +185,7 @@ void GameState::Draw()
 	//this->grid2->Draw();
 	m_eventHandle->Draw();
 	
-	bed3D.Draw();
+	bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -223,17 +225,20 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
+	bed = new Mesh();
 	//bed.LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	bed.LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
-	//bed.LoadModel("trolls_inn/Resources/Chair/Chair.obj");
+	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
+	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
 	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	bed3D.setMesh(&bed);
-	bed3D.setPos(17, 0, 8);
-	bed3D.Rotate(0, 90, 0);
+	bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
+	bed3D = new Object3D();
+	bed3D->setMesh(bed);
+	bed3D->setPos(0, 0, 8);
+	bed3D->Rotate(0, 90, 0);
 }
 
 void GameState::_setHud()

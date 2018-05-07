@@ -71,7 +71,7 @@ float4 main(Input input) : SV_Target
 	//spec lowest value is 32.
 	float spec = pow(max(dot(normal, halfWayDir), 0.0f), 32.0f);
 
-	float3 finalSpec = spec * specLevel;
+	float3 finalSpec = spec * specLevel * 0.1f;
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 	//float4 lightPos = view[3];
