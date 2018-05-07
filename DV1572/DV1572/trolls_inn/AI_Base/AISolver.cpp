@@ -430,12 +430,12 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 			//GetPath(customer, RoomType::bar);
 			break;
 		case EatAction:
-			GetPath(customer, RoomType::randomStupid);
-			//GetPath(customer, RoomType::kitchen);
+			//GetPath(customer, RoomType::randomStupid);
+			GetPath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
-			GetPath(customer, RoomType::randomStupid);
-			//GetPath(customer, RoomType::bedroom);
+			//GetPath(customer, RoomType::randomStupid);
+			GetPath(customer, RoomType::bedroom);
 			break;
 		}
 		customer.PopToNextState(); // pop Thinking state
