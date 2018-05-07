@@ -70,6 +70,9 @@
     <ClCompile Include="trolls_inn\Events\Reward.cpp" />
     <ClCompile Include="trolls_inn\Events\EventCollection.cpp" />
     <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -132,6 +135,9 @@
     <ClInclude Include="trolls_inn\Events\Reward.h" />
     <ClInclude Include="trolls_inn\Events\EventCollection.h" />
     <ClInclude Include="trolls_inn\Events\EventHandler.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

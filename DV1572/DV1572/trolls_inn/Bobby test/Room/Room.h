@@ -12,6 +12,7 @@ enum RoomType {
 	hallway,
 	bedroom,
 	reception,
+	bar,
 	randomStupid,
 	UNDEFINED
 };
