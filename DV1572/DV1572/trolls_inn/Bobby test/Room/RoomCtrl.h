@@ -63,7 +63,10 @@ public:
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
+
 	bool				CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle = 0);
+	bool				MarkAllTilesRedObject(DirectX::XMINT2 start, int size, int angle = 0);
+
 	void				PickRoomTiles();
 	void				PickWalls();
 	void				Update(Camera * cam);

@@ -172,6 +172,11 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	}
 }
 
+void Inn::UpdateMoney()
+{
+	m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
+}
+
 int Inn::getMoney() const
 {
 	return m_economy->GetGold();

@@ -1,6 +1,8 @@
 #include "BuildState.h"
 #include "../../../Mesh Manager/MeshManager.h"
 
+#define DEBUG = 1;
+
 void BuildState::_resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud)
 {
 	for (size_t i = 0; i < vec.size(); i++)
@@ -317,11 +319,17 @@ void BuildState::_inputBuildRoom()
 				end.y = static_cast<int>(e.z + 0.5f);
 
 				int area = (abs(end.x - start.x) + 1) * (abs(end.y - start.y) + 1);
-				std::string textString = "Area: " + std::to_string(area);
+				std::string textString = "Area: " + std::to_string(area) + " Price: " + std::to_string(area * 20); //20 is the roomPrice
 				m_priceOfRoom.setTextString(textString);
 				DirectX::XMFLOAT2 mp = Input::getMousePositionLH();
 				m_priceOfRoom.setPosition(mp.x, mp.y + 30);
-				m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
+				if (area * 20 <= m_inn->getMoney())
+				{
+					m_roomPlaceable = this->grid->CheckAndMarkTiles(start, end);
+				}
+				else {
+					m_roomPlaceable = this->grid->MarkAllTilesRed(start, end);
+				}
 			}
 		}
 	}
@@ -355,7 +363,7 @@ void BuildState::_buildRoom()
 	XMINT2 end;
 	end.x = static_cast<int>(e.x + 0.5f);
 	end.y = static_cast<int>(e.z + 0.5f);
-
+	int area = (abs(end.x - start.x) + 1) * (abs(end.y - start.y) + 1);
 	if (start.x > end.x)
 		std::swap(start.x, end.x);
 	if (start.y > end.y)
@@ -373,6 +381,11 @@ void BuildState::_buildRoom()
 	if (m_roomPlaceable && m_selectedThing != -1)
 	{
 		m_roomCtrl->AddRoom(start, end, static_cast<RoomType>(m_selectedThing), grid->extractTiles(start, end));
+		
+		m_inn->Withdraw(area * 20);
+		//m_inn->Deposit(area);
+		m_inn->UpdateMoney();
+		
 		m_startTile = nullptr;
 		m_selectedTile = nullptr;
 	}
@@ -432,6 +445,8 @@ void BuildState::_inputFurniture()
 			if (m_canBuildFurniture)
 			{
 				m_roomCtrl->AddRoomObject(*table);
+				m_inn->Withdraw(table->getPrice());
+				m_inn->UpdateMoney();
 			}
 
 			m_buildStage = BuildStage::None;
@@ -449,7 +464,15 @@ void BuildState::_inputFurniture()
 			start.x = table->getPosition().x;
 			start.y = table->getPosition().z;
 			//this->grid->ResetTileColor(start, start);
-			m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
+			if (m_inn->getMoney() >= table->getPrice())
+			{
+				m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
+			}
+			else
+			{
+				m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
+			}
+			
 			
 			//std::cout << m_startTile->getRotation().y << std::endl;
 			//TEMP
@@ -473,7 +496,7 @@ void BuildState::_inputFurniture()
 
 BuildState::BuildState(Camera * cam,
 	std::stack<Shape *>* pickingEvent,
-	Grid * grid, RoomCtrl* roomCtrl) : SubState(cam, pickingEvent)
+	Grid * grid, RoomCtrl* roomCtrl, Inn * i) : SubState(cam, pickingEvent)
 {
 	this->grid = grid;
 	m_roomCtrl = roomCtrl;
@@ -490,6 +513,8 @@ BuildState::BuildState(Camera * cam,
 	m_currentBuildType = CurrentBuildType::NONE;
 
 	drawSelectedThing = false;
+
+	m_inn = i;
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());

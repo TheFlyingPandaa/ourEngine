@@ -49,6 +49,7 @@ public:
 	Attributes GetInnAttributes() const;
 
 	void Update(double deltaTime, TIMEOFDAY TOD);
+	void UpdateMoney();
 	int getMoney() const;
 
 	void Deposit(int amount);

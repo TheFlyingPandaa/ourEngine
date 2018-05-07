@@ -3,6 +3,8 @@
 #include "../../Room/Grid.h"
 #include "../../../Furniture/Table.h"
 #include "../../../Mesh Manager/MeshManager.h"
+#include "../../../AI_Base/Inn.h"
+
 class BuildState :
 	public SubState
 {
@@ -45,7 +47,7 @@ private:
 	Room*				m_selectedRoom;
 	// </Create Room HUD>
 
-	
+	Inn * m_inn;
 	Text m_priceOfRoom;
 	
 	
@@ -82,7 +84,7 @@ public:
 	BuildState(Camera * cam, 
 	std::stack<Shape *>* pickingEvent,
 	Grid * grid,
-	RoomCtrl* roomCtrl);
+	RoomCtrl* roomCtrl, Inn * i);
 	~BuildState();
 	
 	

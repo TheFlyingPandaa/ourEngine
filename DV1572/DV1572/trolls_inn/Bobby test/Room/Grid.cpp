@@ -280,6 +280,47 @@ bool Grid::CheckAndMarkTiles(DirectX::XMINT2 start, DirectX::XMINT2 end)
 	return result;
 }
 
+bool Grid::MarkAllTilesRed(DirectX::XMINT2 start, DirectX::XMINT2 end)
+{
+	DirectX::XMFLOAT3 color(8.0f, 0.5f, 0.5f);
+
+	if (end.x < start.x)
+	{
+		std::swap(end.x, start.x);
+	}
+	if (end.y < start.y)
+	{
+		std::swap(end.y, start.y);
+	}
+
+
+
+
+	bool result = true;
+	for (int i = start.x; i < end.x + 1; i++)
+	{
+		for (int j = start.y; j < end.y + 1; j++)
+		{
+			Tile* t = m_tiles[_index(i, j)];
+			if (!t)
+			{
+				color = XMFLOAT3(8.0f, 0.5f, 0.5f);
+				result = false;
+			}
+		}
+	}
+	for (int i = start.x; i < end.x + 1; i++)
+	{
+		for (int j = start.y; j < end.y + 1; j++)
+		{
+			Tile* t = m_tiles[_index(i, j)];
+			if (t)
+				t->getQuad().setColor(color.x, color.y, color.z);
+		}
+	}
+	return false;
+}
+
 
 
 void Grid::ResetTileColor(DirectX::XMINT2 pos, DirectX::XMINT2 end)

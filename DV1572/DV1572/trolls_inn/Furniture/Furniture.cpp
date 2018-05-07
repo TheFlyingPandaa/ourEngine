@@ -60,6 +60,11 @@ DirectX::XMINT3 Furniture::getPosition()
 	return this->pos;
 }
 
+int Furniture::getPrice()
+{
+	return p_price;
+}
+
 bool Furniture::getIsBusy()
 {
 	return p_isBusy;

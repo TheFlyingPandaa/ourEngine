@@ -12,12 +12,13 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 	if (setting == 0)
 	{
 		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
+		p_price = 100;
 	}
 	else if (setting == 1)
 	{
 		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
-
 		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
+		p_price = 1000;
 	}
 }
 //
