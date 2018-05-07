@@ -223,7 +223,6 @@ void Shape::CheckPick()
 
 void Shape::CastShadow()
 {
-	//DX::g_shadowQueue.push_back(this);
 	DX::submitToInstance(this, DX::g_InstanceGroupsShadow);
 }
 

@@ -33,14 +33,14 @@ ID3D11DomainShader* DX::g_standardDomainShader;
 ID3D11VertexShader* DX::g_skyBoxVertexShader;
 ID3D11PixelShader* DX::g_skyBoxPixelShader;
 
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsSkyBox;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsSkyBox;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
-std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsBillboard;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
+std::deque<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsBillboard;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
@@ -50,9 +50,9 @@ std::unique_ptr<DirectX::SpriteBatch>				DX::g_spriteBatch;
 XMFLOAT4A											DX::g_lightPos;
 XMFLOAT4A											DX::g_lightDir;
 
-void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
+void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 {
-	
+
 	int existingId = -1;
 	for (int i = 0; i < queue.size() && existingId == -1; i++)
 	{
@@ -67,20 +67,23 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
 	INSTANCE_ATTRIB attribDesc;
-	
+
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
-	
+
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
 	XMFLOAT4A rows[4];
-	for (int i = 0; i < 4; i++)
-	{
-		rows[i].x = worldMat.m[i][0];
+	
+	memcpy(&rows[0],&worldMat.m[0][0], 4 * sizeof(float));
+	memcpy(&rows[1],&worldMat.m[1][0], 4 * sizeof(float));
+	memcpy(&rows[2],&worldMat.m[2][0], 4 * sizeof(float));
+	memcpy(&rows[3],&worldMat.m[3][0], 4 * sizeof(float));
+	/*	rows[i].x = worldMat.m[i][0];
 		rows[i].y = worldMat.m[i][1];
 		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];
-	}
+		rows[i].w = worldMat.m[i][3];*/
+	
 
 	
 	attribDesc.w1 = rows[0];
@@ -402,8 +405,9 @@ void Window::_drawHUD()
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
-	for (auto& instance : DX::g_instanceGroupsHUD)	//Every instance has it's own queue
+	while (!DX::g_instanceGroupsHUD.empty())	//Every instance has it's own queue
 	{
+		auto instance = DX::g_instanceGroupsHUD.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -453,6 +457,7 @@ void Window::_drawHUD()
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsHUD.pop_front();
 	}
 }
 
@@ -655,8 +660,9 @@ void Window::_shadowPass(Camera* c)
 	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
 	ID3D11Buffer* instanceBuffer = nullptr;
-	for (auto& instance : DX::g_InstanceGroupsShadow)
+	while (!DX::g_InstanceGroupsShadow.empty())
 	{
+		auto instance = DX::g_InstanceGroupsShadow.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -691,6 +697,7 @@ void Window::_shadowPass(Camera* c)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_InstanceGroupsShadow.pop_front();
 	}
 
 	
@@ -1107,10 +1114,10 @@ void Window::_billboardPass(const Camera & cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsBillboard)
+	while (!DX::g_instanceGroupsBillboard.empty())
 	{
 		
-		
+		auto instance = DX::g_instanceGroupsBillboard.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1164,6 +1171,7 @@ void Window::_billboardPass(const Camera & cam)
 		}
 
 		instanceBuffer->Release();
+		DX::g_instanceGroupsBillboard.pop_front();
 	}
 
 	if (m_WireFrameDebug == true)
@@ -1203,9 +1211,9 @@ void Window::_geometryPass(const Camera &cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroups)
+	while (!DX::g_instanceGroups.empty())
 	{
-		
+		auto instance = DX::g_instanceGroups.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1259,6 +1267,7 @@ void Window::_geometryPass(const Camera &cam)
 		}
 		
 		instanceBuffer->Release();
+		DX::g_instanceGroups.pop_front();
 	}
 
 	if (m_WireFrameDebug == true)
@@ -1290,8 +1299,9 @@ void Window::_skyBoxPass(const Camera& cam)
 	
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsSkyBox)
+	while (!DX::g_instanceGroupsSkyBox.empty())
 	{
+		auto instance = DX::g_instanceGroupsSkyBox.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1341,6 +1351,7 @@ void Window::_skyBoxPass(const Camera& cam)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsSkyBox.pop_front();
 	}
 }
 
@@ -1464,8 +1475,9 @@ void Window::_transparencyPass(const Camera & cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsTransparancy)
+	while (!DX::g_instanceGroupsTransparancy.empty())
 	{
+		auto instance = DX::g_instanceGroupsTransparancy.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1511,6 +1523,7 @@ void Window::_transparencyPass(const Camera & cam)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsTransparancy.pop_front();
 	}
 }
 
@@ -1672,20 +1685,13 @@ void Window::Clear()
 {
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_pickingQueue.clear();
-	DX::g_skyBoxQueue.clear();
-	DX::g_instanceGroups.clear();
-	DX::g_instanceGroupsSkyBox.clear();
-	DX::g_instanceGroupsHUD.clear();
-	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
-	DX::g_InstanceGroupsShadow.clear();
 
 	// WINDOW Test
 	DX::g_instanceGroupWindows.clear();
 	// end window test
 
 	DX::g_textQueue.clear();
-	DX::g_instanceGroupsBillboard.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
