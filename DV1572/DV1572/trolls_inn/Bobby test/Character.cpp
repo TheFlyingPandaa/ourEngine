@@ -256,7 +256,7 @@ bool Character::walkQueueDone() const
 #include <iostream>
 void Character::Draw()
 {
-	std::cout << printDir(m_currentDir) << std::endl;
+	//std::cout << printDir(m_currentDir) << std::endl;
 	DX::submitToInstance(this);
 //	DX::submitToInstance(this);
 }
