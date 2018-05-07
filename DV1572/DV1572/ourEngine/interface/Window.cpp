@@ -4,6 +4,7 @@
 #include "../core/Picking.h"
 #include <chrono>
 #include <iostream>
+#include <algorithm> // For std::find_if
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
@@ -52,17 +53,9 @@ XMFLOAT4A											DX::g_lightDir;
 
 void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 {
-
-	int existingId = -1;
-	for (int i = 0; i < queue.size() && existingId == -1; i++)
-	{
-		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
-		{
-			existingId = i;
-
-		}
-	}
-
+	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP& item) {
+		return shape->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
@@ -73,29 +66,13 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
-	XMFLOAT4A rows[4];
+	memcpy(&attribDesc.u.rows,&worldMat.m[0][0], 16 * sizeof(float));
 	
-	memcpy(&rows[0],&worldMat.m[0][0], 4 * sizeof(float));
-	memcpy(&rows[1],&worldMat.m[1][0], 4 * sizeof(float));
-	memcpy(&rows[2],&worldMat.m[2][0], 4 * sizeof(float));
-	memcpy(&rows[3],&worldMat.m[3][0], 4 * sizeof(float));
-	/*	rows[i].x = worldMat.m[i][0];
-		rows[i].y = worldMat.m[i][1];
-		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];*/
-	
-
-	
-	attribDesc.w1 = rows[0];
-	attribDesc.w2 = rows[1];
-	attribDesc.w3 = rows[2];
-	attribDesc.w4 = rows[3];
-
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 	attribDesc.lightIndex = static_cast<float>(shape->getLightIndex());
 	
 	// Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == queue.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -107,21 +84,17 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		queue[existingId].attribs.push_back(attribDesc);
+		exisitingEntry->attribs.push_back(attribDesc);
 	}
 	
 }
+
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>& queue)
 {
-	int existingId = -1;
-	for (int i = 0; i < queue.size() && existingId == -1; i++)
-	{
-		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
-		{
-			existingId = i;
+	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP_INDEXED& item) {
+			return shape->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
-		}
-	}
 
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
@@ -133,26 +106,13 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
-	XMFLOAT4A rows[4];
-	for (int i = 0; i < 4; i++)
-	{
-		rows[i].x = worldMat.m[i][0];
-		rows[i].y = worldMat.m[i][1];
-		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];
-	}
-
-
-	attribDesc.w1 = rows[0];
-	attribDesc.w2 = rows[1];
-	attribDesc.w3 = rows[2];
-	attribDesc.w4 = rows[3];
+	memcpy(&attribDesc.u.rows, &worldMat.m[0][0], 16 * sizeof(float));
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 
 
 												   // Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == queue.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -166,8 +126,8 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		queue[existingId].attribs.push_back(attribDesc);
-		queue[existingId].index.push_back(index);
+		exisitingEntry->attribs.push_back(attribDesc);
+		exisitingEntry->index.push_back(index);
 	}
 
 }

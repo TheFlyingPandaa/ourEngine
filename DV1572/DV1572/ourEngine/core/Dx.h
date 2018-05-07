@@ -35,10 +35,18 @@ namespace DX
 	// InstanceRender
 	struct INSTANCE_ATTRIB
 	{
-		DirectX::XMFLOAT4A w1;
-		DirectX::XMFLOAT4A w2;
-		DirectX::XMFLOAT4A w3;
-		DirectX::XMFLOAT4A w4;
+		union MemUni
+		{
+			struct
+			{
+				float _11, _12, _13, _14;
+				float _21, _22, _23, _24;
+				float _31, _32, _33, _34;
+				float _41, _42, _43, _44;
+			};
+			float rows[4][4];
+		} u;
+
 
 		DirectX::XMFLOAT4A highLightColor;
 		float lightIndex;
