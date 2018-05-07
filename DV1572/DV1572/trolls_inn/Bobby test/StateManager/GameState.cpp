@@ -61,8 +61,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	m_mai = new MasterAI(m_roomctrl, m_grid);
 	previousKey = -1;	
-
-	
 }
 
 GameState::~GameState()
@@ -100,6 +98,9 @@ void GameState::Update(double deltaTime)
 	}
 	m_eventHandle->Update();
 	//std::cout << inn.getMoney() << std::endl;
+
+	m_stateHUD.SlideMeterBarWithIndex(0, 0, 0);
+		
 
 	if (m_subStates.empty())
 	{
@@ -414,6 +415,16 @@ bool GameState::_handleHUDPicking()
 			switch (index)
 			{
 			case 0:
+				// Build Button
+				std::cout << "Build Button Pressed\n";
+				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
+				if (m_hudButtonsPressed[index])
+				{
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
+					m_stage = GameStage::BuildRoom;
+				}
+				break;
+			case 1:
 				// Crew Button
 				std::cout << "Crew Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
@@ -422,16 +433,7 @@ bool GameState::_handleHUDPicking()
 					m_subStates.push(new CrewState(m_cam, p_pickingEvent));
 					m_stage = GameStage::CrewWindow;
 				}
-				break;
-			case 1:
-				// Build Button
-				std::cout << "Build Button Pressed\n";
-				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
-				if (m_hudButtonsPressed[index])
-				{
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
-					m_stage = GameStage::BuildRoom;	
-				}
+				
 				break;
 			case 2:
 				// Event Button
