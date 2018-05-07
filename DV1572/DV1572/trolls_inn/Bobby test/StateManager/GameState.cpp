@@ -55,6 +55,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	}
 	c.setModel(MeshHandler::getBox());
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
+	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
 
@@ -226,10 +227,10 @@ void GameState::_init()
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 	bed = new Mesh();
-	//bed.LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
+	bed->LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
+	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
 	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
 	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
@@ -237,7 +238,7 @@ void GameState::_init()
 	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
 	bed3D = new Object3D();
 	bed3D->setMesh(bed);
-	bed3D->setPos(0, 0, 8);
+	bed3D->setPos(17, 0, 8);
 	bed3D->Rotate(0, 90, 0);
 }
 
