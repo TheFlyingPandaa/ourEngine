@@ -143,9 +143,6 @@
     <ClCompile Include="ourEngine\interface\Text.cpp" />
     <ClCompile Include="ourEngine\interface\Window.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Inn.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\AITest.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="trolls_inn\AI_Base\Attributes.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Customer.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\CustomerFlowControl.cpp" />
@@ -163,6 +160,9 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
     <ClCompile Include="trolls_inn\Events\EventCollection.cpp" />
     <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
     <ClCompile Include="trolls_inn\Events\Events.cpp" />
@@ -170,9 +170,6 @@
     <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
-    <ClCompile Include="trolls_inn\main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
     <ClCompile Include="trolls_inn\Mesh Manager\MeshManager.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
@@ -226,6 +223,9 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Events\EventCollection.h" />
     <ClInclude Include="trolls_inn\Events\EventHandler.h" />
@@ -290,10 +290,14 @@
     <FxCompile Include="ourEngine\shaders\hudPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\hudVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\pickingPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -317,6 +321,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\ShadowVertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -358,10 +363,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Hull</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="ourEngine\shaders\testComputeShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="ourEngine\shaders\transPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
