@@ -563,6 +563,11 @@ std::vector<Wall*> Room::getWalls(Direction dir)
 	return std::vector<Wall*>();
 }
 
+const RoomType & Room::getRoomType() const
+{
+	return m_roomType;
+}
+
 int Room::getAmountOfObjects()
 {
 	return m_roomObjects.size();
