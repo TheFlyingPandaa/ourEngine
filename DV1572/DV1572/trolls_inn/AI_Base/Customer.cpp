@@ -6,6 +6,9 @@ Customer::Customer()
 
 Customer::Customer(Race race, int gold)
 {
+	this->m_start = this->m_clock.now();
+	m_showingInterests = false;
+
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
@@ -291,6 +294,29 @@ void Customer::DoDrinking()
 	this->m_thirsty--;
 	if (m_thirsty < 0)
 		m_thirsty = 0;
+}
+
+std::chrono::duration<double> Customer::getTimeSpan()
+{
+	m_now = m_clock.now();
+	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
+
+	return m_time_span;
+}
+
+void Customer::restartClock()
+{
+	m_start = m_clock.now();
+}
+
+bool Customer::getShowingInterests() const
+{
+	return m_showingInterests;
+}
+
+void Customer::setShowingInterests(bool showingInterests)
+{
+	m_showingInterests = showingInterests;
 }
 
 void Customer::Update()
