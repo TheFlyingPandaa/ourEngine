@@ -73,6 +73,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

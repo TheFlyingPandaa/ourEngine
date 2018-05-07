@@ -75,6 +75,11 @@ int Furniture::getRotation()
 	return p_rot;
 }
 
+void Furniture::setLightIndex(int index)
+{
+	p_object.setLightIndex(index);
+}
+
 void Furniture::LoadFurnitureStats(std::string path)
 {
 	std::string line;

@@ -8,8 +8,21 @@ void HUD::_cleanUp()
 	for (size_t i = 0; i < m_quadsClickAble.size(); i++)
 		delete m_quadsClickAble[i];
 	m_quadsClickAble.clear();
+	
+	for (auto& p : m_meterBarsNotSlideAble)
+		delete p;
+	for (auto& p : m_meterBarsSlideAble)
+		delete p;
+	
+	m_meterBarsNotSlideAble.clear();
+	m_meterBarsSlideAble.clear();
+
+
 	for (size_t i = 0; i < m_mesh.size(); i++)
 		delete m_mesh[i];
+
+	
+
 	m_mesh.clear();
 	m_texts.clear();
 
@@ -211,6 +224,110 @@ bool HUD::LoadHud(const std::string & path)
 					r->setPressColor(press);
 					m_quadsClickAble.push_back(r);
 				}
+			}
+			else if (type == "meter")
+			{
+				std::string path;
+				stream >> path;
+				Mesh* m = new Mesh();
+				m->MakeRectangle();
+				m->setDiffuseTexture(path);
+				m_mesh.push_back(m);
+				std::getline(inputFile, currentLine);
+				path = currentLine;
+				m = new Mesh();
+				m->MakeRectangle();
+				m->setDiffuseTexture(path);
+				m_mesh.push_back(m);
+
+				std::getline(inputFile, currentLine);
+				std::istringstream aStream(currentLine);
+
+				RectangleShape* back;
+				back = new RectangleShape();
+				back->setMesh(m_mesh[m_mesh.size() - 2]);
+
+				RectangleShape* needle;
+				needle = new RectangleShape();
+				needle->setMesh(m_mesh[m_mesh.size() - 1]);
+
+				float pX, pY, sX, sY;
+				int relativeTo;
+				std::string shape = "";
+
+				DirectX::XMFLOAT3 hover;
+				DirectX::XMFLOAT3 press;
+
+				int index = 0;
+				float d = 0;
+
+				aStream >> pX >> pY >> sX >> sY >> index >> d >> relativeTo >> shape >> hover.x >> hover.y >> hover.z >> press.x >> press.y >> press.z;
+
+				d *= 0.00001f;
+				if (static_cast<int>(sX) == 0)
+					sX = static_cast<float>(Input::getWindowSize().x);
+				if (static_cast<int>(sY) == 0)
+					sY = static_cast<float>(Input::getWindowSize().y);
+
+				needle->setWidth(sX);
+				needle->setHeight(sY);
+
+				needle->setRelative(static_cast<RectangleShape::RelativeTo>(relativeTo));
+				needle->setScreenPos(pX, pY, d);
+
+				if (shape == "circle")
+					needle->setShapeType(RectangleShape::ShapeType::Circle);
+				else if (shape == "elipse")
+					needle->setShapeType(RectangleShape::ShapeType::Elipse);
+				else if (shape == "rectangle")
+					needle->setShapeType(RectangleShape::ShapeType::Rectangle);
+
+				MeterBar * meterBar = new MeterBar;
+				meterBar->setNeedle(needle);
+
+				std::getline(inputFile, currentLine);
+				aStream = std::istringstream(currentLine);
+				
+				aStream >> pX >> pY >> sX >> sY >> d >> relativeTo >> shape;
+
+				d *= 0.00001f;
+				if (static_cast<int>(sX) == 0)
+					sX = static_cast<float>(Input::getWindowSize().x);
+				if (static_cast<int>(sY) == 0)
+					sY = static_cast<float>(Input::getWindowSize().y);
+				back->setWidth(sX);
+				back->setHeight(sY);
+
+				back->setRelative(static_cast<RectangleShape::RelativeTo>(relativeTo));
+				back->setScreenPos(pX, pY, d);
+
+				if (shape == "circle")
+					back->setShapeType(RectangleShape::ShapeType::Circle);
+				else if (shape == "elipse")
+					back->setShapeType(RectangleShape::ShapeType::Elipse);
+				else if (shape == "rectangle")
+					back->setShapeType(RectangleShape::ShapeType::Rectangle);
+
+				meterBar->setBackground(back);
+				meterBar->SlideNeedleHorizontalBasedOnPrecentage(0.0f);
+				meterBar->SlideNeedleVerticalBasedOnPrecentage(0.0f);
+
+				if (index < 0)
+				{
+					m_meterBarsNotSlideAble.push_back(meterBar);
+				}
+				else
+				{
+					needle->setIndex(index);
+					needle->setHoverColor(hover);
+					needle->setPressColor(press);
+					m_meterBarsSlideAble.push_back(meterBar);
+				}
+
+			}
+			else if (type == "mtxt")
+			{
+
 			}
 			else if (type == "txt")
 			{
@@ -440,6 +557,43 @@ void HUD::ResetColorsExcept(int index)
 	}
 }
 
+// Blblbla
+void HUD::SlideMeterBarWithIndex(int index, float x, float y)
+{
+	for (auto &m : m_meterBarsSlideAble)
+	{
+		if (m->getNeedleIndex() == index)
+		{
+			m->SlideNeedleHorizontalBasedOnPrecentage(x);
+			m->SlideNeedleVerticalBasedOnPrecentage(y);
+			return;
+		}
+	}
+}
+
+MeterBar * HUD::getMeterBarWithIndex(int index)
+{
+	for (auto &m : m_meterBarsSlideAble)
+	{
+		if (m->getNeedleIndex() == index)
+		{
+			return m;
+		}
+	}
+
+}
+
+MeterBar * HUD::getMeterBarAtMousePosition()
+{
+	for (auto &m : m_meterBarsSlideAble)
+	{
+		if (_checkAgainstRectangle(Input::getMousePositionLH(), *m->getNeedle()))
+			return m;	
+	}
+}
+
+
+
 //void HUD::CheckIfPicked()
 //{
 //	for (auto& p : m_quadsClickAble)
@@ -464,6 +618,11 @@ void HUD::Draw()
 	{
 		t->Draw();
 	}
+
+	for (auto& p : m_meterBarsNotSlideAble)
+		p->Draw();
+	for (auto& p : m_meterBarsSlideAble)
+		p->Draw();
 }
 
 void HUD::addText(Text * text)
