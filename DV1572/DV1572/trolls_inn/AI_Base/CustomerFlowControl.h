@@ -12,6 +12,7 @@ private:
 	// Race models
 	// Box race
 	Mesh box;
+	Mesh m_boxBillboard;
 	// REAL_COOL_RACES_YES_YES_PLOX
 	Mesh m_human;
 	Mesh m_troll;

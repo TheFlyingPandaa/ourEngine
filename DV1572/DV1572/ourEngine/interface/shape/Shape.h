@@ -83,6 +83,7 @@ public:
 	void setColor(DirectX::XMFLOAT4A color);
 
 	virtual void Draw();
+
 	void setUVScale(int scale);
 	void setUVScaleX(int x);
 	void setUVScaleY(int y);

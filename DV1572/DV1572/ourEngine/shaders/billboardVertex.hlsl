@@ -2,7 +2,6 @@ cbuffer BILLBOARD_MESH_BUFFER : register(b0)
 {
 	float4x4 View;
 	float4x4 Projection;
-	float4 direction;
 	float4 charDir;
 	float spriteIndex;
 }
@@ -50,10 +49,23 @@ OUTPUT main(INPUT input)
 	
 	float4x4 vp = mul(View, Projection);
 	o.pos = mul(float4(rotatedAndLol, 1.0f), View);
+	float4 viewPosition = o.pos;
 	o.pos.w = 2.0f;
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
+	if (spriteIndex != -1)
+	{
+		// Increase in X is to swap direction
+		o.tex.x = o.tex.x + 0.25f;
+
+
+		// Increase in Y is to swap in animation
+		
+		o.tex.y = o.tex.y + (0.25f*spriteIndex);
+		o.color = float4(0.5, 0.5, 0.5, 1.0f);
+	}
+
 	o.normal = input.normal;
 
 	o.TBN[0] = normalize(mul(float4(input.tangent, 0), world)).xyz;

@@ -20,8 +20,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_Rpressed = false;
 
 	int startSize = 32;
-	int firstRoomSizeX = 4;
-	int firstRoomSizeY = 3;
+	int firstRoomSizeX = 6;
+	int firstRoomSizeY = 5;
 
 	int secondRoomSizeX = 4;
 	int secondRoomSizeY = 2;
@@ -73,6 +73,7 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
+	delete m_eventHandle;
 }
 
 // round float to n decimals precision
@@ -176,6 +177,7 @@ void GameState::Draw()
 	c.Draw();
 	//this->grid2->Draw();
 	m_eventHandle->Draw();
+	
 	bed3D.Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
@@ -217,7 +219,16 @@ void GameState::_init()
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 	bed.LoadModel("trolls_inn/Resources/Reception/Reception.obj");
+	//bed.LoadModel("trolls_inn/Resources/Bar/Bar.obj");
+	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
+	//bed.LoadModel("trolls_inn/Resources/Bed/Bed.obj");
+	//bed.LoadModel("trolls_inn/Resources/Chair/Chair.obj");
+	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
+	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
+	//bed.LoadModel("trolls_inn/Resources/Window.obj");
 	bed3D.setMesh(&bed);
+	bed3D.setPos(17, 0, 8);
+	bed3D.Rotate(0, 90, 0);
 }
 
 void GameState::_setHud()
