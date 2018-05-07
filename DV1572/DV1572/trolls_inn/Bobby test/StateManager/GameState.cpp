@@ -32,7 +32,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
 	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-
+	hardBed = new Furniture(bed3D.getPosition(), bed3D.getMesh());
+	//m_roomctrl->AddRoomObject(*hardBed);
 	this->_init();
 
 	inn = new Inn();
@@ -77,6 +78,7 @@ GameState::~GameState()
 	}
 	delete inn;
 	delete m_eventHandle;
+	delete hardBed;
 }
 
 // round float to n decimals precision
@@ -221,10 +223,10 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	bed.LoadModel("trolls_inn/Resources/Reception/Reception.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bar/Bar.obj");
+	//bed.LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
+	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bed/Bed.obj");
+	bed.LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
 	//bed.LoadModel("trolls_inn/Resources/Chair/Chair.obj");
 	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");

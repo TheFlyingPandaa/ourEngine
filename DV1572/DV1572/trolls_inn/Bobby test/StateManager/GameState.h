@@ -35,6 +35,7 @@ private:
 
 	Mesh bed;
 	Object3D bed3D;
+	Furniture * hardBed;
 	
 	MasterAI* m_mai;
 
