@@ -49,6 +49,7 @@ namespace DX
 		DirectX::XMFLOAT4A w4;
 		DirectX::XMFLOAT4A highLightColor;
 		DirectX::XMFLOAT4A charDir;
+		float spriteIndex;
 		float lightIndex;
 	};
 
@@ -90,6 +91,7 @@ namespace DX
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
 	extern void submitToInstance(Character* character);
+	extern void submitToInstance(Billboard* bill);
 
 	extern DirectX::XMFLOAT4A g_lightPos;
 	extern DirectX::XMFLOAT4A g_lightDir;

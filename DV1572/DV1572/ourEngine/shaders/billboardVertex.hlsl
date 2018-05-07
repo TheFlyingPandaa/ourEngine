@@ -2,7 +2,6 @@ cbuffer BILLBOARD_MESH_BUFFER : register(b0)
 {
 	float4x4 View;
 	float4x4 Projection;
-	float spriteIndex;
 }
 
 struct INPUT
@@ -16,6 +15,7 @@ struct INPUT
 
 	float4 color : HIGHLIGHTCOLOR;
 	float4 charDir : CHARDIR;
+	float spriteIndex : SPRITEINDEX;
 	float lIndex : LIGHTINDEX;
 };
 
@@ -45,41 +45,27 @@ OUTPUT main(INPUT input)
 	
 	float4x4 vp = mul(View, Projection);
 	o.pos = mul(float4(rotatedAndLol, 1.0f), View);
-	float4 viewPosition = o.pos;
 	o.pos.w = 1.0f;
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
 	float3 charDir = input.charDir.xyz;
 	o.color = input.color;
-	if (spriteIndex != -1)
+	if (input.spriteIndex != -1)
 	{
-		// Increase in X is to swap direction
-
-		if(charDir.z == -1)
-			o.tex.x = o.tex.x + 0.75f;
-		else if(charDir.z == 1)
-			o.tex.x = o.tex.x + 0.5f;
-		else if (charDir.x == 1)
-			o.tex.x = o.tex.x + 0.5f;
-
-		//float3 camDir = normalize(-viewPosition);
-
-		////float angle = acos(dot(camDir, tempDir)) * 57;
-		//float d = dot(camDir, tempDir);
-		//float3 C = cross(camDir, tempDir);
-		//float angle = acos(d);
-		//float dir = dot(C, camDir);
-		//if (dir < 0) angle = -angle;
-
-		//if (angle < 0)
-		//{
-		//}
-		//
-		//// Increase in Y is to swap in animation
+		if (charDir.z != -1 && charDir.x != -1 && charDir.y != -1)
+		{
+			if (charDir.z == -1)
+				o.tex.x = o.tex.x + 0.75f;
+			else if (charDir.z == 1)
+				o.tex.x = o.tex.x + 0.5f;
+			else if (charDir.x == 1)
+				o.tex.x = o.tex.x + 0.5f;
+		}
 		
-		o.tex.y = o.tex.y + (0.25f*spriteIndex);
-		//o.color = float4(angle, angle, angle, 1.0f);
+		
+		
+		o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
 	}
 
 	o.normal = input.normal;

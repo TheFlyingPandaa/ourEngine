@@ -33,6 +33,7 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid)
 	: m_solver(roomCtrl,grid)
 {
 	this->m_start = this->m_clock.now();
+	m_thinkingMesh.LoadModel("trolls_inn/Resources/Thoughts/Bubble.obj");
 }
 
 MasterAI::~MasterAI()
@@ -188,4 +189,5 @@ void MasterAI::Draw()
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn.GetInnAttributes()));
+	m_customers.back()->setThoughtBubbleMesh(&m_thinkingMesh);
 }

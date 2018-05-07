@@ -208,6 +208,7 @@ void DX::submitToInstance(Character * character)
 	XMFLOAT3 tempPos = character->getDirection3f();
 	XMFLOAT4A chararcterDireciton = { tempPos.x,tempPos.y,tempPos.z,1.0f };
 	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = character->getModelSpriteIndex();
 
 	// Unique Mesh
 	if (existingId == -1)
@@ -225,7 +226,51 @@ void DX::submitToInstance(Character * character)
 		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
 	}
 }
+void DX::submitToInstance(Billboard* bill)
+{
+	int existingId = -1;
+	for (int i = 0; i < DX::g_instanceGroupsBillboard.size() && existingId == -1; i++)
+	{
+		if (bill->getMesh()->CheckID(*DX::g_instanceGroupsBillboard[i].shape->getMesh()))
+		{
+			existingId = i;
 
+		}
+	}
+
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB_BILL attribDesc;
+
+	XMFLOAT3 bPos = bill->getPosition();
+	XMFLOAT4A rows = { bPos.x, bPos.y, bPos.z,1.0f };
+
+	attribDesc.w4 = rows;
+
+	attribDesc.highLightColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	attribDesc.lightIndex = 0.0f;
+	
+	XMFLOAT4A chararcterDireciton = { -1, -1, -1, -1 };
+	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = bill->getSpriteIndex();
+
+	// Unique Mesh
+	if (existingId == -1)
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_BILL newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = bill;
+		DX::g_instanceGroupsBillboard.push_back(newGroup);
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
+	}
+}
 void DX::CleanUp()
 {
 	DX::g_device->Release();
@@ -1164,9 +1209,6 @@ void Window::_billboardPass(const Camera & cam)
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
-	
-	
-	buffer.spriteIndex = index;
 	
 
 	if (m_WireFrameDebug == true)

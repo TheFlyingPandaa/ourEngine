@@ -8,23 +8,19 @@ Character::Character()
 	m_model.setPos(0.5, 0.5, -10.5);
 	m_currentDir = DOWN;
 	
-	m_thinkingMesh.LoadModel("trolls_inn/resources/woodenfloor/floor.obj");
-	m_thinkingEmoji.setMesh(&m_thinkingMesh);
 	XMFLOAT3 playerPos = m_model.getPosition();
 	playerPos.y += 1.5f;
-	m_thinkingEmoji.setPos(playerPos);
+	m_modelSpriteIndex = 0;
+	m_displayThought = false;
 }
 
 Character::Character(const Character & other)
 {
-	this->m_thinkingEmoji = other.m_thinkingEmoji;
-	this->m_thinkingMesh = other.m_thinkingMesh;
 	this->m_currentDir = other.m_currentDir;
 	this->m_model = other.m_model;
 	this->m_floor = other.m_floor;
 	this->m_goQueue = other.m_goQueue;
 	this->m_speed = other.m_speed;
-	
 
 }
 
@@ -95,7 +91,27 @@ void Character::Update()
 			}
 			XMFLOAT3 playerPos = m_model.getPosition();
 			playerPos.y += 1.5f;
-			m_thinkingEmoji.setPos(playerPos);
+			m_thoughtBubble.setPos(playerPos);
+
+			if (Input::isKeyPressed('M'))
+				m_thoughtBubble.setSpriteIndex(1);
+			if (Input::isKeyPressed('N'))
+				m_thoughtBubble.setSpriteIndex(2);
+			if (Input::isKeyPressed('B'))
+				m_thoughtBubble.setSpriteIndex(3);
+			if (Input::isKeyPressed('V'))
+				m_thoughtBubble.setSpriteIndex(0);
+
+
+			static float indexLol = 0.01f;
+			m_modelSpriteIndex = (int)m_modelSpriteIndex % 4;
+			indexLol += 0.1f;
+			if (indexLol >= 1)
+			{
+				m_modelSpriteIndex += indexLol;
+				indexLol = 0.0f;
+			}
+			
 		}
 	}
 }
@@ -158,6 +174,26 @@ void Character::setSpeed(float spd)
 	m_speed = spd;
 }
 
+void Character::setThoughtBubble(Thoughts t)
+{
+	m_displayThought = true;
+	switch (t)
+	{
+	case ANGRY:
+		m_thoughtBubble.setSpriteIndex(0);
+		return;
+	case TIRED:
+		m_thoughtBubble.setSpriteIndex(2);
+		return;
+	case HUNGRY:
+		m_thoughtBubble.setSpriteIndex(2);
+		return;
+	case THIRSTY:
+		m_thoughtBubble.setSpriteIndex(3);
+		return;
+	}
+}
+
 void Character::castShadow()
 {
 	DX::submitToInstance(&m_model, DX::g_InstanceGroupsShadow);
@@ -171,6 +207,12 @@ void Character::castShadow()
 	position.y = p.z;
 	return position;
 }
+
+int Character::getModelSpriteIndex() const
+{
+	return m_modelSpriteIndex;
+}
+
 
 Character::WalkDirection Character::getDirection() const
 {
@@ -253,12 +295,18 @@ bool Character::walkQueueDone() const
 {
 	return m_goQueue.size() == 0;
 }
-#include <iostream>
+
 void Character::Draw()
 {
-	//std::cout << printDir(m_currentDir) << std::endl;
 	DX::submitToInstance(this);
-//	DX::submitToInstance(this);
+
+	if(m_displayThought)
+		DX::submitToInstance(&m_thoughtBubble);
+}
+
+void Character::setThoughtBubbleMesh(Mesh * bubbleMesh)
+{
+	m_thoughtBubble.setMesh(bubbleMesh);
 }
 
 Shape * Character::getShape()
