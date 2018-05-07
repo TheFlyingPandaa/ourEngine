@@ -500,6 +500,8 @@ BuildState::~BuildState()
 {
 	if (m_roomCtrl->getIsBuildingDoor())
 		m_roomCtrl->setIsBuildingDoor(false);
+	if (m_selectedRoom)
+		m_selectedRoom->Select();
 	delete table;
 }
 

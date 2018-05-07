@@ -20,13 +20,13 @@ private:
 
 	// Inn stuff
 	Attributes m_innAttributes;
-	Attributes m_innUpdateAttributes;
+	//Attributes m_innUpdateAttributes;
 	int m_foodPrice;
 	int m_sleepPrice;
 	int m_drinkPrice;
 
-	void _addStatsToInn(Attributes type);
-	void _checkInnStatUpdate();
+	//void _addStatsToInn(Attributes type);
+	//void _checkInnStatUpdate();
 	Economy*		m_economy;
 	int				m_profit,	m_staffSalary = 420;
 	bool			m_staffSalaryApplyed;
@@ -52,6 +52,7 @@ public:
 
 	void Deposit(int amount);
 	void Withdraw(int amount);
+	void GetRefund(int amount);
 
 	void changeStaffSalary(int amount);
 	

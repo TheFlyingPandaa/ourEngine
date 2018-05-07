@@ -11,11 +11,11 @@ Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(
 	//p_attributes
 	if (setting == 0)
 	{
-		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
+		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 	}
 	else if(setting == 1)
 	{
-		LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
+		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
 		
 		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
 	}

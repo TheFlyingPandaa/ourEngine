@@ -18,7 +18,10 @@ private:
 	enum GameStage
 	{
 		Play,
-		BuildRoom
+		BuildRoom,
+		CrewWindow,
+		StatsWindow,
+		EventWindow
 	};
 
 

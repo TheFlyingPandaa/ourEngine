@@ -24,7 +24,7 @@ public:
 	bool			getIsBusy();
 	void			setIsBusy(bool busy);
 
-	void LoadFurnitureStats(std::string path);
+	//void LoadFurnitureStats(std::string path);
 
 	void Draw();
 

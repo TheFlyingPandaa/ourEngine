@@ -7,6 +7,9 @@
 #include "../../../ourEngine/interface/light/PointLight.h"
 #include "../../../ourEngine/core/Dx.h"
 #include "../StateManager/SubStates/BuildState.h"
+#include "../StateManager/SubStates/CrewState.h"
+#include "../StateManager/SubStates/StatsState.h"
+#include "../StateManager/SubStates/EventsState.h"
 #include "../../Mesh Manager/MeshManager.h"
 #include "../../Furniture/Table.h"
 
@@ -413,24 +416,41 @@ bool GameState::_handleHUDPicking()
 				// Crew Button
 				std::cout << "Crew Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
+				if (m_hudButtonsPressed[index])
+				{
+					m_subStates.push(new CrewState(m_cam, p_pickingEvent));
+					m_stage = GameStage::CrewWindow;
+				}
 				break;
 			case 1:
 				// Build Button
 				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index])
+				{
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
-					m_stage = GameStage::BuildRoom;
+					m_stage = GameStage::BuildRoom;	
+				}
 				break;
 			case 2:
 				// Event Button
 				std::cout << "Event Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cHL, cC);
+				if (m_hudButtonsPressed[index])
+				{
+					m_subStates.push(new EventsState(m_cam, p_pickingEvent));
+					m_stage = GameStage::EventWindow;
+				}
 				break;
 			case 3:
 				// Stats Button
 				std::cout << "Stats Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL / 4, cC);
+				if (m_hudButtonsPressed[index])
+				{
+					m_subStates.push(new StatsState(m_cam, p_pickingEvent));
+					m_stage = GameStage::StatsWindow;
+				}
 				break;
 			}
 

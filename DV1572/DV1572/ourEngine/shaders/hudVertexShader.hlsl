@@ -23,7 +23,7 @@ struct INPUT
 struct OUTPUT
 {
 	float4 worldPos : SV_POSITION;
-	float2 tex : TEXELS;
+	float2 tex : TEXCOORD;
 	float4 color : HIGHLIGHTCOLOR;
 };
 
