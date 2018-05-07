@@ -28,16 +28,7 @@ bool RoomCtrl::_checkLegal(Room * room)
 
 bool RoomCtrl::_checkRoomType(Room * room, RoomType type)
 {
-	switch (type)
-	{
-	case kitchen:
-		return dynamic_cast<Room*>(room) == nullptr;
-	case bedroom:
-		return dynamic_cast<Room*>(room) == nullptr;
-	case reception:
-		return dynamic_cast<Room*>(room) == nullptr;
-	}
-	return false;
+	return room->getRoomType() == type;
 }
 
 void RoomCtrl::_makeRoomConnection(int source, int destination)

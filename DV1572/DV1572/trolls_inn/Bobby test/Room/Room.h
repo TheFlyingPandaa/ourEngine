@@ -84,6 +84,8 @@ public:
 	std::vector<Wall*>*	getAllWalls();
 	std::vector<Wall*>	getWalls(Direction dir);
 
+	const RoomType& getRoomType() const;
+
 	int getAmountOfObjects();
 	int getAmountOfSpecificObjects(Furniture compare);
 

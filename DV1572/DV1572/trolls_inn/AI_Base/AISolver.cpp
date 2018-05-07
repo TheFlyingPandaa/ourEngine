@@ -480,11 +480,8 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 		else
 		{
 			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
-			if (xmtarg.x == -1)// || xmtarg.y == -1)
-			{
-				xmtarg.x = this->m_rNG.GenerateRandomNumber(0, 31);
-				xmtarg.z = this->m_rNG.GenerateRandomNumber(0, 31);
-			}
+			if (xmtarg.x == -1)
+				return;
 			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
 		}
 		
