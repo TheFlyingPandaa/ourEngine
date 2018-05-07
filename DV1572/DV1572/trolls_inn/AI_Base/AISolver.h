@@ -19,7 +19,7 @@ private:
 	std::chrono::high_resolution_clock m_clock;
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
-	RandomNumberGenerator rNG;
+	RandomNumberGenerator m_rNG;
 	
 	void _checkSpotInRoom(Inn& inn, Customer& customer);
 	void _doWaiting(Customer& customer);

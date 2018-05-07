@@ -43,7 +43,7 @@ void AISolver::_doWaiting(Customer& customer)
 {
 	// Check if a spot is available
 
-	if ((this->rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > WAITING_FOR_SPOT_TIME_LIMIT)
+	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > WAITING_FOR_SPOT_TIME_LIMIT)
 	{
 		customer.GetAttributes().SetReputation(-5);
 		customer.SetWaitingForSpot(false);
@@ -477,7 +477,16 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 
 		if (targetRoom == RoomType::randomStupid)
 			targetPosition = { (int)rand() % 32, (int)rand() % 32 };
-		
+		else
+		{
+			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
+			if (xmtarg.x == -1)// || xmtarg.y == -1)
+			{
+				xmtarg.x = this->m_rNG.GenerateRandomNumber(0, 31);
+				xmtarg.z = this->m_rNG.GenerateRandomNumber(0, 31);
+			}
+			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
+		}
 		
 
 		XMINT2 startPosition = { xTile, yTile };
@@ -489,7 +498,6 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 
 		if (path.size() != 0)
 		{
-
 			character.Move(character.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 			for (int i = 0; i < path.size() - 1; i++)
