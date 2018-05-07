@@ -180,16 +180,16 @@ void Character::setThoughtBubble(Thoughts t)
 	switch (t)
 	{
 	case ANGRY:
-		m_thoughtBubble.setSpriteIndex(0);
+		m_thoughtBubble.setSpriteIndex(3);
 		return;
 	case TIRED:
 		m_thoughtBubble.setSpriteIndex(2);
 		return;
 	case HUNGRY:
-		m_thoughtBubble.setSpriteIndex(2);
+		m_thoughtBubble.setSpriteIndex(1);
 		return;
 	case THIRSTY:
-		m_thoughtBubble.setSpriteIndex(3);
+		m_thoughtBubble.setSpriteIndex(0);
 		return;
 	}
 }

@@ -50,7 +50,7 @@ float4 main(Input input) : SV_Target
 	float inside = tNormal.Sample(sampAni, input.tex).a;
 	//return tShadow.Sample(sampAni, input.tex);
 
-	float3 ambient = diffuseSample * 0.2f;
+	float3 ambient = diffuseSample * 0.5f;
 	float3 finalColorForSun; 
 	//SUN//
 
