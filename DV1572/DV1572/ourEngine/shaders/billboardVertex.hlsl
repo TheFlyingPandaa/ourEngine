@@ -49,7 +49,7 @@ OUTPUT main(INPUT input)
 	o.pos.w = 1.0f;
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
-	o.tex = input.tex;
+	o.tex = input.tex; // Up
 	float3 charDir = input.charDir.xyz;
 	o.color = input.color;
 	if (spriteIndex != -1)
@@ -58,10 +58,10 @@ OUTPUT main(INPUT input)
 
 		if(charDir.z == -1)
 			o.tex.x = o.tex.x + 0.75f;
-		else if(charDir.z == 1)
+		/*else if(charDir.z == 1)
 			o.tex.x = o.tex.x + 0.5f;
 		else if (charDir.x == 1)
-			o.tex.x = o.tex.x + 0.5f;
+			o.tex.x = o.tex.x + 0.5f;*/
 
 		//float3 camDir = normalize(-viewPosition);
 

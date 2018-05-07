@@ -2,22 +2,12 @@
 #include <vector>
 #include "Room.h"
 #include "Structure.h"
-#include "Kitchen.h"
-#include "Bedroom.h"
-#include "Reception.h"
 #include "../../Furniture/Furniture.h"
 
 
 
-const unsigned short ROOM_TYPE_SIZE = 2;
-enum RoomType {
-	kitchen,
-	hallway,
-	bedroom,
-	reception,
-	randomStupid,
-	UNDEFINED
-};
+const unsigned short ROOM_TYPE_SIZE = 4;
+
 
 const float WALLOFFSET = 0.5f;
 
@@ -101,6 +91,10 @@ public:
 	Direction			getDirection(Tile*, Tile*);
 	XMINT2				getDirection2i(Tile*, Tile*);
 	Direction			getDirection(Room*, Room*);
+
+	std::vector<Furniture*> getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos);
+	std::vector<Furniture*> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos);
+	std::vector<Furniture*> getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos);
 
 	bool getIsBuildingDoor();
 	void setIsBuildingDoor(bool tje);

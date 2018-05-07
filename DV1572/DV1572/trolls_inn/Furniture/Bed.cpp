@@ -20,6 +20,10 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
 	}
 }
+//
+
+
+
 
 Bed::~Bed()
 {

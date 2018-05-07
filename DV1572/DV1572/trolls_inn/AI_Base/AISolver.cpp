@@ -382,6 +382,7 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 			targetPosition = { (int)rand() % 31, (int)rand() % 31 };
 		
 		
+		
 
 		XMINT2 startPosition = { xTile, yTile };
 
