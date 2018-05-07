@@ -383,6 +383,8 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 		else
 		{
 			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
+			if (xmtarg.x == -1)
+				return;
 			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
 		}
 		
