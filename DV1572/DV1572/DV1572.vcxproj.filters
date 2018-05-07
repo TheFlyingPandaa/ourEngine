@@ -58,7 +58,6 @@
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\Mesh Manager\MeshManager.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Reception.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
@@ -66,7 +65,6 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Room\Kitchen.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
@@ -119,7 +117,6 @@
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\RoomCtrl.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Reception.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Room.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\GameState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\MainMenu.h" />
@@ -127,8 +124,6 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Structure.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Kitchen.h" />
-    <ClInclude Include="trolls_inn\Bobby test\Room\Bedroom.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\HUD.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />

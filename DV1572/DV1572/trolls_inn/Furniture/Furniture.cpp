@@ -9,7 +9,10 @@ Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
 	this->pos.x = pos.x;
 	this->pos.y = pos.y;
 	this->pos.z = pos.z;
+
+	p_isBusy = false;
 }
+
 
 Furniture::~Furniture()
 {
@@ -55,6 +58,16 @@ void Furniture::setRotation(int rot)
 DirectX::XMINT3 Furniture::getPosition()
 {
 	return this->pos;
+}
+
+bool Furniture::getIsBusy()
+{
+	return p_isBusy;
+}
+
+void Furniture::setIsBusy(bool busy)
+{
+	p_isBusy = busy;
 }
 
 int Furniture::getRotation()

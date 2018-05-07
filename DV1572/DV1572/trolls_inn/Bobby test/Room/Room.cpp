@@ -20,9 +20,9 @@ void Room::_initAABB(int x, int y, int sx, int sy, int level)
 void Room::_createLight(int x, int y, int sx, int sy, int level)
 {
 	PointLight l;
-	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 1, static_cast<float>(y) + ((float)sy / 2));
+	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 2, static_cast<float>(y) + ((float)sy / 2));
 	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
-	l.setSettingsForLight(1, 0.8f);
+	l.setSettingsForLight(2.0f, 0.8f);
 	l.setIndex(m_index);
 	m_lights.push_back(l);
 }
@@ -45,16 +45,17 @@ int Room::_index(int x, int y)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	
+	// Do not use i guess
 }
 
-Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
+Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
 {
 	if (!s_isLoaded)
 		_loadStatic();
 	m_index = s_index++;
 	_initAABB(posX, posY, sizeX, sizeY);
 	_createLight(posX, posY, sizeX, sizeY);
+	m_selected = false;
 
 	for (auto &l : m_lights)
 	{
@@ -77,8 +78,10 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles)
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
-	//TODO //
+	//TODO //Fix scale?? CHEFEN GET ON IT
 	m_wholeFloor.setUVScale(sizeX);
+
+	m_roomType = roomType;
 
 }
 
@@ -88,6 +91,8 @@ Room::~Room()
 		delete walls;
 	for (auto& tile : m_roomTiles)
 		delete tile;
+	for (auto& element : m_roomObjects)
+		delete element;
 }
 
 bool Room::Inside(int x, int y)
@@ -137,6 +142,31 @@ void Room::Update(Camera * cam)
 	}
 }
 
+void Room::Draw()
+{
+	m_wholeFloor.Draw();
+
+	for (auto& fur : m_roomObjects)
+		fur->Draw();
+
+	for (auto& tile : m_roomTiles)
+	{
+		if (tile->getQuad().getColor().x != 1.0f)
+			tile->getQuad().Draw();
+	}
+
+	for (auto& wall : m_allWalls)
+	{
+		wall->Draw();
+	}
+	
+}
+
+std::string Room::toString() const
+{
+	return "meh";
+}
+
 int Room::getRoomIndex() const
 {
 	return m_index;
@@ -155,7 +185,11 @@ void Room::ApplyIndexOnMesh()
 void Room::CastShadow()
 {
 	m_AABB.CastShadow();
-	//m_AABB.Draw();
+
+
+	/*Move To Draw*/
+	if (m_selected)
+		m_AABB.TEMPTRANS();
 }
 
 void Room::setIsBuildingDoor(bool tje)
@@ -172,7 +206,6 @@ float Room::getDistance(Tile * t1, Tile * t2)
 
 std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTile)
 {
-
 	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
 	{
 		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
@@ -255,8 +288,8 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 			bool shouldContinue = false;
 			for (auto& object : m_roomObjects)
 			{
-				if (currentTile->getPosition().x == object.getPosition().x
-					&& currentTile->getPosition().y == object.getPosition().z)
+				if (currentTile->getPosition().x == object->getPosition().x
+					&& currentTile->getPosition().y == object->getPosition().z)
 					shouldContinue = true;
 
 			}
@@ -402,7 +435,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 
 void Room::AddRoomObject(Furniture fut)
 {
-	m_roomObjects.push_back(fut);
+	m_roomObjects.push_back(new Furniture(fut));
 }
 
 void Room::PickTiles()
@@ -418,6 +451,11 @@ void Room::PickWalls()
 {
 	for (auto& wall : m_allWalls)
 		wall->getObject3D().CheckPick();
+}
+
+void Room::Select()
+{
+	m_selected = !m_selected;
 }
 
 std::vector<Tile*> Room::ReturnTiles()
@@ -533,6 +571,24 @@ int Room::getAmountOfObjects()
 int Room::getAmountOfSpecificObjects(Furniture compare)
 {
 	return 0;
+}
+
+RoomType Room::getRoomType()
+{
+	return m_roomType;
+}
+
+std::vector<Furniture*> Room::getNoneBusyFurnitures()
+{
+	std::vector<Furniture*> tempFurni;
+	for (int i = 0; i < m_roomObjects.size(); ++i)
+	{
+		if (false == m_roomObjects.at(i)->getIsBusy())
+		{
+			tempFurni.push_back(m_roomObjects.at(i));
+		}
+	}
+	return tempFurni;
 }
 
 void Room::move(int x, int y)
