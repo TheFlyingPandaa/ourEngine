@@ -229,12 +229,12 @@ void GameState::_init()
 	//bed.LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
+	bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
 	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
 	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
+	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
 	bed3D = new Object3D();
 	bed3D->setMesh(bed);
 	bed3D->setPos(0, 0, 8);
