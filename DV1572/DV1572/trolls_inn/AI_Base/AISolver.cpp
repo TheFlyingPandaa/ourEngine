@@ -33,19 +33,30 @@ void AISolver::_checkSpotInRoom(Inn& inn, Customer& customer)
 			
 			break;
 		}*/
-		customer.GetAttributes().SetReputation(-1);
+		// Do something because angry, request money?
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(true);
 	}
 }
 
-void AISolver::_doWaiting(Customer& customer)
+void AISolver::_doWaiting(Customer& customer, Inn& inn)
 {
 	// Check if a spot is available
 
-	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > WAITING_FOR_SPOT_TIME_LIMIT)
+	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > (WAITING_FOR_SPOT_TIME_LIMIT * customer.GetPatience()))
 	{
-		customer.GetAttributes().SetReputation(-5);
+		// Do something because angry, request money?
+		if (customer.GetRace() == Elf)
+		{
+			inn.GetRefund(5);
+			customer.GetEconomy().GetCashback(5);
+			customer.GetAttributes().AddStat(-0.3f);
+		}
+		else
+		{
+			inn.GetRefund(15);
+			customer.GetEconomy().GetCashback(15);
+		}
 		customer.SetWaitingForSpot(false);
 		// Do angry face emote
 		// Leave inn (?)
@@ -358,7 +369,7 @@ void AISolver::Update(Customer& customer, Inn& inn)
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
-				this->_doWaiting(customer);
+				this->_doWaiting(customer, inn);
 			}
 			else
 			{
@@ -381,7 +392,7 @@ void AISolver::Update(Customer& customer, Inn& inn)
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
 				// Check if there is a spot open this time
-				this->_doWaiting(customer);
+				this->_doWaiting(customer, inn);
 			}
 			else
 			{
@@ -404,7 +415,7 @@ void AISolver::Update(Customer& customer, Inn& inn)
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
 				// Check if there is a spot open this time
-				this->_doWaiting(customer);
+				this->_doWaiting(customer, inn);
 			}
 			else
 			{

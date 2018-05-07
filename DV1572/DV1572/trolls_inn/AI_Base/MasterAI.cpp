@@ -76,9 +76,9 @@ void MasterAI::Update(Camera* cam)
 			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
 			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
 			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;
-			customer->SetHungry(customer->GetHungry() + 1);
-			customer->SetTired(customer->GetTired() + 1);
-			customer->SetThirsty(customer->GetThirsty() + 1);
+			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
+			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
+			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
 		}
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty())

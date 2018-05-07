@@ -8,9 +8,7 @@
 
 enum Race
 {
-	Human,
-	Troll,
-	Orc,
+	Elf,
 	Dwarf
 };
 
@@ -53,13 +51,18 @@ private:
 
 	// Needs variables
 	bool m_availableSpotFound;
-	//bool m_movingTowardsActionArea;
 	bool m_waitingForSpot;
 	int m_waitingForSpotMultiplier;
 
-	int m_hungry;
-	int m_tired;
-	int m_thirsty;
+	float m_hungry;
+	float m_tired;
+	float m_thirsty;
+
+	// Multipliers
+	float m_hungryRate;
+	float m_tiredRate;
+	float m_thirstyRate;
+	float m_patience;
 
 public:
 	Customer();
@@ -86,21 +89,25 @@ public:
 	const char* GetStateStr() const;
 
 	bool GetAvailableSpotFound() const;
-	//bool GetMovingTowardsActionArea() const;
 	bool GetWaitingForSpot() const;
 	int GetWaitingForSpotMultiplier() const;
 	void SetAvailableSpotFound(bool spotFound);
-	//void SetMovingTowardsActionArea(bool moving);
 	void SetWaitingForSpot(bool waiting);
 	void SetWaitingForSpotMultiplier(int multiplier);
 	
-	int GetHungry() const;
-	int GetTired() const;
-	int GetThirsty() const;
+	float GetHungry() const;
+	float GetTired() const;
+	float GetThirsty() const;
 
-	void SetHungry(int value);
-	void SetTired(int value);
-	void SetThirsty(int value);
+	// Multiplies
+	float GetHungryRate() const;
+	float GetTiredRate() const;
+	float GetThirstyRate() const;
+	float GetPatience() const;
+
+	void SetHungry(float value);
+	void SetTired(float value);
+	void SetThirsty(float value);
 
 	// Reduces hungry by 1
 	void DoEating();

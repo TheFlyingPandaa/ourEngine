@@ -22,7 +22,7 @@ private:
 	RandomNumberGenerator m_rNG;
 	
 	void _checkSpotInRoom(Inn& inn, Customer& customer);
-	void _doWaiting(Customer& customer);
+	void _doWaiting(Customer& customer, Inn& inn);
 	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
