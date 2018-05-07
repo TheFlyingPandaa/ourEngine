@@ -1,6 +1,7 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
 
+
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 {
 	m_tileMesh[roomType] = mesh;
@@ -174,6 +175,18 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 	m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setHasObject(true);
 
 	cr->AddRoomObject(furniture);
+}
+
+void RoomCtrl::RemoveRoomObject(DirectX::XMINT2 pos)
+{
+	int index = _intersect(pos, XMINT2(1, 1));
+	if (index != -1)
+	{
+		std::vector<Furniture*> temp = m_rooms[index]->getAllRoomFurnitures();
+		//delete temp.at(0);
+		
+		
+	}
 }
 
 void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
@@ -378,6 +391,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	if (index != -1)
 	{
+
 		backtiles = m_rooms[index]->ReturnTiles();
 		XMFLOAT3 _pos = m_rooms[index]->getPosition();
 		delSize = m_rooms[index]->getSize();
@@ -388,6 +402,24 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	return index != -1;
 }
+
+ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
+ {
+	 int index = _intersect(pos, XMINT2(1, 1));
+	 int payBack = 0;
+	 if (index != -1)
+	 {
+		 payBack = m_rooms[index]->getPriceOfAllObjects();
+		 backtiles = m_rooms[index]->ReturnTiles();
+		 XMFLOAT3 _pos = m_rooms[index]->getPosition();
+		 delSize = m_rooms[index]->getSize();
+		 delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
+		 delete m_rooms[index];
+		 m_rooms.erase(m_rooms.begin() + index);
+		 payBack += (delSize.x * delSize.y) * 20;
+	 } 
+	 return { index != -1, payBack/2 }; //c++17 way of making a tuple
+ }
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {

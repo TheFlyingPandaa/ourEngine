@@ -86,6 +86,8 @@ public:
 
 	int getAmountOfObjects();
 	int getAmountOfSpecificObjects(Furniture compare);
+	int getPriceOfAllObjects();
+	std::vector<Furniture*> getAllRoomFurnitures();
 
 	RoomType getRoomType();
 

@@ -573,6 +573,26 @@ int Room::getAmountOfSpecificObjects(Furniture compare)
 	return 0;
 }
 
+int Room::getPriceOfAllObjects()
+{
+	int m = 0;
+	for (size_t i = 0; i < m_roomObjects.size(); i++)
+	{
+		m += m_roomObjects.at(i)->getPrice();
+	}
+	return m;
+}
+
+std::vector<Furniture*> Room::getAllRoomFurnitures()
+{
+	for (size_t i = 0; i < m_roomObjects.size(); i++)
+	{
+		delete m_roomObjects.at(i);
+	}
+	m_roomObjects.clear();
+	return std::vector<Furniture*>();
+}
+
 RoomType Room::getRoomType()
 {
 	return m_roomType;

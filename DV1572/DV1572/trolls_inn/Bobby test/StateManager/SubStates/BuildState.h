@@ -45,6 +45,7 @@ private:
 	HUD					m_furnitureHUD;
 	int					m_selectedThing;
 	Room*				m_selectedRoom;
+	Room*				m_selectedRoomm;
 	// </Create Room HUD>
 
 	Inn * m_inn;
@@ -55,6 +56,8 @@ private:
 
 	bool m_doorBuild = false;
 	bool m_canBuildFurniture = false;
+	bool m_furnitureDeleteMode = false;
+
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{
 		RoomBuild,
@@ -78,7 +81,7 @@ private:
 
 	void	_inputFurniture();
 
-	void _resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
+	void	_resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
 public:
 
 	BuildState(Camera * cam, 

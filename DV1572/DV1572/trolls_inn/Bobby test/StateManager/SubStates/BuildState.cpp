@@ -64,7 +64,33 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 			m_startTile = pickedShape;
 			break;
 		case BuildState::Furniture:
-			m_startTile = pickedShape;
+			if (m_selectedThing == -1)
+			{
+				m_furnitureDeleteMode = true;
+				if (pickedShape)
+				{
+					DirectX::XMINT2 pos(pickedShape->getPosition().x, pickedShape->getPosition().z);
+					Room* temp = m_roomCtrl->getRoomAtPos(pos);
+					if (temp != m_selectedRoomm)
+					{
+						if (m_selectedRoomm)
+							m_selectedRoomm->Select();
+						m_selectedRoomm = temp;
+						m_selectedRoomm->Select();
+
+					}
+					else
+					{
+						m_selectedRoomm->Select();
+						m_selectedRoomm = nullptr;
+					}
+
+				}
+			}
+			else {
+				m_furnitureDeleteMode = false;
+				m_startTile = pickedShape;
+			}
 			break;
 		default:
 			m_startTile = nullptr;
@@ -433,6 +459,10 @@ void BuildState::_inputDoor()
 
 void BuildState::_inputFurniture()
 {
+	if (m_selectedThing == -1)
+	{
+		m_roomCtrl->PickRoomTiles();
+	}
 	if (m_selectedThing != -1)
 	{
 		m_roomCtrl->PickRoomTiles();
@@ -456,6 +486,7 @@ void BuildState::_inputFurniture()
 			drawSelectedThing = true;
 			m_canBuildFurniture = false;
 		}
+		
 		else if (m_startTile)
 		{
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
@@ -479,6 +510,7 @@ void BuildState::_inputFurniture()
 			drawSelectedThing = true;
 			twoStepThingy = true;
 		}
+		
 		else
 		{
 			if (twoStepThingy)
@@ -546,6 +578,7 @@ void BuildState::_init()
 
 void BuildState::Update(double deltaTime)
 {
+	std::cout << m_selectedThing << std::endl;
 	if (m_selectedRoom && Input::isKeyPressed(Input::Del))
 	{
 		DirectX::XMFLOAT3 p = m_selectedRoom->getPosition();
@@ -553,15 +586,21 @@ void BuildState::Update(double deltaTime)
 		std::vector<Tile*> backtiles;
 		DirectX::XMINT2 delPos;
 		DirectX::XMINT2 delSize;
-		
-		if (m_roomCtrl->RemoveRoom(pos, backtiles, delPos, delSize));
+		auto tupleReturn = m_roomCtrl->RemoveRoomTuple(pos, backtiles, delPos, delSize);
+		if (std::get<0>(tupleReturn))
 		{
+			m_inn->Deposit(std::get<1>(tupleReturn));
 			m_selectedRoom->Select();
 			grid->insertTiles(delPos, delSize, backtiles);
 			m_selectedRoom = nullptr;
 		}
 	}
-
+	if (m_selectedRoomm && m_furnitureDeleteMode && Input::isKeyPressed(Input::Del))
+	{
+		DirectX::XMFLOAT3 p = m_selectedRoomm->getPosition();
+		DirectX::XMINT2 pos(p.x + 0.5f, p.z + 0.5f);
+		m_roomCtrl->RemoveRoomObject(pos);
+	}
 }
 
 void BuildState::Draw()
