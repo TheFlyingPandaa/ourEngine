@@ -70,6 +70,7 @@ public:
 	virtual DirectX::XMFLOAT2 getPosition() const;
 
 	int getModelSpriteIndex() const;
+	void DisableThinkingEmjois();
 
 	virtual WalkDirection getDirection() const;
 	virtual XMFLOAT3 getDirection3f()const;

@@ -58,7 +58,6 @@ private:
 	std::chrono::high_resolution_clock m_clock;
 	std::chrono::high_resolution_clock::time_point m_start, m_now;
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
-	bool m_showingInterests;
 
 	float m_hungry;
 	float m_tired;
@@ -124,8 +123,6 @@ public:
 
 	std::chrono::duration<double> getTimeSpan();
 	void restartClock();
-	bool getShowingInterests() const;
-	void setShowingInterests(bool showingInterests);
 
 	void Update();
 };

@@ -213,6 +213,11 @@ int Character::getModelSpriteIndex() const
 	return m_modelSpriteIndex;
 }
 
+void Character::DisableThinkingEmjois()
+{
+	m_displayThought = false;
+}
+
 
 Character::WalkDirection Character::getDirection() const
 {

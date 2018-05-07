@@ -7,7 +7,6 @@ Customer::Customer()
 Customer::Customer(Race race, int gold)
 {
 	this->m_start = this->m_clock.now();
-	m_showingInterests = false;
 
 	m_availableSpotFound = false;
 	m_race = race;
@@ -123,14 +122,17 @@ void Customer::SetAction(Action nextAction)
 		break;
 	case DrinkAction:
 		this->m_stateQueue.push(Drinking);
+		restartClock();
 		setThoughtBubble(THIRSTY);
 		break;
 	case EatAction:
 		this->m_stateQueue.push(Eating);
+		restartClock();
 		setThoughtBubble(HUNGRY);
 		break;
 	case SleepAction:
 		this->m_stateQueue.push(Sleeping);
+		restartClock();
 		setThoughtBubble(TIRED);
 		break;
 	case LeavingInnAction:
@@ -314,17 +316,11 @@ void Customer::restartClock()
 	m_start = m_clock.now();
 }
 
-bool Customer::getShowingInterests() const
-{
-	return m_showingInterests;
-}
-
-void Customer::setShowingInterests(bool showingInterests)
-{
-	m_showingInterests = showingInterests;
-}
-
 void Customer::Update()
 {
+	if (getTimeSpan().count() > 5)
+		DisableThinkingEmjois();
+
 	Character::Update();
+
 }
