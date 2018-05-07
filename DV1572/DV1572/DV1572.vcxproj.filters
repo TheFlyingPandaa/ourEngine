@@ -3,8 +3,6 @@
   <ItemGroup>
     <FxCompile Include="ourEngine\shaders\deferredPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\deferredVertexShader.hlsl" />
-    <FxCompile Include="ourEngine\shaders\3DPixel.hlsl" />
-    <FxCompile Include="ourEngine\shaders\3DVertex.hlsl" />
     <FxCompile Include="ourEngine\shaders\pickingPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\pickingVertexShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\standardDomainShader.hlsl" />
@@ -19,6 +17,8 @@
     <FxCompile Include="ourEngine\shaders\ShadowPixel.hlsl" />
     <FxCompile Include="ourEngine\shaders\billboardVertex.hlsl" />
     <FxCompile Include="ourEngine\shaders\billboardPixel.hlsl" />
+    <FxCompile Include="ourEngine\shaders\3DPixel.hlsl" />
+    <FxCompile Include="ourEngine\shaders\3DVertex.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ourEngine\core\Camera\Camera.cpp" />
