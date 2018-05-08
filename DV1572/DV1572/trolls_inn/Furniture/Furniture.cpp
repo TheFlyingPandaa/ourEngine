@@ -18,7 +18,7 @@ Furniture::~Furniture()
 {
 }
 
-Object3D Furniture::getObject3D()
+Object3D& Furniture::getObject3D()
 {
 	return p_object;
 }

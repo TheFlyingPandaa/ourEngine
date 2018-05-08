@@ -57,6 +57,8 @@ private:
 	bool m_doorBuild = false;
 	bool m_canBuildFurniture = false;
 	bool m_furnitureDeleteMode = false;
+	bool m_clickedLast = false;
+	Furniture* m_furnitureRemove;
 
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{

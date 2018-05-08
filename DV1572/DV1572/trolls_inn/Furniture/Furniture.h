@@ -8,7 +8,7 @@ public:
 	Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	~Furniture();
 
-	Object3D	getObject3D();
+	Object3D&	getObject3D();
 
 	Attributes&	getAttributes();
 

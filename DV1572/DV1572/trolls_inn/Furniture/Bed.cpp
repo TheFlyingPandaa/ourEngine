@@ -22,10 +22,7 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 	}
 }
 //
-
-
-
-
 Bed::~Bed()
 {
 }
+//13.5,6.5

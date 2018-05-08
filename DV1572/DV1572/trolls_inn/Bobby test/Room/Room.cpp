@@ -453,6 +453,12 @@ void Room::PickWalls()
 		wall->getObject3D().CheckPick();
 }
 
+void Room::PickFurnitures()
+{
+	for (auto& obj : m_roomObjects)
+		obj->getObject3D().CheckPick();
+}
+
 void Room::Select()
 {
 	m_selected = !m_selected;
@@ -585,12 +591,32 @@ int Room::getPriceOfAllObjects()
 
 std::vector<Furniture*> Room::getAllRoomFurnitures()
 {
-	for (size_t i = 0; i < m_roomObjects.size(); i++)
+	return m_roomObjects;
+}
+
+bool Room::RemoveThisFurniture(Furniture * fur)
+{
+	for (int i = 0; i < m_roomObjects.size(); ++i)
 	{
-		delete m_roomObjects.at(i);
+		if (m_roomObjects.at(i) == fur)
+		{
+			delete m_roomObjects.at(i);
+			m_roomObjects.erase(m_roomObjects.begin() + i);
+			return true;
+		}
 	}
-	m_roomObjects.clear();
-	return std::vector<Furniture*>();
+	return false;
+}
+
+Furniture * Room::getFurnitureAtPos(DirectX::XMINT2 pos)
+{
+	for (auto& element : m_roomObjects)
+	{
+		if (element->getPosition().x == pos.x && element->getPosition().z == pos.y)
+		{
+			return element;
+		}
+	}
 }
 
 RoomType Room::getRoomType()

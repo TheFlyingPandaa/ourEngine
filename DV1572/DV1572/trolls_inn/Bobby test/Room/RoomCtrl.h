@@ -56,7 +56,8 @@ public:
 
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture furniture);
-	void				RemoveRoomObject(DirectX::XMINT2 pos);
+	//void				RemoveRoomObject(DirectX::XMINT2 pos);
+	bool				RemoveRoomObject(Furniture* fur);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size = { 1, 1 });
@@ -71,6 +72,8 @@ public:
 
 	void				PickRoomTiles();
 	void				PickWalls();
+	void				PickAllFurnitures();
+
 	void				Update(Camera * cam);
 	void				Draw();
 
@@ -90,6 +93,8 @@ public:
 	Room*				getRoomAt(int index);
 	Room*				getRoomAtPos(XMINT2 pos);
 	std::vector<Room*>	getAllTheRooms() const;
+
+	Furniture*			getFurnitureAtPos(XMINT2 pos);
 
 	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 

@@ -1,6 +1,6 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
-
+#include <iostream>
 
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 {
@@ -177,16 +177,30 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 	cr->AddRoomObject(furniture);
 }
 
-void RoomCtrl::RemoveRoomObject(DirectX::XMINT2 pos)
+//void RoomCtrl::RemoveRoomObject(DirectX::XMINT2 pos)
+//{
+//	int index = _intersect(pos, XMINT2(1, 1));
+//	if (index != -1)
+//	{
+//		std::vector<Furniture*> temp = m_rooms[index]->getAllRoomFurnitures();
+//		//delete temp.at(0);
+//		
+//		
+//	}
+//}
+
+bool RoomCtrl::RemoveRoomObject(Furniture * fur)
 {
-	int index = _intersect(pos, XMINT2(1, 1));
+	int index = _intersect(XMINT2(fur->getPosition().x, fur->getPosition().z), XMINT2(1, 1));
 	if (index != -1)
 	{
-		std::vector<Furniture*> temp = m_rooms[index]->getAllRoomFurnitures();
+		return m_rooms[index]->RemoveThisFurniture(fur);
+
 		//delete temp.at(0);
-		
-		
+
+
 	}
+	return false;
 }
 
 void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
@@ -647,6 +661,14 @@ void RoomCtrl::PickWalls()
 		room->PickWalls();
 }
 
+void RoomCtrl::PickAllFurnitures()
+{
+	for (auto& element : m_rooms)
+	{
+		element->PickFurnitures();
+	}
+}
+
 void RoomCtrl::Update(Camera * cam)
 {
 	
@@ -927,6 +949,19 @@ Room * RoomCtrl::getRoomAtPos(XMINT2 pos)
 std::vector<Room*> RoomCtrl::getAllTheRooms() const
 {
 	return m_rooms;
+}
+
+Furniture * RoomCtrl::getFurnitureAtPos(XMINT2 pos)
+{
+	Furniture * temp = nullptr;
+	for (auto& element : m_rooms)
+	{
+		 temp = element->getFurnitureAtPos(pos);
+		if (temp)
+		{
+			return temp;
+		}
+	}
 }
 
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
