@@ -605,7 +605,6 @@ void BuildState::_init()
 
 void BuildState::Update(double deltaTime)
 {
-	std::cout << m_selectedThing << std::endl;
 	if (m_selectedRoom && Input::isKeyPressed(Input::Del))
 	{
 		DirectX::XMFLOAT3 p = m_selectedRoom->getPosition();
