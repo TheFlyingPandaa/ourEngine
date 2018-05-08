@@ -16,6 +16,9 @@ public:
 
 	void Deposit(int amount);
 	void Withdraw(int amount);
+	// For unhappy customers
+	void GetRefund(int amount);
+	void GetCashback(int amount);
 	
 	int GetGold() const;
 

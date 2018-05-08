@@ -1,97 +1,97 @@
 #include "Inn.h"
 #include "FroggeDebug.h"
 
-void Inn::_addStatsToInn(Attributes type)
-{
-	this->m_innUpdateAttributes.SetReviewCreepy(type.GetCreepy());
+//void Inn::_addStatsToInn(Attributes type)
+//{
+	/*this->m_innUpdateAttributes.SetReviewCreepy(type.GetCreepy());
 	this->m_innUpdateAttributes.SetReviewDrinkQuality(type.GetDrinkQuality());
 	this->m_innUpdateAttributes.SetReviewFoodQuality(type.GetFoodQuality());
 	this->m_innUpdateAttributes.SetReviewPrices(type.GetPrices());
 	this->m_innUpdateAttributes.SetReviewReputation(type.GetReputation());
 	this->m_innUpdateAttributes.SetReviewShady(type.GetShady());
-	this->m_innUpdateAttributes.SetReviewStandard(type.GetStandard());
-}
+	this->m_innUpdateAttributes.SetReviewStandard(type.GetStandard());*/
+//}
 
-void Inn::_checkInnStatUpdate()
-{
-	if (this->m_innUpdateAttributes.GetCreepy() >= 10)
-	{
-		this->m_innAttributes.SetCreepy(1);
-		this->m_innUpdateAttributes.SetReviewCreepy(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetCreepy() <= -10)
-	{
-		this->m_innAttributes.SetCreepy(-1);
-		this->m_innUpdateAttributes.SetReviewCreepy(10);
-	}
-	if (this->m_innUpdateAttributes.GetDrinkQuality() >= 10)
-	{
-		this->m_innAttributes.SetDrinkQuality(1);
-		this->m_innUpdateAttributes.SetReviewDrinkQuality(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetDrinkQuality() <= -10)
-	{
-		this->m_innAttributes.SetDrinkQuality(-1);
-		this->m_innUpdateAttributes.SetReviewDrinkQuality(10);
-	}
-	if (this->m_innUpdateAttributes.GetFoodQuality() >= 10)
-	{
-		this->m_innAttributes.SetFoodQuality(1);
-		this->m_innUpdateAttributes.SetReviewFoodQuality(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetFoodQuality() <= -10)
-	{
-		this->m_innAttributes.SetFoodQuality(-1);
-		this->m_innUpdateAttributes.SetReviewFoodQuality(10);
-	}
-	if (this->m_innUpdateAttributes.GetPrices() >= 10)
-	{
-		this->m_innAttributes.SetPrices(1);
-		this->m_innUpdateAttributes.SetReviewPrices(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetPrices() <= -10)
-	{
-		this->m_innAttributes.SetPrices(-1);
-		this->m_innUpdateAttributes.SetReviewPrices(10);
-	}
-	if (this->m_innUpdateAttributes.GetReputation() >= 10)
-	{
-		this->m_innAttributes.SetReputation(1);
-		this->m_innUpdateAttributes.SetReviewReputation(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetReputation() <= -10)
-	{
-		this->m_innAttributes.SetReputation(-1);
-		this->m_innUpdateAttributes.SetReviewReputation(10);
-	}
-	if (this->m_innUpdateAttributes.GetShady() >= 10)
-	{
-		this->m_innAttributes.SetShady(1);
-		this->m_innUpdateAttributes.SetReviewShady(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetShady() <= -10)
-	{
-		this->m_innAttributes.SetShady(-1);
-		this->m_innUpdateAttributes.SetReviewShady(10);
-	}
-	if (this->m_innUpdateAttributes.GetStandard() >= 10)
-	{
-		this->m_innAttributes.SetStandard(1);
-		this->m_innUpdateAttributes.SetReviewStandard(-10);
-	}
-	else if (this->m_innUpdateAttributes.GetStandard() <= -10)
-	{
-		this->m_innAttributes.SetStandard(-1);
-		this->m_innUpdateAttributes.SetReviewStandard(10);
-	}
-	std::cout << "Creepy: " << this->m_innAttributes.GetCreepy() << std::endl;
-	std::cout << "Drink Quality: " << this->m_innAttributes.GetDrinkQuality() << std::endl;
-	std::cout << "Food Quality: " << this->m_innAttributes.GetFoodQuality() << std::endl;
-	std::cout << "Prices: " << this->m_innAttributes.GetPrices() << std::endl;
-	std::cout << "Reputation: " << this->m_innAttributes.GetReputation() << std::endl;
-	std::cout << "Shady: " << this->m_innAttributes.GetShady() << std::endl;
-	std::cout << "Standard: " << this->m_innAttributes.GetStandard() << std::endl;
-}
+//void Inn::_checkInnStatUpdate()
+//{
+//	if (this->m_innUpdateAttributes.GetCreepy() >= 10)
+//	{
+//		this->m_innAttributes.SetCreepy(1);
+//		this->m_innUpdateAttributes.SetReviewCreepy(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetCreepy() <= -10)
+//	{
+//		this->m_innAttributes.SetCreepy(-1);
+//		this->m_innUpdateAttributes.SetReviewCreepy(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetDrinkQuality() >= 10)
+//	{
+//		this->m_innAttributes.SetDrinkQuality(1);
+//		this->m_innUpdateAttributes.SetReviewDrinkQuality(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetDrinkQuality() <= -10)
+//	{
+//		this->m_innAttributes.SetDrinkQuality(-1);
+//		this->m_innUpdateAttributes.SetReviewDrinkQuality(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetFoodQuality() >= 10)
+//	{
+//		this->m_innAttributes.SetFoodQuality(1);
+//		this->m_innUpdateAttributes.SetReviewFoodQuality(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetFoodQuality() <= -10)
+//	{
+//		this->m_innAttributes.SetFoodQuality(-1);
+//		this->m_innUpdateAttributes.SetReviewFoodQuality(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetPrices() >= 10)
+//	{
+//		this->m_innAttributes.SetPrices(1);
+//		this->m_innUpdateAttributes.SetReviewPrices(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetPrices() <= -10)
+//	{
+//		this->m_innAttributes.SetPrices(-1);
+//		this->m_innUpdateAttributes.SetReviewPrices(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetReputation() >= 10)
+//	{
+//		this->m_innAttributes.SetReputation(1);
+//		this->m_innUpdateAttributes.SetReviewReputation(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetReputation() <= -10)
+//	{
+//		this->m_innAttributes.SetReputation(-1);
+//		this->m_innUpdateAttributes.SetReviewReputation(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetShady() >= 10)
+//	{
+//		this->m_innAttributes.SetShady(1);
+//		this->m_innUpdateAttributes.SetReviewShady(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetShady() <= -10)
+//	{
+//		this->m_innAttributes.SetShady(-1);
+//		this->m_innUpdateAttributes.SetReviewShady(10);
+//	}
+//	if (this->m_innUpdateAttributes.GetStandard() >= 10)
+//	{
+//		this->m_innAttributes.SetStandard(1);
+//		this->m_innUpdateAttributes.SetReviewStandard(-10);
+//	}
+//	else if (this->m_innUpdateAttributes.GetStandard() <= -10)
+//	{
+//		this->m_innAttributes.SetStandard(-1);
+//		this->m_innUpdateAttributes.SetReviewStandard(10);
+//	}
+//	std::cout << "Creepy: " << this->m_innAttributes.GetCreepy() << std::endl;
+//	std::cout << "Drink Quality: " << this->m_innAttributes.GetDrinkQuality() << std::endl;
+//	std::cout << "Food Quality: " << this->m_innAttributes.GetFoodQuality() << std::endl;
+//	std::cout << "Prices: " << this->m_innAttributes.GetPrices() << std::endl;
+//	std::cout << "Reputation: " << this->m_innAttributes.GetReputation() << std::endl;
+//	std::cout << "Shady: " << this->m_innAttributes.GetShady() << std::endl;
+//	std::cout << "Standard: " << this->m_innAttributes.GetStandard() << std::endl;
+//}
 
 Inn::Inn()
 {
@@ -142,6 +142,16 @@ int Inn::GetDrinkPrice() const
 	return this->m_drinkPrice;
 }
 
+bool Inn::GetRecievedReview() const
+{
+	return m_recievedReview;
+}
+
+void Inn::SetRecievedReviewToFalse()
+{
+	m_recievedReview = false;
+}
+
 Attributes Inn::GetInnAttributes() const
 {
 	return this->m_innAttributes;
@@ -187,6 +197,11 @@ void Inn::Withdraw(int amount)
 	m_economy->Withdraw(amount);
 }
 
+void Inn::GetRefund(int amount)
+{
+	m_economy->GetRefund(amount);
+}
+
 void Inn::changeStaffSalary(int amount)
 {
 	m_staffSalary += amount;
@@ -202,14 +217,17 @@ Text * Inn::GetText()
 // Change to one standard function for all stat adds?
 void Inn::CustomerReview(Attributes review)
 {
-	this->_addStatsToInn(review);
-	this->_checkInnStatUpdate();
+	//this->_addStatsToInn(review);
+	//this->_checkInnStatUpdate();
+	m_innAttributes.AddStat(review.GetStat());
+	m_recievedReview = true;
 }
 
 void Inn::FurnitureStatAdd(Attributes furnitureStats)
 {
-	this->_addStatsToInn(furnitureStats);
-	this->_checkInnStatUpdate();
+	//this->_addStatsToInn(furnitureStats);
+	//this->_checkInnStatUpdate();
+	m_innAttributes.AddStat(furnitureStats.GetStat());
 }
 
 void Inn::Draw()

@@ -29,10 +29,16 @@ void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
 	ID[index2] = temp;
 }
 
+void MasterAI::_generateCustomer()
+{
+	m_nextCustomer = m_cFC.Update(m_inn->GetInnAttributes());
+}
+
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	: m_solver(roomCtrl,grid)
 {
-	this->m_start = this->m_clock.now();
+	m_customer_start = m_start = m_clock.now();
+	m_customerSpawned = true;
 	m_inn = inn;
 }
 
@@ -45,13 +51,50 @@ MasterAI::~MasterAI()
 void MasterAI::Update(Camera* cam)
 {
 	// Get the elapsed time
-	this->m_now = this->m_clock.now();
-	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
-	
+	m_customer_now = m_now = m_clock.now();
+	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
+	m_customer_spawn_timer = std::chrono::duration_cast<std::chrono::duration<double>>(m_customer_now - m_customer_start);
+
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
-	if (this->m_time_span.count() > 10)
+	if (!m_customerSpawned)
+	{
+		double duration = m_nextCustomer->GetTimeSpan().count();
+		if (duration > CHECK_CUSTOMER_SPAWN)
+		{
+			if (m_nextCustomer->GetRace() == Elf)
+			{
+				if (duration > 30)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+			else
+			{
+				if (duration > 15)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (m_customer_spawn_timer.count() > 30)
+		{
+			m_customerSpawned = false;
+			_generateCustomer();
+		}
+	}
+
+	if (this->m_time_span.count() > UPDATE_FREQUENCY_CUSTOMER_NEEDS)
 	{
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
@@ -75,9 +118,9 @@ void MasterAI::Update(Camera* cam)
 			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
 			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
 			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;
-			customer->SetHungry(customer->GetHungry() + 1);
-			customer->SetTired(customer->GetTired() + 1);
-			customer->SetThirsty(customer->GetThirsty() + 1);
+			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
+			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
+			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
 		}
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty())
@@ -110,7 +153,7 @@ void MasterAI::Update(Camera* cam)
 			{
 				// Customer wants path to Action area
 				customer->SetAction(ThinkingAction);
-				this->m_solver.Update(*customer, desiredAction, price);
+				this->m_solver.Update(*customer, desiredAction);
 			}
 		}
 		else
@@ -120,18 +163,17 @@ void MasterAI::Update(Camera* cam)
 				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
 			}
 			// Execute the action queue
-			this->m_solver.Update(*customer, this->m_time_span);
+			m_solver.Update(*customer, m_inn);
 		}
 
 		loopCounter++;
 	}
 
-	if (this->m_solver.getTimeSpan().count() > 1)
-		this->m_solver.restartClock();
+	if (this->m_solver.getTimeSpan().count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+		this->m_solver.RestartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
 	
-	// BROKEN, subscript changes when first customer is deleted. Fixed(?)
 	for (int i = 0; i < leavingCustomersIDs.size(); i++)
 	{
 		this->m_leavingCustomers.push_back(this->m_customers[leavingCustomersIDs[i]]);
@@ -156,6 +198,8 @@ void MasterAI::Update(Camera* cam)
 			// Send review to inn if customer reached end of path
 			if (leavingCustomer->walkQueueDone())
 				leavingCustomer->PopToNextState();
+			else
+				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
 				this->m_inn->CustomerReview(leavingCustomer->GetAttributes());
@@ -168,7 +212,7 @@ void MasterAI::Update(Camera* cam)
 	// Delete customers that left the inn area
 	if (goneCustomers.size() > 0)
 		this->_sortVectorID(goneCustomers);
-	// BROKEN, same as previous
+
 	for (int i = 0; i < goneCustomers.size(); i++)
 	{
 		int index = goneCustomers[i];
@@ -182,9 +226,12 @@ void MasterAI::Draw()
 	m_inn->Draw();
 	for (auto& customer : m_customers)
 		customer->Draw();
+	for (auto& leavingCustomer : this->m_leavingCustomers)
+		leavingCustomer->Draw();
 }
 
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
+
 }
