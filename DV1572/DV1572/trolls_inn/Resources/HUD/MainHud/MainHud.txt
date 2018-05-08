@@ -16,7 +16,7 @@
 
 # Button Background
 tx trolls_inn/Resources/HUD/MainHud/ButtonBackground.png
-r 8 8 208 112 -1 0.1 0
+r 8 8 308 112 -1 0.1 0
 
 # Hit box for buttons
 hr 16 48 64 64 0
@@ -28,9 +28,16 @@ r 16 48 64 64 0 0 0 circle
 # MeterBar
 meter trolls_inn/Resources/HUD/MainHud/StatsBar.png
 trolls_inn/Resources/HUD/MainHud/Needle.png
-0 0 9 32 0 0 0 rectangle 5 5 5 5 5 5
-80 16 128 32 0.01 0 rectangle
+0 0 9 32 0 0 -1 rectangle 5 5 5 5 5 5
+110 32 128 32 0.01 0 rectangle
 
+# Metertext
+#txt 35 15 0.2 0 0 0 1 0 L 0
+#Simple
+## Metertext
+#txt 240 15 0.2 0 0 0 1 0 L 0
+#Fancy
+#
 # Crew Button
 # tx trolls_inn/Resources/HUD/MainHud/CrewButton.png
 # r 36 66 48 48 1 0 0 circle

@@ -55,13 +55,12 @@ public:
 
 	void changeStaffSalary(int amount);
 	
-	Text* GetText();
+	Text*& GetText();
 
 	// Add a customers review to the inn stats
 	void CustomerReview(Attributes review);
 	// Add stats to the inn based on the furniture placed
 	void FurnitureStatAdd(Attributes furnitureStats);
 
-	void Update(Camera* cam);
 	void Draw();
 };

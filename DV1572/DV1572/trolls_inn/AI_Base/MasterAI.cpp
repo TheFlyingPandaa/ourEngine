@@ -29,10 +29,11 @@ void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
 	ID[index2] = temp;
 }
 
-MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid)
+MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	: m_solver(roomCtrl,grid)
 {
 	this->m_start = this->m_clock.now();
+	m_inn = inn;
 }
 
 MasterAI::~MasterAI()
@@ -55,8 +56,6 @@ void MasterAI::Update(Camera* cam)
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
 	}
-
-	m_inn.Update(cam);
 	// Set spawn time limit (?)
 	//this->customers.push_back(this->cFC.Update(this->inn.getInnAttributes()));
 	// Not enough gold for wanted action = leave (?)
@@ -91,13 +90,13 @@ void MasterAI::Update(Camera* cam)
 			switch (desiredAction)
 			{
 			case EatAction:
-				price = m_inn.GetFoodPrice();
+				price = m_inn->GetFoodPrice();
 				break;
 			case DrinkAction:
-				price = m_inn.GetDrinkPrice();
+				price = m_inn->GetDrinkPrice();
 				break;
 			case SleepAction:
-				price = m_inn.GetSleepPrice();
+				price = m_inn->GetSleepPrice();
 				break;
 			}
 
@@ -159,7 +158,7 @@ void MasterAI::Update(Camera* cam)
 				leavingCustomer->PopToNextState();
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
-				this->m_inn.CustomerReview(leavingCustomer->GetAttributes());
+				this->m_inn->CustomerReview(leavingCustomer->GetAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}
@@ -180,12 +179,12 @@ void MasterAI::Update(Camera* cam)
 
 void MasterAI::Draw()
 {
-	m_inn.Draw();
+	m_inn->Draw();
 	for (auto& customer : m_customers)
 		customer->Draw();
 }
 
 void MasterAI::spawn()
 {
-	m_customers.push_back(this->m_cFC.Update(this->m_inn.GetInnAttributes()));
+	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
 }
