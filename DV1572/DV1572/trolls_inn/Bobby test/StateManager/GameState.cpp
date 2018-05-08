@@ -163,7 +163,7 @@ void GameState::Update(double deltaTime)
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
 		//m_in++;
-	}
+	
 	if (Input::isKeyPressed('U'))
 		inn->Withdraw(500);
 
@@ -448,7 +448,7 @@ bool GameState::_handleHUDPicking()
 				// Build Button
 				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
-				if (m_hudButtonsPressed[index])
+				if (m_hudButtonsPressed[index]){
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn));
 					m_stage = GameStage::BuildRoom;
 				}
