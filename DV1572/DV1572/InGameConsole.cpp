@@ -16,7 +16,7 @@ InGameConsole::~InGameConsole()
 	text.clear();
 }
 
-void InGameConsole::update()
+void InGameConsole::update(double DeltaTime)
 {	
 	while (text.size() > maxSize)
 	{
@@ -24,11 +24,17 @@ void InGameConsole::update()
 		text.erase(text.begin());
 	}
 
-	for (int i = 0; i < text.size() - 1; i++)
+	for (int i = 0; i < text.size(); i++)
 	{
-		text[i]->position.y -= textHight * text[i + 1]->rows ;
-		text[i]->text.setPosition(text[i]->position.x, text[i]->position.y);
+		text[i]->timer += DeltaTime;
+		if (text[i]->timer > startFade)
+		{			
+			text[i]->text.setColor(1.0f, 1.0f, 1.0f, 1.0 - ((text[i]->timer - startFade) / fadeTime));
+		}
+		
 	}
+
+
 }
 
 void InGameConsole::draw()
@@ -56,15 +62,27 @@ void InGameConsole::pushString(const std::string & string)
 	t.setTextString(ss.str());
 	t.setAllignment(TXT::ALLIGN::Right);
 	t.setRelative(Text::RelativeTo::TR);
-	t.setPosition(startPosition.x, startPosition.y);
-	t.setScale(.3f);
+	t.setScale(.5f);
+
+	XMVECTOR size = Text::getStringSize(&t);
+	float y = DirectX::XMVectorGetY(size);
+	y*=.5f;
+
+	t.setPosition(startPosition.x, y*maxSize);
 	
 
 	text_t * t_t = new text_t();
-	t_t->position = startPosition;
+	t_t->position = DirectX::XMINT2(startPosition.x, y * maxSize);
 	t_t->text = t;
 	t_t->rows = rows;
+	t_t->size = y;
 
 	text.push_back(t_t);
-	update();
+
+	for (int i = 0; i < text.size() - 1 && text.size() != 0; i++)
+	{
+		text[i]->position.y -= text[i + 1]->size;
+		text[i]->text.setPosition(text[i]->position.x, text[i]->position.y);
+	}
+	
 }
