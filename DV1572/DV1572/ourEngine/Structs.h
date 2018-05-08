@@ -40,8 +40,10 @@ struct MESH_BUFFER
 
 struct BILLBOARD_MESH_BUFFER
 {
-	DirectX::XMFLOAT4X4A View;
-	DirectX::XMFLOAT4X4A Projection;
+	DirectX::XMFLOAT4X4A	View;
+	DirectX::XMFLOAT4X4A	Projection;
+	DirectX::XMFLOAT4A		CamPos;
+	DirectX::XMFLOAT4A		CamDir;
 	float spriteIndex;
 };
 

@@ -1167,6 +1167,10 @@ void Window::_billboardPass(const Camera & cam)
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
+	DirectX::XMFLOAT3 p = cam.getPosition();
+	DirectX::XMFLOAT3 la = cam.getLookAt();
+	buffer.CamPos = DirectX::XMFLOAT4A(p.x, p.y, p.z, 1.0f);
+	buffer.CamDir = DirectX::XMFLOAT4A(la.x, la.y, la.z, 0.0f);
 	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 
