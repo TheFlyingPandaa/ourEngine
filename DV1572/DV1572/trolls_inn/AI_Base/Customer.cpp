@@ -70,12 +70,6 @@ const char* Customer::GetRaceStr() const
 {
 	switch (m_race)
 	{
-	/*case Human:
-		return "Human";
-	case Troll:
-		return "Troll";
-	case Orc:
-		return "Orc";*/
 	case Elf:
 		return "Elf";
 	case Dwarf:

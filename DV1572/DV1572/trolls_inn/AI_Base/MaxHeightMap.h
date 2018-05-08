@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 #include "WICTextureLoader.h"
 #include <fstream>
-#include "DiamondSqaure.h"
+#include "FroggeDSA.h"
 #include "QuadTree.h"
 #include "Application.h"
 

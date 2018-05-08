@@ -3,54 +3,6 @@
 
 Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
-	// Update inn attributes
-	/*auto getPoints = [&](Race atri) 
-	{
-		Attributes attributes;
-		switch (atri)
-		{
-		case Human:
-			attributes = humanAtr;
-			break;
-		case Troll:
-			attributes = trollAtr;
-			break;
-		case Orc:
-			attributes = orcAtr;
-			break;
-		case Elf:
-			attributes = elfAtr;
-			break;
-		case Dwarf:
-			attributes = dwarfAtr;
-			break;
-		}
-		float points = 0;
-
-		points += abs((10 + attributes.GetCreepy()) - (10 + innAttributes.GetCreepy()));
-		points += abs((10 + attributes.GetDrinkQuality()) - (10 + innAttributes.GetDrinkQuality()));
-		points += abs((10 + attributes.GetFoodQuality()) - (10 + innAttributes.GetFoodQuality()));
-		points += abs((10 + attributes.GetPrices()) - (10 + innAttributes.GetPrices()));
-		points += abs((10 + attributes.GetReputation()) - (10 + innAttributes.GetReputation()));
-		points += abs((10 + attributes.GetShady()) - (10 + innAttributes.GetShady()));
-		points += abs((10 + attributes.GetStandard()) - (10 + innAttributes.GetStandard()));
-
-		return points;
-	};*/
-	//race = Elf;
-	//int closestMatch = 200;
-	// Human is first and dwarf is the last in the enum structure. IMPORTANT
-	/*for (int currentRace = Elf; currentRace <= Dwarf; currentRace++)
-	{
-	Race cr = static_cast<Race>(currentRace);
-	int cp = getPoints(cr);
-
-	if (closestMatch > cp)
-	{
-	race = cr;
-	closestMatch = cp;
-	}
-	}*/
 	Customer* newCustomer = nullptr;
 	int probabilityForCustomerSpawnOfSpecificRace = abs(100 * innAttributes.GetStat());
 	int rNGUpperLimit = 100 - probabilityForCustomerSpawnOfSpecificRace;
@@ -114,18 +66,6 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 	default:
 		newCustomer = new Customer(Dwarf, m_rNG.GenerateRandomNumber(50, 150));
 		break;
-	/*case 1:
-		newCustomer = new Customer(Troll, this->m_rNG.GenerateRandomNumber(50, 150));
-		break;		  
-	case 2:			  
-		newCustomer = new Customer(Orc, this->m_rNG.GenerateRandomNumber(50, 150));
-		break;		  
-	case 3:			  
-		newCustomer = new Customer(Dwarf, this->m_rNG.GenerateRandomNumber(50, 150));
-		break;		  
-	default:		  
-		newCustomer = new Customer(Human, this->m_rNG.GenerateRandomNumber(50, 150));
-		break;*/
 	}
 
 	return newCustomer;
@@ -134,7 +74,6 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 CustomerFlowControl::CustomerFlowControl()
 {
 	// Load all race models
-	//box.LoadModel("trolls_inn/Resources/box.obj");
 	m_thinkingMesh.LoadModel("trolls_inn/Resources/Thoughts/Bubble.obj");
 	m_elf.LoadModel("trolls_inn/resources/SpritesheetSample/elf.obj");
 	m_dwarf.LoadModel("trolls_inn/resources/SpritesheetSample/dwarf.obj");
