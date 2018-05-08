@@ -9,6 +9,7 @@ Mesh* MeshHandler::floorTile = nullptr;
 Mesh* MeshHandler::grassTile = nullptr;
 Mesh* MeshHandler::table = nullptr; 
 Mesh* MeshHandler::box = nullptr; 
+Mesh* MeshHandler::plainRectangle = nullptr;
 
 Mesh* MeshHandler::getTable()
 {
@@ -100,6 +101,17 @@ Mesh * MeshHandler::getBox()
 	return box;
 }
 
+Mesh * MeshHandler::getPlainRectangle()
+{
+	if (plainRectangle == nullptr)
+	{
+		plainRectangle = new Mesh();
+		plainRectangle->MakeRectangle();
+		plainRectangle->setDiffuseTexture("trolls_inn/Resources/HUD/plain.png");
+	}
+	return plainRectangle;
+}
+
 void MeshHandler::cleanAll()
 {
 	if (table != nullptr)
@@ -146,4 +158,7 @@ void MeshHandler::cleanAll()
 	{
 		delete box;
 	}
+
+	if (plainRectangle != nullptr)
+		delete plainRectangle;
 }

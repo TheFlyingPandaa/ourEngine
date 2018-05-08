@@ -2,6 +2,8 @@ cbuffer BILLBOARD_MESH_BUFFER : register(b0)
 {
 	float4x4 View;
 	float4x4 Projection;
+	float4	CamPos;
+	float4	CamDir;
 }
 
 struct INPUT
@@ -53,25 +55,35 @@ OUTPUT main(INPUT input)
 	if (input.spriteIndex != -1)
 	{
 		float3 charDir = input.charDir.xyz; // Character Direction
-		float3 CamView = float3(View[0][2], View[1][2], View[1][2]); // CamLookAt
 
 		if (!(charDir.z == -1 && charDir.x == -1 && charDir.y == -1))
 		{
-			o.tex = input.tex;		// DEFAULT = UP
+			float3 CamView = float3(View[0][2], View[1][2], View[1][2]); // CamLookAt
+			float3 camTarget = normalize(CamDir.xyz);
 
-			if (charDir.x == 1)
-				o.tex.x = o.tex.x + 0.50f; // RIGHT
-			else if (charDir.x == -1)
-				o.tex.x = o.tex.x + 0.25f; // LEFT
-			else if (charDir.z == 1)
+			float angle = dot(camTarget, charDir);
+			float dirChange = cross(camTarget, charDir).y;
+
+			if (charDir.z)
+			{
+				angle *= -1;
+				dirChange *= -1;
+			}
+			if (angle > 0.66)
+				o.tex = input.tex;		// DEFAULT = UP
+			else if (angle <= 0.66 && angle > -0.66)
+			{
+				if (dirChange < 0)
+					o.tex.x = o.tex.x + 0.25f; // LEFT
+				else
+					o.tex.x = o.tex.x + 0.50f; // RIGHT
+			}
+			else
 				o.tex.x = o.tex.x + 0.75f; // DOWN
 
-				
-		}		
-		
-		o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
+			o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
+		}
 	}
-
 	o.normal = input.normal;
 
 	o.TBN[0] = normalize(mul(float4(input.tangent, 0), world)).xyz;

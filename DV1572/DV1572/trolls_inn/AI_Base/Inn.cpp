@@ -99,10 +99,11 @@ Inn::Inn()
 	m_profit = 0;
 	m_timer = 0;
 	m_text = new Text();
-	m_text->setColor(0.0f, 1.0f, 0.0f);
-	m_text->setRelative(static_cast<Text::RelativeTo>(1));
-	m_text->setPosition(198.0f, 32.0f);
-	m_text->setScale(0.4f);
+	m_text->setFontType(TXT::Constantina_Big);
+	m_text->setColor(0.02f, 0.3f, 0.0f);
+	m_text->setRelative(Text::RelativeTo::BR);
+	m_text->setPosition(198.0f, 36.0f);
+	m_text->setScale(0.5f);
 	m_text->setRotation(0.0f);
 	m_text->setTextString("");
 	m_text->setAllignment(TXT::Right);
@@ -118,9 +119,9 @@ Inn::Inn()
 Inn::~Inn()
 {
 	delete m_economy;
-	
+	/*
 	delete m_text;
-	m_text = nullptr;
+	m_text = nullptr;*/
 }
 
 DirectX::XMINT2 Inn::getReceptionPos()
@@ -242,7 +243,7 @@ void Inn::changeStaffSalary(int amount)
 		m_staffSalary = 0;
 }
 
-Text *& Inn::GetText()
+Text * Inn::GetText()
 {
 	return m_text;
 }

@@ -22,7 +22,6 @@ void HUD::_cleanUp()
 		delete m_mesh[i];
 
 	m_mesh.clear();
-	m_texts.clear();
 	
 	for (size_t i = 0; i < m_texts.size(); i++)
 	{
@@ -143,6 +142,9 @@ HUD::HUD()
 HUD::~HUD()
 {
 	_cleanUp();
+	for (auto &t : m_pushedTexts)
+		delete t;
+	m_pushedTexts.clear();
 }
 
 bool HUD::LoadHud(const std::string & path)
@@ -323,38 +325,6 @@ bool HUD::LoadHud(const std::string & path)
 				}
 
 			}
-			else if (type == "mtxt")
-			{
-				float x, y, scl, r, g, b, a, rot;
-				char allignment;
-				int relativeTo;
-				std::string text = "";
-
-				stream >> x >> y >> scl >> r >> g >> b >> a >> rot >> allignment >> relativeTo;
-				std::getline(inputFile, text);
-				Text* t = new Text();
-				t->setColor(r, g, b, a);
-				t->setRelative(static_cast<Text::RelativeTo>(relativeTo));
-				t->setPosition(x, y);
-				t->setScale(scl);
-				t->setRotation(rot);
-				t->setTextString(text);
-
-				switch (allignment)
-				{
-				case 'R':
-					t->setAllignment(TXT::Right);
-					break;
-				case 'C':
-					t->setAllignment(TXT::Center);
-					break;
-				default:
-					t->setAllignment(TXT::Left);
-					break;
-				}
-
-				
-			}
 			else if (type == "txt")
 			{
 				float x, y, scl, r, g, b, a, rot;
@@ -365,6 +335,7 @@ bool HUD::LoadHud(const std::string & path)
 				stream >> x >> y >> scl >> r >> g >> b >> a >> rot >> allignment >> relativeTo;
 				std::getline(inputFile, text);
 				Text* t = new Text();
+				t->setFontType(TXT::FONT_TYPE::Arial_Black);
 				t->setColor(r, g, b, a);
 				t->setRelative(static_cast<Text::RelativeTo>(relativeTo));
 				t->setPosition(x, y);
@@ -618,16 +589,6 @@ MeterBar * HUD::getMeterBarAtMousePosition()
 	}
 }
 
-
-
-//void HUD::CheckIfPicked()
-//{
-//	for (auto& p : m_quadsClickAble)
-//	{
-//		p->CheckPick();
-//	}
-//}
-
 void HUD::Draw()
 {
 	for (auto& p : m_quadsNonClickAble)
@@ -640,11 +601,14 @@ void HUD::Draw()
 		p->DrawAsHud();
 	}
 	
+	for (auto& t : m_pushedTexts)
+	{
+		t->Draw();
+	}
 	for (auto& t : m_texts)
 	{
 		t->Draw();
 	}
-
 	for (auto& p : m_meterBarsNotSlideAble)
 		p->Draw();
 	for (auto& p : m_meterBarsSlideAble)
@@ -653,5 +617,5 @@ void HUD::Draw()
 
 void HUD::addText(Text * text)
 {
-	m_texts.push_back(text);
+	m_pushedTexts.push_back(text);
 }
