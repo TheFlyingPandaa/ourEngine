@@ -45,7 +45,10 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 MasterAI::~MasterAI()
 {
 	for (auto& customer : m_customers)
+	{
 		delete customer;
+		customer = nullptr;
+	}
 	if (m_nextCustomer != nullptr)
 		delete m_nextCustomer;
 	if (m_leavingCustomers.size() > 0)
@@ -62,6 +65,8 @@ void MasterAI::Update(Camera* cam)
 
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
+
+	
 	
 	if (!m_customerSpawned)
 	{
@@ -74,6 +79,7 @@ void MasterAI::Update(Camera* cam)
 				{
 					m_nextCustomer->RestartClock();
 					m_customers.push_back(m_nextCustomer);
+					m_nextCustomer = nullptr;
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
 				}
@@ -194,14 +200,18 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			m_solver.GetPath(*leavingCustomer, leave);
+			int result = m_solver.RequestPath(*leavingCustomer, leave);
+			if (result == 1)
+			{
+				for (int i = 0; i < 3; ++i)
+					leavingCustomer->Move(Character::WalkDirection::DOWN);
+				for (int i = 0; i < 16; ++i)
+					leavingCustomer->Move(Character::WalkDirection::RIGHT);
+				leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 
-			for (int i = 0; i < 3; ++i)
-				leavingCustomer->Move(Character::WalkDirection::DOWN);
-			for (int i = 0; i < 16; ++i)
-				leavingCustomer->Move(Character::WalkDirection::RIGHT);
+			}
 
-			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
+			
 		}
 		else
 		{

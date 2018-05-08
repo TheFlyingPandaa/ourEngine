@@ -129,7 +129,8 @@ void GameState::Update(double deltaTime)
 	bool lol2 = Input::isKeyPressed('L');
 	if (lol2 && !lol)
 	{
-		this->m_mai->spawn();	
+
+		this->m_mai->spawn();
 	}
 	lol = lol2;
 

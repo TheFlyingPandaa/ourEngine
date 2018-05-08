@@ -1,6 +1,9 @@
 #include "Character.h" 
 #include "../../ourEngine/core/Dx.h"
 
+// FOr threading
+short Character::s_indexCounter = 0;
+
 Character::Character()
 {
 	m_floor = 0;
@@ -12,6 +15,9 @@ Character::Character()
 	playerPos.y += 1.5f;
 	m_modelSpriteIndex = 0;
 	m_displayThought = false;
+	
+	// For threading
+	m_uniqueIndex = s_indexCounter++;
 }
 
 Character::Character(const Character & other)
@@ -328,4 +334,9 @@ void Character::setThoughtBubbleMesh(Mesh * bubbleMesh)
 Shape * Character::getShape()
 {
 	return &m_model;
+}
+
+short Character::getUniqueIndex() const
+{
+	return m_uniqueIndex;
 }

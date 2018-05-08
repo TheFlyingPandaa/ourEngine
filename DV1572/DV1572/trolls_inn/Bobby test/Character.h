@@ -46,6 +46,10 @@ private:
 	int				m_floor; //floor 0 is first floor 
 	std::deque<Go>  m_goQueue;
 	float			m_speed;
+	
+
+	static short s_indexCounter;
+	short m_uniqueIndex;
 
 public:
 	Character();
@@ -81,4 +85,6 @@ public:
 	virtual void Draw();
 	void setThoughtBubbleMesh(Mesh* bubbleMesh);
 	virtual Shape* getShape();
+
+	short getUniqueIndex() const;
 };
