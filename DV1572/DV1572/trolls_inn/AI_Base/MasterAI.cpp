@@ -189,8 +189,13 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			m_solver.GetPath(*leavingCustomer, randomStupid);
-			std::cout << "!!!!!!!!!!!!!!!!!!!!!!!This customer is now leaving!!!!!!!!!!!!!!!!!!!!\n";
+			m_solver.GetPath(*leavingCustomer, leave);
+
+			for (int i = 0; i < 3; ++i)
+				leavingCustomer->Move(Character::WalkDirection::DOWN);
+			for (int i = 0; i < 16; ++i)
+				leavingCustomer->Move(Character::WalkDirection::RIGHT);
+
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else
