@@ -430,7 +430,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 void AISolver::Update(Customer& customer, Action desiredAction)
 {
 	CustomerState currentState = customer.GetState();
-
+	bool gotPath = false;
 	switch (currentState)
 	{
 	case Thinking:
@@ -438,23 +438,32 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		{
 		case DrinkAction:
 			//GetPath(customer, RoomType::randomStupid);
-			GetPath(customer, RoomType::bar);
+			gotPath = GetPath(customer, RoomType::bar);
 			break;
 		case EatAction:
 			//GetPath(customer, RoomType::randomStupid);
-			GetPath(customer, RoomType::kitchen);
+			gotPath = GetPath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
 			//GetPath(customer, RoomType::randomStupid);
-			GetPath(customer, RoomType::bedroom);
+			gotPath = GetPath(customer, RoomType::bedroom);
 			break;
 		}
 		customer.PopToNextState(); // pop Thinking state
 		customer.PopToNextState(); // pop Idle state
-		customer.GotPathSetNextAction(desiredAction);
-		customer.SetAvailableSpotFound(false);
-		customer.SetWaitingForSpot(false);
-		customer.SetWaitingForSpotMultiplier(1);
+		if (gotPath)
+		{
+			customer.GotPathSetNextAction(desiredAction);
+			customer.SetAvailableSpotFound(false);
+			customer.SetWaitingForSpot(false);
+			customer.SetWaitingForSpotMultiplier(1);
+		}
+		else
+		{
+			customer.RestartClock();
+			customer.setThoughtBubble(Character::ANGRY);
+		}
+		
 		break;
 	}
 }
@@ -474,7 +483,8 @@ float round_n2(float num, int dec)
 	float pwr = pow(10.0f, dec);
 	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
 }
-void AISolver::GetPath(Character & character, RoomType targetRoom)
+
+bool AISolver::GetPath(Character & character, RoomType targetRoom)
 {
 	if (character.walkQueueDone())
 	{
@@ -495,8 +505,11 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 		else
 		{
 			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
+			// There wasnt any good rooms
 			if (xmtarg.x == -1)
-				return;
+			{
+				return false; // HENRIK WAS HERE
+			}
 			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
 		}
 		
@@ -515,7 +528,15 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 
 			for (int i = 0; i < path.size() - 1; i++)
 				character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+
+			return true;
 		}
+		else
+		{
+			return false;
+		}
+		
 
 	}
+	return true;
 }

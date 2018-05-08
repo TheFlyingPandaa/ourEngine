@@ -64,6 +64,7 @@ public:
 	virtual void setSpeed(float spd);
 
 	void setThoughtBubble(Thoughts t);
+	Thoughts GetThought() const;
 
 	virtual void castShadow();
 

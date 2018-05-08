@@ -46,6 +46,11 @@ MasterAI::~MasterAI()
 {
 	for (auto& customer : m_customers)
 		delete customer;
+	if (m_nextCustomer != nullptr)
+		delete m_nextCustomer;
+	if (m_leavingCustomers.size() > 0)
+		for (auto& customer : m_leavingCustomers)
+			delete customer;
 }
 
 void MasterAI::Update(Camera* cam)
@@ -143,7 +148,7 @@ void MasterAI::Update(Camera* cam)
 				break;
 			}
 
-			if (customer->GetEconomy().GetGold() < price)
+			if (customer->GetEconomy().GetGold() < price || customer->GetThought() == Character::ANGRY)
 			{
 				// Customer leaves inn
 				// Save id for leaving customers

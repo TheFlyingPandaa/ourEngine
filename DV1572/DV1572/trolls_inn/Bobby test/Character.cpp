@@ -184,6 +184,8 @@ void Character::setSpeed(float spd)
 
 void Character::setThoughtBubble(Thoughts t)
 {
+	if (m_displayThought)
+		return;
 	m_displayThought = true;
 	switch (t)
 	{
@@ -200,6 +202,22 @@ void Character::setThoughtBubble(Thoughts t)
 		m_thoughtBubble.setSpriteIndex(0);
 		return;
 	}
+}
+
+Character::Thoughts Character::GetThought() const
+{
+	switch (m_thoughtBubble.getSpriteIndex())
+	{
+	case 3:
+		return ANGRY;
+	case 2:
+		return TIRED;
+	case 1:
+		return HUNGRY;
+	case 0:
+		return THIRSTY;
+	}
+	return THIRSTY;
 }
 
 void Character::castShadow()

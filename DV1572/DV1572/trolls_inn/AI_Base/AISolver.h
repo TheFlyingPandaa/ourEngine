@@ -38,5 +38,5 @@ public:
 	void Update(Staff& staff, Action desiredAction);
 	// Get Path function (?)
 
-	void GetPath(Character& character, RoomType targetRoom);
+	bool GetPath(Character& character, RoomType targetRoom);
 };
