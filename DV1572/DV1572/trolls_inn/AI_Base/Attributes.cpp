@@ -34,11 +34,13 @@ float Attributes::GetStat() const
 void Attributes::SetStat(float stat)
 {
 	m_stat = stat;
+	m_stat = std::min(std::max(m_stat, -1.0f), 1.0f);
 }
 
 void Attributes::AddStat(float stat)
 {
 	m_stat += stat;
+	m_stat = std::min(std::max(m_stat, -1.0f), 1.0f);
 }
 
 //int Attributes::GetReputation() const
