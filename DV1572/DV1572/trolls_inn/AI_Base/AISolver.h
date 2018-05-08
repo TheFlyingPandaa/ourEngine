@@ -21,8 +21,8 @@ private:
 	std::chrono::duration<double, std::ratio<1, 1>> m_time_span;
 	RandomNumberGenerator m_rNG;
 	
-	void _checkSpotInRoom(Inn& inn, Customer& customer);
-	void _doWaiting(Customer& customer, Inn& inn);
+	void _checkSpotInRoom(Inn* inn, Customer& customer);
+	void _doWaiting(Customer& customer, Inn* inn);
 	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
@@ -31,7 +31,7 @@ public:
 	std::chrono::duration<double> getTimeSpan() const;
 	void restartClock();
 
-	void Update(Customer& customer, Inn& inn);
+	void Update(Customer& customer, Inn* inn);
 	void Update(Customer& customer, Action desiredAction);
 	//void Update(Customer& customer, Action desiredAction, int price = 0);
 	void Update(Staff& staff);

@@ -116,6 +116,7 @@ Inn::Inn()
 Inn::~Inn()
 {
 	delete m_economy;
+	
 	delete m_text;
 	m_text = nullptr;
 }
@@ -207,7 +208,7 @@ void Inn::changeStaffSalary(int amount)
 		m_staffSalary = 0;
 }
 
-Text * Inn::GetText()
+Text *& Inn::GetText()
 {
 	return m_text;
 }
@@ -226,11 +227,6 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 	//this->_addStatsToInn(furnitureStats);
 	//this->_checkInnStatUpdate();
 	m_innAttributes.AddStat(furnitureStats.GetStat());
-}
-
-void Inn::Update(Camera * cam)
-{
-	
 }
 
 void Inn::Draw()

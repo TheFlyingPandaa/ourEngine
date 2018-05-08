@@ -32,7 +32,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
-	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
+	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
+		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
+		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
+			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 	hardBed = new Furniture(bed3D->getPosition(), bed);
 	//m_roomctrl->AddRoomObject(*hardBed);
 
@@ -61,7 +64,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	this->m_cam = cam;
 
-	m_mai = new MasterAI(m_roomctrl, m_grid);
+	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
 	previousKey = -1;	
 }
 
@@ -104,9 +107,6 @@ void GameState::Update(double deltaTime)
 	m_eventHandle->Update();
 	//std::cout << inn.getMoney() << std::endl;
 
-	m_stateHUD.SlideMeterBarWithIndex(0, 0, 0);
-		
-
 	if (m_subStates.empty())
 	{
 		m_stage = GameStage::Play;
@@ -145,6 +145,11 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
+	if (inn->GetRecievedReview())
+	{
+		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
+		inn->SetRecievedReviewToFalse();
+	}
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
 	if (Input::isKeyPressed('U'))

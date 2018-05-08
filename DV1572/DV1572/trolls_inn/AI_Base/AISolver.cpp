@@ -1,6 +1,6 @@
 ﻿#include "AISolver.h"
 
-void AISolver::_checkSpotInRoom(Inn& inn, Customer& customer)
+void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
 	//customer.SetMovingTowardsActionArea(false);
 	// If spot is available in the room at customer position
@@ -11,9 +11,9 @@ void AISolver::_checkSpotInRoom(Inn& inn, Customer& customer)
 		// Get the seat/bed ID to lock it to the customer
 		
 		// Do quick maff
-		int price = inn.GetDrinkPrice();
+		int price = inn->GetDrinkPrice();
 		customer.GetEconomy().Withdraw(price);
-		inn.Deposit(price);
+		inn->Deposit(price);
 		customer.SetAvailableSpotFound(true);
 	}
 	else
@@ -39,7 +39,7 @@ void AISolver::_checkSpotInRoom(Inn& inn, Customer& customer)
 	}
 }
 
-void AISolver::_doWaiting(Customer& customer, Inn& inn)
+void AISolver::_doWaiting(Customer& customer, Inn* inn)
 {
 	// Check if a spot is available
 
@@ -48,13 +48,13 @@ void AISolver::_doWaiting(Customer& customer, Inn& inn)
 		// Do something because angry, request money?
 		if (customer.GetRace() == Elf)
 		{
-			inn.GetRefund(5);
+			inn->GetRefund(5);
 			customer.GetEconomy().GetCashback(5);
 			customer.GetAttributes().AddStat(-0.3f);
 		}
 		else
 		{
-			inn.GetRefund(15);
+			inn->GetRefund(15);
 			customer.GetEconomy().GetCashback(15);
 		}
 		customer.SetWaitingForSpot(false);
@@ -298,7 +298,7 @@ void AISolver::restartClock()
 	this->m_start = this->m_clock.now();
 }
 
-void AISolver::Update(Customer& customer, Inn& inn)
+void AISolver::Update(Customer& customer, Inn* inn)
 {
 	// Get the elapsed time
 	this->m_now = this->m_clock.now();

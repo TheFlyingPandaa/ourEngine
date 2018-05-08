@@ -13,7 +13,7 @@ const int CHECK_CUSTOMER_SPAWN = 5;
 class MasterAI
 {
 private:
-	Inn m_inn;
+	Inn * m_inn;
 	AISolver m_solver;
 	Customer* m_nextCustomer;
 	std::vector<Customer*> m_customers;
@@ -37,7 +37,7 @@ private:
 	void _generateCustomer();
 
 public:
-	MasterAI(RoomCtrl* roomCtrl, Grid* grid);
+	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
 	
 	void Update(Camera* cam);
