@@ -29,11 +29,12 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	int secondRoomSizeX = 4;
 	int secondRoomSizeY = 2;
 
+	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
 	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception, m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4), DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-
-	this->_init();
+	hardBed = new Furniture(bed3D->getPosition(), bed);
+	//m_roomctrl->AddRoomObject(*hardBed);
 
 	inn = new Inn();
 
@@ -54,6 +55,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	}
 	c.setModel(MeshHandler::getBox());
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
+	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
 	table.LoadModel("trolls_inn/Resources/Stol.obj");
 
@@ -61,8 +63,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	m_mai = new MasterAI(m_roomctrl, m_grid);
 	previousKey = -1;	
-
-	
 }
 
 GameState::~GameState()
@@ -77,6 +77,9 @@ GameState::~GameState()
 	}
 	delete inn;
 	delete m_eventHandle;
+	delete bed;
+	delete bed3D;
+	delete hardBed;
 }
 
 // round float to n decimals precision
@@ -100,6 +103,9 @@ void GameState::Update(double deltaTime)
 	}
 	m_eventHandle->Update();
 	//std::cout << inn.getMoney() << std::endl;
+
+	m_stateHUD.SlideMeterBarWithIndex(0, 0, 0);
+		
 
 	if (m_subStates.empty())
 	{
@@ -179,8 +185,9 @@ void GameState::Draw()
 	//TEST
 	//c.Draw();
 	//this->grid2->Draw();
-	//m_eventHandle->Draw();
-	bed3D.Draw();
+	m_eventHandle->Draw();
+	
+	bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -220,17 +227,20 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	bed.LoadModel("trolls_inn/Resources/Reception/Reception.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bar/Bar.obj");
+	bed = new Mesh();
+	bed->LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
+	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bed/Bed.obj");
-	//bed.LoadModel("trolls_inn/Resources/Chair/Chair.obj");
+	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
+	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
 	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	bed3D.setMesh(&bed);
-	bed3D.setPos(17, 0, 8);
-	bed3D.Rotate(0, 90, 0);
+	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
+	bed3D = new Object3D();
+	bed3D->setMesh(bed);
+	bed3D->setPos(17, 0, 8);
+	bed3D->Rotate(0, 90, 0);
 }
 
 void GameState::_setHud()
@@ -413,6 +423,16 @@ bool GameState::_handleHUDPicking()
 			switch (index)
 			{
 			case 0:
+				// Build Button
+				std::cout << "Build Button Pressed\n";
+				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
+				if (m_hudButtonsPressed[index])
+				{
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
+					m_stage = GameStage::BuildRoom;
+				}
+				break;
+			case 1:
 				// Crew Button
 				std::cout << "Crew Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
@@ -421,16 +441,7 @@ bool GameState::_handleHUDPicking()
 					m_subStates.push(new CrewState(m_cam, p_pickingEvent));
 					m_stage = GameStage::CrewWindow;
 				}
-				break;
-			case 1:
-				// Build Button
-				std::cout << "Build Button Pressed\n";
-				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
-				if (m_hudButtonsPressed[index])
-				{
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl));
-					m_stage = GameStage::BuildRoom;	
-				}
+				
 				break;
 			case 2:
 				// Event Button

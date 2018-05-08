@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../../ourEngine/interface/Interface.h"
+#include "MeterBar.h"
 #include <fstream>
 #include <sstream>
 
@@ -15,12 +15,14 @@ private:
 		int x, y, sx, sy;
 	};
 
-	std::vector<Mesh*>				m_mesh;
-	std::vector<RectangleShape*>	m_quadsNonClickAble;
-	std::vector<RectangleShape*>	m_quadsClickAble;
+	std::vector<Mesh*>					m_mesh;
+	std::vector<RectangleShape*>		m_quadsNonClickAble;
+	std::vector<RectangleShape*>		m_quadsClickAble;
 	std::vector<PotentialAreaCircle>	m_potentialAreasCircle;
-	std::vector<PotentialAreaRect>	m_potentialAreasRect;
-	std::vector<Text*>				m_texts;
+	std::vector<PotentialAreaRect>		m_potentialAreasRect;
+	std::vector<Text*>					m_texts;
+	std::vector<MeterBar*>				m_meterBarsSlideAble;
+	std::vector<MeterBar*>				m_meterBarsNotSlideAble;
 
 private:
 	void _cleanUp();
@@ -43,6 +45,11 @@ public:
 	void	SetHoverColorOnButton(int index);
 	void	SetPressColorOnButton(int index);
 	void	ResetColorsExcept(int index);
+	// BLABLAL
+	void	SlideMeterBarWithIndex(int index, float x, float y);
+	MeterBar* getMeterBarWithIndex(int index);
+	MeterBar* getMeterBarAtMousePosition();
+
 	//void CheckIfPicked();
 	void Draw();
 

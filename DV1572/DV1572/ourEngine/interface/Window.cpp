@@ -422,11 +422,12 @@ void Window::_compileShaders()
 	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	// INSTANCE ATTRIBUTES
-	{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 44, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	//This is the attribute that allows the color change without constant buffer
-	{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 84, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+	{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 60, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 76, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 92, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
 		L"ourEngine/shaders/billboardVertex.hlsl", "main",
@@ -1209,6 +1210,7 @@ void Window::_billboardPass(const Camera & cam)
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 
 	if (m_WireFrameDebug == true)
@@ -1845,6 +1847,7 @@ void Window::Flush(Camera* c)
 	_prepareGeometryPass();
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
 	_billboardPass(*c);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
 	_clearTargets();

@@ -9,7 +9,7 @@ struct INPUT
 {
 	float4 pos : SV_POSITION;
 	float4 worldPos : WORLDPOS;
-	float2 tex : TEXELS;
+	float2 tex : TEXCOORD;
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;
@@ -39,7 +39,7 @@ OUTPUT main(INPUT input)// : SV_TARGET
 
 	
 
-    uint index = round(input.lIndex);
+    int index = round(input.lIndex);
 	output.lIndex.a = 1.0f;
 
 	output.lIndex.r = index % 256;

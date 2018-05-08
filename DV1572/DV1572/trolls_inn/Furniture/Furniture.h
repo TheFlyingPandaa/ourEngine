@@ -16,7 +16,7 @@ public:
 	
 	void			setRotation(int rot);
 	int				getRotation();
-
+	void			setLightIndex(int index);
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
 	DirectX::XMINT3 getPosition();
