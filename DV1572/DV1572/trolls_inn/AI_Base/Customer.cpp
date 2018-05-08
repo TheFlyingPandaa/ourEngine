@@ -122,12 +122,18 @@ void Customer::SetAction(Action nextAction)
 		break;
 	case DrinkAction:
 		this->m_stateQueue.push(Drinking);
+		RestartClock();
+		setThoughtBubble(THIRSTY);
 		break;
 	case EatAction:
 		this->m_stateQueue.push(Eating);
+		RestartClock();
+		setThoughtBubble(HUNGRY);
 		break;
 	case SleepAction:
 		this->m_stateQueue.push(Sleeping);
+		RestartClock();
+		setThoughtBubble(TIRED);
 		break;
 	case LeavingInnAction:
 		this->m_stateQueue.push(LeavingInn);
@@ -136,6 +142,8 @@ void Customer::SetAction(Action nextAction)
 		this->m_stateQueue.push(WalkingToInn);
 		break;
 	}
+
+	//POPUP HERE (Henrik)
 	// To return the customer to idle after it executed its action
 	this->m_stateQueue.push(Idle);
 }
@@ -310,5 +318,9 @@ void Customer::RestartClock()
 
 void Customer::Update()
 {
+	if (GetTimeSpan().count() > 5)
+		DisableThinkingEmjois();
+
 	Character::Update();
+
 }

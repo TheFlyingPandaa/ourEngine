@@ -4,6 +4,8 @@
 #include "../core/Picking.h"
 #include <chrono>
 #include <iostream>
+#include <algorithm> // For std::find_if
+#include "../interface/shape/Billboard.h"
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
@@ -13,6 +15,7 @@ ID3D11DeviceContext* DX::g_deviceContext;
 ID3D11VertexShader* DX::g_3DVertexShader;
 ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
+ID3D11InputLayout* DX::g_billInputLayout;
 
 ID3D11VertexShader* DX::g_billboardVertexShader;
 ID3D11PixelShader* DX::g_billboardPixelShader;
@@ -33,14 +36,14 @@ ID3D11DomainShader* DX::g_standardDomainShader;
 ID3D11VertexShader* DX::g_skyBoxVertexShader;
 ID3D11PixelShader* DX::g_skyBoxPixelShader;
 
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsSkyBox;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroups;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsSkyBox;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
-std::vector<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupsBillboard;
-std::vector<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
+std::deque<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
+std::deque<DX::INSTANCE_GROUP_BILL>				DX::g_instanceGroupsBillboard;
+std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
 
 //TEXT
 std::vector<std::unique_ptr<DirectX::SpriteFont>>	DX::g_fonts;
@@ -50,49 +53,28 @@ std::unique_ptr<DirectX::SpriteBatch>				DX::g_spriteBatch;
 XMFLOAT4A											DX::g_lightPos;
 XMFLOAT4A											DX::g_lightDir;
 
-void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
+void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 {
-	
-	int existingId = -1;
-	for (int i = 0; i < queue.size() && existingId == -1; i++)
-	{
-		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
-		{
-			existingId = i;
-
-		}
-	}
-
+	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP& item) {
+		return shape->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
 	INSTANCE_ATTRIB attribDesc;
-	
+
 	XMMATRIX xmWorldMat = shape->getWorld();
 	XMFLOAT4X4A worldMat;
-	
+
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
-	XMFLOAT4A rows[4];
-	for (int i = 0; i < 4; i++)
-	{
-		rows[i].x = worldMat.m[i][0];
-		rows[i].y = worldMat.m[i][1];
-		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];
-	}
-
+	memcpy(&attribDesc.u.rows,&worldMat.m[0][0], 16 * sizeof(float));
 	
-	attribDesc.w1 = rows[0];
-	attribDesc.w2 = rows[1];
-	attribDesc.w3 = rows[2];
-	attribDesc.w4 = rows[3];
-
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 	attribDesc.lightIndex = static_cast<float>(shape->getLightIndex());
 	
 	// Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == queue.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -104,21 +86,17 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP>& queue)
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		queue[existingId].attribs.push_back(attribDesc);
+		exisitingEntry->attribs.push_back(attribDesc);
 	}
 	
 }
+
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>& queue)
 {
-	int existingId = -1;
-	for (int i = 0; i < queue.size() && existingId == -1; i++)
-	{
-		if (shape->getMesh()->CheckID(*queue[i].shape->getMesh()))
-		{
-			existingId = i;
+	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP_INDEXED& item) {
+			return shape->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
-		}
-	}
 
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
@@ -130,26 +108,13 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
-	XMFLOAT4A rows[4];
-	for (int i = 0; i < 4; i++)
-	{
-		rows[i].x = worldMat.m[i][0];
-		rows[i].y = worldMat.m[i][1];
-		rows[i].z = worldMat.m[i][2];
-		rows[i].w = worldMat.m[i][3];
-	}
-
-
-	attribDesc.w1 = rows[0];
-	attribDesc.w2 = rows[1];
-	attribDesc.w3 = rows[2];
-	attribDesc.w4 = rows[3];
+	memcpy(&attribDesc.u.rows, &worldMat.m[0][0], 16 * sizeof(float));
 
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 
 
 												   // Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == queue.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -163,12 +128,99 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		queue[existingId].attribs.push_back(attribDesc);
-		queue[existingId].index.push_back(index);
+		exisitingEntry->attribs.push_back(attribDesc);
+		exisitingEntry->index.push_back(index);
 	}
 
 }
 
+void DX::submitToInstance(Character * character)
+{
+	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
+		return character->getShape()->getMesh()->CheckID(*item.shape->getMesh());
+	});
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB_BILL attribDesc;
+	
+	XMMATRIX xmWorldMat = character->getShape()->getWorld();
+	XMFLOAT4X4A worldMat;
+
+	XMStoreFloat4x4A(&worldMat, xmWorldMat);
+
+	XMFLOAT4A rows;
+
+	rows.x = worldMat.m[3][0];
+	rows.y = worldMat.m[3][1];
+	rows.z = worldMat.m[3][2];
+	rows.w = worldMat.m[3][3];
+
+	attribDesc.w4 = rows;
+
+	attribDesc.highLightColor = character->getShape()->getColor(); //This allowes us to use a "click highlight"
+	attribDesc.lightIndex = static_cast<float>(character->getShape()->getLightIndex());
+	XMFLOAT3 tempPos = character->getDirection3f();
+	
+	XMFLOAT4A chararcterDireciton = { tempPos.x,tempPos.y,tempPos.z,1.0f };
+	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = character->getModelSpriteIndex();
+
+	// Unique Mesh
+	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_BILL newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = character->getShape();
+		DX::g_instanceGroupsBillboard.push_back(newGroup);
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		exisitingEntry->attribs.push_back(attribDesc);
+	}
+}
+void DX::submitToInstance(Billboard* bill)
+{
+	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
+		return bill->getMesh()->CheckID(*item.shape->getMesh());
+	});
+
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB_BILL attribDesc;
+
+	XMFLOAT3 bPos = bill->getPosition();
+	XMFLOAT4A rows = { bPos.x, bPos.y, bPos.z,1.0f };
+
+	attribDesc.w4 = rows;
+
+	attribDesc.highLightColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	attribDesc.lightIndex = 0.0f;
+	
+	XMFLOAT4A chararcterDireciton = { -1, -1, -1, -1 };
+	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = bill->getSpriteIndex();
+
+	// Unique Mesh
+	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_BILL newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = bill;
+		DX::g_instanceGroupsBillboard.push_back(newGroup);
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		exisitingEntry->attribs.push_back(attribDesc);
+	}
+}
 void DX::CleanUp()
 {
 	DX::g_device->Release();
@@ -313,9 +365,23 @@ void Window::_compileShaders()
 	};
 	
 	// Billboarding
+
+	D3D11_INPUT_ELEMENT_DESC inputDescBill[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		// INSTANCE ATTRIBUTES
+		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		//This is the attribute that allows the color change without constant buffer
+		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 52, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
 		L"ourEngine/shaders/billboardVertex.hlsl", "main",
-		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
+		inputDescBill, ARRAYSIZE(inputDescBill), DX::g_billInputLayout);
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_billboardPixelShader,
 		L"ourEngine/shaders/billboardPixel.hlsl", "main");
 	// Billboarding end
@@ -402,8 +468,9 @@ void Window::_drawHUD()
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
-	for (auto& instance : DX::g_instanceGroupsHUD)	//Every instance has it's own queue
+	while (!DX::g_instanceGroupsHUD.empty())	//Every instance has it's own queue
 	{
+		auto instance = DX::g_instanceGroupsHUD.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -453,6 +520,7 @@ void Window::_drawHUD()
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsHUD.pop_front();
 	}
 }
 
@@ -655,8 +723,9 @@ void Window::_shadowPass(Camera* c)
 	DX::g_deviceContext->VSSetConstantBuffers(9, 1, &m_shadowBuffer);
 
 	ID3D11Buffer* instanceBuffer = nullptr;
-	for (auto& instance : DX::g_InstanceGroupsShadow)
+	while (!DX::g_InstanceGroupsShadow.empty())
 	{
+		auto instance = DX::g_InstanceGroupsShadow.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -691,6 +760,7 @@ void Window::_shadowPass(Camera* c)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_InstanceGroupsShadow.pop_front();
 	}
 
 	
@@ -1079,20 +1149,22 @@ void Window::_billboardPass(const Camera & cam)
 	Proj = XMMatrixTranspose(Proj);
 	static bool pressed = false;
 	static float index = 1;
-
-	if (Input::isKeyPressed('K'))
-	{
+	static float indexLol = 0.01f;
+	
+	
 		index = (int)index % 4;
-		index++;
-	}
-
+		indexLol += 0.1f;
+		if (indexLol >= 1)
+		{
+			index+= indexLol;
+			indexLol = 0.0f;
+		}
+	
 	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
-	
-	
-	buffer.spriteIndex = index;
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 
 	if (m_WireFrameDebug == true)
@@ -1107,14 +1179,14 @@ void Window::_billboardPass(const Camera & cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsBillboard)
+	while (!DX::g_instanceGroupsBillboard.empty())
 	{
 		
-		
+		auto instance = DX::g_instanceGroupsBillboard.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
-		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB_BILL) * (UINT)instance.attribs.size();
 		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 
@@ -1149,7 +1221,7 @@ void Window::_billboardPass(const Camera & cam)
 
 			unsigned int strides[2];
 			strides[0] = sizeof(VERTEX);
-			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB_BILL);
 
 			unsigned int offsets[2];
 			offsets[0] = 0;
@@ -1164,6 +1236,7 @@ void Window::_billboardPass(const Camera & cam)
 		}
 
 		instanceBuffer->Release();
+		DX::g_instanceGroupsBillboard.pop_front();
 	}
 
 	if (m_WireFrameDebug == true)
@@ -1203,9 +1276,9 @@ void Window::_geometryPass(const Camera &cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroups)
+	while (!DX::g_instanceGroups.empty())
 	{
-		
+		auto instance = DX::g_instanceGroups.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1259,6 +1332,7 @@ void Window::_geometryPass(const Camera &cam)
 		}
 		
 		instanceBuffer->Release();
+		DX::g_instanceGroups.pop_front();
 	}
 
 	if (m_WireFrameDebug == true)
@@ -1290,8 +1364,9 @@ void Window::_skyBoxPass(const Camera& cam)
 	
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsSkyBox)
+	while (!DX::g_instanceGroupsSkyBox.empty())
 	{
+		auto instance = DX::g_instanceGroupsSkyBox.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1341,6 +1416,7 @@ void Window::_skyBoxPass(const Camera& cam)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsSkyBox.pop_front();
 	}
 }
 
@@ -1464,8 +1540,9 @@ void Window::_transparencyPass(const Camera & cam)
 
 	ID3D11Buffer* instanceBuffer = nullptr;
 
-	for (auto& instance : DX::g_instanceGroupsTransparancy)
+	while (!DX::g_instanceGroupsTransparancy.empty())
 	{
+		auto instance = DX::g_instanceGroupsTransparancy.front();
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -1511,6 +1588,7 @@ void Window::_transparencyPass(const Camera & cam)
 
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
+		DX::g_instanceGroupsTransparancy.pop_front();
 	}
 }
 
@@ -1672,20 +1750,13 @@ void Window::Clear()
 {
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_pickingQueue.clear();
-	DX::g_skyBoxQueue.clear();
-	DX::g_instanceGroups.clear();
-	DX::g_instanceGroupsSkyBox.clear();
-	DX::g_instanceGroupsHUD.clear();
-	DX::g_instanceGroupsTransparancy.clear();
 	DX::g_instanceGroupsPicking.clear();
-	DX::g_InstanceGroupsShadow.clear();
 
 	// WINDOW Test
 	DX::g_instanceGroupWindows.clear();
 	// end window test
 
 	DX::g_textQueue.clear();
-	DX::g_instanceGroupsBillboard.clear();
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -1728,7 +1799,9 @@ void Window::Flush(Camera* c)
 
 	_prepareGeometryPass();
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	_billboardPass(*c);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
 	_clearTargets();

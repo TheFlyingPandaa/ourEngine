@@ -293,7 +293,7 @@ std::chrono::duration<double> AISolver::getTimeSpan() const
 	return this->m_time_span;
 }
 
-void AISolver::restartClock()
+void AISolver::RestartClock()
 {
 	this->m_start = this->m_clock.now();
 }
@@ -495,6 +495,7 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 				return;
 			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
 		}
+		
 		
 
 		XMINT2 startPosition = { xTile, yTile };

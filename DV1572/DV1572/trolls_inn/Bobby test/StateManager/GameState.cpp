@@ -66,6 +66,15 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
 	previousKey = -1;	
+
+
+	// Mountains
+	m_mountainsMesh = new Mesh();
+	m_mountainsMesh->MakeRectangle();
+	m_mountains.setRotation(90, 0, 0);
+	m_mountains.setPos(-125, -0.5,-125);
+	m_mountains.setScale(500, 1, 500);
+	m_mountains.setMesh(m_mountainsMesh);
 }
 
 GameState::~GameState()
@@ -83,6 +92,7 @@ GameState::~GameState()
 	delete bed;
 	delete bed3D;
 	delete hardBed;
+	delete m_mountainsMesh;
 }
 
 // round float to n decimals precision
@@ -188,14 +198,16 @@ void GameState::Draw()
 	this->m_grid->Draw();
 
 	//TEST
-	c.Draw();
+	//c.Draw();
 	//this->grid2->Draw();
-	m_eventHandle->Draw();
+	//m_eventHandle->Draw();
 	
 	bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
+
+	m_mountains.Draw();
 }
 
 void GameState::DrawHUD()

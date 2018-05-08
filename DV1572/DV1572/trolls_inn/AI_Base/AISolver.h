@@ -29,7 +29,7 @@ public:
 	~AISolver();
 
 	std::chrono::duration<double> getTimeSpan() const;
-	void restartClock();
+	void RestartClock();
 
 	void Update(Customer& customer, Inn* inn);
 	void Update(Customer& customer, Action desiredAction);

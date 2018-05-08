@@ -77,7 +77,7 @@ public:
 	{
 		return quad.getPosition().x;
 	}
-	int		getPosY() const
+	int	getPosY() const
 	{
 		return quad.getPosition().z;
 	}

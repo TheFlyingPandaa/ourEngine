@@ -170,7 +170,7 @@ void MasterAI::Update(Camera* cam)
 	}
 
 	if (this->m_solver.getTimeSpan().count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-		this->m_solver.restartClock();
+		this->m_solver.RestartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
 	
@@ -233,4 +233,5 @@ void MasterAI::Draw()
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
+
 }

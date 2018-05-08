@@ -42,12 +42,13 @@ OUTPUT main(INPUT input)// : SV_TARGET
     int index = round(input.lIndex);
 	output.lIndex.a = 1.0f;
 
+
+	
 	output.lIndex.r = index % 256;
 	index /= 256;
 	output.lIndex.g = index % 256;
 	index /= 256;
 	output.lIndex.b = index % 256;
-	
 
 
 	return output;

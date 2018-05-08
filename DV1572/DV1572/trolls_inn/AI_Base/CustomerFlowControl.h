@@ -7,9 +7,10 @@ class CustomerFlowControl
 {
 private:
 	RandomNumberGenerator m_rNG;
-
+	// INSERT MESH Henrik
 	Mesh box;
 	Mesh m_boxBillboard;
+	Mesh m_thinkingMesh;
 
 	// Race models
 	Mesh m_elf;
