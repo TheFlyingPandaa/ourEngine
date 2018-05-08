@@ -532,7 +532,7 @@ void BuildState::_inputFurniture()
 		else if (m_startTile)
 		{
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
-			table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
+			table->setPosition(p.x , p.y - 0.2f, p.z);
 			DirectX::XMINT2 start;
 			start.x = table->getPosition().x;
 			start.y = table->getPosition().z;
@@ -592,7 +592,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Table(DirectX::XMFLOAT3(0, 0, 0), MeshHandler::getTable());
+	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
 }
 
 BuildState::~BuildState()
