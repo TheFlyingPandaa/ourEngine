@@ -164,6 +164,7 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 	//m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setIsWalkeble(false);
 	m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setHasObject(true);
 
+	//furniture.setLightIndex(cr->getRoomIndex());
 	cr->AddRoomObject(furniture);
 }
 
