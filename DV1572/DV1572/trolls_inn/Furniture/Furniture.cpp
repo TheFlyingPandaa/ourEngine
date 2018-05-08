@@ -18,7 +18,7 @@ Furniture::~Furniture()
 {
 }
 
-Object3D Furniture::getObject3D()
+Object3D& Furniture::getObject3D()
 {
 	return p_object;
 }
@@ -58,6 +58,11 @@ void Furniture::setRotation(int rot)
 DirectX::XMINT3 Furniture::getPosition()
 {
 	return this->pos;
+}
+
+int Furniture::getPrice()
+{
+	return p_price;
 }
 
 bool Furniture::getIsBusy()

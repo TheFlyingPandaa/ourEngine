@@ -1,5 +1,6 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
+#include <iostream>
 
 void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 {
@@ -166,6 +167,32 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 
 	//furniture.setLightIndex(cr->getRoomIndex());
 	cr->AddRoomObject(furniture);
+}
+
+//void RoomCtrl::RemoveRoomObject(DirectX::XMINT2 pos)
+//{
+//	int index = _intersect(pos, XMINT2(1, 1));
+//	if (index != -1)
+//	{
+//		std::vector<Furniture*> temp = m_rooms[index]->getAllRoomFurnitures();
+//		//delete temp.at(0);
+//		
+//		
+//	}
+//}
+
+bool RoomCtrl::RemoveRoomObject(Furniture * fur)
+{
+	int index = _intersect(XMINT2(fur->getPosition().x, fur->getPosition().z), XMINT2(1, 1));
+	if (index != -1)
+	{
+		return m_rooms[index]->RemoveThisFurniture(fur);
+
+		//delete temp.at(0);
+
+
+	}
+	return false;
 }
 
 void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
@@ -379,6 +406,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	if (index != -1)
 	{
+
 		backtiles = m_rooms[index]->ReturnTiles();
 		XMFLOAT3 _pos = m_rooms[index]->getPosition();
 		delSize = m_rooms[index]->getSize();
@@ -389,6 +417,24 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	return index != -1;
 }
+
+ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
+ {
+	 int index = _intersect(pos, XMINT2(1, 1));
+	 int payBack = 0;
+	 if (index != -1)
+	 {
+		 payBack = m_rooms[index]->getPriceOfAllObjects();
+		 backtiles = m_rooms[index]->ReturnTiles();
+		 XMFLOAT3 _pos = m_rooms[index]->getPosition();
+		 delSize = m_rooms[index]->getSize();
+		 delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
+		 delete m_rooms[index];
+		 m_rooms.erase(m_rooms.begin() + index);
+		 payBack += (delSize.x * delSize.y) * 20;
+	 } 
+	 return { index != -1, payBack/2 }; //c++17 way of making a tuple
+ }
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
@@ -497,6 +543,113 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	return true;
  }
 
+ bool RoomCtrl::MarkAllTilesRedObject(DirectX::XMINT2 start, int size, int angle)
+ {
+	 bool isFalse = false;
+	 int index = _intersect(start, XMINT2(1, 1));
+	 if (index == -1)
+	 {
+		 return false;
+	 }
+	 Room*  cr = m_rooms[index];
+	 auto tiles = cr->getTiles();
+
+	 auto _index = [&](int x, int y) ->int
+	 {
+		 return ((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+	 };
+
+	 if (angle == 0 || angle == 180)
+	 {
+		 for (size_t i = 0; i < size; i++)
+		 {
+			 int ii = _index(start.x, start.y + i);
+
+			 if (ii >= tiles.size()) {
+				 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+				 return false;
+			 }
+
+			 if (angle == 0)
+			 {
+				 Tile* t = tiles[ii];
+				 if (t && t->getHasObject() == false)
+				 {
+					 t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
+				 }
+				 else if (t)
+				 {
+					 t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 isFalse = false;
+				 }
+			 }
+			 else
+			 {
+				 Tile* t = tiles[_index(start.x, start.y - i)];
+				 if (t && t->getHasObject() == false)
+				 {
+					 t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
+				 }
+				 else if (t)
+				 {
+					 t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 isFalse = false;
+				 }
+			 }
+		 }
+	 }
+	 if (angle == 90 || angle == 270)
+	 {
+		 for (size_t i = 0; i < size; i++)
+		 {
+			 if (angle == 90)
+			 {
+				 if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
+				 {
+					 tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+				 }
+				 else
+				 {
+					 tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 isFalse = false;
+				 }
+			 }
+			 else
+			 {
+				 if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
+				 {
+					 tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+				 }
+				 else
+				 {
+					 tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 isFalse = false;
+				 }
+			 }
+		 }
+	 }
+
+	 if (tiles[_index(start.x, start.y)]->getHasObject() == true)
+	 {
+		 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+		 return false;
+	 }
+	 else
+	 {
+		 if (isFalse == true)
+		 {
+			 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+			 return false;
+		 }
+		 else
+		 {
+			 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+			 return false;
+		 }
+	 }
+	 return false;
+ }
+
 void RoomCtrl::PickRoomTiles()
 {
 	for (auto& room : m_rooms)
@@ -507,6 +660,14 @@ void RoomCtrl::PickWalls()
 {
 	for (auto& room : m_rooms)
 		room->PickWalls();
+}
+
+void RoomCtrl::PickAllFurnitures()
+{
+	for (auto& element : m_rooms)
+	{
+		element->PickFurnitures();
+	}
 }
 
 void RoomCtrl::Update(Camera * cam)
@@ -789,6 +950,19 @@ Room * RoomCtrl::getRoomAtPos(XMINT2 pos)
 std::vector<Room*> RoomCtrl::getAllTheRooms() const
 {
 	return m_rooms;
+}
+
+Furniture * RoomCtrl::getFurnitureAtPos(XMINT2 pos)
+{
+	Furniture * temp = nullptr;
+	for (auto& element : m_rooms)
+	{
+		 temp = element->getFurnitureAtPos(pos);
+		if (temp)
+		{
+			return temp;
+		}
+	}
 }
 
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
