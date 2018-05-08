@@ -11,6 +11,7 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 
 	if (setting == 0)
 	{
+		p_price = 100;
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 	}
 	else if (setting == 1)
@@ -18,13 +19,11 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
 
 		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
+		p_price = 1000;
 	}
 }
 //
-
-
-
-
 Bed::~Bed()
 {
 }
+//13.5,6.5
