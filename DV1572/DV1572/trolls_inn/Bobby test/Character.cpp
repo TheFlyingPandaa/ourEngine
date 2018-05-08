@@ -122,7 +122,7 @@ void Character::Update()
 			indexLol += 0.1f;
 			if (indexLol >= 1)
 			{
-				m_modelSpriteIndex += indexLol;
+				m_modelSpriteIndex += static_cast<int>(indexLol);
 				indexLol = 0.0f;
 			}
 			

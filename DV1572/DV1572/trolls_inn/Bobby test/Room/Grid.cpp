@@ -73,8 +73,8 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 
 			t->getQuad().setScale(2.0f);
 			t->getQuad().setPos(static_cast<float>(j + posX), 0, static_cast<float>(i + posY));
-			t->getQuad().setUVScaleX(1.0f);
-			t->getQuad().setUVScaleY(1.0f);
+			t->getQuad().setUVScaleX(1);
+			t->getQuad().setUVScaleY(1);
 
 			this->m_tiles.push_back(t);
 		}
@@ -358,7 +358,7 @@ void Grid::generatePath(Character& character, RoomType targetRoom)
 	};
 	XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
 
-	XMFLOAT3 targetPosition;
+	//XMFLOAT3 targetPosition;
 	/*if (targetRoom == randomStupid)
 		targetPosition = { float(rand() % 31), 0.0f, float(rand() % 31) };
 	else
@@ -393,7 +393,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 {
 	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
 	{
-		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
+		int index = _index(static_cast<int>(current->tile->getQuad().getPosition().x + dx), static_cast<int>(current->tile->getQuad().getPosition().z + dy));
 		if (index < 0 || index >= m_tiles.size()) return nullptr;;
 		return m_tiles[index];
 	};
@@ -432,7 +432,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		{
 			
 			Direction dir = static_cast<Direction>(dirIndex);
-			float addedCost = (dirIndex > 3) ? 1.414 : 1;
+			float addedCost = (dirIndex > 3) ? 1.414f : 1.0f;
 			XMFLOAT2 dirFloat;
 			switch (dir)
 			{
@@ -465,7 +465,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			default:
 				break;
 			}
-			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
+			int index = _index(static_cast<int>(current->tile->getQuad().getPosition().x + dirFloat.x), static_cast<int>(current->tile->getQuad().getPosition().z + dirFloat.y));
 			if (index < 0 || index >= m_tiles.size()) continue;
 			Tile* currentTile = m_tiles[index];
 			

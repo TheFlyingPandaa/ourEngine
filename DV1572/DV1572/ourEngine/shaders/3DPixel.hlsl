@@ -39,7 +39,7 @@ OUTPUT main(INPUT input)// : SV_TARGET
 
 	
 
-    int index = round(input.lIndex);
+    uint index = round(input.lIndex);
 	output.lIndex.a = 1.0f;
 
 
