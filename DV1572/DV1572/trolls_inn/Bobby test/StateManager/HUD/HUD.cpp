@@ -9,23 +9,21 @@ void HUD::_cleanUp()
 		delete m_quadsClickAble[i];
 	m_quadsClickAble.clear();
 	
-	for (auto& p : m_meterBarsNotSlideAble)
-		delete p;
-	for (auto& p : m_meterBarsSlideAble)
-		delete p;
-	
+	for (size_t i = 0; i < m_meterBarsNotSlideAble.size(); i++)
+		delete m_meterBarsNotSlideAble[i];
 	m_meterBarsNotSlideAble.clear();
+
+	for (size_t i = 0; i < m_meterBarsSlideAble.size(); i++)
+		delete m_meterBarsSlideAble[i];
 	m_meterBarsSlideAble.clear();
 
 
 	for (size_t i = 0; i < m_mesh.size(); i++)
 		delete m_mesh[i];
 
-	
-
 	m_mesh.clear();
 	m_texts.clear();
-
+	
 	for (size_t i = 0; i < m_texts.size(); i++)
 	{
 		if (m_texts[i] != nullptr)
@@ -327,7 +325,35 @@ bool HUD::LoadHud(const std::string & path)
 			}
 			else if (type == "mtxt")
 			{
+				float x, y, scl, r, g, b, a, rot;
+				char allignment;
+				int relativeTo;
+				std::string text = "";
 
+				stream >> x >> y >> scl >> r >> g >> b >> a >> rot >> allignment >> relativeTo;
+				std::getline(inputFile, text);
+				Text* t = new Text();
+				t->setColor(r, g, b, a);
+				t->setRelative(static_cast<Text::RelativeTo>(relativeTo));
+				t->setPosition(x, y);
+				t->setScale(scl);
+				t->setRotation(rot);
+				t->setTextString(text);
+
+				switch (allignment)
+				{
+				case 'R':
+					t->setAllignment(TXT::Right);
+					break;
+				case 'C':
+					t->setAllignment(TXT::Center);
+					break;
+				default:
+					t->setAllignment(TXT::Left);
+					break;
+				}
+
+				
 			}
 			else if (type == "txt")
 			{
