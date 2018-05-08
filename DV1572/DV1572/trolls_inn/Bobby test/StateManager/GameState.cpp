@@ -36,8 +36,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	hardBed = new Furniture(bed3D->getPosition(), bed);
-	//m_roomctrl->AddRoomObject(*hardBed);
+
+	
 
 	inn = new Inn();
 
@@ -75,6 +75,8 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_mountains.setPos(-125, -0.5,-125);
 	m_mountains.setScale(500, 1, 500);
 	m_mountains.setMesh(m_mountainsMesh);
+
+	m_roomctrl->AddRoomObject(*hardBed);
 }
 
 GameState::~GameState()
@@ -194,6 +196,8 @@ void GameState::Update(double deltaTime)
 
 void GameState::Draw()
 {
+	ib.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+	ib.Draw();
 	gameTime.m_cpyLightToGPU();
 	
 	m_roomctrl->Draw();
@@ -204,7 +208,6 @@ void GameState::Draw()
 	//this->grid2->Draw();
 	//m_eventHandle->Draw();
 	
-	bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -251,18 +254,9 @@ void GameState::_init()
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
 	bed = new Mesh();
 	bed->LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
-	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
-	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
-	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
-	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
-	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
-	bed3D = new Object3D();
-	bed3D->setMesh(bed);
-	bed3D->setPos(17, 0, 8);
-	bed3D->Rotate(0, 90, 0);
+	hardBed = new Furniture(DirectX::XMFLOAT3(0, 0, 0), bed);
+	hardBed->setPosition(17 + 0.5, 0, 8 + 0.5);
+
 }
 
 void GameState::_setHud()

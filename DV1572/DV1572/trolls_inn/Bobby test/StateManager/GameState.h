@@ -12,6 +12,7 @@
 #include "../../Events/EventCollection.h"
 #include "../../Events/EventHandler.h"
 #include "../../Furniture/Table.h"
+#include "HUD\InfoBoard.h"
 
 class GameState : public State {
 private:
@@ -68,6 +69,11 @@ private:
 	Inn * inn;
 
 	int m_in = 0;
+
+
+	//TTEEST
+	InfoBoard ib;
+
 
 	//EventCollection testtt;
 	EventHandler * m_eventHandle;

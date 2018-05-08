@@ -9,7 +9,7 @@ Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
 	this->pos.x = pos.x;
 	this->pos.y = pos.y;
 	this->pos.z = pos.z;
-
+	p_object.setMesh(mesh);
 	p_isBusy = false;
 }
 
