@@ -7,9 +7,8 @@ class CustomerFlowControl
 {
 private:
 	RandomNumberGenerator m_rNG;
-
-	Mesh box;
-	Mesh m_boxBillboard;
+	// INSERT MESH Henrik
+	Mesh m_thinkingMesh;
 
 	// Race models
 	Mesh m_elf;
@@ -17,6 +16,7 @@ private:
 
 	// Determine what customers the inn attract
 	Customer* _evaluate(Attributes innAttributes);
+	Customer* _generateCustomerBasedOnInnAttributes(Attributes innAttributes);
 	Customer* _generateRandomCustomer();
 
 

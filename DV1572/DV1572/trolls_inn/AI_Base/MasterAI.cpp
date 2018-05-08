@@ -114,10 +114,10 @@ void MasterAI::Update(Camera* cam)
 		//solver.update(*customer);
 		if (updateCustomerNeeds)
 		{
-			std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
+			/*std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
 			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
 			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
-			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;
+			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;*/
 			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
 			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
 			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
@@ -158,10 +158,10 @@ void MasterAI::Update(Camera* cam)
 		}
 		else
 		{
-			if (updateCustomerNeeds)
+			/*if (updateCustomerNeeds)
 			{
 				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
-			}
+			}*/
 			// Execute the action queue
 			m_solver.Update(*customer, m_inn);
 		}
@@ -170,7 +170,7 @@ void MasterAI::Update(Camera* cam)
 	}
 
 	if (this->m_solver.getTimeSpan().count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-		this->m_solver.restartClock();
+		this->m_solver.RestartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
 	
@@ -189,8 +189,13 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			m_solver.GetPath(*leavingCustomer, randomStupid);
-			std::cout << "!!!!!!!!!!!!!!!!!!!!!!!This customer is now leaving!!!!!!!!!!!!!!!!!!!!\n";
+			m_solver.GetPath(*leavingCustomer, leave);
+
+			for (int i = 0; i < 3; ++i)
+				leavingCustomer->Move(Character::WalkDirection::DOWN);
+			for (int i = 0; i < 16; ++i)
+				leavingCustomer->Move(Character::WalkDirection::RIGHT);
+
 			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 		}
 		else
@@ -233,4 +238,5 @@ void MasterAI::Draw()
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
+
 }

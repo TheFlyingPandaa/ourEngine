@@ -242,7 +242,7 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 		closedList.push_back(current);		// add the entry to the closed list
 		openList.erase(openList.begin());   // Remove the entry
 
-		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
+		for (int dirIndex = Direction::up; dirIndex != Direction::upright; dirIndex++)
 		{
 
 			Direction dir = static_cast<Direction>(dirIndex);

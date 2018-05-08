@@ -531,7 +531,7 @@ void BuildState::Update(double deltaTime)
 		DirectX::XMINT2 delPos;
 		DirectX::XMINT2 delSize;
 		
-		if (m_roomCtrl->RemoveRoom(pos, backtiles, delPos, delSize));
+		if (m_roomCtrl->RemoveRoom(pos, backtiles, delPos, delSize))
 		{
 			m_selectedRoom->Select();
 			grid->insertTiles(delPos, delSize, backtiles);

@@ -47,8 +47,6 @@ private:
 	// Add a room stack with all the rooms of a specific type (?)
 	// For pathfinding purposes
 
-	// Add angry face count (?)
-
 	// Needs variables
 	bool m_availableSpotFound;
 	bool m_waitingForSpot;

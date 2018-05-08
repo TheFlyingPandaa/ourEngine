@@ -22,6 +22,8 @@ private:
 	CustomerFlowControl m_cFC;
 	bool m_customerSpawned;
 
+	Mesh			m_thinkingMesh;
+
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
 	std::chrono::high_resolution_clock::time_point m_start, m_now;

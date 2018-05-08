@@ -387,7 +387,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		closedList.push_back(current);		// add the entry to the closed list
 		openList.erase(openList.begin());   // Remove the entry
 
-		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
+		for (int dirIndex = Direction::up; dirIndex != Direction::upright; dirIndex++)
 		{
 			
 			Direction dir = static_cast<Direction>(dirIndex);
