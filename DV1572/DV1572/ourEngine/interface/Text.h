@@ -68,5 +68,6 @@ public:
 
 	void Draw();
 
-
+public:
+	static DirectX::XMVECTOR getStringSize(Text * t);
 };

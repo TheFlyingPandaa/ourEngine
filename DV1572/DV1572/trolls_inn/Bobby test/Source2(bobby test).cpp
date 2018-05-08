@@ -25,6 +25,8 @@
 #include "../../ourEngine/core/FileReader.h"
 #include "../../ourEngine/interface/shape/SkyBoxObject.h"
 
+#include "../../InGameConsole.h"
+
 #ifdef NDEBUG
 	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
 	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
@@ -129,6 +131,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	State* gameState = new GameState(&pickingEvents, &keyEvent, cam);
 
+	InGameConsole igc;
+
 	while (wnd.isOpen())
 	{	
 		wnd.Clear();
@@ -144,6 +148,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 
+			InGameConsole::update(1.0/60.0);
 
 			if (!gameStates.empty())
 			{
@@ -200,6 +205,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		}
 		//boxy.setPos(cam->getPosition());
 		boxy.Draw();
+
+		InGameConsole::draw();
 
 		Shape* picked = nullptr;
 		picked = wnd.getPicked(cam);

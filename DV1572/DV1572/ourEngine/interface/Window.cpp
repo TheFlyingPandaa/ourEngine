@@ -899,14 +899,18 @@ void Window::_windowPass(Camera * c)
 
 void Window::_initFonts()
 {
-	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/consolas32.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/constantia32.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/constantia50.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/arialBlack32.spritefont"));
 	DX::g_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
 }
 
 void Window::_drawText()
 {
-	DX::g_spriteBatch->Begin();
-
+	DX::g_spriteBatch->Begin(SpriteSortMode_Immediate, m_transBlendState);
+	//DX::g_spriteBatch->Begin();
+	//DX::g_deviceContext->OMSetBlendState(m_transBlendState, 0, 0xffffffff);
 	for (auto &t : DX::g_textQueue)
 	{
 		std::string str = t->getTextString();
@@ -931,7 +935,6 @@ void Window::_drawText()
 			origin = XMVectorSetX(origin, 0);
 			break;
 		}
-
 
 		DX::g_fonts[t->getFontType()]->DrawString(
 			DX::g_spriteBatch.get(),
@@ -1164,6 +1167,10 @@ void Window::_billboardPass(const Camera & cam)
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
+	DirectX::XMFLOAT3 p = cam.getPosition();
+	DirectX::XMFLOAT3 la = cam.getLookAt();
+	buffer.CamPos = DirectX::XMFLOAT4A(p.x, p.y, p.z, 1.0f);
+	buffer.CamDir = DirectX::XMFLOAT4A(la.x, la.y, la.z, 0.0f);
 	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 

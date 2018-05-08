@@ -29,13 +29,20 @@ private:
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
 	Economy*		m_economy;
-	int				m_profit,	m_staffSalary = 420;
+	int				m_staffSalary = 420;
+	int				m_rent;
 	bool			m_staffSalaryApplyed;
 	double			m_timer;
 
 	Text*			m_text;
+	std::vector<Text> m_withdrawText;
+	std::vector<Text> m_depositText;
+	std::vector<int> m_depositAmount;
+	std::vector<int> m_removeVec;
 
 	DirectX::XMINT2 m_receptionPos;	//The way we set this will be changed
+
+	void WithdrawText();
 public:
 	Inn();
 	~Inn();
@@ -52,15 +59,19 @@ public:
 	Attributes GetInnAttributes() const;
 
 	void Update(double deltaTime, TIMEOFDAY TOD);
+	void UpdateMoney();
 	int getMoney() const;
 
 	void Deposit(int amount);
 	void Withdraw(int amount);
 	void GetRefund(int amount);
 
+	void IncreaseRent(int amount);
+	void DecreaseRent(int amount);
+
 	void changeStaffSalary(int amount);
 	
-	Text*& GetText();
+	Text* GetText();
 
 	// Add a customers review to the inn stats
 	void CustomerReview(Attributes review);

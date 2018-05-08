@@ -1,5 +1,6 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
+#include "../../InGameConsole.h"
 
 Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
@@ -95,10 +96,19 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 		nextCustomer = this->_generateRandomCustomer();
 
 	if (nextCustomer->GetRace() == Elf)
+	{
+		std::stringstream ss;
+		ss << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 		std::cout << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+		InGameConsole::pushString(ss.str());
+	}
 	else
+	{
+		std::stringstream ss;
+		ss << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 		std::cout << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-
+		InGameConsole::pushString(ss.str());
+	}
 	// Set this to path entrance
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
 

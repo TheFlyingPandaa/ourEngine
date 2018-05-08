@@ -9,6 +9,7 @@ Mesh* MeshHandler::floorTile = nullptr;
 Mesh* MeshHandler::grassTile = nullptr;
 Mesh* MeshHandler::table = nullptr; 
 Mesh* MeshHandler::box = nullptr; 
+Mesh* MeshHandler::plainRectangle = nullptr;
 
 Mesh* MeshHandler::getTable()
 {
@@ -75,7 +76,7 @@ Mesh* MeshHandler::getBed()
 	if (bed == nullptr)
 	{
 		bed = new Mesh();
-		bed->LoadModel("trolls_inn/Resources/bed.obj");
+		bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
 	}
 	return bed;
 }
@@ -98,6 +99,17 @@ Mesh * MeshHandler::getBox()
 		box->LoadModel("trolls_inn/Resources/Box.obj");
 	}
 	return box;
+}
+
+Mesh * MeshHandler::getPlainRectangle()
+{
+	if (plainRectangle == nullptr)
+	{
+		plainRectangle = new Mesh();
+		plainRectangle->MakeRectangle();
+		plainRectangle->setDiffuseTexture("trolls_inn/Resources/HUD/plain.png");
+	}
+	return plainRectangle;
 }
 
 void MeshHandler::cleanAll()
@@ -146,4 +158,7 @@ void MeshHandler::cleanAll()
 	{
 		delete box;
 	}
+
+	if (plainRectangle != nullptr)
+		delete plainRectangle;
 }

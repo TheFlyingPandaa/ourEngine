@@ -20,7 +20,11 @@ private:
 public:
 	enum Key
 	{
-		Del = 46
+		Del = 46,
+		LeftArrow = 37,
+		UpArrow = 38,
+		RightArrow = 39,
+		DownArrow = 40
 		// add more if needed
 	};
 
