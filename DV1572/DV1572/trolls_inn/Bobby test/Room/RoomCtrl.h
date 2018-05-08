@@ -3,7 +3,7 @@
 #include "Room.h"
 #include "Structure.h"
 #include "../../Furniture/Furniture.h"
-
+#include <tuple>
 
 
 const unsigned short ROOM_TYPE_SIZE = 5;
@@ -56,6 +56,8 @@ public:
 
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture furniture);
+	//void				RemoveRoomObject(DirectX::XMINT2 pos);
+	bool				RemoveRoomObject(Furniture* fur);
 	
 	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size = { 1, 1 });
@@ -63,9 +65,15 @@ public:
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
+	std::tuple<bool,int> RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
+
 	bool				CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle = 0);
+	bool				MarkAllTilesRedObject(DirectX::XMINT2 start, int size, int angle = 0);
+
 	void				PickRoomTiles();
 	void				PickWalls();
+	void				PickAllFurnitures();
+
 	void				Update(Camera * cam);
 	void				Draw();
 
@@ -85,6 +93,8 @@ public:
 	Room*				getRoomAt(int index);
 	Room*				getRoomAtPos(XMINT2 pos);
 	std::vector<Room*>	getAllTheRooms() const;
+
+	Furniture*			getFurnitureAtPos(XMINT2 pos);
 
 	DirectX::XMFLOAT3	getClosestRoom(XMFLOAT2 position, RoomType type);
 

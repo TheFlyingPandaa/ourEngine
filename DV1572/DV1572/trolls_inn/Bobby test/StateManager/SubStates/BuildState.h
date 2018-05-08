@@ -3,6 +3,8 @@
 #include "../../Room/Grid.h"
 #include "../../../Furniture/Table.h"
 #include "../../../Mesh Manager/MeshManager.h"
+#include "../../../AI_Base/Inn.h"
+
 class BuildState :
 	public SubState
 {
@@ -43,15 +45,20 @@ private:
 	HUD					m_furnitureHUD;
 	int					m_selectedThing;
 	Room*				m_selectedRoom;
+	Room*				m_selectedRoomm;
 	// </Create Room HUD>
 
-	
+	Inn * m_inn;
 	Text m_priceOfRoom;
 	
 	bool m_readyToPick;
 
 	bool m_doorBuild = false;
 	bool m_canBuildFurniture = false;
+	bool m_furnitureDeleteMode = false;
+	bool m_clickedLast = false;
+	Furniture* m_furnitureRemove;
+
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{
 		RoomBuild,
@@ -75,13 +82,13 @@ private:
 
 	void	_inputFurniture();
 
-	void _resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
+	void	_resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud);
 public:
 
 	BuildState(Camera * cam, 
 	std::stack<Shape *>* pickingEvent,
 	Grid * grid,
-	RoomCtrl* roomCtrl);
+	RoomCtrl* roomCtrl, Inn * i);
 	~BuildState();
 	
 	

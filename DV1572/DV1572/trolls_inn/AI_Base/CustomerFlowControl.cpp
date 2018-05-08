@@ -1,5 +1,6 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
+#include "../../InGameConsole.h"
 
 Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
@@ -37,22 +38,56 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 
 		return points;
 	};*/
-	Customer* newCustomer = nullptr;
-	Race race;
 	//race = Elf;
 	//int closestMatch = 200;
 	// Human is first and dwarf is the last in the enum structure. IMPORTANT
 	/*for (int currentRace = Elf; currentRace <= Dwarf; currentRace++)
 	{
-		Race cr = static_cast<Race>(currentRace);
-		int cp = getPoints(cr);
+	Race cr = static_cast<Race>(currentRace);
+	int cp = getPoints(cr);
 
-		if (closestMatch > cp)
-		{
-			race = cr;
-			closestMatch = cp;
-		}
+	if (closestMatch > cp)
+	{
+	race = cr;
+	closestMatch = cp;
+	}
 	}*/
+	Customer* newCustomer = nullptr;
+	int probabilityForCustomerSpawnOfSpecificRace = abs(100 * innAttributes.GetStat());
+	int rNGUpperLimit = 100 - probabilityForCustomerSpawnOfSpecificRace;
+	
+	std::cout << "---------------------------------------------------------\n";
+	std::cout << "Probability: " << probabilityForCustomerSpawnOfSpecificRace << std::endl;
+	std::cout << "Inn stats: " << innAttributes.GetStat() << std::endl;
+
+	if (rNGUpperLimit == 0)
+	{
+		newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
+	}
+	else
+	{
+		//int customerRandomProbabilityPercentage = m_rNG.GenerateRandomNumber(0, rNGUpperLimit);
+		int randomNumber = m_rNG.GenerateRandomNumber(1, 100);
+		
+		//std::cout << "Random percentage: " << customerRandomProbabilityPercentage << std::endl;
+		std::cout << "Random number: " << randomNumber << std::endl;
+		std::cout << "---------------------------------------------------------\n";
+
+		if (randomNumber > rNGUpperLimit)
+		//if (customerRandomProbabilityPercentage <= randomNumber)
+			newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
+		else
+			newCustomer = _generateRandomCustomer();
+	}
+
+	return newCustomer;
+}
+
+Customer* CustomerFlowControl::_generateCustomerBasedOnInnAttributes(Attributes innAttributes)
+{
+	Customer* newCustomer;
+	Race race;
+
 	if (innAttributes.GetStat() > 0.0)
 	{
 		race = Elf;
@@ -63,7 +98,7 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 		race = Dwarf;
 		newCustomer = new Customer(race, m_rNG.GenerateRandomNumber(50, 100));
 	}
-	
+
 	return newCustomer;
 }
 
@@ -102,7 +137,8 @@ CustomerFlowControl::CustomerFlowControl()
 	// Load all race models
 	//box.LoadModel("trolls_inn/Resources/box.obj");
 	m_thinkingMesh.LoadModel("trolls_inn/Resources/Thoughts/Bubble.obj");
-	m_boxBillboard.LoadModel("trolls_inn/resources/SpritesheetSample/floor.obj");
+	m_elf.LoadModel("trolls_inn/resources/SpritesheetSample/elf.obj");
+	m_dwarf.LoadModel("trolls_inn/resources/SpritesheetSample/dwarf.obj");
 }
 
 CustomerFlowControl::~CustomerFlowControl()
@@ -114,19 +150,34 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	Customer* nextCustomer;
 
 	// Evaluate what customer to spawn next
+	// Inn attributes affect what customers that spawn
 	if (this->m_rNG.GenerateRandomNumber(1, 100) > 5)
 		nextCustomer = this->_evaluate(innAttributes);
 	else
 		nextCustomer = this->_generateRandomCustomer();
 
 	if (nextCustomer->GetRace() == Elf)
+	{
+		std::stringstream ss;
+		ss << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 		std::cout << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+		InGameConsole::pushString(ss.str());
+	}
 	else
+	{
+		std::stringstream ss;
+		ss << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 		std::cout << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-
+		InGameConsole::pushString(ss.str());
+	}
 	// Set this to path entrance
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
-	nextCustomer->setModel(&m_boxBillboard);
+
+	if (nextCustomer->GetRace() == Elf)
+		nextCustomer->setModel(&m_elf);
+	else
+		nextCustomer->setModel(&m_dwarf);
+
 	nextCustomer->setFloor(0);
 	nextCustomer->setThoughtBubbleMesh(&m_thinkingMesh);
 

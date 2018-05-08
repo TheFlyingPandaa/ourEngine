@@ -74,6 +74,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
+    <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
+    <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
   </ItemGroup>
   <ItemGroup>

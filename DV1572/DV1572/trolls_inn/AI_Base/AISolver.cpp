@@ -488,6 +488,10 @@ void AISolver::GetPath(Character & character, RoomType targetRoom)
 
 		if (targetRoom == RoomType::randomStupid)
 			targetPosition = { (int)rand() % 32, (int)rand() % 32 };
+		else if (targetRoom == RoomType::leave)
+		{
+			targetPosition = { 16,0 };
+		}
 		else
 		{
 			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);

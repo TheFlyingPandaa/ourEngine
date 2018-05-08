@@ -14,6 +14,7 @@ enum RoomType {
 	reception,
 	bar,
 	randomStupid,
+	leave,
 	UNDEFINED
 };
 
@@ -71,6 +72,7 @@ public:
 	void		AddRoomObject(Furniture fut);
 	void		PickTiles();
 	void		PickWalls();
+	void		PickFurnitures();
 	
 	void				Select();
 
@@ -89,6 +91,10 @@ public:
 
 	int getAmountOfObjects();
 	int getAmountOfSpecificObjects(Furniture compare);
+	int getPriceOfAllObjects();
+	std::vector<Furniture*> getAllRoomFurnitures();
+	bool RemoveThisFurniture(Furniture * fur);
+	Furniture* getFurnitureAtPos(DirectX::XMINT2 pos);
 
 	RoomType getRoomType();
 
