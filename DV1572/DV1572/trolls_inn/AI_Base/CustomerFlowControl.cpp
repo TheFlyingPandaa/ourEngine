@@ -37,22 +37,56 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 
 		return points;
 	};*/
-	Customer* newCustomer = nullptr;
-	Race race;
 	//race = Elf;
 	//int closestMatch = 200;
 	// Human is first and dwarf is the last in the enum structure. IMPORTANT
 	/*for (int currentRace = Elf; currentRace <= Dwarf; currentRace++)
 	{
-		Race cr = static_cast<Race>(currentRace);
-		int cp = getPoints(cr);
+	Race cr = static_cast<Race>(currentRace);
+	int cp = getPoints(cr);
 
-		if (closestMatch > cp)
-		{
-			race = cr;
-			closestMatch = cp;
-		}
+	if (closestMatch > cp)
+	{
+	race = cr;
+	closestMatch = cp;
+	}
 	}*/
+	Customer* newCustomer = nullptr;
+	int probabilityForCustomerSpawnOfSpecificRace = abs(100 * innAttributes.GetStat());
+	int rNGUpperLimit = 100 - probabilityForCustomerSpawnOfSpecificRace;
+	
+	std::cout << "---------------------------------------------------------\n";
+	std::cout << "Probability: " << probabilityForCustomerSpawnOfSpecificRace << std::endl;
+	std::cout << "Inn stats: " << innAttributes.GetStat() << std::endl;
+
+	if (rNGUpperLimit == 0)
+	{
+		newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
+	}
+	else
+	{
+		//int customerRandomProbabilityPercentage = m_rNG.GenerateRandomNumber(0, rNGUpperLimit);
+		int randomNumber = m_rNG.GenerateRandomNumber(1, 100);
+		
+		//std::cout << "Random percentage: " << customerRandomProbabilityPercentage << std::endl;
+		std::cout << "Random number: " << randomNumber << std::endl;
+		std::cout << "---------------------------------------------------------\n";
+
+		if (randomNumber > rNGUpperLimit)
+		//if (customerRandomProbabilityPercentage <= randomNumber)
+			newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
+		else
+			newCustomer = _generateRandomCustomer();
+	}
+
+	return newCustomer;
+}
+
+Customer* CustomerFlowControl::_generateCustomerBasedOnInnAttributes(Attributes innAttributes)
+{
+	Customer* newCustomer;
+	Race race;
+
 	if (innAttributes.GetStat() > 0.0)
 	{
 		race = Elf;
@@ -63,7 +97,7 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 		race = Dwarf;
 		newCustomer = new Customer(race, m_rNG.GenerateRandomNumber(50, 100));
 	}
-	
+
 	return newCustomer;
 }
 
@@ -114,6 +148,7 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	Customer* nextCustomer;
 
 	// Evaluate what customer to spawn next
+	// Inn attributes affect what customers that spawn
 	if (this->m_rNG.GenerateRandomNumber(1, 100) > 5)
 		nextCustomer = this->_evaluate(innAttributes);
 	else

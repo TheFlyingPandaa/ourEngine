@@ -11,7 +11,7 @@ Customer::Customer(Race race, int gold)
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
-	m_review.SetStat(0.1f);
+	m_review.SetStat(0.1);
 
 	if (race == Elf)
 	{
