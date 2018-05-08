@@ -57,7 +57,7 @@ void InGameConsole::pushString(const std::string & string)
 	t.setAllignment(TXT::ALLIGN::Right);
 	t.setRelative(Text::RelativeTo::TR);
 	t.setPosition(startPosition.x, startPosition.y);
-	t.setScale(.2f);
+	t.setScale(.3f);
 	
 
 	text_t * t_t = new text_t();

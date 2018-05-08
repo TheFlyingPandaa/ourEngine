@@ -4,8 +4,8 @@
 #include <string.h>
 #include <sstream>
 #include <iostream>
-const unsigned int textHight = 16;
-const DirectX::XMINT2 startPosition(8,360);
+const unsigned int textHight = 20;
+const DirectX::XMINT2 startPosition(8,188);
 const unsigned int maxWidth = 32;
 const unsigned int maxSize = 32;
 class InGameConsole
