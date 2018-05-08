@@ -148,6 +148,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 
+			InGameConsole::update(1.0/60.0);
 
 			if (!gameStates.empty())
 			{
@@ -205,7 +206,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//boxy.setPos(cam->getPosition());
 		boxy.Draw();
 
-		
 		InGameConsole::draw();
 
 		Shape* picked = nullptr;
