@@ -125,6 +125,7 @@
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\AISolver.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\State.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
     <ClInclude Include="trolls_inn\Events\EventCollection.h" />

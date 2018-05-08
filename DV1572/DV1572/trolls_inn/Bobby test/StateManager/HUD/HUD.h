@@ -21,6 +21,7 @@ private:
 	std::vector<PotentialAreaCircle>	m_potentialAreasCircle;
 	std::vector<PotentialAreaRect>		m_potentialAreasRect;
 	std::vector<Text*>					m_texts;
+	std::vector<Text*>					m_pushedTexts;
 	std::vector<MeterBar*>				m_meterBarsSlideAble;
 	std::vector<MeterBar*>				m_meterBarsNotSlideAble;
 

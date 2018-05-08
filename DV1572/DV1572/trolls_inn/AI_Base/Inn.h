@@ -71,7 +71,7 @@ public:
 
 	void changeStaffSalary(int amount);
 	
-	Text*& GetText();
+	Text* GetText();
 
 	// Add a customers review to the inn stats
 	void CustomerReview(Attributes review);
