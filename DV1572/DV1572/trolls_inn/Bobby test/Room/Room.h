@@ -14,6 +14,7 @@ enum RoomType {
 	reception,
 	bar,
 	randomStupid,
+	leave,
 	UNDEFINED
 };
 
