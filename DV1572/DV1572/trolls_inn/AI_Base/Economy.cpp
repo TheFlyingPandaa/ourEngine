@@ -28,6 +28,20 @@ void Economy::Withdraw(int amount)
 	this->m_transactionsDocumentation.push_back("Withdrew: ");
 }
 
+void Economy::GetRefund(int amount)
+{
+	m_gold -= amount;
+	m_transactions.push_back(amount);
+	m_transactionsDocumentation.push_back("Customer refund: ");
+}
+
+void Economy::GetCashback(int amount)
+{
+	m_gold += amount;
+	m_transactions.push_back(amount);
+	m_transactionsDocumentation.push_back("Cashback: ");
+}
+
 int Economy::GetGold() const
 {
 	return this->m_gold;

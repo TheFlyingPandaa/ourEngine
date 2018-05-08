@@ -80,7 +80,7 @@ void Furniture::setLightIndex(int index)
 	p_object.setLightIndex(index);
 }
 
-void Furniture::LoadFurnitureStats(std::string path)
+/*void Furniture::LoadFurnitureStats(std::string path)
 {
 	std::string line;
 	std::ifstream myfile(path);
@@ -152,7 +152,7 @@ void Furniture::LoadFurnitureStats(std::string path)
 		std::cout << "Can't load Furniture Stats " << path << std::endl;
 	}
 
-}
+}*/
 
 void Furniture::Draw()
 {

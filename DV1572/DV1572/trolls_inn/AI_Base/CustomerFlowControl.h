@@ -6,17 +6,13 @@
 class CustomerFlowControl
 {
 private:
-	Customer m_nextCustomer;
 	RandomNumberGenerator m_rNG;
 
-	// Race models
-	// Box race
 	Mesh box;
 	Mesh m_boxBillboard;
-	// REAL_COOL_RACES_YES_YES_PLOX
-	Mesh m_human;
-	Mesh m_troll;
-	Mesh m_orc;
+
+	// Race models
+	Mesh m_elf;
 	Mesh m_dwarf;
 
 	// Determine what customers the inn attract
