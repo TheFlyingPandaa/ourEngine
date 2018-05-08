@@ -829,7 +829,10 @@ void Window::_windowPass(Camera * c)
 
 void Window::_initFonts()
 {
-	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/myfile.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/consolas32.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/constantia32.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/constantia50.spritefont"));
+	DX::g_fonts.push_back(std::make_unique<SpriteFont>(DX::g_device, L"trolls_inn/Resources/Fonts/arialBlack32.spritefont"));
 	DX::g_spriteBatch = std::make_unique<SpriteBatch>(DX::g_deviceContext);
 }
 

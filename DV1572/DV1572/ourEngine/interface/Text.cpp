@@ -140,3 +140,12 @@ void Text::Draw()
 {
 	DX::g_textQueue.push_back(this);
 }
+
+DirectX::XMVECTOR Text::getStringSize(Text * t)
+{
+	std::string str = t->getTextString();
+	std::wstring widestr = std::wstring(str.begin(), str.end());
+	const wchar_t* text = widestr.c_str();
+
+	return DX::g_fonts[t->getFontType()]->MeasureString(text);
+}

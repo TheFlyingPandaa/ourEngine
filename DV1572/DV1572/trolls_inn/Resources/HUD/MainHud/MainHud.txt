@@ -32,12 +32,16 @@ trolls_inn/Resources/HUD/MainHud/Needle.png
 110 32 128 32 0.01 0 rectangle
 
 # Metertext
-#txt 35 15 0.2 0 0 0 1 0 L 0
-#Simple
-## Metertext
-#txt 240 15 0.2 0 0 0 1 0 L 0
-#Fancy
-#
+txt 50 15 0.4 0 0 0 1 0 L 0
+Simple
+
+# Metertext
+txt 110 65 0.3 0 0 0 1 0 L 0
+Standard-o-Meter
+# Metertext
+txt 240 15 0.4 0 0 0 1 0 L 0
+Fancy
+
 # Crew Button
 # tx trolls_inn/Resources/HUD/MainHud/CrewButton.png
 # r 36 66 48 48 1 0 0 circle

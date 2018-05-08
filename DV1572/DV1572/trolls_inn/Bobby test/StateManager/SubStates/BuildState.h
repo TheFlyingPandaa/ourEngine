@@ -48,7 +48,6 @@ private:
 	
 	Text m_priceOfRoom;
 	
-	
 	bool m_readyToPick;
 
 	bool m_doorBuild = false;
