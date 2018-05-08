@@ -12,7 +12,7 @@ const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
 class MasterAI
 {
 private:
-	Inn m_inn;
+	Inn * m_inn;
 	AISolver m_solver;
 	std::vector<Customer*> m_customers;
 	std::vector<Customer*> m_leavingCustomers;
@@ -30,7 +30,7 @@ private:
 	void _swap(int index1, int index2, std::vector<int>& ID);
 
 public:
-	MasterAI(RoomCtrl* roomCtrl, Grid* grid);
+	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
 	
 	void Update(Camera* cam);
