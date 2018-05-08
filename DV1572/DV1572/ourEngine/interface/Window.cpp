@@ -42,7 +42,7 @@ std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsHUD;
 std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsTransparancy;
 std::vector<DX::INSTANCE_GROUP_INDEXED>		DX::g_instanceGroupsPicking;
 std::deque<DX::INSTANCE_GROUP>				DX::g_InstanceGroupsShadow;
-std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupsBillboard;
+std::deque<DX::INSTANCE_GROUP_BILL>				DX::g_instanceGroupsBillboard;
 std::deque<DX::INSTANCE_GROUP>				DX::g_instanceGroupWindows;
 
 //TEXT
@@ -136,16 +136,9 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 void DX::submitToInstance(Character * character)
 {
-	int existingId = -1;
-	for (int i = 0; i < DX::g_instanceGroupsBillboard.size() && existingId == -1; i++)
-	{
-		if (character->getShape()->getMesh()->CheckID(*DX::g_instanceGroupsBillboard[i].shape->getMesh()))
-		{
-			existingId = i;
-
-		}
-	}
-
+	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
+		return character->getShape()->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
 	//Converting The worldMatrix into a instanced world matrix.
 	//This allowes us to send in the matrix in the layout and now a constBuffer
@@ -157,12 +150,12 @@ void DX::submitToInstance(Character * character)
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
 
 	XMFLOAT4A rows;
-	
+
 	rows.x = worldMat.m[3][0];
 	rows.y = worldMat.m[3][1];
 	rows.z = worldMat.m[3][2];
 	rows.w = worldMat.m[3][3];
-	
+
 	attribDesc.w4 = rows;
 
 	attribDesc.highLightColor = character->getShape()->getColor(); //This allowes us to use a "click highlight"
@@ -173,7 +166,7 @@ void DX::submitToInstance(Character * character)
 	attribDesc.spriteIndex = character->getModelSpriteIndex();
 
 	// Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -185,20 +178,14 @@ void DX::submitToInstance(Character * character)
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
+		exisitingEntry->attribs.push_back(attribDesc);
 	}
 }
 void DX::submitToInstance(Billboard* bill)
 {
-	int existingId = -1;
-	for (int i = 0; i < DX::g_instanceGroupsBillboard.size() && existingId == -1; i++)
-	{
-		if (bill->getMesh()->CheckID(*DX::g_instanceGroupsBillboard[i].shape->getMesh()))
-		{
-			existingId = i;
-
-		}
-	}
+	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
+		return bill->getMesh()->CheckID(*item.shape->getMesh());
+	});
 
 
 	//Converting The worldMatrix into a instanced world matrix.
@@ -218,7 +205,7 @@ void DX::submitToInstance(Billboard* bill)
 	attribDesc.spriteIndex = bill->getSpriteIndex();
 
 	// Unique Mesh
-	if (existingId == -1)
+	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
 	{
 		//If the queue dose not exist we create a new queue.
 		//This is what allows the instancing to work
@@ -230,7 +217,7 @@ void DX::submitToInstance(Billboard* bill)
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
+		exisitingEntry->attribs.push_back(attribDesc);
 	}
 }
 void DX::CleanUp()
@@ -380,16 +367,16 @@ void Window::_compileShaders()
 
 	D3D11_INPUT_ELEMENT_DESC inputDescBill[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	// INSTANCE ATTRIBUTES
-	{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 44, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	//This is the attribute that allows the color change without constant buffer
-	{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 60, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 76, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 92, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-	{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		// INSTANCE ATTRIBUTES
+		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		//This is the attribute that allows the color change without constant buffer
+		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 52, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
 		L"ourEngine/shaders/billboardVertex.hlsl", "main",
@@ -1198,7 +1185,7 @@ void Window::_billboardPass(const Camera & cam)
 		D3D11_BUFFER_DESC instBuffDesc;
 		memset(&instBuffDesc, 0, sizeof(instBuffDesc));
 		instBuffDesc.Usage = D3D11_USAGE_DEFAULT;
-		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB) * (UINT)instance.attribs.size();
+		instBuffDesc.ByteWidth = sizeof(DX::INSTANCE_ATTRIB_BILL) * (UINT)instance.attribs.size();
 		instBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 
@@ -1233,7 +1220,7 @@ void Window::_billboardPass(const Camera & cam)
 
 			unsigned int strides[2];
 			strides[0] = sizeof(VERTEX);
-			strides[1] = sizeof(DX::INSTANCE_ATTRIB);
+			strides[1] = sizeof(DX::INSTANCE_ATTRIB_BILL);
 
 			unsigned int offsets[2];
 			offsets[0] = 0;
@@ -1811,6 +1798,7 @@ void Window::Flush(Camera* c)
 
 	_prepareGeometryPass();
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	_billboardPass(*c);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);

@@ -93,7 +93,7 @@ namespace DX
 	extern std::vector<INSTANCE_GROUP_INDEXED>	g_instanceGroupsPicking;
 	extern std::deque<INSTANCE_GROUP>			g_InstanceGroupsShadow;
 	extern std::deque<INSTANCE_GROUP>			g_instanceGroupWindows;
-	extern std::deque<INSTANCE_GROUP>			g_instanceGroupsBillboard;
+	extern std::deque<INSTANCE_GROUP_BILL>		g_instanceGroupsBillboard;
 	extern ID3D11VertexShader* g_billboardVertexShader;
 	extern ID3D11PixelShader* g_billboardPixelShader;
 
