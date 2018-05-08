@@ -141,6 +141,16 @@ int Inn::GetDrinkPrice() const
 	return this->m_drinkPrice;
 }
 
+bool Inn::GetRecievedReview() const
+{
+	return m_recievedReview;
+}
+
+void Inn::SetRecievedReviewToFalse()
+{
+	m_recievedReview = false;
+}
+
 Attributes Inn::GetInnAttributes() const
 {
 	return this->m_innAttributes;
@@ -209,6 +219,7 @@ void Inn::CustomerReview(Attributes review)
 	//this->_addStatsToInn(review);
 	//this->_checkInnStatUpdate();
 	m_innAttributes.AddStat(review.GetStat());
+	m_recievedReview = true;
 }
 
 void Inn::FurnitureStatAdd(Attributes furnitureStats)

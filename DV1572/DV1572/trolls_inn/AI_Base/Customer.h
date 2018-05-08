@@ -121,8 +121,8 @@ public:
 	// Reduces thirsty by 1
 	void DoDrinking();
 
-	std::chrono::duration<double> getTimeSpan();
-	void restartClock();
+	std::chrono::duration<double> GetTimeSpan();
+	void RestartClock();
 
 	void Update();
 };

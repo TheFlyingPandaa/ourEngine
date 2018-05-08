@@ -11,7 +11,7 @@ Customer::Customer(Race race, int gold)
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
-	m_review.SetStat(0.5f);
+	m_review.SetStat(0.1f);
 
 	if (race == Elf)
 	{
@@ -122,17 +122,17 @@ void Customer::SetAction(Action nextAction)
 		break;
 	case DrinkAction:
 		this->m_stateQueue.push(Drinking);
-		restartClock();
+		RestartClock();
 		setThoughtBubble(THIRSTY);
 		break;
 	case EatAction:
 		this->m_stateQueue.push(Eating);
-		restartClock();
+		RestartClock();
 		setThoughtBubble(HUNGRY);
 		break;
 	case SleepAction:
 		this->m_stateQueue.push(Sleeping);
-		restartClock();
+		RestartClock();
 		setThoughtBubble(TIRED);
 		break;
 	case LeavingInnAction:
@@ -303,7 +303,7 @@ void Customer::DoDrinking()
 		m_thirsty = 0;
 }
 
-std::chrono::duration<double> Customer::getTimeSpan()
+std::chrono::duration<double> Customer::GetTimeSpan()
 {
 	m_now = m_clock.now();
 	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
@@ -311,14 +311,14 @@ std::chrono::duration<double> Customer::getTimeSpan()
 	return m_time_span;
 }
 
-void Customer::restartClock()
+void Customer::RestartClock()
 {
 	m_start = m_clock.now();
 }
 
 void Customer::Update()
 {
-	if (getTimeSpan().count() > 5)
+	if (GetTimeSpan().count() > 5)
 		DisableThinkingEmjois();
 
 	Character::Update();

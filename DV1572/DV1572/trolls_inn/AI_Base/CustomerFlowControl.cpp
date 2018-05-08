@@ -101,6 +101,7 @@ CustomerFlowControl::CustomerFlowControl()
 {
 	// Load all race models
 	//box.LoadModel("trolls_inn/Resources/box.obj");
+	m_thinkingMesh.LoadModel("trolls_inn/Resources/Thoughts/Bubble.obj");
 	m_boxBillboard.LoadModel("trolls_inn/resources/SpritesheetSample/floor.obj");
 }
 
@@ -127,6 +128,7 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
 	nextCustomer->setModel(&m_boxBillboard);
 	nextCustomer->setFloor(0);
+	nextCustomer->setThoughtBubbleMesh(&m_thinkingMesh);
 
 	// Set needs for the customer
 	nextCustomer->SetHungry(this->m_rNG.GenerateRandomNumber(0, 4));

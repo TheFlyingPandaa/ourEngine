@@ -29,11 +29,17 @@ void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
 	ID[index2] = temp;
 }
 
+void MasterAI::_generateCustomer()
+{
+	m_nextCustomer = m_cFC.Update(m_inn->GetInnAttributes());
+}
+
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	: m_solver(roomCtrl,grid)
 {
-	this->m_start = this->m_clock.now();
-	m_thinkingMesh.LoadModel("trolls_inn/Resources/Thoughts/Bubble.obj");
+	m_customer_start = m_start = m_clock.now();
+	m_customerSpawned = true;
+	m_inn = inn;
 }
 
 MasterAI::~MasterAI()
@@ -45,12 +51,49 @@ MasterAI::~MasterAI()
 void MasterAI::Update(Camera* cam)
 {
 	// Get the elapsed time
-	this->m_now = this->m_clock.now();
-	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
-	
+	m_customer_now = m_now = m_clock.now();
+	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
+	m_customer_spawn_timer = std::chrono::duration_cast<std::chrono::duration<double>>(m_customer_now - m_customer_start);
+
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
+	if (!m_customerSpawned)
+	{
+		double duration = m_nextCustomer->GetTimeSpan().count();
+		if (duration > CHECK_CUSTOMER_SPAWN)
+		{
+			if (m_nextCustomer->GetRace() == Elf)
+			{
+				if (duration > 30)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+			else
+			{
+				if (duration > 15)
+				{
+					m_nextCustomer->RestartClock();
+					m_customers.push_back(m_nextCustomer);
+					m_customerSpawned = true;
+					m_customer_start = m_clock.now();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (m_customer_spawn_timer.count() > 30)
+		{
+			m_customerSpawned = false;
+			_generateCustomer();
+		}
+	}
+
 	if (this->m_time_span.count() > UPDATE_FREQUENCY_CUSTOMER_NEEDS)
 	{
 		updateCustomerNeeds = true;
@@ -120,14 +163,14 @@ void MasterAI::Update(Camera* cam)
 				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
 			}
 			// Execute the action queue
-			this->m_solver.Update(*customer, *this->m_inn);
+			m_solver.Update(*customer, m_inn);
 		}
 
 		loopCounter++;
 	}
 
 	if (this->m_solver.getTimeSpan().count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-		this->m_solver.restartClock();
+		this->m_solver.RestartClock();
 	if (leavingCustomersIDs.size() > 0)
 		this->_sortVectorID(leavingCustomersIDs);
 	
@@ -156,7 +199,7 @@ void MasterAI::Update(Camera* cam)
 			if (leavingCustomer->walkQueueDone())
 				leavingCustomer->PopToNextState();
 			else
-				this->m_solver.Update(*leavingCustomer, *this->m_inn);
+				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
 				this->m_inn->CustomerReview(leavingCustomer->GetAttributes());
@@ -181,7 +224,7 @@ void MasterAI::Update(Camera* cam)
 void MasterAI::Draw()
 {
 	m_inn->Draw();
-	for (auto& customer : this->m_customers)
+	for (auto& customer : m_customers)
 		customer->Draw();
 	for (auto& leavingCustomer : this->m_leavingCustomers)
 		leavingCustomer->Draw();
@@ -190,5 +233,5 @@ void MasterAI::Draw()
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
-	m_customers.back()->setThoughtBubbleMesh(&m_thinkingMesh);
+
 }

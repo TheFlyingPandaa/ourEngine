@@ -161,6 +161,7 @@ void DX::submitToInstance(Character * character)
 	attribDesc.highLightColor = character->getShape()->getColor(); //This allowes us to use a "click highlight"
 	attribDesc.lightIndex = static_cast<float>(character->getShape()->getLightIndex());
 	XMFLOAT3 tempPos = character->getDirection3f();
+	std::cout << "Dir(" << tempPos.x << "," << tempPos.y << "," << tempPos.z << ")\n";
 	XMFLOAT4A chararcterDireciton = { tempPos.x,tempPos.y,tempPos.z,1.0f };
 	attribDesc.charDir = chararcterDireciton;
 	attribDesc.spriteIndex = character->getModelSpriteIndex();

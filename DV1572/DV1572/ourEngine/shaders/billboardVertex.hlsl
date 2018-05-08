@@ -49,21 +49,25 @@ OUTPUT main(INPUT input)
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
-	float3 charDir = input.charDir.xyz;
 	o.color = input.color;
 	if (input.spriteIndex != -1)
 	{
-		if (charDir.z != -1 && charDir.x != -1 && charDir.y != -1)
+		float3 charDir = input.charDir.xyz; // Character Direction
+		float3 CamView = float3(View[0][2], View[1][2], View[1][2]); // CamLookAt
+
+		if (!(charDir.z == -1 && charDir.x == -1 && charDir.y == -1))
 		{
-			if (charDir.z == -1)
-				o.tex.x = o.tex.x + 0.75f;
+			o.tex = input.tex;		// DEFAULT = UP
+
+			if (charDir.x == 1)
+				o.tex.x = o.tex.x + 0.50f; // RIGHT
+			else if (charDir.x == -1)
+				o.tex.x = o.tex.x + 0.25f; // LEFT
 			else if (charDir.z == 1)
-				o.tex.x = o.tex.x + 0.5f;
-			else if (charDir.x == 1)
-				o.tex.x = o.tex.x + 0.5f;
-		}
-		
-		
+				o.tex.x = o.tex.x + 0.75f; // DOWN
+
+				
+		}		
 		
 		o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
 	}

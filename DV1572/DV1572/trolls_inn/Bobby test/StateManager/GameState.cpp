@@ -117,9 +117,6 @@ void GameState::Update(double deltaTime)
 	m_eventHandle->Update();
 	//std::cout << inn.getMoney() << std::endl;
 
-	m_stateHUD.SlideMeterBarWithIndex(0, 0, 0);
-		
-
 	if (m_subStates.empty())
 	{
 		m_stage = GameStage::Play;
@@ -158,6 +155,11 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
+	if (inn->GetRecievedReview())
+	{
+		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
+		inn->SetRecievedReviewToFalse();
+	}
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
 	if (Input::isKeyPressed('U'))
@@ -198,7 +200,7 @@ void GameState::Draw()
 	//TEST
 	//c.Draw();
 	//this->grid2->Draw();
-	m_eventHandle->Draw();
+	//m_eventHandle->Draw();
 	
 	bed3D->Draw();
 	m_mai->Draw();

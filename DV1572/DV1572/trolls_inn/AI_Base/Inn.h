@@ -24,6 +24,7 @@ private:
 	int m_foodPrice;
 	int m_sleepPrice;
 	int m_drinkPrice;
+	bool m_recievedReview;
 
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
@@ -44,6 +45,9 @@ public:
 	int GetFoodPrice() const;
 	int GetSleepPrice() const;
 	int GetDrinkPrice() const;
+
+	bool GetRecievedReview() const;
+	void SetRecievedReviewToFalse();
 
 	Attributes GetInnAttributes() const;
 

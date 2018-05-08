@@ -32,7 +32,23 @@ void Character::setModel(Mesh * model)
 {
 	m_model.setMesh(model);
 }
+const char* printDir(Character::WalkDirection dir)
+{
+	switch (dir)
+	{
+	case Character::UP:
+		return "Up";
+	case Character::DOWN:
+		return "Down";
+	case Character::RIGHT:
+		return "Right";
+	case Character::LEFT:
+		return "Left";
+	}
+	return "No movement";
 
+}
+#include <iostream>
 void Character::Update()
 {
 	if (!m_goQueue.empty())
@@ -89,18 +105,10 @@ void Character::Update()
 				m_model.Move(-m_speed, 0.0f, 0.0f);
 				break;
 			}
+			//std::cout << printDir(getDirection()) << std::endl;
 			XMFLOAT3 playerPos = m_model.getPosition();
 			playerPos.y += 1.5f;
 			m_thoughtBubble.setPos(playerPos);
-
-			if (Input::isKeyPressed('M'))
-				m_thoughtBubble.setSpriteIndex(1);
-			if (Input::isKeyPressed('N'))
-				m_thoughtBubble.setSpriteIndex(2);
-			if (Input::isKeyPressed('B'))
-				m_thoughtBubble.setSpriteIndex(3);
-			if (Input::isKeyPressed('V'))
-				m_thoughtBubble.setSpriteIndex(0);
 
 
 			static float indexLol = 0.01f;
@@ -242,22 +250,7 @@ XMFLOAT3 Character::getDirection3f() const
 	}
 	return XMFLOAT3(0,0,0);
 }
-const char* printDir(Character::WalkDirection dir)
-{
-	switch (dir)
-	{
-	case Character::UP:
-		return "Up";
-	case Character::DOWN:
-		return "Down";
-	case Character::RIGHT:
-		return "Right";
-	case Character::LEFT:
-		return "Left";
-	}
-	return "No movement";
-		
-}
+
 Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const
 {
 
