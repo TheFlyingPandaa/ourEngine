@@ -7,6 +7,8 @@
 #include <vector>
 #include <chrono>
 
+const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
+
 class MasterAI
 {
 private:
@@ -16,6 +18,8 @@ private:
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
 	CustomerFlowControl m_cFC;
+
+	Mesh			m_thinkingMesh;
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;

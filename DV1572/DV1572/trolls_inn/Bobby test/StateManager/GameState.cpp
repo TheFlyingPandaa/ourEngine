@@ -89,6 +89,7 @@ GameState::~GameState()
 	delete bed;
 	delete bed3D;
 	delete hardBed;
+	delete m_mountainsMesh;
 }
 
 // round float to n decimals precision
@@ -192,7 +193,7 @@ void GameState::Draw()
 	this->m_grid->Draw();
 
 	//TEST
-	c.Draw();
+	//c.Draw();
 	//this->grid2->Draw();
 	m_eventHandle->Draw();
 	

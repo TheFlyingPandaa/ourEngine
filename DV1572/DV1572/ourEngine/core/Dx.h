@@ -12,6 +12,7 @@
 #include "../Structs.h"
 #include "../../ourEngine/core/Font/SpriteBatch.h"
 #include "../../ourEngine/core/Font/SpriteFont.h"
+#include "../../trolls_inn/Bobby test/Character.h"
 
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
@@ -52,6 +53,21 @@ namespace DX
 		float lightIndex;
 	};
 
+	struct INSTANCE_ATTRIB_BILL
+	{
+		DirectX::XMFLOAT4A w4;
+		DirectX::XMFLOAT4A highLightColor;
+		DirectX::XMFLOAT4A charDir;
+		float spriteIndex;
+		float lightIndex;
+	};
+
+	struct INSTANCE_GROUP_BILL
+	{
+		std::vector<INSTANCE_ATTRIB_BILL> attribs;
+		Shape* shape;
+	};
+
 	struct INSTANCE_GROUP
 	{
 		std::vector<INSTANCE_ATTRIB> attribs;
@@ -68,6 +84,7 @@ namespace DX
 	extern ID3D11VertexShader* g_3DVertexShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
 	extern ID3D11InputLayout* g_inputLayout;
+	extern ID3D11InputLayout* g_billInputLayout;
 
 	extern std::deque<INSTANCE_GROUP>			g_instanceGroups;
 	extern std::deque<INSTANCE_GROUP>			g_instanceGroupsSkyBox;
@@ -82,6 +99,8 @@ namespace DX
 
 	extern void submitToInstance(Shape* shape, std::deque<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);
+	extern void submitToInstance(Character* character);
+	extern void submitToInstance(Billboard* bill);
 
 	extern DirectX::XMFLOAT4A g_lightPos;
 	extern DirectX::XMFLOAT4A g_lightDir;

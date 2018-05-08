@@ -103,7 +103,8 @@ void Shape::Move(float x, float y, float z)
 }
 
 void Shape::Move(DirectX::XMFLOAT3 move)
-{
+{	
+
 	XMVECTOR newPos = XMLoadFloat3(&m_pos) + XMLoadFloat3(&move); 
 	XMStoreFloat3(&m_pos, newPos); 
 	_buildMatrix(); 

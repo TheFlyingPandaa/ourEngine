@@ -2,8 +2,6 @@ cbuffer BILLBOARD_MESH_BUFFER : register(b0)
 {
 	float4x4 View;
 	float4x4 Projection;
-	float4 charDir;
-	float spriteIndex;
 }
 
 struct INPUT
@@ -13,13 +11,11 @@ struct INPUT
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 
-
-	float4 w1 : INSTANCEWORLDONE;
-	float4 w2 : INSTANCEWORLDTWO;
-	float4 w3 : INSTANCEWORLDTHREE;
 	float4 w4 : INSTANCEWORLDFOUR;
 
 	float4 color : HIGHLIGHTCOLOR;
+	float4 charDir : CHARDIR;
+	float spriteIndex : SPRITEINDEX;
 	float lIndex : LIGHTINDEX;
 };
 
@@ -39,7 +35,7 @@ OUTPUT main(INPUT input)
 {
 	OUTPUT o;
 
-	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
+	float4x4 world = { input.w4 , input.w4 , input.w4 , input.w4 };
 	float4 position = float4(input.w4.xyz,1.0f);
 	float3 cameraRightWorld = float3(View[0][0], View[1][0], View[2][0]);
 	float3 cameraUpWorld = float3(View[0][1], View[1][1], View[2][1]);
@@ -49,21 +45,27 @@ OUTPUT main(INPUT input)
 	
 	float4x4 vp = mul(View, Projection);
 	o.pos = mul(float4(rotatedAndLol, 1.0f), View);
-	float4 viewPosition = o.pos;
-	o.pos.w = 2.0f;
+	o.pos.w = 1.0f;
 	o.pos = mul(o.pos, Projection);
 	o.worldPos = float4(rotatedAndLol, 1.0f);
 	o.tex = input.tex;
-	if (spriteIndex != -1)
+	float3 charDir = input.charDir.xyz;
+	o.color = input.color;
+	if (input.spriteIndex != -1)
 	{
-		// Increase in X is to swap direction
-		o.tex.x = o.tex.x + 0.25f;
-
-
-		// Increase in Y is to swap in animation
+		if (charDir.z != -1 && charDir.x != -1 && charDir.y != -1)
+		{
+			if (charDir.z == -1)
+				o.tex.x = o.tex.x + 0.75f;
+			else if (charDir.z == 1)
+				o.tex.x = o.tex.x + 0.5f;
+			else if (charDir.x == 1)
+				o.tex.x = o.tex.x + 0.5f;
+		}
 		
-		o.tex.y = o.tex.y + (0.25f*spriteIndex);
-		o.color = float4(0.5, 0.5, 0.5, 1.0f);
+		
+		
+		o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
 	}
 
 	o.normal = input.normal;
@@ -73,7 +75,6 @@ OUTPUT main(INPUT input)
 	o.TBN[1] = normalize(mul(float4(bt, 0), world)).xyz;
 	o.TBN[2] = normalize(mul(float4(input.normal, 0), world)).xyz;
 
-	o.color = input.color;
 	o.lIndex = input.lIndex;
 
 	return o;

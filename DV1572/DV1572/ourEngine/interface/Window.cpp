@@ -5,6 +5,7 @@
 #include <chrono>
 #include <iostream>
 #include <algorithm> // For std::find_if
+#include "../interface/shape/Billboard.h"
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;
@@ -14,6 +15,7 @@ ID3D11DeviceContext* DX::g_deviceContext;
 ID3D11VertexShader* DX::g_3DVertexShader;
 ID3D11PixelShader* DX::g_3DPixelShader;
 ID3D11InputLayout* DX::g_inputLayout;
+ID3D11InputLayout* DX::g_billInputLayout;
 
 ID3D11VertexShader* DX::g_billboardVertexShader;
 ID3D11PixelShader* DX::g_billboardPixelShader;
@@ -132,6 +134,105 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 
 }
 
+void DX::submitToInstance(Character * character)
+{
+	int existingId = -1;
+	for (int i = 0; i < DX::g_instanceGroupsBillboard.size() && existingId == -1; i++)
+	{
+		if (character->getShape()->getMesh()->CheckID(*DX::g_instanceGroupsBillboard[i].shape->getMesh()))
+		{
+			existingId = i;
+
+		}
+	}
+
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB_BILL attribDesc;
+	
+	XMMATRIX xmWorldMat = character->getShape()->getWorld();
+	XMFLOAT4X4A worldMat;
+
+	XMStoreFloat4x4A(&worldMat, xmWorldMat);
+
+	XMFLOAT4A rows;
+	
+	rows.x = worldMat.m[3][0];
+	rows.y = worldMat.m[3][1];
+	rows.z = worldMat.m[3][2];
+	rows.w = worldMat.m[3][3];
+	
+	attribDesc.w4 = rows;
+
+	attribDesc.highLightColor = character->getShape()->getColor(); //This allowes us to use a "click highlight"
+	attribDesc.lightIndex = static_cast<float>(character->getShape()->getLightIndex());
+	XMFLOAT3 tempPos = character->getDirection3f();
+	XMFLOAT4A chararcterDireciton = { tempPos.x,tempPos.y,tempPos.z,1.0f };
+	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = character->getModelSpriteIndex();
+
+	// Unique Mesh
+	if (existingId == -1)
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_BILL newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = character->getShape();
+		DX::g_instanceGroupsBillboard.push_back(newGroup);
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
+	}
+}
+void DX::submitToInstance(Billboard* bill)
+{
+	int existingId = -1;
+	for (int i = 0; i < DX::g_instanceGroupsBillboard.size() && existingId == -1; i++)
+	{
+		if (bill->getMesh()->CheckID(*DX::g_instanceGroupsBillboard[i].shape->getMesh()))
+		{
+			existingId = i;
+
+		}
+	}
+
+
+	//Converting The worldMatrix into a instanced world matrix.
+	//This allowes us to send in the matrix in the layout and now a constBuffer
+	INSTANCE_ATTRIB_BILL attribDesc;
+
+	XMFLOAT3 bPos = bill->getPosition();
+	XMFLOAT4A rows = { bPos.x, bPos.y, bPos.z,1.0f };
+
+	attribDesc.w4 = rows;
+
+	attribDesc.highLightColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	attribDesc.lightIndex = 0.0f;
+	
+	XMFLOAT4A chararcterDireciton = { -1, -1, -1, -1 };
+	attribDesc.charDir = chararcterDireciton;
+	attribDesc.spriteIndex = bill->getSpriteIndex();
+
+	// Unique Mesh
+	if (existingId == -1)
+	{
+		//If the queue dose not exist we create a new queue.
+		//This is what allows the instancing to work
+		INSTANCE_GROUP_BILL newGroup;
+		newGroup.attribs.push_back(attribDesc);
+		newGroup.shape = bill;
+		DX::g_instanceGroupsBillboard.push_back(newGroup);
+	}
+	else
+	{
+		//If the mesh allready exists we just push it into a exsiting queue
+		DX::g_instanceGroupsBillboard[existingId].attribs.push_back(attribDesc);
+	}
+}
 void DX::CleanUp()
 {
 	DX::g_device->Release();
@@ -276,9 +377,23 @@ void Window::_compileShaders()
 	};
 	
 	// Billboarding
+
+	D3D11_INPUT_ELEMENT_DESC inputDescBill[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXELS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	// INSTANCE ATTRIBUTES
+	{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 44, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	//This is the attribute that allows the color change without constant buffer
+	{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 60, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "CHARDIR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 76, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 92, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	};
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
 		L"ourEngine/shaders/billboardVertex.hlsl", "main",
-		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
+		inputDescBill, ARRAYSIZE(inputDescBill), DX::g_billInputLayout);
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_billboardPixelShader,
 		L"ourEngine/shaders/billboardPixel.hlsl", "main");
 	// Billboarding end
@@ -1046,20 +1161,22 @@ void Window::_billboardPass(const Camera & cam)
 	Proj = XMMatrixTranspose(Proj);
 	static bool pressed = false;
 	static float index = 1;
-
-	if (Input::isKeyPressed('K'))
-	{
+	static float indexLol = 0.01f;
+	
+	
 		index = (int)index % 4;
-		index++;
-	}
-
+		indexLol += 0.1f;
+		if (indexLol >= 1)
+		{
+			index+= indexLol;
+			indexLol = 0.0f;
+		}
+	
 	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
-	
-	
-	buffer.spriteIndex = index;
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 
 	if (m_WireFrameDebug == true)
@@ -1695,6 +1812,7 @@ void Window::Flush(Camera* c)
 	_prepareGeometryPass();
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
 	_billboardPass(*c);
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
 	_clearTargets();
