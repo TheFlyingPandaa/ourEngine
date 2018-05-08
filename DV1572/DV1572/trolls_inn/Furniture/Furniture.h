@@ -8,7 +8,7 @@ public:
 	Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	~Furniture();
 
-	Object3D	getObject3D();
+	Object3D&	getObject3D();
 
 	Attributes&	getAttributes();
 
@@ -20,6 +20,8 @@ public:
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
 	DirectX::XMINT3 getPosition();
+
+	int				getPrice();
 
 	bool			getIsBusy();
 	void			setIsBusy(bool busy);
@@ -35,6 +37,7 @@ protected:
 	Attributes	p_attributes;
 	int			p_gridSize;
 	int			p_rot;
+	int			p_price;
 
 	bool		p_isBusy;
 };

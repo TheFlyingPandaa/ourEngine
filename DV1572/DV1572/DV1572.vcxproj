@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />

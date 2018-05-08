@@ -111,6 +111,8 @@ Inn::Inn()
 	this->m_sleepPrice = 20;
 
 	m_receptionPos = DirectX::XMINT2(16, 1);
+
+	m_rent = 0;
 }
 
 Inn::~Inn()
@@ -159,7 +161,7 @@ Attributes Inn::GetInnAttributes() const
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
-		m_profit -= m_staffSalary;
+		m_profit -= m_staffSalary - m_rent;
 		m_staffSalaryApplyed = true;
 	}
 
@@ -181,6 +183,11 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	}
 }
 
+void Inn::UpdateMoney()
+{
+	m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
+}
+
 int Inn::getMoney() const
 {
 	return m_economy->GetGold();
@@ -188,12 +195,39 @@ int Inn::getMoney() const
 
 void Inn::Deposit(int amount)
 {
-	m_profit += amount;
+	m_depositText.push_back(Text());
+	m_depositText.at(m_depositText.size() - 1).setColor(0.0f, 100.0f, 0.0f, 1.0f);
+	m_depositText.at(m_depositText.size() - 1).setRelative(static_cast<Text::RelativeTo>(1));
+	m_depositText.at(m_depositText.size() - 1).setPosition(198.0f, 182.0f);
+	m_depositText.at(m_depositText.size() - 1).setScale(0.4f);
+	m_depositText.at(m_depositText.size() - 1).setRotation(0.0f);
+	m_depositText.at(m_depositText.size() - 1).setTextString("$ " + std::to_string(amount));
+	m_depositText.at(m_depositText.size() - 1).setAllignment(TXT::Right);
+	m_depositAmount.push_back(amount);
 }
 
 void Inn::Withdraw(int amount)
 {
+	m_withdrawText.push_back(Text());
+	m_withdrawText.at(m_withdrawText.size() - 1).setColor(100.0f, 0.0f, 0.0f,1.0f);
+	m_withdrawText.at(m_withdrawText.size() - 1).setRelative(static_cast<Text::RelativeTo>(1));
+	m_withdrawText.at(m_withdrawText.size() - 1).setPosition(198.0f, 32.0f);
+	m_withdrawText.at(m_withdrawText.size() - 1).setScale(0.4f);
+	m_withdrawText.at(m_withdrawText.size() - 1).setRotation(0.0f);
+	m_withdrawText.at(m_withdrawText.size() - 1).setTextString("$ " + std::to_string(amount));
+	m_withdrawText.at(m_withdrawText.size() - 1).setAllignment(TXT::Right);
 	m_economy->Withdraw(amount);
+	UpdateMoney();
+}
+
+void Inn::IncreaseRent(int amount)
+{
+	m_rent += amount;
+}
+
+void Inn::DecreaseRent(int amount)
+{
+	m_rent -= amount;
 }
 
 void Inn::GetRefund(int amount)
@@ -230,6 +264,56 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 }
 
 void Inn::Draw()
+{
+	
+	for (size_t i = 0; i < m_withdrawText.size(); i++)
+	{
+		DirectX::XMVECTOR pos = m_withdrawText.at(i).getPosition();
+		m_withdrawText.at(i).setPosition(XMVectorGetX(pos), XMVectorGetY(pos) + 1);
+		auto color = m_withdrawText.at(i).getColor();
+		m_withdrawText.at(i).setColor(XMVectorGetX(color), XMVectorGetY(color), XMVectorGetZ(color), XMVectorGetW(color) - 0.01f);
+		if (XMVectorGetY(pos) >= 182)
+		{
+			//m_withdrawText.erase(m_withdrawText.begin() + i);
+			m_removeVec.push_back(i);
+		}
+		m_withdrawText.at(i).Draw();
+	}
+	if (m_removeVec.size() >0)
+	{
+		for (auto element : m_removeVec)
+		{
+			m_withdrawText.erase(m_withdrawText.begin() + element);
+		}
+		m_removeVec.clear();
+	}
+	for (size_t i = 0; i < m_depositText.size(); i++)
+	{
+		DirectX::XMVECTOR pos = m_depositText.at(i).getPosition();
+		m_depositText.at(i).setPosition(198, XMVectorGetY(pos) - 1);
+		auto color = m_depositText.at(i).getColor();
+		m_depositText.at(i).setColor(XMVectorGetX(color), XMVectorGetY(color), XMVectorGetZ(color), XMVectorGetW(color) - 0.005f);
+		if (XMVectorGetY(pos) <= 32)
+		{
+			//m_withdrawText.erase(m_withdrawText.begin() + i);
+			m_economy->Deposit(m_depositAmount.at(i));
+			UpdateMoney();
+			m_removeVec.push_back(i);
+		}
+		m_depositText.at(i).Draw();
+	}
+	if (m_removeVec.size() >0)
+	{
+		for (auto element : m_removeVec)
+		{
+			m_depositAmount.erase(m_depositAmount.begin() + element);
+			m_depositText.erase(m_depositText.begin() + element);
+		}
+		m_removeVec.clear();
+	}
+}
+
+void Inn::WithdrawText()
 {
 	
 }
