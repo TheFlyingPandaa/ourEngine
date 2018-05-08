@@ -605,6 +605,8 @@ bool Room::RemoveThisFurniture(Furniture * fur)
 	{
 		if (m_roomObjects.at(i) == fur)
 		{
+			int t = _index(fur->getPosition().x, fur->getPosition().z);
+			m_roomTiles.at(t)->setHasObject(false);
 			delete m_roomObjects.at(i);
 			m_roomObjects.erase(m_roomObjects.begin() + i);
 			return true;

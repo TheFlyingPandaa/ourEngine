@@ -491,6 +491,23 @@ void BuildState::_inputFurniture()
 	if (m_selectedThing != -1)
 	{
 		m_roomCtrl->PickRoomTiles();
+		if (Input::isKeyPressed(Input::LeftArrow))
+		{
+			table->setRotation(90);
+		}
+		else if (Input::isKeyPressed(Input::UpArrow))
+		{
+			table->setRotation(180);
+		}
+		else if (Input::isKeyPressed(Input::DownArrow))
+		{
+			table->setRotation(0);
+		}
+		else if (Input::isKeyPressed(Input::RightArrow))
+		{
+			table->setRotation(270);
+		}
+
 		if (m_startTile && Input::isMouseLeftPressed())
 		{
 			XMINT3 s= table->getPosition();

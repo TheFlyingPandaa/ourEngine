@@ -76,7 +76,7 @@ Mesh* MeshHandler::getBed()
 	if (bed == nullptr)
 	{
 		bed = new Mesh();
-		bed->LoadModel("trolls_inn/Resources/bed.obj");
+		bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
 	}
 	return bed;
 }

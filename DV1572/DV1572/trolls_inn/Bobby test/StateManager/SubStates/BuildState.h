@@ -4,6 +4,7 @@
 #include "../../../Furniture/Table.h"
 #include "../../../Mesh Manager/MeshManager.h"
 #include "../../../AI_Base/Inn.h"
+#include "../../../Furniture/Bed.h"
 
 class BuildState :
 	public SubState
