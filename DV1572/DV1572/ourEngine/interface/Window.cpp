@@ -1156,7 +1156,7 @@ void Window::_billboardPass(const Camera & cam)
 	
 	
 		index = (int)index % 4;
-		indexLol += 0.1f;
+		indexLol += 1.0f;
 		if (indexLol >= 1)
 		{
 			index+= indexLol;

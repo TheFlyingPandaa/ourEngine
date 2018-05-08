@@ -592,7 +592,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
+	table = new Table(DirectX::XMFLOAT3(0, 0, 0), nullptr);
 }
 
 BuildState::~BuildState()
