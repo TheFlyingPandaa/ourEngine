@@ -1,7 +1,7 @@
 #include <chrono>
 #include"Room\Grid.h"
 #include "Room\RoomCtrl.h"
-
+#include "../AI_Base/HeightMapGenerator.h"
 #include <iostream>
 
 const float REFRESH_RATE = 60.0f;
@@ -22,7 +22,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Window wnd(hInstance);
 	wnd.Init(1280, 720, "Banan");
 	Mesh mountainMesh;
-
+	HeightMap hm(129, 16, 1.0f);
+	RectangleShape rs;
+	mountainMesh.LoadModel("trolls_inn/TerrainLol.txt");
+	rs.setMesh(&mountainMesh);
+	rs.setPos(0, 0, 0);
+	rs.setScale(1, 1, 1);
+	
 	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
@@ -49,11 +55,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
+			cam->update();
 		}
 
 		fpsCounter++;
 		
-		
+		rs.Draw();
 		
 
 		wnd.Flush(cam);

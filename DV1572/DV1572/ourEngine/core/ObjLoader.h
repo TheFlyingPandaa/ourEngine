@@ -353,7 +353,7 @@ namespace DX
 
 	static void CalculateTangents(std::vector<VERTEX> &model)
 	{
-		for (int i = 0; i < model.size(); i += 3)
+		for (int i = 0; i < model.size() - 2; i += 3)
 		{
 			int j = i + 1;
 			int k = i + 2;
