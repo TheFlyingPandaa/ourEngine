@@ -5,6 +5,7 @@ Billboard::Billboard()
 {
 	setVertexShader(DX::g_billboardVertexShader);
 	setPixelShader(DX::g_billboardPixelShader);
+	m_spriteIndex = 0; 
 }
 
 int Billboard::getSpriteIndex() const

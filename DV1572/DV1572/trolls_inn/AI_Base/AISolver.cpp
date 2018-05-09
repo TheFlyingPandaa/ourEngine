@@ -481,6 +481,7 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 
 void AISolver::Update(Staff& staff)
 {
+	staff.Update(); 
 }
 
 void AISolver::Update(Staff& staff, Action desiredAction)
@@ -518,6 +519,7 @@ int AISolver::RequestPath(Character & character, RoomType targetRoom)
 						character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 				}
 				
+				delete futureObjects[i].futObj; 
 				futureObjects.erase(futureObjects.begin() + i);
 				return 1;
 			}

@@ -24,7 +24,6 @@ private:
 		EventWindow
 	};
 
-
 private:
 	Mesh m;
 	Mesh kitchenTile;

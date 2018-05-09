@@ -20,6 +20,7 @@ private:
 	std::vector<Customer*> m_customers;
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
+	Staff* m_InnTroll; 
 	CustomerFlowControl m_cFC;
 	bool m_customerSpawned;
 
@@ -43,6 +44,8 @@ public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
 	
+	Staff* getTroll(); 
+
 	void Update(Camera* cam);
 	void Draw();
 
