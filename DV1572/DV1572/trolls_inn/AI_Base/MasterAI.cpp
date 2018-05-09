@@ -71,6 +71,10 @@ void MasterAI::Update(Camera* cam)
 					m_customers.push_back(m_nextCustomer);
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
+					std::stringstream ss;
+					ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 				}
 			}
 			else
@@ -81,6 +85,10 @@ void MasterAI::Update(Camera* cam)
 					m_customers.push_back(m_nextCustomer);
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
+					std::stringstream ss;
+					ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 				}
 			}
 		}

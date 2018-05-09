@@ -1,6 +1,5 @@
 #include "CustomerFlowControl.h"
 #include <iostream>
-#include "../../InGameConsole.h"
 
 Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
@@ -18,15 +17,12 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 	}
 	else
 	{
-		//int customerRandomProbabilityPercentage = m_rNG.GenerateRandomNumber(0, rNGUpperLimit);
 		int randomNumber = m_rNG.GenerateRandomNumber(1, 100);
 		
-		//std::cout << "Random percentage: " << customerRandomProbabilityPercentage << std::endl;
 		std::cout << "Random number: " << randomNumber << std::endl;
 		std::cout << "---------------------------------------------------------\n";
 
 		if (randomNumber > rNGUpperLimit)
-		//if (customerRandomProbabilityPercentage <= randomNumber)
 			newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
 		else
 			newCustomer = _generateRandomCustomer();
@@ -95,20 +91,6 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	else
 		nextCustomer = this->_generateRandomCustomer();
 
-	if (nextCustomer->GetRace() == Elf)
-	{
-		std::stringstream ss;
-		ss << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-		std::cout << "An " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-		InGameConsole::pushString(ss.str());
-	}
-	else
-	{
-		std::stringstream ss;
-		ss << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-		std::cout << "A " << nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-		InGameConsole::pushString(ss.str());
-	}
 	// Set this to path entrance
 	nextCustomer->setPosition(0 + 0.5f, -3.f + 0.5f);
 
