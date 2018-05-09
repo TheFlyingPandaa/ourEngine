@@ -6,6 +6,7 @@
 #include "Inn.h"
 #include <vector>
 #include <chrono>
+#include "../../InGameConsole.h"
 
 const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
 const int CHECK_CUSTOMER_SPAWN = 5;
