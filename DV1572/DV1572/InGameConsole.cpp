@@ -29,7 +29,7 @@ void InGameConsole::update(double DeltaTime)
 		text[i]->timer += DeltaTime;
 		if (text[i]->timer > startFade)
 		{			
-			text[i]->text.setColor(1.0f, 1.0f, 1.0f, 1.0 - ((text[i]->timer - startFade) / fadeTime));
+			text[i]->text.setColor(1.0f, 1.0f, 1.0f, 1.0f - static_cast<float>((text[i]->timer - startFade) / fadeTime));
 		}
 		
 	}
@@ -68,21 +68,21 @@ void InGameConsole::pushString(const std::string & string)
 	float y = DirectX::XMVectorGetY(size);
 	y*=.5f;
 
-	t.setPosition(startPosition.x, y*maxSize);
+	t.setPosition(static_cast<float>(xPos), y*maxSize);
 	
 
 	text_t * t_t = new text_t();
-	t_t->position = DirectX::XMINT2(startPosition.x, y * maxSize);
+	t_t->position = DirectX::XMINT2(xPos, static_cast<int32_t>(y * maxSize));
 	t_t->text = t;
 	t_t->rows = rows;
-	t_t->size = y;
+	t_t->size = static_cast<int32_t>(y);
 
 	text.push_back(t_t);
 
 	for (int i = 0; i < text.size() - 1 && text.size() != 0; i++)
 	{
 		text[i]->position.y -= text[i + 1]->size;
-		text[i]->text.setPosition(text[i]->position.x, text[i]->position.y);
+		text[i]->text.setPosition(static_cast<float>(text[i]->position.x), static_cast<float>(text[i]->position.y));
 	}
 	
 }

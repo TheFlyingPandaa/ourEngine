@@ -1,4 +1,12 @@
-﻿#include "AISolver.h"
+﻿
+#include "AISolver.h"
+// round float to n decimals precision
+float round_n2(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
@@ -300,6 +308,8 @@ void AISolver::RestartClock()
 
 void AISolver::Update(Customer& customer, Inn* inn)
 {
+
+	
 	// Get the elapsed time
 	this->m_now = this->m_clock.now();
 	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
@@ -349,7 +359,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				// Walk towards a room with the highest value (?) (Tired, Hungry or Thirsty)
 				// Go explore (?)
 				// Get race desires (?)
-				GetPath(customer, RoomType::randomStupid);
+				RequestPath(customer, RoomType::randomStupid);
 				customer.SetAction(WalkAction);
 			}
 			customer.PopToNextState();
@@ -429,31 +439,42 @@ void AISolver::Update(Customer& customer, Inn* inn)
 
 void AISolver::Update(Customer& customer, Action desiredAction)
 {
-	CustomerState currentState = customer.GetState();
-
+	CustomerState currentState = customer.GetState();	
+	int gotPath = -1;
 	switch (currentState)
 	{
 	case Thinking:
 		switch (desiredAction)
 		{
 		case DrinkAction:
-			GetPath(customer, RoomType::bar);
+			gotPath = RequestPath(customer, RoomType::bar);
 			break;
 		case EatAction:
-			GetPath(customer, RoomType::kitchen);
+			gotPath = RequestPath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
-			GetPath(customer, RoomType::bedroom);
+			gotPath = RequestPath(customer, RoomType::bedroom);
 			break;
 		}
-		customer.PopToNextState(); // pop Thinking state
-		customer.PopToNextState(); // pop Idle state
+			
+		break;
+	}
+	customer.PopToNextState(); // pop Thinking state
+	customer.PopToNextState(); // pop Idle state
+	if (gotPath == 1)
+	{
 		customer.GotPathSetNextAction(desiredAction);
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(false);
 		customer.SetWaitingForSpotMultiplier(1);
-		break;
 	}
+	else if (gotPath == -1)
+	{
+		customer.RestartClock();
+		customer.setThoughtBubble(Character::ANGRY);
+	}
+	
+	
 }
 
 void AISolver::Update(Staff& staff)
@@ -464,55 +485,85 @@ void AISolver::Update(Staff& staff, Action desiredAction)
 {
 
 }
-// round float to n decimals precision
-float round_n2(float num, int dec)
+
+
+int AISolver::RequestPath(Character & character, RoomType targetRoom)
 {
-	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
-	float pwr = pow(10.0f, dec);
-	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
-}
-void AISolver::GetPath(Character & character, RoomType targetRoom)
-{
-	if (character.walkQueueDone())
+	bool notPendingPath = false;
+	for(int i = 0; i< futureObjects.size();i++)
 	{
-		//Shape * obj = this->p_pickingEvent->top();
-		XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
-
-		int xTile = (int)(round_n2(charPos.x, 1) - 0.5f);
-		int yTile = (int)(round_n2(charPos.y, 1) - 0.5f);
-		
-		XMINT2 targetPosition = { (int)character.getPosition().x , (int)character.getPosition().y };
-
-		if (targetRoom == RoomType::randomStupid)
-			targetPosition = { (int)rand() % 32, (int)rand() % 32 };
-		else if (targetRoom == RoomType::leave)
+		auto t = futureObjects.at(i);
+		if (t.index == character.getUniqueIndex())
 		{
-			targetPosition = { 16,0 };
-		}
-		else
-		{
-			XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
-			if (xmtarg.x == -1)
-				return;
-			targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
+			notPendingPath = true;
+			auto status = t.futObj->wait_for(0ms);
+			if (status == std::future_status::ready)
+			{
+				
+				XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
+
+				int xTile = (int)(round_n2(charPos.x, 1) - 0.5f);
+				int yTile = (int)(round_n2(charPos.y, 1) - 0.5f);
+
+				auto path = t.futObj->get();
+				XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+				if (path.size() != 0)
+				{
+					character.Move(character.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+					for (int i = 0; i < path.size() - 1; i++)
+						character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+				}
+				
+				futureObjects.erase(futureObjects.begin() + i);
+				return 1;
+			}
 		}
 		
-		
-
-		XMINT2 startPosition = { xTile, yTile };
-
-		auto path = GetPathAndSmokeGrass(startPosition, targetPosition);
-
-
-		XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-		if (path.size() != 0)
-		{
-			character.Move(character.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-			for (int i = 0; i < path.size() - 1; i++)
-				character.Move(character.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-		}
-
 	}
+	if (!notPendingPath)
+	{
+		if (character.walkQueueDone())
+		{
+			//Shape * obj = this->p_pickingEvent->top();
+			XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
+
+			int xTile = (int)(round_n2(charPos.x, 1) - 0.5f);
+			int yTile = (int)(round_n2(charPos.y, 1) - 0.5f);
+
+			XMINT2 targetPosition = { (int)character.getPosition().x , (int)character.getPosition().y };
+
+			if (targetRoom == RoomType::randomStupid)
+				targetPosition = { (int)rand() % 32, (int)rand() % 32 };
+			else if (targetRoom == RoomType::leave)
+			{
+				targetPosition = { 16,0 };
+			}
+			else
+			{
+				XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(static_cast<float>(xTile), static_cast<float>(yTile)), targetRoom);
+				// There wasnt any good rooms
+				if (xmtarg.x == -1)
+				{
+					return -1; // HENRIK WAS HERE
+				}
+				targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
+			}
+
+
+
+			XMINT2 startPosition = { xTile, yTile };
+			std::future<std::vector<std::shared_ptr<Node>>>* future = new std::future<std::vector<std::shared_ptr<Node>>>();
+			// Starts the pathfinding 
+			*future = std::async(std::launch::async, &AISolver::GetPathAndSmokeGrass, this, startPosition, targetPosition);
+		
+			PathThread futureObj;
+			futureObj.futObj = future;
+			futureObj.index = character.getUniqueIndex();
+			futureObjects.push_back(futureObj);
+		}
+	}
+
+	return 0;
 }

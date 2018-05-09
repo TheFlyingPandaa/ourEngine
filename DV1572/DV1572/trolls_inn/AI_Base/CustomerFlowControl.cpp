@@ -4,7 +4,7 @@
 Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 {
 	Customer* newCustomer = nullptr;
-	int probabilityForCustomerSpawnOfSpecificRace = abs(100 * innAttributes.GetStat());
+	int probabilityForCustomerSpawnOfSpecificRace = static_cast<int>(abs(100 * innAttributes.GetStat()));
 	int rNGUpperLimit = 100 - probabilityForCustomerSpawnOfSpecificRace;
 	
 	std::cout << "---------------------------------------------------------\n";
@@ -103,9 +103,9 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	nextCustomer->setThoughtBubbleMesh(&m_thinkingMesh);
 
 	// Set needs for the customer
-	nextCustomer->SetHungry(this->m_rNG.GenerateRandomNumber(0, 4));
-	nextCustomer->SetTired(this->m_rNG.GenerateRandomNumber(0, 4));
-	nextCustomer->SetThirsty(this->m_rNG.GenerateRandomNumber(0, 4));
+	nextCustomer->SetHungry(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
+	nextCustomer->SetTired(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
+	nextCustomer->SetThirsty(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
 
 	return nextCustomer;
 }

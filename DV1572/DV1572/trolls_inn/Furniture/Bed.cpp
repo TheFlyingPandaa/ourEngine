@@ -1,13 +1,21 @@
 #include "Bed.h"
+#include "../Mesh Manager/MeshManager.h"
 
 Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos, mesh)
 {
 	//TODO:: NOT DONE YET
 	p_gridSize = 2;
-	p_rot = 0;
+	p_rot = 90;
 
-	p_object.setMesh(mesh);
-	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
+	if (!mesh)
+	{
+		p_object.setMesh(MeshHandler::getBed());
+	}
+	else {
+		p_object.setMesh(mesh);
+	}
+	p_object.setPos(pos.x - 20.5f , pos.y - 0.2f, pos.z - 0.5f);
+	setPosition(p_object.getPosition());
 
 	if (setting == 0)
 	{

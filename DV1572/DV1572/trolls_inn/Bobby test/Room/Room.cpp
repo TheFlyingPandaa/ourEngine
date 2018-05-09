@@ -13,8 +13,8 @@ void Room::_loadStatic()
 void Room::_initAABB(int x, int y, int sx, int sy, int level)
 {
 	m_AABB.setMesh(&s_AABB);
-	m_AABB.setPos(x + ((float)sx / 2.0f) + 0.001, (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f) - 0.001);
-	m_AABB.setScale(static_cast<float>(sx) + 0.05, 2.1f, static_cast<float>(sy) + 0.05);
+	m_AABB.setPos(x + ((float)sx / 2.0f) + 0.001f, (level * 2.0f) + 1.0f, y + ((float)sy / 2.0f) - 0.001f);
+	m_AABB.setScale(static_cast<float>(sx) + 0.05f, 2.1f, static_cast<float>(sy) + 0.05f);
 }
 
 void Room::_createLight(int x, int y, int sx, int sy, int level)
@@ -74,7 +74,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 		t->getQuad().setLightIndex(m_index);
 	}
 	m_wholeFloor.setLightIndex(m_index);
-	m_wholeFloor.setPos(posX, -0.001f, posY);
+	m_wholeFloor.setPos(static_cast<float>(posX), -0.001f, static_cast<float>(posY));
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
@@ -208,7 +208,7 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 {
 	auto getAdjacentTile = [&](std::shared_ptr<Node> current, float dx, float dy) -> Tile*
 	{
-		int index = _index(current->tile->getQuad().getPosition().x + dx, current->tile->getQuad().getPosition().z + dy);
+		int index = _index(static_cast<int>(current->tile->getQuad().getPosition().x + dx), static_cast<int>(current->tile->getQuad().getPosition().z + dy));
 		if (index < 0 || index >= m_roomTiles.size()) return nullptr;;
 		return m_roomTiles[index];
 	};
@@ -246,7 +246,7 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 		{
 
 			Direction dir = static_cast<Direction>(dirIndex);
-			float addedCost = (dirIndex > 3) ? 1.414 : 1;
+			float addedCost = (dirIndex > 3) ? 1.414f : 1.0f;
 			XMFLOAT2 dirFloat;
 			switch (dir)
 			{
@@ -276,7 +276,7 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 				break;
 			}
 
-			int index = _index(current->tile->getQuad().getPosition().x + dirFloat.x, current->tile->getQuad().getPosition().z + dirFloat.y);
+			int index = _index(static_cast<int>(current->tile->getQuad().getPosition().x + dirFloat.x), static_cast<int>(current->tile->getQuad().getPosition().z + dirFloat.y));
 			if (index < 0 || index >= m_roomTiles.size()) 
 				continue;
 			Tile* currentTile = m_roomTiles[index];
@@ -382,7 +382,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 			if (allowed[i])
 			{
 				Wall* newWallUp = new Wall(mesh, { 0, -1 });
-				newWallUp->setPosition(m_posX + 0.5f + i, m_posY + m_sizeY);
+				newWallUp->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY + m_sizeY));
 				m_allWalls.push_back(newWallUp);
 				m_upWalls.push_back(newWallUp);
 			}
@@ -395,7 +395,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 			if (allowed[i])
 			{
 				Wall* newWallLow = new Wall(mesh, { 0,1 });
-				newWallLow->setPosition(m_posX + 0.5f + i, m_posY);
+				newWallLow->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY));
 				m_allWalls.push_back(newWallLow);
 				m_downWalls.push_back(newWallLow);
 			}
@@ -409,7 +409,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 			{
 				Wall* newWallLeft = new Wall(mesh, { 1, 0 });
 				newWallLeft->setRotation(0, 90, 0);
-				newWallLeft->setPosition(m_posX, m_posY + 0.5f + i);
+				newWallLeft->setPosition(static_cast<float>(m_posX), static_cast<float>(m_posY + i) + 0.5f);
 				m_allWalls.push_back(newWallLeft);
 				m_leftWalls.push_back(newWallLeft);
 			}
@@ -424,7 +424,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 			{
 				Wall* newWallRight = new Wall(mesh, { -1, 0 });
 				newWallRight->setRotation(0, 90, 0);
-				newWallRight->setPosition(m_posX + m_sizeX, m_posY + 0.5f + i);
+				newWallRight->setPosition(static_cast<float>(m_posX + m_sizeX), static_cast<float>(m_posY + i) + 0.5f);
 				m_allWalls.push_back(newWallRight);
 				m_rightWalls.push_back(newWallRight);
 			}
@@ -576,7 +576,7 @@ const RoomType & Room::getRoomType() const
 
 int Room::getAmountOfObjects()
 {
-	return m_roomObjects.size();
+	return static_cast<int>(m_roomObjects.size());
 }
 
 int Room::getAmountOfSpecificObjects(Furniture compare)
@@ -624,6 +624,7 @@ Furniture * Room::getFurnitureAtPos(DirectX::XMINT2 pos)
 			return element;
 		}
 	}
+	return nullptr;
 }
 
 RoomType Room::getRoomType()

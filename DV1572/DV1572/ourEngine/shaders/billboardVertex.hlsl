@@ -81,8 +81,8 @@ OUTPUT main(INPUT input)
 			else
 				o.tex.x = o.tex.x + 0.75f; // DOWN
 
-			o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
 		}
+		o.tex.y = o.tex.y + (0.25f*input.spriteIndex);
 	}
 	o.normal = input.normal;
 

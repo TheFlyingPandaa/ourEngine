@@ -262,7 +262,7 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 void Inn::Draw()
 {
 	
-	for (size_t i = 0; i < m_withdrawText.size(); i++)
+	for (int i = 0; i < m_withdrawText.size(); i++)
 	{
 		DirectX::XMVECTOR pos = m_withdrawText.at(i).getPosition();
 		m_withdrawText.at(i).setPosition(XMVectorGetX(pos), XMVectorGetY(pos) + 1);
@@ -283,7 +283,7 @@ void Inn::Draw()
 		}
 		m_removeVec.clear();
 	}
-	for (size_t i = 0; i < m_depositText.size(); i++)
+	for (int i = 0; i < m_depositText.size(); i++)
 	{
 		DirectX::XMVECTOR pos = m_depositText.at(i).getPosition();
 		m_depositText.at(i).setPosition(198, XMVectorGetY(pos) - 1);
