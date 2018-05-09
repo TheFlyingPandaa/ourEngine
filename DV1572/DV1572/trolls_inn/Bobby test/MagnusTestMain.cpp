@@ -21,15 +21,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	Window wnd(hInstance);
 	wnd.Init(1280, 720, "Banan");
-	Grid test(0,0,32,32);
-	RoomCtrl ctrl;
-	XMINT2 pos = {6, 0 };
-	XMINT2 pos2 = { 1, 1 };
-	XMINT2 size = { 5,5 };
+	Mesh mountainMesh;
 
-	ctrl.AddRoom(pos, size, RoomType::reception, test.extractTiles(pos, size));
-	ctrl.AddRoom(pos2, size, RoomType::reception, test.extractTiles(pos2, size));
-
+	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -55,22 +49,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-			cam->update();
-			ctrl.Update(cam);
 		}
 
 		fpsCounter++;
 		
-		ctrl.Draw();
-		test.Draw();
-
-		/*Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);*/
-
 		
-			
-
-
+		
 
 		wnd.Flush(cam);
 		wnd.Present();
