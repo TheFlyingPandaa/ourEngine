@@ -55,7 +55,7 @@ void Furniture::setRotation(int rot)
 {
 	p_rot = rot;
 	//p_object.setRotation(0, rot * (-90), 0);
-	p_object.setRotation(0, rot - 90, 0);
+	p_object.setRotation(0.0f, static_cast<float>(rot) - 90.0f, 0.0f);
 }
 
 DirectX::XMINT3 Furniture::getPosition()

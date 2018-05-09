@@ -131,7 +131,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	
 	if (furniture->getRotation() == 0 || furniture->getRotation() == 180)
 	{
-		for (size_t i = 0; i < furniture->getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
 			if (furniture->getRotation() == 0)
 			{
@@ -147,7 +147,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	}
 	if (furniture->getRotation() == 90 || furniture->getRotation() == 270)
 	{
-		for (size_t i = 0; i < furniture->getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
 			if (furniture->getRotation() == 90)
 			{

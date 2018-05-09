@@ -548,7 +548,7 @@ void BuildState::_inputFurniture()
 		else if (m_startTile)
 		{
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
-			table->setPosition(p.x , p.y - 0.2f, p.z);
+			table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
 			DirectX::XMINT2 start;
 			start.x = table->getPosition().x;
 			start.y = table->getPosition().z;

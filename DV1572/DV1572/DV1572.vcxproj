@@ -127,9 +127,6 @@
     <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="trolls_inn\AI_Base\MaxHeightMap.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
@@ -192,9 +189,6 @@
     </ClInclude>
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
-    <ClInclude Include="trolls_inn\AI_Base\MaxHeightMap.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
