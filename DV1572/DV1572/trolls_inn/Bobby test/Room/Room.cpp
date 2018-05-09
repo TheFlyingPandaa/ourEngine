@@ -603,6 +603,30 @@ int Room::getAmountOfSpecificObjects(Furniture * compare)
 	return amount;
 }
 
+int Room::getAmountOfSpecificObjectsNotBusy(Furniture * compare)
+{
+	int amount = 0;
+	if (m_roomObjects.size() <= 0)
+	{
+		return -1;
+	}
+	else
+	{
+		for (size_t i = 0; i < m_roomObjects.size(); i++)
+		{
+			if (m_roomObjects.at(i)->WhatType() == compare->WhatType())
+			{
+				if (false == m_roomObjects.at(i)->getIsBusy())
+				{
+					amount++;
+				}
+			}
+
+		}
+	}
+	return amount;
+}
+
 int Room::getPriceOfAllObjects()
 {
 	int m = 0;

@@ -105,6 +105,17 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 					m_furnitureRemove = nullptr;
 				}
+				if (!table)
+				{
+					if (m_selectedThing == 0)
+					{
+						table = new Table(XMFLOAT3(0, 0, 0), nullptr);
+					}
+					else if(m_selectedThing == 1)
+					{
+						table = new Bed(XMFLOAT3(0, 0, 0), nullptr);
+					}
+				}
 			}
 			break;
 		default:
@@ -120,6 +131,11 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 				m_selectedRoom->Select();
 			}
 			m_selectedRoom = nullptr;
+			if (table)
+			{
+				delete table;
+				table = nullptr;
+			}
 			break;
 		}
 	}

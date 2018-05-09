@@ -91,6 +91,7 @@ public:
 
 	int getAmountOfObjects();
 	int getAmountOfSpecificObjects(Furniture * compare);
+	int getAmountOfSpecificObjectsNotBusy(Furniture * compare);
 	int getPriceOfAllObjects();
 	std::vector<Furniture*> getAllRoomFurnitures();
 	bool RemoveThisFurniture(Furniture * fur);
