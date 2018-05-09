@@ -298,10 +298,6 @@ void GameState::_handlePicking()
 			ss->HandlePicking(nullptr);
 		}
 	}
-	
-	if(m_stage == GameStage::Play && Input::isMouseLeftPressed())
-		m_grid->PickTiles();
-
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
@@ -346,15 +342,16 @@ void GameState::_handlePicking()
 		
 
 */
+
+		_handlePickingAi(obj);
 		using namespace std::chrono_literals;
 
-		// Create a promise and get its future.
+		/*// Create a promise and get its future.
 		if (m_i == 0)
 		{
 			m_i++;
 			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
 		}
-
 
 		// Use wait_for() with zero milliseconds to check thread status.
 		auto status = future.wait_for(0ms);
@@ -370,7 +367,7 @@ void GameState::_handlePicking()
 			std::cout << "Thread still running" << std::endl;
 		}
 
-		//_handlePickingAi(obj);
+		//_handlePickingAi(obj);*/
 		
 	}
 }
@@ -381,10 +378,6 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 	if (m_stage == GameStage::Play)
 	{
-		if (!troll->walkQueueDone())
-		{
-		
-		}
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
