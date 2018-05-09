@@ -55,7 +55,7 @@ public:
 	~RoomCtrl();
 
 	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
-	void				AddRoomObject(Furniture furniture);
+	void				AddRoomObject(Furniture * furniture);
 	//void				RemoveRoomObject(DirectX::XMINT2 pos);
 	bool				RemoveRoomObject(Furniture* fur);
 	

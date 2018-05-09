@@ -6,7 +6,7 @@ class Furniture
 {
 public:
 	Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh);
-	~Furniture();
+	virtual ~Furniture();
 
 	Object3D&	getObject3D();
 
@@ -26,9 +26,16 @@ public:
 	bool			getIsBusy();
 	void			setIsBusy(bool busy);
 
+	int				getLevel();
+	void			setLevel(int amount);
+	void			AddLevel(int amount = 1);
 	//void LoadFurnitureStats(std::string path);
 
-	void Draw();
+	virtual std::string WhatType();
+
+	virtual void Draw();
+
+	virtual Furniture * MakeCopy();
 
 private:
 	DirectX::XMINT3 pos;
@@ -40,4 +47,6 @@ protected:
 	int			p_price;
 
 	bool		p_isBusy;
+
+	int			p_level;
 };

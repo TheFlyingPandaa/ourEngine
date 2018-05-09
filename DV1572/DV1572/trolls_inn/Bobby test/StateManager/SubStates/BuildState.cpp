@@ -516,7 +516,7 @@ void BuildState::_inputFurniture()
 			start.y = s.z;
 			if (m_canBuildFurniture)
 			{
-				m_roomCtrl->AddRoomObject(*table);
+				m_roomCtrl->AddRoomObject(table);
 				m_inn->Withdraw(table->getPrice());
 				//m_inn->UpdateMoney();
 			}
@@ -592,7 +592,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Table(DirectX::XMFLOAT3(0, 0, 0), nullptr);
+	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
 }
 
 BuildState::~BuildState()

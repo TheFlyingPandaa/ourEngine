@@ -1,4 +1,6 @@
 #include "Room.h"
+#include "../../Furniture/Table.h"
+#include "../../Furniture/Bed.h"
 
 Mesh Room::s_AABB;
 bool Room::s_isLoaded = false;
@@ -433,9 +435,10 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 	}
 }
 
-void Room::AddRoomObject(Furniture fut)
+void Room::AddRoomObject(Furniture * fut)
 {
-	m_roomObjects.push_back(new Furniture(fut));
+	Furniture * temp = fut->MakeCopy();
+	m_roomObjects.push_back(temp);
 }
 
 void Room::PickTiles()
@@ -579,9 +582,25 @@ int Room::getAmountOfObjects()
 	return static_cast<int>(m_roomObjects.size());
 }
 
-int Room::getAmountOfSpecificObjects(Furniture compare)
+int Room::getAmountOfSpecificObjects(Furniture * compare)
 {
-	return 0;
+	int amount = 0;
+	if (m_roomObjects.size() <= 0)
+	{
+		return -1;
+	}
+	else
+	{
+		for (size_t i = 0; i < m_roomObjects.size(); i++)
+		{
+			if (m_roomObjects.at(i)->WhatType() == compare->WhatType())
+			{
+				amount++;
+			}
+
+		}
+	}
+	return amount;
 }
 
 int Room::getPriceOfAllObjects()
