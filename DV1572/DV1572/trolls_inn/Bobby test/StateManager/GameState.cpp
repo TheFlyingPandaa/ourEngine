@@ -370,7 +370,7 @@ void GameState::_handlePicking()
 	}
 }
 
-void GameState::_handlePickingAi(Shape * obj)
+void GameState:: _handlePickingAi(Shape * obj)
 {
 	if (m_stage == GameStage::Play)
 	{

@@ -516,7 +516,7 @@ void BuildState::_inputFurniture()
 			start.y = s.z;
 			if (m_canBuildFurniture)
 			{
-				m_roomCtrl->AddRoomObject(*table);
+				m_roomCtrl->AddRoomObject(table);
 				m_inn->Withdraw(table->getPrice());
 				//m_inn->UpdateMoney();
 			}

@@ -20,7 +20,7 @@ private:
 
 	//TEMP
 	Object3D door;
-	Table* table;
+	Bed* table;
 	
 	bool drawSelectedThing;
 	bool twoStepThingy = false;
