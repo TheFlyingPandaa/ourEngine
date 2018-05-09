@@ -1829,6 +1829,7 @@ void Window::Flush(Camera* c)
 
 void Window::FullReset()
 {
+	//DX::g_lightQueue.clear(); 
 	DX::g_deviceContext->ClearState();
 	_setViewport();
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);

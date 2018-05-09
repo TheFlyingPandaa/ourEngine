@@ -7,7 +7,7 @@ Character::Character()
 	m_speed = 2.0f / 60;
 	setPosition(16.0f, 8.2f);
 	m_currentDir = DOWN;
-	m_modelSpriteIndex = 0;
+	m_modelSpriteIndex = 3;
 	m_displayThought = false;
 }
 

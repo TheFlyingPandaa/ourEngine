@@ -5,6 +5,7 @@ Staff::Staff() : Character()
 	m_trollMesh.LoadModel("trolls_inn/Resources/SpritesheetSample/elf.obj"); 
 	m_level.SetLevel(1);
 	this->setModel(&m_trollMesh);
+	
 }
 
 Staff::Staff(Professions profession)
