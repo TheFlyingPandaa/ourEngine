@@ -298,8 +298,8 @@ void GameState::_handlePicking()
 			ss->HandlePicking(nullptr);
 		}
 	}
-
-	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
+	
+	if(m_stage == GameStage::Play && Input::isMouseLeftPressed())
 		m_grid->PickTiles();
 
 	while (!p_pickingEvent->empty())
@@ -377,45 +377,47 @@ void GameState::_handlePicking()
 
 void GameState:: _handlePickingAi(Shape * obj)
 {
+	Staff* troll = m_mai->getTroll(); 
+
 	if (m_stage == GameStage::Play)
 	{
-		if (c.walkQueueDone())
+		if (!troll->walkQueueDone())
 		{
-			//Shape * obj = this->p_pickingEvent->top();
-			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
-
-			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-			
-			
-			XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
-			
-			XMINT2 startPosition = { xTile, yTile };
-
-			auto path = getPathAndEatAss(startPosition, targetPosition);
-			
-
-			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-			if (path.size() != 0)
-			{
-				m_justMoved = false;
-
-				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-				for (int i = 0; i < path.size() - 1; i++)
-				{
-					float lol = 255 * (float(i) / float(path.size()));
-					path[i + 1]->tile->getQuad().setColor(0, 0, lol);
-					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-				}
-			}
-
+		
 		}
-	}
-	
-	
+		troll->clearWalkingQueue();
 
+		//Shape * obj = this->p_pickingEvent->top();
+		XMFLOAT2 trollPos = troll->getPosition(); // (x,y) == (x,z,0)
+
+		int xTile = (int)(round_n(trollPos.x, 1) - 0.5f);
+		int yTile = (int)(round_n(trollPos.y, 1) - 0.5f);
+
+
+		XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
+
+		XMINT2 startPosition = { xTile, yTile };
+
+		auto path = getPathAndEatAss(startPosition, targetPosition);
+
+
+		XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+		if (path.size() != 0)
+		{
+			m_justMoved = false;
+
+			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+			for (int i = 0; i < path.size() - 1; i++)
+			{
+				float lol = 255 * (float(i) / float(path.size()));
+				path[i + 1]->tile->getQuad().setColor(0, 0, lol);
+				troll->Move(troll->getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+			}
+		}
+
+	}
 }
 
 

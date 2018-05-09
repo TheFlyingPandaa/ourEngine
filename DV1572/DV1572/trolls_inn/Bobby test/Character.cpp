@@ -8,7 +8,7 @@ Character::Character()
 {
 	m_floor = 0;
 	m_speed = 2.0f / 60;
-	setPosition(16.0f, 8.2f);
+	setPosition(16.5f, 8.5f);
 	m_currentDir = DOWN;
 	m_modelSpriteIndex = 3;
 	m_displayThought = false;
@@ -312,6 +312,14 @@ int Character::getFloor() const
 bool Character::walkQueueDone() const
 {
 	return m_goQueue.size() == 0;
+}
+
+void Character::clearWalkingQueue()
+{
+	m_goQueue.clear(); 
+	int xPos = getPosition().x;
+	int yPos = getPosition().y; 
+	setPosition(float(xPos) + 0.5f, float(yPos) + 0.5f); 
 }
 
 void Character::Draw()

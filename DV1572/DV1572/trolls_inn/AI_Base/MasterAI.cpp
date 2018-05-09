@@ -59,10 +59,16 @@ MasterAI::~MasterAI()
 			delete customer;
 	delete m_InnTroll; 
 }
+Staff * MasterAI::getTroll()
+{
+	return m_InnTroll; 
+}
 #include "../../InGameConsole.h"
 void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
+
+	m_solver.Update(*m_InnTroll); 
 
 	// Get the elapsed time
 	m_customer_now = m_now = m_clock.now();

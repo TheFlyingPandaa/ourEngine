@@ -82,9 +82,11 @@ public:
 	virtual WalkDirection getDirectionFromPoint(XMFLOAT3 oldPos, XMFLOAT3 newPos) const;
 	virtual int getFloor() const;
 	virtual bool walkQueueDone() const;
+	void clearWalkingQueue(); 
 	virtual void Draw();
 	void setThoughtBubbleMesh(Mesh* bubbleMesh);
 	virtual Shape* getShape();
+
 
 	short getUniqueIndex() const;
 };

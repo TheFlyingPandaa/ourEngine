@@ -44,6 +44,8 @@ public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
 	
+	Staff* getTroll(); 
+
 	void Update(Camera* cam);
 	void Draw();
 
