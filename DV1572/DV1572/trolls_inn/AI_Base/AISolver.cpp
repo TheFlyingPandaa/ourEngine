@@ -449,15 +449,12 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		switch (desiredAction)
 		{
 		case DrinkAction:
-			//GetPath(customer, RoomType::randomStupid);
 			gotPath = RequestPath(customer, RoomType::bar);
 			break;
 		case EatAction:
-			//GetPath(customer, RoomType::randomStupid);
 			gotPath = RequestPath(customer, RoomType::kitchen);
 			break;
 		case SleepAction:
-			//GetPath(customer, RoomType::randomStupid);
 			gotPath = RequestPath(customer, RoomType::bedroom);
 			break;
 		}

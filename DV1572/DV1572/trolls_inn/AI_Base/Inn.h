@@ -29,7 +29,7 @@ private:
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
 	Economy*		m_economy;
-	int				m_profit,	m_staffSalary = 420;
+	int				m_staffSalary = 420;
 	int				m_rent;
 	bool			m_staffSalaryApplyed;
 	double			m_timer;

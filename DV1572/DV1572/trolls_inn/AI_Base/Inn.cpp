@@ -96,7 +96,7 @@
 Inn::Inn()
 {
 	m_economy = new Economy(START_MONEY);
-	m_profit = 0;
+	
 	m_timer = 0;
 	m_text = new Text();
 	m_text->setFontType(TXT::Constantina_Big);
@@ -162,7 +162,7 @@ Attributes Inn::GetInnAttributes() const
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
-		m_profit -= m_staffSalary - m_rent;
+		
 		m_staffSalaryApplyed = true;
 	}
 
@@ -170,15 +170,10 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	if (m_timer > UPDATE_FREQ)
 	{
 		m_timer = 0;
-		if (m_profit > 0)
-			m_economy->Deposit(std::abs(m_profit));
-		else
-			m_economy->Withdraw(std::abs(m_profit));
 
 		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
 			m_staffSalaryApplyed = false;
 
-		m_profit = 0;
 		m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
 		
 	}
