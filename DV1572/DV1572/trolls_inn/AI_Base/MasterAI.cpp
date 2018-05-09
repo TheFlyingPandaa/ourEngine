@@ -49,8 +49,10 @@ MasterAI::~MasterAI()
 		delete customer;
 		customer = nullptr;
 	}
+
 	if (m_nextCustomer != nullptr)
 		delete m_nextCustomer;
+
 	if (m_leavingCustomers.size() > 0)
 		for (auto& customer : m_leavingCustomers)
 			delete customer;
@@ -65,8 +67,6 @@ void MasterAI::Update(Camera* cam)
 
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
-
-	
 	
 	if (!m_customerSpawned)
 	{
@@ -203,7 +203,9 @@ void MasterAI::Update(Camera* cam)
 			int result = m_solver.RequestPath(*leavingCustomer, leave);
 			if (result == 1)
 			{
-				for (int i = 0; i < 3; ++i)
+				RandomNumberGenerator gen;
+				int depth = gen.GenerateRandomNumber(1,5);
+				for (int i = 0; i < depth; ++i)
 					leavingCustomer->Move(Character::WalkDirection::DOWN);
 				for (int i = 0; i < 16; ++i)
 					leavingCustomer->Move(Character::WalkDirection::RIGHT);
