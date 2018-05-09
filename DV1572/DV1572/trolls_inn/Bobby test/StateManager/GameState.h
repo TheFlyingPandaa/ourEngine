@@ -12,6 +12,7 @@
 #include "../../Events/EventCollection.h"
 #include "../../Events/EventHandler.h"
 #include "../../Furniture/Table.h"
+#include "../../AI_Base/HeightMapGenerator.h"
 
 class GameState : public State {
 private:
@@ -37,9 +38,8 @@ private:
 	Object3D * bed3D;
 	Furniture * hardBed;
 
-	Object3D m_mountains;
-	Mesh* m_mountainsMesh;
-	
+	HeightMap m_background;
+
 	MasterAI* m_mai;
 
 	GameTime gameTime; 

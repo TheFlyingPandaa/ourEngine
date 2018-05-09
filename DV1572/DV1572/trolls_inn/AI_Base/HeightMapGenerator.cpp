@@ -109,6 +109,38 @@ void HeightMap::DiamondSqaure::smoothValues(int filterSize)
 	} //x
 }
 
+void HeightMap::DiamondSqaure::smoothValues(int filterSize, int _x, int _z)
+{
+	int count = 0;
+	float total = 0;
+
+	//loop through the values
+	for (int x = 0; x < mapSize - 1; x++)
+	{
+		for (int z = 0; z < mapSize - 1; z++)
+		{
+			count = 0;
+			total = 0.f;
+			for (int x0 = x - filterSize; x0 <= x + filterSize; x0++)
+			{
+				if (x0 < 0 || x0 > mapSize - 1) //check boundaries
+					continue;
+				for (int z0 = z - filterSize; z0 < z + filterSize; z0++)
+				{
+					if (z0 < 0 || z0 > mapSize - 1)
+						continue;
+
+					//add the contribution from the filter to the total for this point
+					total += diamondSquare[z0 + (x0 * mapSize)];
+					count++;
+				} //z0
+			} //x0
+			if (count != 0 && total != 0)
+				diamondSquare[z + (mapSize * x)] = total / (float)count;
+		} //z
+	} //x
+}
+
 HeightMap::DiamondSqaure::DiamondSqaure()
 {
 }
@@ -127,7 +159,7 @@ std::vector<float> HeightMap::DiamondSqaure::createDiamondSquare(int mapSize, in
 	/*for (int z = 0; z < this->mapSize; z += stepSize)
 		for (int x = 0; x < this->mapSize; x += stepSize)
 			setValue(x, z, 10);*/
-	int mountainHeight = 25;
+	int mountainHeight = 30;
 	for (int z = 0; z < this->mapSize; z += stepSize)
 		this->setValue(0, z, mountainHeight);
 	for (int z = 0; z < this->mapSize; z += stepSize)
@@ -149,10 +181,13 @@ std::vector<float> HeightMap::DiamondSqaure::createDiamondSquare(int mapSize, in
 		noiseScale = noiseScale / 2;
 	}
 	//add smoothing to the values and repeat X given times for further smoothing, 1 time is enough for now, but play with it for lulz
-	for (int z = (mapSize / 2) - 12; z < (mapSize / 2) + 12; z++)
-		for (int x = (mapSize / 2) - 12; x < (mapSize / 2) + 12; x++)
+	for (int z = (mapSize / 2) - 24; z < (mapSize / 2) + 22; z++)
+		for (int x = (mapSize / 2) - 22; x < (mapSize / 2) + 22; x++)
+			this->setValue(x, z, 5.5);
+	smoothValues((int)pow(2, 1) + 1);
+	for (int z = (mapSize / 2) - 20; z < (mapSize / 2) + 19; z++)
+		for (int x = (mapSize / 2) - 16; x < (mapSize / 2) + 17; x++)
 			this->setValue(x, z, 5);
-	smoothValues((int)pow(2, 2) + 1);
 	return this->diamondSquare;
 }
 
@@ -164,20 +199,73 @@ HeightMap::HeightMap(int mapWidth, int stepSize, float noise)
 	_BuildHeightMap();
 }
 
+HeightMap::HeightMap()
+{
+	m_mountainMesh.LoadModel("trolls_inn/TerrainLol.txt");
+
+	std::ifstream ifstr;
+	ifstr.open("trolls_inn/TerrainLol.txt");
+	while (ifstr)
+	{
+		std::string current;
+		ifstr >> current;
+		if (!strcmp(current.c_str(), "H"))
+		{
+			while (ifstr)
+			{
+				float value;
+				ifstr >> value;
+				m_heightValues.push_back(value);
+			}
+		}
+	}
+	rs.setMesh(&m_mountainMesh);
+	rs.setPos(-48, -5.04, -49.4);
+	rs.setScale(1, 1, 1);
+
+	m_treeMesh.LoadModel("trolls_inn/Resources/tree/tree.obj");
+	int mapSize = 129;
+	for (int i = 0; i < 1000; i++)
+	{
+		int x = rand() % mapSize;
+		int z = rand() % mapSize;
+		if (x - 48 < (mapSize / 2) - 16 || (mapSize / 2) + 17 > x - 48)
+		{
+			if (z - 49.4< (mapSize / 2) - 20 || z - 49.4 <(mapSize / 2) + 19)
+			{
+				m_trees.push_back(RectangleShape());
+				m_trees.back().setMesh(&m_treeMesh);
+				int index = x + (mapSize * z);
+				m_trees.back().setPos(x - 48, m_heightValues[index] - 5.04, z - 49.4);
+				m_trees.back().setScale(2, 3, 2);
+			}
+			
+
+		}
+			
+		
+	}
+	
+
+
+}
+
+void HeightMap::Draw()
+{
+	rs.Draw();
+	for (auto& tree : m_trees)
+		tree.Draw();
+}
+
 HeightMap::~HeightMap()
 {
-
+	rs.Draw();
 }
 
 void HeightMap::_GenerateHeightValues(int stepSize, float noise)
 {
 	DiamondSqaure ds;
 	m_heightValues = ds.createDiamondSquare(m_mapSize, stepSize, noise);
-}
-
-std::string HeightMap::toString() const
-{
-	return std::string();
 }
 
 void HeightMap::_BuildHeightMap()
@@ -245,47 +333,26 @@ void HeightMap::_BuildHeightMap()
 
 
 			XMFLOAT3 vtx1, vtx2, vtx3;
-			//XMFLOAT2 uv1, uv2, uv3;
 			XMFLOAT3 normal;
 
 			vtx1 = XMFLOAT3(m_vertices[v1].x, m_vertices[v1].y, m_vertices[v1].z);
 			vtx2 = XMFLOAT3(m_vertices[v2].x, m_vertices[v2].y, m_vertices[v2].z);
 			vtx3 = XMFLOAT3(m_vertices[v3].x, m_vertices[v3].y, m_vertices[v3].z);
 
-			//uv1 = m_vertices[v1].tex;
-			//uv2 = m_vertices[v2].tex;
-			//uv3 = m_vertices[v3].tex;
-
 			XMVECTOR edge1 = XMLoadFloat3(&vtx2) - XMLoadFloat3(&vtx1);
 			XMVECTOR edge2 = XMLoadFloat3(&vtx3) - XMLoadFloat3(&vtx1);
 
 			XMVECTOR n = XMVector3Normalize(XMVector3Cross(edge1, edge2));
-
 			XMStoreFloat3(&normal, n);
 
 			m_vertices[v1].nx = normal.x; m_vertices[v1].ny = normal.y; m_vertices[v1].nz = normal.z;
 			m_vertices[v2].nx = normal.x; m_vertices[v2].ny = normal.y; m_vertices[v2].nz = normal.z;
 			m_vertices[v3].nx = normal.x; m_vertices[v3].ny = normal.y; m_vertices[v3].nz = normal.z;
-
-
-			vtx1 = XMFLOAT3(m_vertices[v4].x, m_vertices[v4].y, m_vertices[v4].z);
-			vtx2 = XMFLOAT3(m_vertices[v5].x, m_vertices[v5].y, m_vertices[v5].z);
-			vtx3 = XMFLOAT3(m_vertices[v6].x, m_vertices[v6].y, m_vertices[v6].z);
-
-			//uv1 = m_vertices[v1].tex;
-			//uv2 = m_vertices[v2].tex;
-			//uv3 = m_vertices[v3].tex;
-
-			edge1 = XMLoadFloat3(&vtx2) - XMLoadFloat3(&vtx1);
-			edge2 = XMLoadFloat3(&vtx3) - XMLoadFloat3(&vtx1);
-
-			n = XMVector3Normalize(XMVector3Cross(edge1, edge2));
-
-			XMStoreFloat3(&normal, n);
-
 			m_vertices[v4].nx = normal.x; m_vertices[v4].ny = normal.y; m_vertices[v4].nz = normal.z;
 			m_vertices[v5].nx = normal.x; m_vertices[v5].ny = normal.y; m_vertices[v5].nz = normal.z;
 			m_vertices[v6].nx = normal.x; m_vertices[v6].ny = normal.y; m_vertices[v6].nz = normal.z;
+
+			
 
 
 			m_indices.push_back(v1);
@@ -330,8 +397,16 @@ void HeightMap::_BuildHeightMap()
 		stream << m_indices[i + 3] + 1 << "/" << m_indices[i + 3] + 1 << "/" << m_indices[i + 3] + 1 << "\n";
 
 	}
+	stream << "H ";
+	for (auto height : m_heightValues)
+		stream << height << " ";
+	stream << "\n";
+	m_vertices.clear();
+	m_indices.clear();
 
 	stream.close();
+
+	
 
 
 }

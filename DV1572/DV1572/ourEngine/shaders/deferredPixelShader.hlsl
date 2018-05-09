@@ -51,7 +51,7 @@ float4 main(Input input) : SV_Target
 	//return tShadow.Sample(sampAni, input.tex);
 
 	float3 ambient = diffuseSample * 0.5f;
-	return float4(normal,1.0f); // HENRIK TA BORT
+
 	float3 finalColorForSun; 
 	//SUN//
 

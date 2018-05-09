@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
-#include "../../ourEngine/interface/shape/Shape.h"
+#include "../../ourEngine/interface/shape/Rectangle.h"
 
 
-class HeightMap : public Shape
+class HeightMap
 {
 private:
 	class DiamondSqaure
@@ -25,6 +25,7 @@ private:
 		void squareStep(int x, int z, int stepSize, float noise);
 		void diamondSquareAlgorithm(int stepSize, float noise);
 		void smoothValues(int filtersize); //filtersize must be 2^n + 1
+		void smoothValues(int filterSize, int x, int z);
 	};
 private:
 
@@ -34,11 +35,17 @@ private:
 	std::vector<float> m_heightValues;
 	std::vector<VERTEX> m_vertices;
 	std::vector<unsigned int> m_indices;
+	
+	Mesh m_mountainMesh;
+	RectangleShape rs;
+	Mesh m_treeMesh;
+	std::vector<RectangleShape> m_trees;
 
 public:
 	HeightMap(int mapWidth, int stepSize, float noise);
+	HeightMap();
+	void Draw();
 	virtual ~HeightMap();
-	std::string toString() const override;
 private:
 	void _GenerateHeightValues(int stepSize, float noise);
 	void _BuildHeightMap();
