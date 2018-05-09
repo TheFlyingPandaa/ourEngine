@@ -118,9 +118,9 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 		_traversalPath(parent, dst, src, dst);
 }
 
-void RoomCtrl::AddRoomObject(Furniture furniture)
+void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
-	XMINT2 furPos = { static_cast<int>(furniture.getPosition().x), static_cast<int>(furniture.getPosition().z) };
+	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
@@ -129,41 +129,41 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 		return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
 	};
 	
-	if (furniture.getRotation() == 0 || furniture.getRotation() == 180)
+	if (furniture->getRotation() == 0 || furniture->getRotation() == 180)
 	{
-		for (int i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
-			if (furniture.getRotation() == 0)
+			if (furniture->getRotation() == 0)
 			{
 				//m_tiles[_index(furniture.getPosition().x,furniture.getPosition().z + i)]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z + i)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z + i)]->setHasObject(true);
 			}
 			else
 			{
 				//m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z - i)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z - i)]->setHasObject(true);
 			}
 		}
 	}
-	if (furniture.getRotation() == 90 || furniture.getRotation() == 270)
+	if (furniture->getRotation() == 90 || furniture->getRotation() == 270)
 	{
-		for (int i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
-			if (furniture.getRotation() == 90)
+			if (furniture->getRotation() == 90)
 			{
 				//m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
 			}
 			else
 			{
 				//m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
 			}
 		}
 	}
 
 	//m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setIsWalkeble(false);
-	m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setHasObject(true);
+	m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z)]->setHasObject(true);
 
 	//furniture.setLightIndex(cr->getRoomIndex());
 	cr->AddRoomObject(furniture);

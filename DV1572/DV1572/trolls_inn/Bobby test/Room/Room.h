@@ -69,7 +69,7 @@ public:
 
 	void		setFloorMesh(Mesh * mesh);
 	void		CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side);
-	void		AddRoomObject(Furniture fut);
+	void		AddRoomObject(Furniture * fut);
 	void		PickTiles();
 	void		PickWalls();
 	void		PickFurnitures();
@@ -90,7 +90,8 @@ public:
 	const RoomType& getRoomType() const;
 
 	int getAmountOfObjects();
-	int getAmountOfSpecificObjects(Furniture compare);
+	int getAmountOfSpecificObjects(Furniture * compare);
+	int getAmountOfSpecificObjectsNotBusy(Furniture * compare);
 	int getPriceOfAllObjects();
 	std::vector<Furniture*> getAllRoomFurnitures();
 	bool RemoveThisFurniture(Furniture * fur);

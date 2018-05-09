@@ -34,4 +34,18 @@ Bed::Bed(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos,
 Bed::~Bed()
 {
 }
+std::string Bed::WhatType()
+{
+	return "Bed";
+}
+void Bed::Draw()
+{
+	p_object.Draw();
+}
+
+Furniture * Bed::MakeCopy()
+{
+	return new Bed(static_cast<const Bed&>(*this));
+}
+
 //13.5,6.5
