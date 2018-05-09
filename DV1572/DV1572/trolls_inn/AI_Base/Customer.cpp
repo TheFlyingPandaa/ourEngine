@@ -11,7 +11,7 @@ Customer::Customer(Race race, int gold)
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
-	m_review.SetStat(0.1);
+	m_review.SetStat(0.1f);
 
 	if (race == Elf)
 	{
@@ -70,12 +70,6 @@ const char* Customer::GetRaceStr() const
 {
 	switch (m_race)
 	{
-	/*case Human:
-		return "Human";
-	case Troll:
-		return "Troll";
-	case Orc:
-		return "Orc";*/
 	case Elf:
 		return "Elf";
 	case Dwarf:

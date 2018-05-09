@@ -96,7 +96,7 @@
 Inn::Inn()
 {
 	m_economy = new Economy(START_MONEY);
-	m_profit = 0;
+	
 	m_timer = 0;
 	m_text = new Text();
 	m_text->setFontType(TXT::Constantina_Big);
@@ -162,7 +162,7 @@ Attributes Inn::GetInnAttributes() const
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
-		m_profit -= m_staffSalary - m_rent;
+		
 		m_staffSalaryApplyed = true;
 	}
 
@@ -170,15 +170,10 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	if (m_timer > UPDATE_FREQ)
 	{
 		m_timer = 0;
-		if (m_profit > 0)
-			m_economy->Deposit(std::abs(m_profit));
-		else
-			m_economy->Withdraw(std::abs(m_profit));
 
 		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
 			m_staffSalaryApplyed = false;
 
-		m_profit = 0;
 		m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
 		
 	}
@@ -267,7 +262,7 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 void Inn::Draw()
 {
 	
-	for (size_t i = 0; i < m_withdrawText.size(); i++)
+	for (int i = 0; i < m_withdrawText.size(); i++)
 	{
 		DirectX::XMVECTOR pos = m_withdrawText.at(i).getPosition();
 		m_withdrawText.at(i).setPosition(XMVectorGetX(pos), XMVectorGetY(pos) + 1);
@@ -288,7 +283,7 @@ void Inn::Draw()
 		}
 		m_removeVec.clear();
 	}
-	for (size_t i = 0; i < m_depositText.size(); i++)
+	for (int i = 0; i < m_depositText.size(); i++)
 	{
 		DirectX::XMVECTOR pos = m_depositText.at(i).getPosition();
 		m_depositText.at(i).setPosition(198, XMVectorGetY(pos) - 1);

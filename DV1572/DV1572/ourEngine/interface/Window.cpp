@@ -164,7 +164,7 @@ void DX::submitToInstance(Character * character)
 	
 	XMFLOAT4A chararcterDireciton = { tempPos.x,tempPos.y,tempPos.z,1.0f };
 	attribDesc.charDir = chararcterDireciton;
-	attribDesc.spriteIndex = character->getModelSpriteIndex();
+	attribDesc.spriteIndex = static_cast<float>(character->getModelSpriteIndex());
 
 	// Unique Mesh
 	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
@@ -203,7 +203,7 @@ void DX::submitToInstance(Billboard* bill)
 	
 	XMFLOAT4A chararcterDireciton = { -1, -1, -1, -1 };
 	attribDesc.charDir = chararcterDireciton;
-	attribDesc.spriteIndex = bill->getSpriteIndex();
+	attribDesc.spriteIndex = static_cast<float>(bill->getSpriteIndex());
 
 	// Unique Mesh
 	if (exisitingEntry == DX::g_instanceGroupsBillboard.end())
@@ -1155,7 +1155,7 @@ void Window::_billboardPass(const Camera & cam)
 	static float indexLol = 0.01f;
 	
 	
-		index = (int)index % 4;
+		index = static_cast<float>((int)index % 4);
 		indexLol += 1.0f;
 		if (indexLol >= 1)
 		{

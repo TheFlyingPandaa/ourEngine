@@ -75,11 +75,11 @@ public:
 	}
 	int	getPosX() const
 	{
-		return quad.getPosition().x;
+		return static_cast<int>(quad.getPosition().x);
 	}
 	int	getPosY() const
 	{
-		return quad.getPosition().z;
+		return static_cast<int>(quad.getPosition().z);
 	}
 
 	void	setPosX(const int x);

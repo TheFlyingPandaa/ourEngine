@@ -1,6 +1,9 @@
 #include "Character.h" 
 #include "../../ourEngine/core/Dx.h"
 
+// FOr threading
+short Character::s_indexCounter = 0;
+
 Character::Character()
 {
 	m_floor = 0;
@@ -9,6 +12,9 @@ Character::Character()
 	m_currentDir = DOWN;
 	m_modelSpriteIndex = 3;
 	m_displayThought = false;
+	
+	// For threading
+	m_uniqueIndex = s_indexCounter++;
 }
 
 Character::Character(const Character & other)
@@ -112,7 +118,7 @@ void Character::Update()
 			indexLol += 0.04f;
 			if (indexLol >= 1)
 			{
-				m_modelSpriteIndex += indexLol;
+				m_modelSpriteIndex += static_cast<int>(indexLol);
 				indexLol = 0.0f;
 			}
 			
@@ -180,6 +186,8 @@ void Character::setSpeed(float spd)
 
 void Character::setThoughtBubble(Thoughts t)
 {
+	if (m_displayThought)
+		return;
 	m_displayThought = true;
 	switch (t)
 	{
@@ -196,6 +204,22 @@ void Character::setThoughtBubble(Thoughts t)
 		m_thoughtBubble.setSpriteIndex(0);
 		return;
 	}
+}
+
+Character::Thoughts Character::GetThought() const
+{
+	switch (m_thoughtBubble.getSpriteIndex())
+	{
+	case 3:
+		return ANGRY;
+	case 2:
+		return TIRED;
+	case 1:
+		return HUNGRY;
+	case 0:
+		return THIRSTY;
+	}
+	return THIRSTY;
 }
 
 void Character::castShadow()
@@ -306,4 +330,9 @@ void Character::setThoughtBubbleMesh(Mesh * bubbleMesh)
 Shape * Character::getShape()
 {
 	return &m_model;
+}
+
+short Character::getUniqueIndex() const
+{
+	return m_uniqueIndex;
 }

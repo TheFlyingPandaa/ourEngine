@@ -38,7 +38,7 @@ OUTPUT main(INPUT input)
 
 
 
-	int index = round(input.lIndex);
+	uint index = round(input.lIndex);
 	output.lIndex.a = 1.0f;
 
 	output.lIndex.r = index % 256;

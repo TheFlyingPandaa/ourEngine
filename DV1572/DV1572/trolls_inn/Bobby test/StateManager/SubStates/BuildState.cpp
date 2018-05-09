@@ -5,7 +5,7 @@
 
 void BuildState::_resetHudButtonPressedExcept(int index, std::vector<bool> &vec, HUD &selectedHud)
 {
-	for (size_t i = 0; i < vec.size(); i++)
+	for (int i = 0; i < vec.size(); i++)
 	{
 		if (i != index)
 		{
@@ -40,7 +40,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 			case BuildStage::None:
 				if (pickedShape)
 				{
-					DirectX::XMINT2 pos(pickedShape->getPosition().x, pickedShape->getPosition().z);
+					DirectX::XMINT2 pos(static_cast<int32_t>(pickedShape->getPosition().x), static_cast<int32_t>(pickedShape->getPosition().z));
 					Room* temp = m_roomCtrl->getRoomAtPos(pos);
 					if (temp != m_selectedRoom)
 					{
@@ -75,7 +75,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 						m_clickedLast = true;
 						if (pickedShape)
 						{
-							DirectX::XMINT2 pos(pickedShape->getPosition().x, pickedShape->getPosition().z);
+							DirectX::XMINT2 pos(static_cast<int32_t>(pickedShape->getPosition().x), static_cast<int32_t>(pickedShape->getPosition().z));
 							if (m_furnitureRemove == nullptr)
 							{
 								
@@ -105,6 +105,17 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 					m_furnitureRemove = nullptr;
 				}
+				if (!table)
+				{
+					if (m_selectedThing == 0)
+					{
+						table = new Table(XMFLOAT3(0, 0, 0), nullptr);
+					}
+					else if(m_selectedThing == 1)
+					{
+						table = new Bed(XMFLOAT3(0, 0, 0), nullptr);
+					}
+				}
 			}
 			break;
 		default:
@@ -120,6 +131,11 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 				m_selectedRoom->Select();
 			}
 			m_selectedRoom = nullptr;
+			if (table)
+			{
+				delete table;
+				table = nullptr;
+			}
 			break;
 		}
 	}
@@ -246,7 +262,7 @@ bool BuildState::_mainHudPick()
 		else
 		{
 			int picked = -1;
-			for (size_t i = 0; i < m_hudButtonsPressed.size() && picked == -1; i++)
+			for (int i = 0; i < m_hudButtonsPressed.size() && picked == -1; i++)
 			{
 				if (m_hudButtonsPressed[i])
 					picked = i;
@@ -283,7 +299,7 @@ bool BuildState::_mainHudPick()
 	else if (!m_madeFullResetMain)
 	{
 		// Miss all buttons
-		for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+		for (int i = 0; i < m_hudButtonsPressed.size(); i++)
 		{
 			if (!m_hudButtonsPressed[i])
 				p_HUD.ResetColorsOnPickableWithIndex(i);
@@ -464,7 +480,7 @@ void BuildState::_inputDoor()
 			door.setPos(p.x, p.y, p.z);
 			//std::cout << m_startTile->getRotation().y << std::endl;
 			door.setRotation(0.0f, DirectX::XMConvertToDegrees(m_startTile->getRotation().y), 0.0f);
-			door.setScale(1.01);
+			door.setScale(1.01f);
 			//TEMP
 			drawSelectedThing = true;
 			twoStepThingy = true;
@@ -516,7 +532,7 @@ void BuildState::_inputFurniture()
 			start.y = s.z;
 			if (m_canBuildFurniture)
 			{
-				m_roomCtrl->AddRoomObject(*table);
+				m_roomCtrl->AddRoomObject(table);
 				m_inn->Withdraw(table->getPrice());
 				//m_inn->UpdateMoney();
 			}
@@ -532,7 +548,7 @@ void BuildState::_inputFurniture()
 		else if (m_startTile)
 		{
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
-			table->setPosition(p.x , p.y - 0.2f, p.z);
+			table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
 			DirectX::XMINT2 start;
 			start.x = table->getPosition().x;
 			start.y = table->getPosition().z;
@@ -592,7 +608,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Table(DirectX::XMFLOAT3(0, 0, 0), nullptr);
+	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
 }
 
 BuildState::~BuildState()
@@ -625,7 +641,7 @@ void BuildState::Update(double deltaTime)
 	if (m_selectedRoom && Input::isKeyPressed(Input::Del))
 	{
 		DirectX::XMFLOAT3 p = m_selectedRoom->getPosition();
-		DirectX::XMINT2 pos(p.x + 0.5f, p.z + 0.5f);
+		DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
 		std::vector<Tile*> backtiles;
 		DirectX::XMINT2 delPos;
 		DirectX::XMINT2 delSize;
@@ -641,7 +657,7 @@ void BuildState::Update(double deltaTime)
 	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isKeyPressed(Input::Del))
 	{
 		DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
-		DirectX::XMINT2 pos(p.x + 0.5f, p.z + 0.5f);
+		DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
 		int price = m_furnitureRemove->getPrice();
 		bool tem = m_roomCtrl->RemoveRoomObject(m_furnitureRemove);
 		if (tem)

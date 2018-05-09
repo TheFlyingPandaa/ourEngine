@@ -8,12 +8,12 @@ void Tile::setMesh(Mesh * mesh)
 void Tile::setPosX(const int x)
 {
 	XMFLOAT3 tempPos = quad.getPosition();
-	quad.setPos(x, tempPos.y, tempPos.z);
+	quad.setPos(static_cast<float>(x), tempPos.y, tempPos.z);
 }
 void Tile::setPosY(const int y)
 {
 	XMFLOAT3 tempPos = quad.getPosition();
-	quad.setPos(tempPos.x, tempPos.y, y);
+	quad.setPos(tempPos.x, tempPos.y, static_cast<float>(y));
 }
 
 XMFLOAT2 Tile::getPosition() const

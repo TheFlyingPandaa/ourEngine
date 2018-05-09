@@ -46,12 +46,24 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 MasterAI::~MasterAI()
 {
 	for (auto& customer : m_customers)
+	{
 		delete customer;
+		customer = nullptr;
+	}
+
+	if (m_nextCustomer != nullptr)
+		delete m_nextCustomer;
+
+	if (m_leavingCustomers.size() > 0)
+		for (auto& customer : m_leavingCustomers)
+			delete customer;
 	delete m_InnTroll; 
 }
-
+#include "../../InGameConsole.h"
 void MasterAI::Update(Camera* cam)
 {
+	//InGameConsole::pushString(std::to_string(m_customers.size()));
+
 	// Get the elapsed time
 	m_customer_now = m_now = m_clock.now();
 	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
@@ -69,8 +81,13 @@ void MasterAI::Update(Camera* cam)
 			{
 				if (duration > 30)
 				{
+					std::stringstream ss;
+					ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 					m_nextCustomer->RestartClock();
 					m_customers.push_back(m_nextCustomer);
+					m_nextCustomer = nullptr;
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
 				}
@@ -79,8 +96,13 @@ void MasterAI::Update(Camera* cam)
 			{
 				if (duration > 15)
 				{
+					std::stringstream ss;
+					ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 					m_nextCustomer->RestartClock();
 					m_customers.push_back(m_nextCustomer);
+					m_nextCustomer = nullptr;
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
 				}
@@ -145,7 +167,7 @@ void MasterAI::Update(Camera* cam)
 				break;
 			}
 
-			if (customer->GetEconomy().GetGold() < price)
+			if (customer->GetEconomy().GetGold() < price || customer->GetThought() == Character::ANGRY)
 			{
 				// Customer leaves inn
 				// Save id for leaving customers
@@ -191,14 +213,20 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			m_solver.GetPath(*leavingCustomer, leave);
+			int result = m_solver.RequestPath(*leavingCustomer, leave);
+			if (result == 1)
+			{
+				RandomNumberGenerator gen;
+				int depth = gen.GenerateRandomNumber(1,5);
+				for (int i = 0; i < depth; ++i)
+					leavingCustomer->Move(Character::WalkDirection::DOWN);
+				for (int i = 0; i < 16; ++i)
+					leavingCustomer->Move(Character::WalkDirection::RIGHT);
+				leavingCustomer->GotPathSetNextAction(LeavingInnAction);
 
-			for (int i = 0; i < 3; ++i)
-				leavingCustomer->Move(Character::WalkDirection::DOWN);
-			for (int i = 0; i < 16; ++i)
-				leavingCustomer->Move(Character::WalkDirection::RIGHT);
+			}
 
-			leavingCustomer->GotPathSetNextAction(LeavingInnAction);
+			
 		}
 		else
 		{

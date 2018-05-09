@@ -6,11 +6,13 @@
 Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
 {
 	p_rot = 0;
-	this->pos.x = pos.x;
-	this->pos.y = pos.y;
-	this->pos.z = pos.z;
+	this->pos.x = static_cast<int>(pos.x);
+	this->pos.y = static_cast<int>(pos.y);
+	this->pos.z = static_cast<int>(pos.z);
 
 	p_isBusy = false;
+
+	p_level = 0;
 }
 
 
@@ -52,7 +54,8 @@ void Furniture::setPosition(float x, float y, float z)
 void Furniture::setRotation(int rot)
 {
 	p_rot = rot;
-	p_object.setRotation(0, rot * (-90), 0);
+	//p_object.setRotation(0, rot * (-90), 0);
+	p_object.setRotation(0.0f, static_cast<float>(rot) - 90.0f, 0.0f);
 }
 
 DirectX::XMINT3 Furniture::getPosition()
@@ -73,6 +76,21 @@ bool Furniture::getIsBusy()
 void Furniture::setIsBusy(bool busy)
 {
 	p_isBusy = busy;
+}
+
+int Furniture::getLevel()
+{
+	return 0;
+}
+
+void Furniture::setLevel(int amount)
+{
+	p_level = amount;
+}
+
+void Furniture::AddLevel(int amount)
+{
+	p_level += amount;
 }
 
 int Furniture::getRotation()
@@ -159,9 +177,19 @@ void Furniture::setLightIndex(int index)
 
 }*/
 
+std::string Furniture::WhatType()
+{
+	return "FUCK";
+}
+
 void Furniture::Draw()
 {
 	p_object.Draw();
+}
+
+Furniture * Furniture::MakeCopy()
+{
+	return nullptr;
 }
 
 
