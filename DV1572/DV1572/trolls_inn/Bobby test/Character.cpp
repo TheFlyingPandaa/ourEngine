@@ -5,11 +5,8 @@ Character::Character()
 {
 	m_floor = 0;
 	m_speed = 2.0f / 60;
-	m_model.setPos(0.5, 0.5, -10.5);
+	setPosition(16.0f, 8.2f);
 	m_currentDir = DOWN;
-	
-	XMFLOAT3 playerPos = m_model.getPosition();
-	playerPos.y += 1.5f;
 	m_modelSpriteIndex = 0;
 	m_displayThought = false;
 }
@@ -21,7 +18,6 @@ Character::Character(const Character & other)
 	this->m_floor = other.m_floor;
 	this->m_goQueue = other.m_goQueue;
 	this->m_speed = other.m_speed;
-
 }
 
 Character::~Character()
@@ -113,7 +109,7 @@ void Character::Update()
 
 			static float indexLol = 0.01f;
 			m_modelSpriteIndex = (int)m_modelSpriteIndex % 4;
-			indexLol += 0.1f;
+			indexLol += 0.04f;
 			if (indexLol >= 1)
 			{
 				m_modelSpriteIndex += indexLol;
@@ -167,7 +163,7 @@ void Character::Turn(WalkDirection dir)
 
 void Character::setPosition(float x, float z)
 {
-	m_model.setPos(x, 2.0f * m_floor, z);
+	m_model.setPos(x, 0.5f, z);
 }
 
 void Character::setFloor(int floor)

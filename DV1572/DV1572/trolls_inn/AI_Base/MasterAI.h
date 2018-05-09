@@ -19,6 +19,7 @@ private:
 	std::vector<Customer*> m_customers;
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
+	Staff* m_InnTroll; 
 	CustomerFlowControl m_cFC;
 	bool m_customerSpawned;
 

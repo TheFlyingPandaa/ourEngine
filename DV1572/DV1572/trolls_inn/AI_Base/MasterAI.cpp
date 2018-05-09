@@ -40,12 +40,14 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	m_customer_start = m_start = m_clock.now();
 	m_customerSpawned = true;
 	m_inn = inn;
+	m_InnTroll = new Staff(); 
 }
 
 MasterAI::~MasterAI()
 {
 	for (auto& customer : m_customers)
 		delete customer;
+	delete m_InnTroll; 
 }
 
 void MasterAI::Update(Camera* cam)
@@ -233,10 +235,10 @@ void MasterAI::Draw()
 		customer->Draw();
 	for (auto& leavingCustomer : this->m_leavingCustomers)
 		leavingCustomer->Draw();
+	m_InnTroll->Draw(); 
 }
 
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
-
 }

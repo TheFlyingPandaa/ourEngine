@@ -1163,7 +1163,6 @@ void Window::_billboardPass(const Camera & cam)
 			indexLol = 0.0f;
 		}
 	
-	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);

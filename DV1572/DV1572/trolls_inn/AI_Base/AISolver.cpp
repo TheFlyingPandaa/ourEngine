@@ -461,6 +461,8 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 
 void AISolver::Update(Staff& staff)
 {
+	//This is only used to update the troll in different ways. 
+	
 }
 
 void AISolver::Update(Staff& staff, Action desiredAction)
