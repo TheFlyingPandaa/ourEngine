@@ -57,9 +57,11 @@ MasterAI::~MasterAI()
 		for (auto& customer : m_leavingCustomers)
 			delete customer;
 }
-
+#include "../../InGameConsole.h"
 void MasterAI::Update(Camera* cam)
 {
+	//InGameConsole::pushString(std::to_string(m_customers.size()));
+
 	// Get the elapsed time
 	m_customer_now = m_now = m_clock.now();
 	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);

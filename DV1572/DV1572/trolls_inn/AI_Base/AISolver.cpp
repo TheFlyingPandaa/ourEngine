@@ -547,7 +547,7 @@ int AISolver::RequestPath(Character & character, RoomType targetRoom)
 			}
 			else
 			{
-				XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(xTile, yTile), targetRoom);
+				XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(static_cast<float>(xTile), static_cast<float>(yTile)), targetRoom);
 				// There wasnt any good rooms
 				if (xmtarg.x == -1)
 				{

@@ -43,32 +43,32 @@ void HUD::_setupAPotentialAreaCircle(int x, int y, int r, int relative)
 	switch (rt)
 	{
 	case RectangleShape::BR:
-		pos.x = static_cast<float>(s.x) - pos.x;
+		pos.x = s.x - pos.x;
 		break;
 	case RectangleShape::TR:
-		pos.x = static_cast<float>(s.x) - pos.x;
-		pos.y = static_cast<float>(s.y) - pos.y;
+		pos.x = s.x - pos.x;
+		pos.y = s.y - pos.y;
 		break;
 	case RectangleShape::TL:
-		pos.y = static_cast<float>(s.y) - pos.y;
+		pos.y = s.y - pos.y;
 		break;
 	case RectangleShape::C:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		pos.x = (s.x / 2) + pos.x;
+		pos.y = (s.y / 2) + pos.y;
 		break;
 	case RectangleShape::BC:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
+		pos.x = (s.x / 2) + pos.x;
 		break;
 	case RectangleShape::TC:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
-		pos.y = static_cast<float>(s.y) - pos.y;
+		pos.x = (s.x / 2) + pos.x;
+		pos.y = s.y - pos.y;
 		break;
 	case RectangleShape::LC:
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		pos.y = (s.y / 2) + pos.y;
 		break;
 	case RectangleShape::RC:
-		pos.x = static_cast<float>(s.x) - pos.x;
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
+		pos.x = s.x - pos.x;
+		pos.y = (s.y / 2) + pos.y;
 		break;
 	}
 	
@@ -88,44 +88,44 @@ void HUD::_setupAPotentialAreaRect(int x, int y, int sx, int sy, int relative)
 	switch (relative)
 	{
 	case RectangleShape::BR:
-		pos.x = static_cast<float>(s.x) - pos.x;
-		offsetX = -scl.x;
+		pos.x = s.x - pos.x;
+		offsetX = static_cast<float>(-scl.x);
 		break;
 	case RectangleShape::TR:
-		pos.x = static_cast<float>(s.x) - pos.x;
-		pos.y = static_cast<float>(s.y) - pos.y;
-		offsetX = -scl.x;
-		offsetY = -scl.y;
+		pos.x = s.x - pos.x;
+		pos.y = s.y - pos.y;
+		offsetX = static_cast<float>(-scl.x);
+		offsetY = static_cast<float>(-scl.y);
 		break;
 	case RectangleShape::TL:
-		pos.y = static_cast<float>(s.y) - pos.y;
-		offsetY = -scl.y;
+		pos.y = s.y - pos.y;
+		offsetY = static_cast<float>(-scl.y);
 		break;
 	case RectangleShape::C:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
-		offsetX = -(scl.x / 2.0f);
-		offsetY = -(scl.y / 2.0f);
+		pos.x = (s.x / 2) + pos.x;
+		pos.y = (s.y / 2) + pos.y;
+		offsetX = -(static_cast<float>(scl.x) / 2.0f);
+		offsetY = -(static_cast<float>(scl.y) / 2.0f);
 		break;
 	case RectangleShape::BC:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
-		offsetX = -(scl.x / 2.0f);
+		pos.x = (s.x / 2) + pos.x;
+		offsetX = -(static_cast<float>(scl.x) / 2.0f);
 		break;
 	case RectangleShape::TC:
-		pos.x = (static_cast<float>(s.x) / 2.0f) + pos.x;
-		pos.y = static_cast<float>(s.y) - pos.y;
-		offsetX = -(scl.x / 2.0f);
-		offsetY = -scl.y;
+		pos.x = (s.x / 2) + pos.x;
+		pos.y = s.y - pos.y;
+		offsetX = -(static_cast<float>(scl.x) / 2.0f);
+		offsetY = static_cast<float>(-scl.y);
 		break;
 	case RectangleShape::LC:
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
-		offsetY = -(scl.y / 2.0f);
+		pos.y = (s.y / 2) + pos.y;
+		offsetY = -(static_cast<float>(scl.y) / 2.0f);
 		break;
 	case RectangleShape::RC:
-		pos.x = static_cast<float>(s.x) - pos.x;
-		pos.y = (static_cast<float>(s.y) / 2.0f) + pos.y;
-		offsetX = -scl.x;
-		offsetY = -(scl.y / 2.0f);
+		pos.x = s.x - pos.x;
+		pos.y = (s.y / 2) + pos.y;
+		offsetX = static_cast<float>(-scl.x);
+		offsetY = -(static_cast<float>(scl.y)/ 2.0f);
 		break;
 	}
 
@@ -405,7 +405,7 @@ bool HUD::_isMouseInsidePotentialAreaCircle(DirectX::XMFLOAT2 mousePos) const
 {
 	for (auto pa : m_potentialAreasCircle)
 	{
-		int dist = static_cast<int>(DirectX::XMVectorGetX(DirectX::XMVector2Length((XMVectorSet(pa.x, pa.y, 0.0f, 0.0f) - XMLoadFloat2(&mousePos)))) + 0.5f);
+		int dist = static_cast<int>(DirectX::XMVectorGetX(DirectX::XMVector2Length((XMVectorSet(static_cast<float>(pa.x), static_cast<float>(pa.y), 0.0f, 0.0f) - XMLoadFloat2(&mousePos)))) + 0.5f);
 		if (dist < pa.r)
 			return true;
 	}

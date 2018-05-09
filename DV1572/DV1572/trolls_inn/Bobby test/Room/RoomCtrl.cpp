@@ -9,7 +9,7 @@ void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
 
 int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
-	for (size_t i = 0; i < m_rooms.size(); i++)
+	for (int i = 0; i < m_rooms.size(); i++)
 	{
 		if (pos.x < m_rooms[i]->getX() + m_rooms[i]->getSize().x &&
 			pos.x + size.x > m_rooms[i]->getX() &&
@@ -126,12 +126,12 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		return ((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
 	};
 	
 	if (furniture.getRotation() == 0 || furniture.getRotation() == 180)
 	{
-		for (size_t i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture.getGridSize(); i++)
 		{
 			if (furniture.getRotation() == 0)
 			{
@@ -147,7 +147,7 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 	}
 	if (furniture.getRotation() == 90 || furniture.getRotation() == 270)
 	{
-		for (size_t i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture.getGridSize(); i++)
 		{
 			if (furniture.getRotation() == 90)
 			{
@@ -361,7 +361,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		}
 	}
 
-	int lastDoorIndex = m_rooms.size() - 1;
+	int lastDoorIndex = static_cast<int>(m_rooms.size()) - 1;
 
 	for (int i = 0; i < m_outsideDoorPos.size(); ++i)
 	{
@@ -449,12 +449,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 return ((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
 	 };
 	 
 	if (angle == 0 || angle == 180)
 	{
-		for (size_t i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			int ii = _index(start.x, start.y + i);
 
@@ -493,7 +493,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 	if (angle == 90 || angle == 270)
 	{
-		for (size_t i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 		{
 			if (angle == 90)
 			{
@@ -556,12 +556,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 return ((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
 	 };
 
 	 if (angle == 0 || angle == 180)
 	 {
-		 for (size_t i = 0; i < size; i++)
+		 for (int i = 0; i < size; i++)
 		 {
 			 int ii = _index(start.x, start.y + i);
 
@@ -600,7 +600,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 }
 	 if (angle == 90 || angle == 270)
 	 {
-		 for (size_t i = 0; i < size; i++)
+		 for (int i = 0; i < size; i++)
 		 {
 			 if (angle == 90)
 			 {
@@ -901,7 +901,7 @@ RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) con
 	for (int i = 0; i < m_outsideDoorPos.size(); i++)
 	{
 		XMVECTOR door1 = XMLoadSInt2(&m_outsideDoorPos[i].one);
-		int c = XMVectorGetX(XMVector2Length(ourPos - door1));
+		int c = static_cast<int>(XMVectorGetX(XMVector2Length(ourPos - door1)));
 		if (length > c)
 		{
 			length = c;
@@ -957,12 +957,13 @@ Furniture * RoomCtrl::getFurnitureAtPos(XMINT2 pos)
 	Furniture * temp = nullptr;
 	for (auto& element : m_rooms)
 	{
-		 temp = element->getFurnitureAtPos(pos);
+		temp = element->getFurnitureAtPos(pos);
 		if (temp)
 		{
 			return temp;
 		}
 	}
+	return nullptr;
 }
 
 DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
@@ -1078,11 +1079,11 @@ std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMINT2 pos
 }
 std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT2 pos)
 {
-	return getRoomAtPos(XMINT2(pos.x,pos.y))->getNoneBusyFurnitures();
+	return getRoomAtPos(XMINT2(static_cast<int32_t>(pos.x), static_cast<int32_t>(pos.y)))->getNoneBusyFurnitures();
 }
 std::vector<Furniture*> RoomCtrl::getNoneBusyFurnitureInRoom(DirectX::XMFLOAT3 pos)
 {
-	return getRoomAtPos(XMINT2(pos.x,pos.z))->getNoneBusyFurnitures();
+	return getRoomAtPos(XMINT2(static_cast<int32_t>(pos.x), static_cast<int32_t>(pos.z)))->getNoneBusyFurnitures();
 }
 
 bool RoomCtrl::getIsBuildingDoor()

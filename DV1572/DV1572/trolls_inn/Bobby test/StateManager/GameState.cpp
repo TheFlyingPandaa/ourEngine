@@ -134,6 +134,10 @@ void GameState::Update(double deltaTime)
 	}
 	lol = lol2;
 
+	if (Input::isKeyPressed('0'))
+		this->m_mai->spawn();
+
+
 
 	this->m_cam->update();
 	c.Update();
@@ -228,7 +232,7 @@ void GameState::DrawHUD()
 
 void GameState::_resetHudButtonPressedExcept(int index)
 {
-	for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+	for (int i = 0; i < m_hudButtonsPressed.size(); i++)
 	{
 		if (i != index)
 		{
@@ -524,7 +528,7 @@ bool GameState::_handleHUDPicking()
 	else if (!m_madeFullReset)
 	{
 		// Miss all buttons
-		for (size_t i = 0; i < m_hudButtonsPressed.size(); i++)
+		for (int i = 0; i < m_hudButtonsPressed.size(); i++)
 		{
 			if (!m_hudButtonsPressed[i])
 				m_stateHUD.ResetColorsOnPickableWithIndex(i);
