@@ -324,7 +324,9 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			if (customer.getPosition().y < 0)
 			{
 				// Walk along the catwalk then upwards towards the gridsystem where the rooms are located
-				for (int i = 0; i < 16; ++i)
+				RandomNumberGenerator gen;
+				int length = gen.GenerateRandomNumber(1, 16);
+				for (int i = 0; i < length; ++i)
 					customer.Move(Character::WalkDirection::RIGHT);
 				for (int i = 0; i < 3; ++i)
 					customer.Move(Character::WalkDirection::UP);
