@@ -139,7 +139,9 @@
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
-    <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
+    <ClCompile Include="ourEngine\interface\light\PointLight.cpp">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />

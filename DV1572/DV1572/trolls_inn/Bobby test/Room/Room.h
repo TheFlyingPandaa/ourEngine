@@ -38,7 +38,7 @@ private:
 	//bool _findInVec(std::vector<RoomNode*>& list, RoomNode* node) const;
 	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
 
-	std::vector<PointLight> m_lights;
+	std::vector<PointLight*> m_lights;
 	std::vector<Tile*> m_roomTiles;
 	Object3D m_wholeFloor;
 	std::vector<Furniture*> m_roomObjects;
@@ -125,6 +125,5 @@ public:
 	std::vector<std::shared_ptr<Node>> findPath(Tile* startTile, Tile* endTile);
 
 	void setIsBuildingDoor(bool tje);
-
 };
 

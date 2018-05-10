@@ -1502,6 +1502,12 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
+	for (int i = nrOfLights; i < 100; i++)
+	{
+		pointLightCollectionBuffer.positionArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+		pointLightCollectionBuffer.colorArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+		pointLightCollectionBuffer.lightSetup[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+	}
 	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
@@ -1758,7 +1764,7 @@ void Window::Clear()
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_pickingQueue.clear();
 	DX::g_instanceGroupsPicking.clear();
-
+	DX::g_lightQueue.clear();
 	// WINDOW Test
 	DX::g_instanceGroupWindows.clear();
 	// end window test
