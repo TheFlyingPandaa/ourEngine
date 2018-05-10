@@ -308,7 +308,8 @@ void GameState::_handlePicking()
 		{
 			SubState* ss = m_subStates.top();
 			ss->HandlePicking(obj);
-		}
+		}		
+		_handlePickingAi(obj);
 		
 		/*if (Input::isKeyPressed('G'))
 		{
@@ -343,7 +344,6 @@ void GameState::_handlePicking()
 
 */
 
-		_handlePickingAi(obj);
 		using namespace std::chrono_literals;
 
 		/*// Create a promise and get its future.
@@ -434,9 +434,9 @@ bool GameState::_handleHUDPicking()
 			// Clicked a button
 			while (!m_subStates.empty())
 			{
-				SubState * s = m_subStates.top();
+				SubState * ss = m_subStates.top();
 				m_subStates.pop();
-				delete s;
+				delete ss;
 			}
 			_resetHudButtonPressedExcept(index);
 			m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];

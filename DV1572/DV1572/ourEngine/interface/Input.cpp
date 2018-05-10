@@ -26,6 +26,7 @@ bool Input::isKeyPressed(int keyCode)
 
 bool Input::isMouseLeftPressed()
 {
+	return m_mouseKeys[0];
 	bool result = false; 
 	static bool lol = false;
 	bool lol2 = m_mouseKeys[0];

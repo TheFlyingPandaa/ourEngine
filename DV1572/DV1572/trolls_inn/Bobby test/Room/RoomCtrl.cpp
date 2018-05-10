@@ -896,7 +896,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
 {
 	XMVECTOR  ourPos = XMLoadSInt2(&startPosition);
-	int index = 0;
+	int index = -1;
 	int length = 1000;
 	for (int i = 0; i < m_outsideDoorPos.size(); i++)
 	{
@@ -908,7 +908,10 @@ RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) con
 			index = i;
 		}
 	}
-	return m_outsideDoorPos[index];
+	if (index > -1)
+		return m_outsideDoorPos[index];
+	else
+		throw "NO EXITS";
 }
 
 RoomCtrl::DoorPassage RoomCtrl::getDoorPassage(int index1, int index2) const
