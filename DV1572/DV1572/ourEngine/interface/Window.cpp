@@ -1163,7 +1163,6 @@ void Window::_billboardPass(const Camera & cam)
 			indexLol = 0.0f;
 		}
 	
-	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
@@ -1836,6 +1835,7 @@ void Window::Flush(Camera* c)
 
 void Window::FullReset()
 {
+	//DX::g_lightQueue.clear(); 
 	DX::g_deviceContext->ClearState();
 	_setViewport();
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
