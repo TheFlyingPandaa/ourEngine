@@ -5,6 +5,7 @@
 #include <queue>
 #include <stack>
 #include <chrono>
+#include "../Bobby test/Room/RoomCtrl.h"
 
 enum Race
 {
@@ -33,7 +34,6 @@ enum CustomerState
 	Sleeping,
 	LeavingInn,
 	WalkingToInn
-
 };
 
 class Customer : public Character
@@ -51,6 +51,9 @@ private:
 	bool m_availableSpotFound;
 	bool m_waitingForSpot;
 	int m_waitingForSpotMultiplier;
+
+	void searchForFreeFurniture(); 
+	void findNearestRoom(RoomCtrl& roomCtrl, Action customerNeed); 
 
 	// Customer interests update variables
 	std::chrono::high_resolution_clock m_clock;

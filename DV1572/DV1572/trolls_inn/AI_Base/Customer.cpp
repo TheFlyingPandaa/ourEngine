@@ -1,5 +1,39 @@
 #include "Customer.h"
 
+void Customer::searchForFreeFurniture()
+{
+	if (GetAction() == SleepAction)
+	{
+
+	}
+}
+
+void Customer::findNearestRoom(RoomCtrl& roomCtrl, Action customerNeed)
+{
+	XMFLOAT3 roomPos; 
+	if (customerNeed == SleepAction)
+		roomPos = roomCtrl.getClosestRoom(this->getPosition(), bedroom);
+	else if (customerNeed == HUNGRY)
+		roomPos = roomCtrl.getClosestRoom(this->getPosition(), kitchen);
+	else
+		roomPos = roomCtrl.getClosestRoom(this->getPosition(), bar);
+
+	Room* roomToCheck = roomCtrl.getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
+
+	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
+	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
+
+	for (int i = 0; i < nrOfFurniture; i++)
+	{
+		if (!furniture[i]->getIsBusy())
+		{
+			furniture[i]->setIsBusy(true); 
+			//Make customer walk to furniture 
+		}
+	}
+
+}
+
 Customer::Customer()
 {
 }
