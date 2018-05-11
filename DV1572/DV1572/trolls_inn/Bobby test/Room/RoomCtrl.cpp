@@ -345,13 +345,13 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	CreateWalls(currentRoom);
 	currentRoom->ApplyIndexOnMesh();
 	m_rooms.push_back(currentRoom);
-	
 
-	
+
+
 	if (m_roomConnectionMap.size() < m_rooms.size())
 	{
 		m_roomConnectionMap.push_back(std::vector<int>());
-		
+
 		for (int j = 0; j < m_roomConnectionMap.size();)
 		{
 			if (m_roomConnectionMap[j].size() != m_roomConnectionMap.size())
@@ -389,11 +389,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		}
 	}
 
-
-	_printRoomConnections();
-
-
-	
 }
 
 // Recieves tile pos, it knows what room you picked.
@@ -882,7 +877,6 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 								m_outsideDoorPos.push_back(dp);
 						}
 
-						std::cout << "This door is Outside->Inside || Inside->Outside";
 					}
 
 					return;

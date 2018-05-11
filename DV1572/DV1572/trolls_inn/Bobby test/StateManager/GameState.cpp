@@ -22,7 +22,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	// Building END
 	m_Rpressed = false;
 
-	int startSize = 32;
+	int startSize = 128;
 	int firstRoomSizeX = 6;
 	int firstRoomSizeY = 5;
 
@@ -43,10 +43,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
 	XMINT2 startPosition = { 0, 0 };
-	auto path1 = getPathAndEatAss(startPosition, targetPosition);
+	auto path1 = std::vector<std::shared_ptr<Node>>();// getPathAndEatAss(startPosition, targetPosition);
 	XMINT2 targetPosition2 = { 32, 0 };
 	XMINT2 startPosition2 = { inn->getReceptionPos().x , inn->getReceptionPos().y };
-	auto path2 = getPathAndEatAss(startPosition, targetPosition);
+	auto path2 = std::vector<std::shared_ptr<Node>>();// getPathAndEatAss(startPosition, targetPosition);
 
 	m_eventHandle = new EventHandler(inn, m_roomctrl,path1,path2);
 	_setHud();
@@ -283,6 +283,10 @@ void GameState::_handlePicking()
 	{
 		m_grid->PickTiles();
 		m_roomctrl->PickRoomTiles();
+
+
+
+		
 	}
 
 	if (hudWasPicked)
@@ -303,72 +307,41 @@ void GameState::_handlePicking()
 		Shape * obj = this->p_pickingEvent->top();
 		this->p_pickingEvent->pop();
 
-		
+
 		if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
 			ss->HandlePicking(obj);
-		}		
-		_handlePickingAi(obj);
-		
-		/*if (Input::isKeyPressed('G'))
-		{
-			Table fut = Table(obj->getPosition(), &table);
-			bool test = this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), fut.getGridSize(), fut.getRotation());
-			if (test)
-			{
-				this->grid->AddRoomObject(fut);
-			}
-			
-		}*/
-
-		/*if (Input::isKeyPressed('C'))
-		{
-			m_roomctrl->CreateDoor(obj->getPosition());
 		}
-		else if (Input::isKeyPressed('D'))
-		{
 
-			XMINT2 delPos = { static_cast<int>(obj->getPosition().x), static_cast<int>(obj->getPosition().z) };
-
-			std::vector<Tile*> tiles;
-			XMINT2 roomPos;
-			XMINT2 roomSize;
-			bool remove = m_roomctrl->RemoveRoom(delPos,tiles,roomPos,roomSize);
-			if(remove)
-				grid->insertTiles(roomPos,roomSize,tiles);
-		
-		}
 	
-		
-
-*/
-
-		using namespace std::chrono_literals;
-
-		/*// Create a promise and get its future.
-		if (m_i == 0)
+		if (m_stage == GameStage::Play)
 		{
-			m_i++;
-			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			using namespace std::chrono_literals;
+
+			// Create a promise and get its future.
+			if (m_i == 0)
+			{
+				m_i++;
+				future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			}
+
+			//	 Use wait_for() with zero milliseconds to check thread status.
+			auto status = future.wait_for(0ms);
+
+			//	 Print status. And start a new thread if the other thread was finnished
+			if (status == std::future_status::ready) {
+				std::cout << "Thread finished" << std::endl;
+				future.get();
+				future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+
+			}
+			else {
+				std::cout << "Thread still running" << std::endl;
+			}
+
 		}
 
-		// Use wait_for() with zero milliseconds to check thread status.
-		auto status = future.wait_for(0ms);
-
-		// Print status. And start a new thread if the other thread was finnished
-		if (status == std::future_status::ready) {
-			//std::cout << "Thread finished" << std::endl;
-			future.get();
-			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			
-		}
-		else {
-			std::cout << "Thread still running" << std::endl;
-		}
-
-		//_handlePickingAi(obj);*/
-		
 	}
 }
 
@@ -378,6 +351,7 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 	if (m_stage == GameStage::Play)
 	{
+	
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
@@ -697,6 +671,9 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		XMINT2 pos = startPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
+
+		if (0 == m_roomctrl->getRoomConnections(index))
+			return std::vector<std::shared_ptr<Node>>();
 
 		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
 
