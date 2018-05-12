@@ -22,7 +22,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	// Building END
 	m_Rpressed = false;
 
-	int startSize = 128;
+	int startSize = 32;
 	int firstRoomSizeX = 6;
 	int firstRoomSizeY = 5;
 
@@ -317,6 +317,7 @@ void GameState::_handlePicking()
 	
 		if (m_stage == GameStage::Play)
 		{
+			//_handlePickingAi(obj);
 			using namespace std::chrono_literals;
 
 			// Create a promise and get its future.

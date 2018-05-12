@@ -1851,7 +1851,7 @@ Shape * Window::getPicked(Camera* c)
 
 void Window::Present()
 {
-	m_swapChain->Present(0, 0);
+	m_swapChain->Present(1, 0);
 }
 
 LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)

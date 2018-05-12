@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include <unordered_map>
+#include <queue>
 
 bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
 {
@@ -438,8 +439,9 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		return m_tiles[index];
 	};
 
-	std::vector<std::shared_ptr<Node>> openList;
-
+	auto cmp = [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node>& a2) {return a1->fCost > a2->fCost; };
+	std::priority_queue < std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(cmp)> openQueue(cmp);
+	
 	bool** closedList3 = new bool*[m_sizeX];
 	for (int i = 0; i < m_sizeX; i++)
 	{
@@ -449,14 +451,38 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 
 	}
 
+	std::shared_ptr<Node>*** openList3 = new std::shared_ptr<Node>**[m_sizeX];
+	for (int i = 0; i < m_sizeX; i++)
+	{
+		openList3[i] = new std::shared_ptr<Node>*[m_sizeY];
+		for (int j = 0; j < m_sizeY; j++)
+			openList3[i][j] = nullptr;
+
+	}
+
+	auto clearArrays = [&]() ->void
+	{
+
+		for (int i = 0; i < m_sizeX; i++)
+		{
+			delete openList3[i];
+		}
+		delete openList3;
+
+		for (int i = 0; i < m_sizeX; i++)
+		{
+			delete closedList3[i];
+		}
+		delete closedList3;
+	};
+
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	
-	openList.push_back(current);
-	auto start = std::chrono::system_clock::now();
-	while (openList.size())
+	openQueue.push(current);
+
+	while (!openQueue.empty())
 	{
-		std::sort(openList.begin(), openList.end(), [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node>& a2) {return a1->fCost < a2->fCost; });
-		current = openList.front();
+		current = openQueue.top();
 
 		if (*current == *endTile)
 		{
@@ -470,14 +496,13 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			}
 
 			std::reverse(path.begin(), path.end());
-			auto end = std::chrono::system_clock::now();
-			std::chrono::duration<float> deltaTime = end - start;
-			std::cout << deltaTime.count() << std::endl;
+			clearArrays();
 			return path;
 		}
 		closedList3[current->tile->getPosX()][current->tile->getPosY()] = 1;
-		//closedList.push_back(current);		// add the entry to the closed list
-		openList.erase(openList.begin());   // Remove the entry
+		openList3[current->tile->getPosX()][current->tile->getPosY()] = nullptr;
+
+		openQueue.pop();
 
 		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 		{
@@ -557,9 +582,6 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				if (leftTile == nullptr) continue;
 			}
 		
-			
-			currentTile->getQuad().setColor(255, 0, 0);
-
 			//--Rules End Here--
 
 			float gCost = current->gCost + addedCost;
@@ -572,33 +594,24 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				continue;
 			}
 
-			auto vecIndex = _findInVec(openList ,newNode);
-			//auto vecIndex = binSearch(openList, 0, openList.size() - 1, newNode);
-
-			if (vecIndex == openList.end() || gCost < newNode->gCost)
-		//	if (vecIndex == -1 || gCost < newNode->gCost)
+			//auto vecIndex = _findInVec(openList ,newNode);
+			int xIndex = newNode->tile->getPosX();
+			int yIndex = newNode->tile->getPosY();
+			if (openList3[xIndex][yIndex] == nullptr|| gCost < newNode->gCost)
 			{
-				openList.push_back(newNode);
+				openList3[xIndex][yIndex] = &newNode;
+				openQueue.push(newNode);
 				
 			}
-			else if (gCost < (*vecIndex)->gCost)
+			else if (gCost < (*openList3[xIndex][yIndex])->gCost)
 			{
-				(*vecIndex)->parent = current;
-				(*vecIndex)->gCost = gCost;
+				(*openList3[xIndex][yIndex])->parent = current;
+				(*openList3[xIndex][yIndex])->gCost = gCost;
 			}
-			/*else if (gCost < openList[vecIndex]->gCost)
-			{
-				openList[vecIndex]->parent = current;
-				openList[vecIndex]->gCost = gCost;
-				std::cout << "LOL" << std::endl;
-			}*/
-
-			
 			
 		}
-		
-		
 	}
-	
+
+	clearArrays();
 	return std::vector<std::shared_ptr<Node>>();
 }
