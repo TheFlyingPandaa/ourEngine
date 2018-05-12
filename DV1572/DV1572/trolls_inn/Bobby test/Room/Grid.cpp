@@ -442,39 +442,8 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	auto cmp = [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node>& a2) {return a1->fCost > a2->fCost; };
 	std::priority_queue < std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(cmp)> openQueue(cmp);
 	
-	bool** closedList3 = new bool*[m_sizeX];
-	for (int i = 0; i < m_sizeX; i++)
-	{
-		closedList3[i] = new bool[m_sizeY];
-		for (int j = 0; j < m_sizeY; j++)
-			closedList3[i][j] = 0;	
-
-	}
-
-	std::shared_ptr<Node>*** openList3 = new std::shared_ptr<Node>**[m_sizeX];
-	for (int i = 0; i < m_sizeX; i++)
-	{
-		openList3[i] = new std::shared_ptr<Node>*[m_sizeY];
-		for (int j = 0; j < m_sizeY; j++)
-			openList3[i][j] = nullptr;
-
-	}
-
-	auto clearArrays = [&]() ->void
-	{
-
-		for (int i = 0; i < m_sizeX; i++)
-		{
-			delete openList3[i];
-		}
-		delete openList3;
-
-		for (int i = 0; i < m_sizeX; i++)
-		{
-			delete closedList3[i];
-		}
-		delete closedList3;
-	};
+	std::vector<bool> closedListLookUp(m_sizeX * m_sizeY, 0);
+	std::vector<std::shared_ptr<Node>*> openListLookUp(m_sizeX * m_sizeY, 0);
 
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	
@@ -483,7 +452,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	while (!openQueue.empty())
 	{
 		current = openQueue.top();
-
+		openQueue.pop();
 		if (*current == *endTile)
 		{
 			std::vector<std::shared_ptr<Node>> path;
@@ -496,13 +465,11 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			}
 
 			std::reverse(path.begin(), path.end());
-			clearArrays();
 			return path;
 		}
-		closedList3[current->tile->getPosX()][current->tile->getPosY()] = 1;
-		openList3[current->tile->getPosX()][current->tile->getPosY()] = nullptr;
 
-		openQueue.pop();
+		closedListLookUp[_index(current->tile->getPosX(),current->tile->getPosY())] = true;
+		openListLookUp[_index(current->tile->getPosX(),current->tile->getPosY())]	= nullptr;
 
 		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 		{
@@ -585,33 +552,32 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			//--Rules End Here--
 
 			float gCost = current->gCost + addedCost;
-
 			float hCost = getDistance(currentTile, endTile);
+
 			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
-			//pointerBank.push_back(newNode);
-			if (closedList3[newNode->tile->getPosX()][newNode->tile->getPosY()] && gCost >= newNode->gCost)
+
+			if (closedListLookUp[_index(newNode->tile->getPosX(),newNode->tile->getPosY())] && gCost >= newNode->gCost)
 			{
 				continue;
 			}
 
-			//auto vecIndex = _findInVec(openList ,newNode);
 			int xIndex = newNode->tile->getPosX();
 			int yIndex = newNode->tile->getPosY();
-			if (openList3[xIndex][yIndex] == nullptr|| gCost < newNode->gCost)
+			int arrIndex = _index(xIndex, yIndex);
+			if (openListLookUp[arrIndex] == nullptr|| gCost < newNode->gCost)
 			{
-				openList3[xIndex][yIndex] = &newNode;
+				openListLookUp[arrIndex] = &newNode;
 				openQueue.push(newNode);
 				
 			}
-			else if (gCost < (*openList3[xIndex][yIndex])->gCost)
+			else if (gCost < (*openListLookUp[arrIndex])->gCost)
 			{
-				(*openList3[xIndex][yIndex])->parent = current;
-				(*openList3[xIndex][yIndex])->gCost = gCost;
+				(*openListLookUp[arrIndex])->parent = current;
+				(*openListLookUp[arrIndex])->gCost = gCost;
 			}
 			
 		}
 	}
 
-	clearArrays();
 	return std::vector<std::shared_ptr<Node>>();
 }
