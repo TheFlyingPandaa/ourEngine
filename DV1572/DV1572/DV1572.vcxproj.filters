@@ -57,7 +57,6 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Room.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
@@ -76,7 +75,8 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -145,7 +145,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
-    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h" />
+    <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />
@@ -162,5 +162,8 @@
     <Library Include="ourEngine\core\Audio\AudioLibxRL.lib" />
     <Library Include="ourEngine\core\Font\FontLibxRL.lib" />
     <Library Include="ourEngine\core\Font\FontLibxDB.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="trolls_inn\Resources\tree\tree.mtl" />
   </ItemGroup>
 </Project>
