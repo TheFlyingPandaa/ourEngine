@@ -19,7 +19,7 @@ void Wall::Draw()
 {
 	if (m_wall)
 	{
-		if (m_wall->getMesh())
+		if (m_wall->GetMesh())
 		{
 			m_wall->Draw();
 		}
