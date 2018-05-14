@@ -6,6 +6,15 @@
 #include <string>
 #include <mutex>
 
+enum MESH : short
+{
+	// Terrain meshes
+	TREE_BILL,
+	WATER,
+	TERRAIN
+
+};
+
 class MLP
 {
 private:
@@ -28,11 +37,20 @@ public:
 	void operator=(MLP const&) = delete;
 	// Gets loaded mesh pointer
 	// Path is set to trolls_inn/Resources/
+	void LoadMesh(short id, std::string path);
 	void LoadMesh(std::string name, std::string path);
+
 	void LoadMeshInverted(std::string name, std::string path);
+
+	void LoadMeshRectangle(short id);
 	void LoadMeshRectangle(std::string name);
+
+	bool IsReady(short id);
 	bool IsReady(std::string name);
+
+	Mesh* GetMesh(short id);
 	Mesh* GetMesh(const std::string path);
+
 	void ClearMeshes();
 private:
 	MLP() {}

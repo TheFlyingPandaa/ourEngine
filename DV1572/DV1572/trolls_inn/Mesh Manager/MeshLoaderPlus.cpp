@@ -1,9 +1,14 @@
 #include "MeshLoaderPlus.h"
 #include <thread>
 #include <chrono>
+
+void MLP::LoadMesh(short id, std::string path)
+{
+	LoadMesh(std::to_string(id), path);
+}
+
 void MLP::LoadMesh(std::string name, std::string path)
 {
-
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
 		MESH_THREAD* mt = new MESH_THREAD;
@@ -16,7 +21,6 @@ void MLP::LoadMesh(std::string name, std::string path)
 	{
 		__debugbreak();
 	}
-	OutputDebugString("NUMBER OF MESHES " + m_meshmap.size());
 }
 
 void MLP::LoadMeshInverted(std::string name, std::string path)
@@ -26,6 +30,11 @@ void MLP::LoadMeshInverted(std::string name, std::string path)
 		m_meshmap[name].LoadModelInverted("trolls_inn/Resources/" + path);
 	
 	}
+}
+
+void MLP::LoadMeshRectangle(short id)
+{
+	LoadMeshRectangle(std::to_string(id));
 }
 
 void MLP::LoadMeshRectangle(std::string name)
@@ -44,9 +53,15 @@ void MLP::LoadMeshRectangle(std::string name)
 
 }
 
+bool MLP::IsReady(short id)
+{
+	return IsReady(std::to_string(id));
+}
+
 bool MLP::IsReady(std::string name)
 {
 	using namespace std::chrono_literals;
+	//If the mesh is not located in the vector, the mesh had already been loaded. not safe
 	for (int i = 0; i < m_futureMeshes.size(); i++)
 	{
 		if (name == m_futureMeshes[i]->name)
@@ -58,9 +73,16 @@ bool MLP::IsReady(std::string name)
 				m_futureMeshes.erase(m_futureMeshes.begin() + i);
 				return true;
 			}
+			else
+				return false;
 		}
 	}
-	return false;
+	return true;
+}
+
+Mesh * MLP::GetMesh(short id)
+{
+	return GetMesh(std::to_string(id));
 }
 
 Mesh * MLP::GetMesh(std::string name)

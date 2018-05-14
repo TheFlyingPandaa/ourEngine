@@ -220,40 +220,35 @@ HeightMap::HeightMap()
 			}
 		}
 	}
-	rs.setMesh(MLP::GetInstance().GetMesh("terrain"));
+	rs.setMesh(MLP::GetInstance().GetMesh(MESH::TERRAIN));
 	rs.setPos(-48, -5.04, -49.4);
 	rs.setScale(1, 1, 1);
 	rs.setUVScale(1.0f);
 
-	MLP::GetInstance().LoadMeshRectangle("Water");
-	MLP::GetInstance().GetMesh("Water")->setDiffuseTexture("trolls_inn/Resources/water.jpg");
-	water.setMesh(MLP::GetInstance().GetMesh("Water"));
+	MLP::GetInstance().LoadMeshRectangle(MESH::WATER);
+	MLP::GetInstance().GetMesh(MESH::WATER)->setDiffuseTexture("trolls_inn/Resources/water.jpg");
+	water.setMesh(MLP::GetInstance().GetMesh(MESH::WATER));
 	water.setPos(-30,-2,-50);
 	water.setRotation(90, 0, 0);
 	water.setScale(256, 1, 256);
 	water.setUVScale(129);
 
-	m_treeMesh.LoadModel("trolls_inn/Resources/tree/tree.obj");
+	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
 	int mapSize = 129;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < NUMBER_OF_TREES; i++)
 	{
 		int x = rand() % mapSize;
 		int z = rand() % mapSize;
-		if (x - 48 < (mapSize / 2) - 16 || (mapSize / 2) + 17 > x - 48)
-		{
-			if (z - 49.4< (mapSize / 2) - 20 || z - 49.4 <(mapSize / 2) + 19)
-			{
-				m_trees.push_back(RectangleShape());
-				m_trees.back().setMesh(&m_treeMesh);
-				int index = x + (mapSize * z);
-				m_trees.back().setPos(x - 48, m_heightValues[index] - 5.04, z - 49.4);
-				m_trees.back().setScale(2, 3, 2);
-			}
-			
 
-		}
-			
-		
+		if (x >= 29 && x <= 100 && z >= 20 && z <= 100) continue;
+	
+			m_trees.push_back(RectangleShape());
+			m_trees.back().setMesh(MLP::GetInstance().GetMesh(MESH::TREE_BILL));
+			int index = x + (mapSize * z);
+			m_trees.back().setPos(x - 48, (m_heightValues[index] - 5.04) + 2.8f, z - 49.4);
+			m_trees.back().setScale(4, 6, 4);
+
+				
 	}
 	
 
@@ -262,15 +257,17 @@ HeightMap::HeightMap()
 
 void HeightMap::Draw()
 {
-	static bool canRender = false;
-	if (MLP::GetInstance().IsReady("terrain"))
-		canRender = true;
-	if(canRender)
+	if (MLP::GetInstance().IsReady(MESH::TERRAIN))
 		rs.Draw();
 
-	water.Draw();
-	for (auto& tree : m_trees)
-		tree.Draw();
+	if(MLP::GetInstance().IsReady(MESH::WATER))
+		water.Draw();
+
+	if (MLP::GetInstance().IsReady(MESH::TREE_BILL))
+	{
+		for (auto& tree : m_trees)
+			tree.Draw();
+	}
 }
 
 HeightMap::~HeightMap()
