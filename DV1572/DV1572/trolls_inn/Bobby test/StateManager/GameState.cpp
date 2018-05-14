@@ -11,6 +11,7 @@
 #include "../StateManager/SubStates/StatsState.h"
 #include "../StateManager/SubStates/EventsState.h"
 #include "../../Mesh Manager/MeshManager.h"
+#include "../../Mesh Manager/MeshLoaderPlus.h"
 #include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
@@ -200,8 +201,11 @@ void GameState::Draw()
 	//c.Draw();
 	//this->grid2->Draw();
 	//m_eventHandle->Draw();
-	
-	bed3D->Draw();
+	static bool canRender = false;
+	if (MLP::GetInstance().IsReady("bed"))
+		canRender = true;
+	if(canRender)
+		bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -246,8 +250,7 @@ void GameState::_init()
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
 	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
 	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	bed = new Mesh();
-	bed->LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
+	MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
 	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
@@ -257,7 +260,7 @@ void GameState::_init()
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
 	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
 	bed3D = new Object3D();
-	bed3D->setMesh(bed);
+	bed3D->setMesh(MLP::GetInstance().GetMesh("bed"));
 	bed3D->setPos(17, 0, 8);
 	bed3D->Rotate(0, 90, 0);
 }
@@ -309,29 +312,32 @@ void GameState::_handlePicking()
 	
 		if (m_stage == GameStage::Play)
 		{
-			//_handlePickingAi(obj);
-			using namespace std::chrono_literals;
+			_handlePickingAi(obj);
 
-			// Create a promise and get its future.
-			if (m_i == 0)
-			{
-				m_i++;
-				future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			}
+			// THREADED BETA
+			// Will cause crashes since we clear the walking queue for the troll
+			//using namespace std::chrono_literals;
 
-			//	 Use wait_for() with zero milliseconds to check thread status.
-			auto status = future.wait_for(0ms);
+			//// Create a promise and get its future.
+			//if (m_i == 0)
+			//{
+			//	m_i++;
+			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			//}
 
-			//	 Print status. And start a new thread if the other thread was finnished
-			if (status == std::future_status::ready) {
-				std::cout << "Thread finished" << std::endl;
-				future.get();
-				future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			////	 Use wait_for() with zero milliseconds to check thread status.
+			//auto status = future.wait_for(0ms);
 
-			}
-			else {
-				std::cout << "Thread still running" << std::endl;
-			}
+			////	 Print status. And start a new thread if the other thread was finnished
+			//if (status == std::future_status::ready) {
+			//	std::cout << "Thread finished" << std::endl;
+			//	future.get();
+			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+
+			//}
+			//else {
+			//	std::cout << "Thread still running" << std::endl;
+			//}
 
 		}
 

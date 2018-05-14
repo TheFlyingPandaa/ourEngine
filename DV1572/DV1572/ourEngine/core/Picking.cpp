@@ -129,7 +129,7 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -142,13 +142,13 @@ Shape * Picking::getPicked(Camera * c, ID3D11RenderTargetView*&RTV, ID3D11DepthS
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		counter += static_cast<int>(instance.attribs.size());
 		instanceBuffer->Release();
 	}

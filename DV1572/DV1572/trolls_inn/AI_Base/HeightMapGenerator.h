@@ -38,6 +38,7 @@ private:
 	
 	Mesh m_mountainMesh;
 	RectangleShape rs;
+	RectangleShape water;
 	Mesh m_treeMesh;
 	std::vector<RectangleShape> m_trees;
 

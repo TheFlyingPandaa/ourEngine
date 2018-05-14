@@ -1,6 +1,7 @@
 #include "HeightMapGenerator.h"
 #include <iostream>
 #include <fstream>
+#include "../Mesh Manager/MeshLoaderPlus.h"
 
 float HeightMap::DiamondSqaure::fRand()
 {
@@ -201,7 +202,7 @@ HeightMap::HeightMap(int mapWidth, int stepSize, float noise)
 
 HeightMap::HeightMap()
 {
-	m_mountainMesh.LoadModel("trolls_inn/TerrainLol.txt");
+	MLP::GetInstance().LoadMesh("terrain", "../TerrainLol.txt");
 
 	std::ifstream ifstr;
 	ifstr.open("trolls_inn/TerrainLol.txt");
@@ -219,13 +220,22 @@ HeightMap::HeightMap()
 			}
 		}
 	}
-	rs.setMesh(&m_mountainMesh);
+	rs.setMesh(MLP::GetInstance().GetMesh("terrain"));
 	rs.setPos(-48, -5.04, -49.4);
 	rs.setScale(1, 1, 1);
+	rs.setUVScale(1.0f);
+
+	MLP::GetInstance().LoadMeshRectangle("Water");
+	MLP::GetInstance().GetMesh("Water")->setDiffuseTexture("trolls_inn/Resources/water.jpg");
+	water.setMesh(MLP::GetInstance().GetMesh("Water"));
+	water.setPos(-30,-2,-50);
+	water.setRotation(90, 0, 0);
+	water.setScale(256, 1, 256);
+	water.setUVScale(129);
 
 	m_treeMesh.LoadModel("trolls_inn/Resources/tree/tree.obj");
 	int mapSize = 129;
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int x = rand() % mapSize;
 		int z = rand() % mapSize;
@@ -252,7 +262,13 @@ HeightMap::HeightMap()
 
 void HeightMap::Draw()
 {
-	rs.Draw();
+	static bool canRender = false;
+	if (MLP::GetInstance().IsReady("terrain"))
+		canRender = true;
+	if(canRender)
+		rs.Draw();
+
+	water.Draw();
 	for (auto& tree : m_trees)
 		tree.Draw();
 }

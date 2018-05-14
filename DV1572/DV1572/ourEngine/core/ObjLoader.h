@@ -9,6 +9,7 @@
 #include <map>
 #include "Dx.h"
 #include "../interface/shape/Material.h"
+#include "../../trolls_inn/Mesh Manager/MeshLoaderPlus.h"
 
 namespace DX
 {
@@ -345,8 +346,9 @@ namespace DX
 	{
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
-
+		MLP::GetInstance().mtx.lock();
 		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
+		MLP::GetInstance().mtx.unlock();
 		return hr == S_OK;
 	}
 

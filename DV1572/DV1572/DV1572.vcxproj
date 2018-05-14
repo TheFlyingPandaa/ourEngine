@@ -88,6 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -177,6 +178,7 @@
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
+    <ClCompile Include="trolls_inn\Mesh Manager\MeshLoaderPlus.cpp" />
     <ClCompile Include="trolls_inn\Mesh Manager\MeshManager.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
@@ -244,6 +246,7 @@
     <ClInclude Include="trolls_inn\Furniture\Bed.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
+    <ClInclude Include="trolls_inn\Mesh Manager\MeshLoaderPlus.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>

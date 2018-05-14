@@ -64,6 +64,11 @@ Mesh::~Mesh()
 		iBuffer->Release();
 }
 
+void Mesh::LoadModelStr(const std::string & path)
+{
+	LoadModel(path);
+}
+
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<Material*> tempMaterials = DX::getMaterials(path);

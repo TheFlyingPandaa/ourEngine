@@ -77,6 +77,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
+    <ClCompile Include="trolls_inn\Mesh Manager\MeshLoaderPlus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
     <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />
+    <ClInclude Include="trolls_inn\Mesh Manager\MeshLoaderPlus.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

@@ -9,9 +9,13 @@
 class MLP
 {
 private:
-
+	struct MESH_THREAD
+	{
+		std::future<void> futureObj;
+		std::string name;
+	};
 	std::unordered_map<std::string, Mesh> m_meshmap;
-	std::vector<std::future<void>> m_futureMeshes;
+	std::vector<MESH_THREAD*> m_futureMeshes;
 public:
 	std::mutex mtx;
 	std::mutex mtx2;
@@ -27,7 +31,8 @@ public:
 	void LoadMesh(std::string name, std::string path);
 	void LoadMeshInverted(std::string name, std::string path);
 	void LoadMeshRectangle(std::string name);
-	Mesh* getMesh(const std::string path);
+	bool IsReady(std::string name);
+	Mesh* GetMesh(const std::string path);
 	void ClearMeshes();
 private:
 	MLP() {}
