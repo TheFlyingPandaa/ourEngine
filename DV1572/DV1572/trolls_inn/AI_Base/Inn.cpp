@@ -232,7 +232,7 @@ void Inn::DecreaseRent(int amount)
 void Inn::IncreaseXP(const int amount)
 {
 	m_innXPLevel += amount;
-	if (m_innXPLevel >= m_innLevel * 20)
+	if (m_innXPLevel >= m_innLevel * 50)
 	{
 		m_innLevel++;
 		m_innXPLevel = 0;

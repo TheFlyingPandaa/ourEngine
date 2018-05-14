@@ -61,18 +61,19 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-#if _DEBUG
+//#if _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//	Activation of Console
 	AllocConsole();
 	FILE* fp;
 	freopen_s(&fp, "CONOUT$", "w", stdout);
-#endif
+//#endif
 	
 
 	Window wnd(hInstance);
@@ -112,8 +113,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	wallWithWindow.setMesh(MeshHandler::getWallWithWindow()); 
 	wallWithWindow.setPos(18, 0, 20); 
 
-	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
-
+	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam
 	std::unique_ptr<AudioEngine> audEngine;
 	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 	#ifdef _DEBUG

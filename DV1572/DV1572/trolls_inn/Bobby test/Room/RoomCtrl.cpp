@@ -446,10 +446,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 }
 	 Room*  cr = m_rooms[index];
 	 auto tiles = cr->getTiles();
-
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 if (x >= 0 && x < cr->getSize().x && y >= 0 && y < cr->getSize().y)
+			 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 else
+			 return -1;
 	 };
 	 
 	if (angle == 0 || angle == 180)
@@ -459,6 +461,9 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			int ii = _index(start.x, start.y + i);
 
 			if (ii >= tiles.size()) {
+				int index = _index(start.x, start.y);
+				if (index == -1)
+					return false;
 				tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				return false;
 			}
@@ -497,18 +502,25 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		{
 			if (angle == 90)
 			{
-				if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
-				{
-					tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					isFalse = true;
-				}
+				int index = _index(start.x + i, start.y);
+				if (index == -1)
+					return false;
+				
+					if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
+					{
+						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					}
+					else
+					{
+						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						isFalse = true;
+					}				
 			}
 			else
 			{
+				int index = _index(start.x - i, start.y);
+				if (index == -1)
+					return false;
 				if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
 				{
 					tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
@@ -691,8 +703,11 @@ void RoomCtrl::Draw()
 {
 	for (Room* r : m_rooms)
 	{
-		r->CastShadow();
-		r->Draw();
+		if (r)
+		{
+			r->CastShadow();
+			r->Draw();
+		}
 	}
 
 }

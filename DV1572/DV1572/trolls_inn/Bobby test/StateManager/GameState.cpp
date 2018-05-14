@@ -202,7 +202,11 @@ void GameState::Draw()
 	gameTime.m_cpyLightToGPU();
 	
 	m_roomctrl->Draw();
-	this->m_grid->Draw();
+	if (m_grid)
+	{
+		this->m_grid->Draw();
+	}
+
 
 	//TEST
 	//c.Draw();
