@@ -1,6 +1,7 @@
 #pragma once
 #include "../../ourEngine/interface/shape/3DObject.h"
 #include "../AI_Base/Attributes.h"
+#include "../AI_Base/Customer.h"
 
 class Furniture
 {
