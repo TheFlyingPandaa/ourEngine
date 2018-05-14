@@ -578,8 +578,6 @@ void BuildState::_inputFurniture()
 			{
 				m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
 			}
-			
-			
 			//std::cout << m_startTile->getRotation().y << std::endl;
 			//TEMP
 			drawSelectedThing = true;
@@ -596,8 +594,6 @@ void BuildState::_inputFurniture()
 	}
 	else
 		drawSelectedThing = false;
-
-
 }
 
 

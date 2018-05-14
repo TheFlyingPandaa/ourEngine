@@ -465,7 +465,7 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	customer.PopToNextState(getRoomCtrl()); // pop Idle state
 	if (gotPath == 1)
 	{
-		customer.GotPathSetNextAction(desiredAction);
+		customer.GotPathSetNextAction(desiredAction, m_roomctrl);
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(false);
 		customer.SetWaitingForSpotMultiplier(1);

@@ -6,24 +6,24 @@ void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)
 {
 	if (GetAction() == SleepAction)
 	{
-		findNearestRoom(roomCtrl, SleepAction); 
+		findNearestRoom(roomCtrl, Sleeping); 
 	}
 	else if (GetAction() == EatAction)
 	{
-		findNearestRoom(roomCtrl, EatAction);
+		findNearestRoom(roomCtrl, Eating);
 	}
 	else if (GetAction() == DrinkAction)
 	{
-		findNearestRoom(roomCtrl, DrinkAction); 
+		findNearestRoom(roomCtrl, Drinking); 
 	}
 }
 
-void Customer::findNearestRoom(RoomCtrl* roomCtrl, Action customerNeed)
+void Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 {
 	XMFLOAT3 roomPos; 
 	if (customerNeed == SleepAction)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
-	else if (customerNeed == HUNGRY)
+	else if (customerNeed == EatAction)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
@@ -35,12 +35,18 @@ void Customer::findNearestRoom(RoomCtrl* roomCtrl, Action customerNeed)
 
 	for (int i = 0; i < nrOfFurniture; i++)
 	{
-		if (furniture[i]->getOwner() == nullptr)
+		if (furniture[i]->getOwner() == nullptr) /*&& (furniture[i]->WhatType() == "Bed" ||
+			furniture[i]->WhatType() == "Table" ||
+			furniture[i]->WhatType() == "Bar")*/
 		{
 			furniture[i]->setOwner(this); 
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
-			std::cout << "Furniture occupied!" << std::endl; 
+			std::cout << "Furniture occupied!" << std::endl;
+		}
+		else
+		{
+			setThoughtBubble(ANGRY); 
 		}
 	}
 }
@@ -151,14 +157,14 @@ CustomerState Customer::GetState() const
 void Customer::PopToNextState(RoomCtrl* roomCtrl)
 {
 	m_stateQueue.pop();
+
 	if (m_ownedFurniture != nullptr)
 	{
-		m_ownedFurniture->releaseOwnerShip(); 
-		m_ownedFurniture->setIsBusy(false); 
+		m_ownedFurniture->releaseOwnerShip();
+		m_ownedFurniture->setIsBusy(false);
 		m_ownedFurniture = nullptr;
 		std::cout << "Furniture released!" << std::endl;
 	}
-	searchForFreeFurniture(roomCtrl); 
 }
 
 void Customer::setOwnedFurniture(Furniture * furnitureOwned)
@@ -166,7 +172,7 @@ void Customer::setOwnedFurniture(Furniture * furnitureOwned)
 	m_ownedFurniture = furnitureOwned; 
 }
 
-void Customer::SetAction(Action nextAction)
+void Customer::SetAction(Action nextAction, RoomCtrl* roomCtrl)
 {
 	switch (nextAction)
 	{
@@ -199,15 +205,25 @@ void Customer::SetAction(Action nextAction)
 		break;
 	}
 
+	if (roomCtrl != nullptr)
+	{
+		if (this->m_stateQueue.front() == SleepAction ||
+			this->m_stateQueue.front() == EatAction ||
+			this->m_stateQueue.front() == DrinkAction)
+		{
+			findNearestRoom(roomCtrl, m_stateQueue.front());
+		}
+	}
+
 	//POPUP HERE (Henrik)
 	// To return the customer to idle after it executed its action
 	this->m_stateQueue.push(Idle);
 }
 
-void Customer::GotPathSetNextAction(Action nextAction)
+void Customer::GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl)
 {
 	this->m_stateQueue.push(Walking);
-	this->SetAction(nextAction);
+	this->SetAction(nextAction, roomCtrl);
 }
 
 const char* Customer::GetActionStr() const

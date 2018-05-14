@@ -204,7 +204,7 @@ void Furniture::setLightIndex(int index)
 
 std::string Furniture::WhatType()
 {
-	return "FUCK";
+	return "This should not be possible, earlier there was nothing here.";
 }
 
 void Furniture::Draw()

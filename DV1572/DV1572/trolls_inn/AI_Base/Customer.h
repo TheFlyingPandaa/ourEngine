@@ -59,7 +59,7 @@ private:
 	int m_waitingForSpotMultiplier;
 
 	void searchForFreeFurniture(RoomCtrl* roomCtrl); 
-	void findNearestRoom(RoomCtrl* roomCtrl, Action customerNeed); 
+	void findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed); 
 
 	// Customer interests update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -90,8 +90,8 @@ public:
 
 	// Get desired action
 	Action GetAction() const;
-	void SetAction(Action nextAction);
-	void GotPathSetNextAction(Action nextAction);
+	void SetAction(Action nextAction, RoomCtrl* roomCtrl = nullptr);
+	void GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl);
 
 	int GetQueueEmpty() const;
 	CustomerState GetState() const;
