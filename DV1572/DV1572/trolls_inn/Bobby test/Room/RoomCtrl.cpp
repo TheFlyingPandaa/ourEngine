@@ -570,8 +570,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 auto tiles = cr->getTiles();
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 if (x >= 0 && x < cr->getSize().x && y >= 0 && y < cr->getSize().y)
-			 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 int xCoord = x - cr->getPosition().x;
+		 int yCoord = y - cr->getPosition().z;
+
+		 if (xCoord >= 0 && xCoord < cr->getSize().x && yCoord >= 0 && yCoord < cr->getSize().y)
+			 return static_cast<int>(xCoord + yCoord * cr->getSize().x);
 		 else
 			 return -1;
 	 };
@@ -586,7 +589,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				int index = _index(start.x, start.y);
 				if (index == -1)
 					return false;
-				tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+				tiles[index]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				return false;
 			}
 
