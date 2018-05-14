@@ -27,8 +27,12 @@ private:
 	int m_drinkPrice;
 	bool m_recievedReview;
 
+	//Level
 	int m_innLevel;
 	int m_innXPLevel;
+
+	int m_AngryCustomers = 0;
+	int m_angryCustomerCap = 40;
 
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
@@ -74,6 +78,10 @@ public:
 	void DecreaseRent(int amount);
 
 	void IncreaseXP(const int amount);
+
+	void AddAngryCustomer();
+	int getAngryCustomers() const;
+	int getAngryCustomersCap() const;
 
 	void changeStaffSalary(int amount);
 	

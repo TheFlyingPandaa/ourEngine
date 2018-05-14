@@ -178,6 +178,10 @@ void MasterAI::Update(Camera* cam)
 				// Customer leaves inn
 				// Save id for leaving customers
 				leavingCustomersIDs.push_back(loopCounter);
+				if (customer->GetThought() == Character::ANGRY)
+				{
+					m_inn->AddAngryCustomer();
+				}
 			}
 			else
 			{

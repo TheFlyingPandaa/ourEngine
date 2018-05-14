@@ -167,6 +167,10 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
 		
 		m_staffSalaryApplyed = true;
+		if (m_AngryCustomers >= 1)
+		{
+			m_AngryCustomers -= 1;
+		}
 	}
 
 	m_timer += deltaTime;
@@ -242,6 +246,21 @@ void Inn::IncreaseXP(const int amount)
 		InGameConsole::pushString(temp);
 		std::cout << "LEVEL UP" << std::endl;
 	}
+}
+
+void Inn::AddAngryCustomer()
+{
+	m_AngryCustomers++;
+}
+
+int Inn::getAngryCustomers() const
+{
+	return m_AngryCustomers;
+}
+
+int Inn::getAngryCustomersCap() const
+{
+	return m_angryCustomerCap;
 }
 
 void Inn::GetRefund(int amount)
