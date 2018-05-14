@@ -202,10 +202,10 @@ HeightMap::HeightMap(int mapWidth, int stepSize, float noise)
 
 HeightMap::HeightMap()
 {
-	MLP::GetInstance().LoadMesh("terrain", "../TerrainLol.txt");
+	MLP::GetInstance().LoadMesh(MESH::TERRAIN, "../TerrainLol.txt");
 
 	std::ifstream ifstr;
-	ifstr.open("trolls_inn/TerrainLol.txt");
+	ifstr.open("trolls_inn/heights.txt");
 	while (ifstr)
 	{
 		std::string current;
@@ -235,6 +235,7 @@ HeightMap::HeightMap()
 
 	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
 	int mapSize = 129;
+	DirectX::XMFLOAT3 gridPosition = rs.getPosition();
 	for (int i = 0; i < NUMBER_OF_TREES; i++)
 	{
 		int x = rand() % mapSize;
@@ -245,7 +246,7 @@ HeightMap::HeightMap()
 			m_trees.push_back(RectangleShape());
 			m_trees.back().setMesh(MLP::GetInstance().GetMesh(MESH::TREE_BILL));
 			int index = x + (mapSize * z);
-			m_trees.back().setPos(x - 48, (m_heightValues[index] - 5.04) + 2.8f, z - 49.4);
+			m_trees.back().setPos(x + gridPosition.x, (m_heightValues[index] + gridPosition.y) + 2.8f, z + gridPosition.z);
 			m_trees.back().setScale(4, 6, 4);
 
 				

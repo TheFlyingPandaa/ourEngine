@@ -23,6 +23,7 @@
 
 
 #include "../../ourEngine/core/FileReader.h"
+#include "../Mesh Manager/MeshLoaderPlus.h"
 #include "../../ourEngine/interface/shape/SkyBoxObject.h"
 
 #include "../../InGameConsole.h"
@@ -98,20 +99,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//Used to manage the time of day. 
 	GameTime gameTime;
 
-	Mesh box;
-	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
-	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
+	MLP::GetInstance().LoadMeshInverted(MESH::SKYBOX, "skybox.obj");
 
 	SkyBoxObject boxy;
-	boxy.setMesh(&box);
-
-	Object3D table; 
-	table.setMesh(MeshHandler::getTable()); 
-	table.setPos(20, 0, 20);
-
-	Object3D wallWithWindow; 
-	wallWithWindow.setMesh(MeshHandler::getWallWithWindow()); 
-	wallWithWindow.setPos(18, 0, 20); 
+	boxy.setMesh(MLP::GetInstance().GetMesh(MESH::SKYBOX));
 
 	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam
 	std::unique_ptr<AudioEngine> audEngine;
@@ -172,28 +163,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					gameStates.push(ref);
 			}
 			
-
-			if (Input::isKeyPressed('P') && !pressed)
-			{
-				/*if (!play)
-				{
-					effect->Stop(false);
-					effect->Play(true);
-					play = true;
-				}
-				else
-				{
-					effect->Play(false);
-					effect->Stop(true);
-					play = false;
-				}
-				
-				pressed = true;*/
-			}
-			else if (!Input::isKeyPressed('P') && pressed)
-			{
-				pressed = false;
-			}
 		}
 		if (!audEngine->Update())
 		{
@@ -202,8 +171,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 			}
 		}
-		//boxy.setPos(cam->getPosition());
-		boxy.Draw();
+	
+		if(MLP::GetInstance().IsReady(MESH::SKYBOX))
+			boxy.Draw();
 
 		InGameConsole::draw();
 
@@ -214,8 +184,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 		gameState->Draw();
-		table.Draw();
-		wallWithWindow.Draw(); 
 
 		if (!gameStates.empty())
 		{

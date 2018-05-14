@@ -15,21 +15,28 @@ void MLP::LoadMesh(std::string name, std::string path)
 		mt->futureObj = std::async(std::launch::async, &Mesh::LoadModelStr, &m_meshmap[name], "trolls_inn/Resources/" + path);
 		mt->name = name;
 		m_futureMeshes.push_back(mt);
-	
+
 	}
 	else
-	{
-		__debugbreak();
-	}
+		throw "Mesh with the same name exists!";
+}
+
+void MLP::LoadMeshInverted(short id, std::string path)
+{
+	LoadMeshInverted(std::to_string(id), path);
 }
 
 void MLP::LoadMeshInverted(std::string name, std::string path)
 {
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
-		m_meshmap[name].LoadModelInverted("trolls_inn/Resources/" + path);
-	
+		MESH_THREAD* mt = new MESH_THREAD;
+		mt->futureObj = std::async(std::launch::async, &Mesh::LoadModelInverted, &m_meshmap[name], "trolls_inn/Resources/" + path);
+		mt->name = name;
+		m_futureMeshes.push_back(mt);
 	}
+	else
+		throw "Mesh with the same name exists";
 }
 
 void MLP::LoadMeshRectangle(short id)
@@ -39,18 +46,16 @@ void MLP::LoadMeshRectangle(short id)
 
 void MLP::LoadMeshRectangle(std::string name)
 {
-	if (m_meshmap.find(name) != m_meshmap.end())
-		__debugbreak();
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
-		m_meshmap[name].MakeRectangle();
-		//m_futureMeshes.push_back(std::async(std::launch::async, &Mesh::MakeRectangle, &m_meshmap[name]));
+		MESH_THREAD* mt = new MESH_THREAD;
+		mt->futureObj = std::async(std::launch::async, &Mesh::MakeRectangle, &m_meshmap[name]);
+		mt->name = name;
+		m_futureMeshes.push_back(mt);
 	
 	}
 	else
-		__debugbreak();
-
-
+		throw "Mesh exist with the same name!";
 }
 
 bool MLP::IsReady(short id)
@@ -71,10 +76,10 @@ bool MLP::IsReady(std::string name)
 			{
 				delete m_futureMeshes[i];
 				m_futureMeshes.erase(m_futureMeshes.begin() + i);
-				return true;
+				return true; // Mesh is ready
 			}
 			else
-				return false;
+				return false; // Mesh isnt ready!
 		}
 	}
 	return true;
@@ -87,15 +92,10 @@ Mesh * MLP::GetMesh(short id)
 
 Mesh * MLP::GetMesh(std::string name)
 {
-	if (m_meshmap.find(name) == m_meshmap.end())
-	{
-		/*__debugbreak();*/
-		return &m_meshmap["NULL"];
-	}
-	else
-	{
+	if (m_meshmap.find(name) != m_meshmap.end())
 		return &m_meshmap[name];
-	}
+	else
+		throw "Requested Mesh that doesnt exist!";
 }
 
 void MLP::ClearMeshes()

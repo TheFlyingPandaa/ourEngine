@@ -26,16 +26,10 @@ private:
 	};
 
 private:
-	Mesh m;
-	Mesh kitchenTile;
-	Mesh rect;
 	
 	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
-
-	Mesh * bed;
-	Object3D * bed3D;
-	Furniture * hardBed;
+	Furniture* m_receptionFur;
 
 	HeightMap m_background;
 

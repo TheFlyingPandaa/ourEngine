@@ -11,7 +11,12 @@ enum MESH : short
 	// Terrain meshes
 	TREE_BILL,
 	WATER,
-	TERRAIN
+	TERRAIN,
+
+	SKYBOX,
+
+	// Furnitures
+	RECEPTION_HIGH
 
 };
 
@@ -40,6 +45,7 @@ public:
 	void LoadMesh(short id, std::string path);
 	void LoadMesh(std::string name, std::string path);
 
+	void LoadMeshInverted(short id, std::string path);
 	void LoadMeshInverted(std::string name, std::string path);
 
 	void LoadMeshRectangle(short id);

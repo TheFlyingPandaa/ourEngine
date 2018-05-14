@@ -427,6 +427,7 @@
   <ItemGroup>
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableCreepyStats.txt" />
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableNormalStats.txt" />
+    <Text Include="trolls_inn\heights.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
@@ -449,6 +450,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <None Include="trolls_inn\Resources\skybox.mtl" />
     <None Include="trolls_inn\Resources\tree\tree.mtl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
