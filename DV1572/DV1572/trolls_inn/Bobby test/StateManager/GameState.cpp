@@ -37,10 +37,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	//MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
-	/*m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MLP::GetInstance().GetMesh(MESH::RECEPTION_HIGH));
-	m_receptionFur->setRotation(180);*/
-	//m_roomctrl->AddRoomObject(m_receptionFur);
+
+	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
+	m_receptionFur->setRotation(180);
+	m_roomctrl->AddRoomObject(m_receptionFur);
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -61,8 +61,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setModel(MeshHandler::getBox());
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
-
-	table.LoadModel("trolls_inn/Resources/Stol.obj");
 
 	this->m_cam = cam;
 
@@ -97,7 +95,6 @@ void GameState::Update(double deltaTime)
 {
 	if (Input::isKeyPressed('Q'))
 	{
-		//std::cout << "EventStarted" << std::endl;
 		m_eventHandle->StartCollectEvent();
 	}
 
@@ -107,7 +104,7 @@ void GameState::Update(double deltaTime)
 		m_eventHandle->EndEvent();
 	}
 	m_eventHandle->Update();
-	//std::cout << inn.getMoney() << std::endl;
+
 
 	if (m_subStates.empty())
 	{
@@ -134,7 +131,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	c.Update();
 	m_roomctrl->Update(m_cam);
-	//this->grid->Update(this->m_cam);
+
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -167,25 +164,6 @@ void GameState::Update(double deltaTime)
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	
-	//auto currentTime = std::chrono::high_resolution_clock::now();
-	if (Input::isKeyPressed('N')) {
-		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
-	}
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	
-	
-	auto time = std::chrono::high_resolution_clock::now();
-	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
-	
-
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	m_roomctrl->PickRoomTiles();
-	//}
-	//if (Input::isKeyPressed('C'))
-	//{
-	//	m_roomctrl->PickWalls();
-	//}
 	
 }
 
@@ -236,7 +214,7 @@ void GameState::_init()
 
 	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
+	//MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
 	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");

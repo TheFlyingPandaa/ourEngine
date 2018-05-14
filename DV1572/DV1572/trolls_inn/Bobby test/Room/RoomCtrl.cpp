@@ -608,16 +608,21 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			}
 			else
 			{
-				Tile* t = tiles[_index(start.x, start.y - i)];
-				if (t && t->getHasObject() == false)
+				int tileIndex = _index(start.x, start.y - i);
+				if (tileIndex != -1)
 				{
-					t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					Tile* t = tiles[_index(start.x, start.y - i)];
+					if (t && t->getHasObject() == false)
+					{
+						t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					}
+					else if (t)
+					{
+						t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						isFalse = true;
+					}
 				}
-				else if(t)
-				{
-					t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					isFalse = true;
-				}
+				
 			}
 		}
 	}

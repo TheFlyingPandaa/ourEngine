@@ -116,17 +116,134 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 					m_furnitureRemove = nullptr;
 				}
-				if (!table)
+				static int lastSelected = -1;
+				 // Chair (Looks like table)
+				if (m_selectedThing == 0)
 				{
-					if (m_selectedThing == 0)
+					// This is the first selected image, the chair
+					if (lastSelected != m_selectedThing)
 					{
-						table = new Table(XMFLOAT3(0, 0, 0), nullptr);
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Table(XMFLOAT3(0, 0, 0), MESH::CHAIR);
 					}
-					else if(m_selectedThing == 1)
+					
+				}
+				// Table
+				else if (m_selectedThing == 1)
+				{
+
+					if (lastSelected != m_selectedThing)
 					{
-						table = new Bed(XMFLOAT3(0, 0, 0), nullptr);
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::TABLE);
 					}
 				}
+				// Bed High
+				else if (m_selectedThing == 2)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BED_HIGH);
+					}
+				}
+				// Bed Low
+				else if (m_selectedThing == 3)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BED_LOW);
+					}
+				}
+				// Bar high
+				else if (m_selectedThing == 4)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BAR_HIGH);
+					}
+				}
+				// Bar low
+				else if (m_selectedThing == 5)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BAR_LOW);
+					}
+				}
+
+				// Chair High
+				else if (m_selectedThing == 6)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::CHAIR_HIGH);
+					}
+				}
+				// Chair low
+				else if (m_selectedThing == 7)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::CHAIR_LOW);
+					}
+				}
+
+				// Stove
+				else if (m_selectedThing == 8)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::STOVE);
+					}
+				}
+
+				// Reception HIGH
+				else if (m_selectedThing == 9)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::RECEPTION_HIGH);
+					}
+				}
+				// Reception LOW
+				else if (m_selectedThing == 10)
+				{
+
+					if (lastSelected != m_selectedThing)
+					{
+						lastSelected = m_selectedThing;
+						delete table;
+						table = new Bed(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
+					}
+				}
+				
+				
 			}
 			break;
 		default:
@@ -564,19 +681,24 @@ void BuildState::_inputFurniture()
 		
 		else if (m_startTile)
 		{
-			DirectX::XMFLOAT3 p(m_startTile->getPosition());
-			table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
-			DirectX::XMINT2 start;
-			start.x = table->getPosition().x;
-			start.y = table->getPosition().z;
-			//this->grid->ResetTileColor(start, start);
-			if (m_inn->getMoney() >= table->getPrice())
+			
+			if(table != nullptr)
 			{
-				m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
-			}
-			else
-			{
-				m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
+				DirectX::XMFLOAT3 p(m_startTile->getPosition());
+				table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
+				DirectX::XMINT2 start;
+				start.x = table->getPosition().x;
+				start.y = table->getPosition().z;
+				//this->grid->ResetTileColor(start, start);
+				if (m_inn->getMoney() >= table->getPrice())
+				{
+					m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
+				}
+				else
+				{
+					m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
+				}
+
 			}
 			
 			
@@ -625,7 +747,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
+	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), MESH::RECEPTION_HIGH);
 }
 
 BuildState::~BuildState()
@@ -702,7 +824,7 @@ void BuildState::Draw()
 		break;
 	case BuildState::Furniture:
 		if (drawSelectedThing)
-			table->Draw();
+			if(table) table->Draw();
 		break;
 	default:
 		break;

@@ -60,9 +60,27 @@ extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
+void InitModels()
+{
+	MLP::GetInstance().LoadMesh(MESH::TERRAIN, "../TerrainLol.txt");
+	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE, "Table/Table.obj");
+	MLP::GetInstance().LoadMesh(MESH::CHAIR, "Stol.obj");
+	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
+	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar.obj");
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
+	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
+
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	
+
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
@@ -78,9 +96,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 
 	Window wnd(hInstance);
-	//wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
-	//wnd.Init(static_cast<int>(1920), static_cast<int>(1080), "Trolls_inn", gameSettings.fullscreen, working);
+	
+	
+	InitModels();
+	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -227,7 +247,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	delete cam;
 	delete gameState;
 	// MSDN
-
+	MLP::GetInstance().ClearMeshes();
 	MeshHandler::cleanAll();
 	return 0;
 }

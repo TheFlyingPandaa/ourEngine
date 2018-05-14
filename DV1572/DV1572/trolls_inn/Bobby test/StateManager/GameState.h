@@ -53,11 +53,6 @@ private:
 	bool m_move = false;
 	bool m_justMoved = false;
 
-	int m_i = 0;
-	std::future<void> future;
-
-	Mesh table;
-	
 	Inn * inn;
 
 	int m_in = 0;

@@ -101,4 +101,11 @@ Mesh * MLP::GetMesh(std::string name)
 void MLP::ClearMeshes()
 {
 	m_meshmap.clear();
+	//if (m_futureMeshes.size())
+	//	// This is not gut! We are loading models that we are not using!
+	for (auto& fut : m_futureMeshes)
+	{
+		delete fut;
+	}
+
 }

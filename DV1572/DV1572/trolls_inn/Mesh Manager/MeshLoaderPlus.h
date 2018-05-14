@@ -16,7 +16,24 @@ enum MESH : short
 	SKYBOX,
 
 	// Furnitures
-	RECEPTION_HIGH
+	RECEPTION_LOW,
+	RECEPTION_HIGH,
+	TABLE,
+
+	CHAIR,
+	CHAIR_LOW,
+	CHAIR_HIGH,
+
+	BED_HIGH,
+	BED_LOW,
+
+	BAR_HIGH,
+	BAR_LOW,
+
+	STOVE
+
+
+
 
 };
 
