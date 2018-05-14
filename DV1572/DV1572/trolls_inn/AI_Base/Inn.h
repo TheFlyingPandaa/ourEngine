@@ -5,6 +5,7 @@
 #include <iostream>
 #include "../Time Management/GameTime.h"
 #include "../Bobby test/StateManager/HUD/HUD.h"
+#include "../../InGameConsole.h"
 
 const int START_MONEY = 500;
 const double UPDATE_FREQ = 2.0;

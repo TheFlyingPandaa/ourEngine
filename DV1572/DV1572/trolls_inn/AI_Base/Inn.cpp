@@ -237,6 +237,9 @@ void Inn::IncreaseXP(const int amount)
 		m_innLevel++;
 		m_innXPLevel = 0;
 		Deposit(m_innLevel * 50);
+		std::string temp;
+		temp = "Level UP: " + std::to_string(m_innLevel);
+		InGameConsole::pushString(temp);
 		std::cout << "LEVEL UP" << std::endl;
 	}
 }
