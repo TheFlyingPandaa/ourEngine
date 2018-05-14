@@ -26,6 +26,9 @@ private:
 	int m_drinkPrice;
 	bool m_recievedReview;
 
+	int m_innLevel;
+	int m_innXPLevel;
+
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
 	Economy*		m_economy;
@@ -68,6 +71,8 @@ public:
 
 	void IncreaseRent(int amount);
 	void DecreaseRent(int amount);
+
+	void IncreaseXP(const int amount);
 
 	void changeStaffSalary(int amount);
 	
