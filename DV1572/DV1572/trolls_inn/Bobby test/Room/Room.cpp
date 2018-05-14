@@ -161,7 +161,10 @@ void Room::Draw()
 
 	for (auto& wall : m_allWalls)
 	{
-		wall->Draw();
+		if (wall)
+		{
+			wall->Draw();
+		}
 	}
 
 	for (auto &l : m_lights)
