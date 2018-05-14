@@ -446,6 +446,7 @@ void Room::AddRoomObject(Furniture * fut)
 {
 	Furniture * temp = fut->MakeCopy();
 	m_roomObjects.push_back(temp);
+	m_roomObjects[m_roomObjects.size() - 1]->setIndex(m_roomObjects.size()); 
 }
 
 void Room::PickTiles()

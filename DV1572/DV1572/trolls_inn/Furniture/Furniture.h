@@ -1,6 +1,8 @@
 #pragma once
 #include "../../ourEngine/interface/shape/3DObject.h"
 #include "../AI_Base/Attributes.h"
+#include "../AI_Base/Customer.h"
+
 
 class Furniture
 {
@@ -20,6 +22,8 @@ public:
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
 	DirectX::XMINT3 getPosition();
+	
+	Customer*		getOwner() const; 
 
 	int				getPrice();
 
@@ -29,6 +33,12 @@ public:
 	int				getLevel();
 	void			setLevel(int amount);
 	void			AddLevel(int amount = 1);
+	void			setIndex(int index); 
+	void			setOwner(Customer* owner); 
+
+	int				getIndex() const; 
+
+	void			releaseOwnerShip(); 
 	//void LoadFurnitureStats(std::string path);
 
 	virtual std::string WhatType();
@@ -39,6 +49,8 @@ public:
 
 private:
 	DirectX::XMINT3 pos;
+	int m_index; 
+	Customer* m_owner; 
 protected:
 	Object3D	p_object;
 	Attributes	p_attributes;

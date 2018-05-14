@@ -47,5 +47,7 @@ public:
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);
 
+	RoomCtrl* getRoomCtrl();
+
 	int RequestPath(Character& character, RoomType targetRoom);
 };

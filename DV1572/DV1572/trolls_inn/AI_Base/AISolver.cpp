@@ -333,7 +333,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			}
 			else
 			{
-				customer.PopToNextState();
+				customer.PopToNextState(getRoomCtrl());
 				currentState = customer.GetState();
 			}
 		}
@@ -343,7 +343,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 	{
 		if (customer.walkQueueDone())
 		{
-			customer.PopToNextState();
+			customer.PopToNextState(getRoomCtrl());
 			currentState = customer.GetState();
 		}
 	}
@@ -364,7 +364,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				RequestPath(customer, RoomType::randomStupid);
 				customer.SetAction(WalkAction);
 			}
-			customer.PopToNextState();
+			customer.PopToNextState(getRoomCtrl());
 			break;
 			// Update animations drink, eat, sleep (?)
 		case Drinking:
@@ -376,7 +376,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 					if (customer.GetThirsty() > 0)
 						customer.DoDrinking();
 					else
-						customer.PopToNextState();
+						customer.PopToNextState(getRoomCtrl());
 				}
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
@@ -398,7 +398,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 					if (customer.GetHungry() > 0)
 						customer.DoEating();
 					else
-						customer.PopToNextState();
+						customer.PopToNextState(getRoomCtrl());
 				}
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
@@ -421,7 +421,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 					if (customer.GetTired() > 0)
 						customer.DoSleeping();
 					else
-						customer.PopToNextState();
+						customer.PopToNextState(getRoomCtrl());
 				}
 			}
 			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
@@ -461,8 +461,8 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 			
 		break;
 	}
-	customer.PopToNextState(); // pop Thinking state
-	customer.PopToNextState(); // pop Idle state
+	customer.PopToNextState(getRoomCtrl()); // pop Thinking state
+	customer.PopToNextState(getRoomCtrl()); // pop Idle state
 	if (gotPath == 1)
 	{
 		customer.GotPathSetNextAction(desiredAction);
@@ -487,6 +487,11 @@ void AISolver::Update(Staff& staff)
 void AISolver::Update(Staff& staff, Action desiredAction)
 {
 
+}
+
+RoomCtrl * AISolver::getRoomCtrl()
+{
+	return m_roomctrl; 
 }
 
 

@@ -6,6 +6,7 @@
 #include <stack>
 #include <chrono>
 #include "../Bobby test/Room/RoomCtrl.h"
+#include <iostream>
 
 enum Race
 {
@@ -44,6 +45,8 @@ private:
 	Race m_race;
 	std::queue<CustomerState> m_stateQueue;
 
+	Furniture* m_ownedFurniture; 
+
 	// Add a room stack with all the rooms of a specific type (?)
 	// For pathfinding purposes
 
@@ -52,8 +55,8 @@ private:
 	bool m_waitingForSpot;
 	int m_waitingForSpotMultiplier;
 
-	void searchForFreeFurniture(); 
-	void findNearestRoom(RoomCtrl& roomCtrl, Action customerNeed); 
+	void searchForFreeFurniture(RoomCtrl* roomCtrl); 
+	void findNearestRoom(RoomCtrl* roomCtrl, Action customerNeed); 
 
 	// Customer interests update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -89,7 +92,9 @@ public:
 
 	int GetQueueEmpty() const;
 	CustomerState GetState() const;
-	void PopToNextState();
+	void PopToNextState(RoomCtrl* roomCtrl);
+	
+	void setOwnedFurniture(Furniture* furnitureOwned); 
 
 	const char* GetActionStr() const;
 	const char* GetStateStr() const;

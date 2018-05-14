@@ -1,41 +1,52 @@
 #include "Customer.h"
 
-void Customer::searchForFreeFurniture()
+//Only do this from time to time, no need to do it every frame
+void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)
 {
 	if (GetAction() == SleepAction)
 	{
-
+		findNearestRoom(roomCtrl, SleepAction); 
+	}
+	else if (GetAction() == EatAction)
+	{
+		findNearestRoom(roomCtrl, EatAction);
+	}
+	else if (GetAction() == DrinkAction)
+	{
+		findNearestRoom(roomCtrl, DrinkAction); 
 	}
 }
 
-void Customer::findNearestRoom(RoomCtrl& roomCtrl, Action customerNeed)
+void Customer::findNearestRoom(RoomCtrl* roomCtrl, Action customerNeed)
 {
 	XMFLOAT3 roomPos; 
 	if (customerNeed == SleepAction)
-		roomPos = roomCtrl.getClosestRoom(this->getPosition(), bedroom);
+		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
 	else if (customerNeed == HUNGRY)
-		roomPos = roomCtrl.getClosestRoom(this->getPosition(), kitchen);
+		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
 	else
-		roomPos = roomCtrl.getClosestRoom(this->getPosition(), bar);
+		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
 
-	Room* roomToCheck = roomCtrl.getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
+	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
 
 	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
 	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
 
 	for (int i = 0; i < nrOfFurniture; i++)
 	{
-		if (!furniture[i]->getIsBusy())
+		if (furniture[i]->getOwner() == nullptr)
 		{
-			furniture[i]->setIsBusy(true); 
-			//Make customer walk to furniture 
+			furniture[i]->setOwner(this); 
+			m_ownedFurniture = furniture[i]; 
+			m_ownedFurniture->setIsBusy(true);
+			std::cout << "Furniture occupied!" << std::endl; 
 		}
 	}
-
 }
 
 Customer::Customer()
 {
+	m_ownedFurniture = nullptr; 
 }
 
 Customer::Customer(Race race, int gold)
@@ -46,6 +57,8 @@ Customer::Customer(Race race, int gold)
 	m_race = race;
 	m_economy = Economy(gold);
 	m_review.SetStat(0.1f);
+
+	m_ownedFurniture = nullptr; 
 
 	if (race == Elf)
 	{
@@ -79,6 +92,7 @@ Customer::Customer(const Customer& other) : Character(other)
 	m_tiredRate = other.m_tiredRate;
 	m_thirstyRate = other.m_thirstyRate;
 	m_patience = other.m_patience;
+	m_ownedFurniture = nullptr; 
 }
 
 Customer::~Customer()
@@ -133,9 +147,22 @@ CustomerState Customer::GetState() const
 	return m_stateQueue.front();
 }
 
-void Customer::PopToNextState()
+void Customer::PopToNextState(RoomCtrl* roomCtrl)
 {
 	m_stateQueue.pop();
+	if (m_ownedFurniture != nullptr)
+	{
+		m_ownedFurniture->releaseOwnerShip(); 
+		m_ownedFurniture->setIsBusy(false); 
+		m_ownedFurniture = nullptr;
+		std::cout << "Furniture released!" << std::endl;
+	}
+	searchForFreeFurniture(roomCtrl); 
+}
+
+void Customer::setOwnedFurniture(Furniture * furnitureOwned)
+{
+	m_ownedFurniture = furnitureOwned; 
 }
 
 void Customer::SetAction(Action nextAction)
@@ -350,5 +377,4 @@ void Customer::Update()
 		DisableThinkingEmjois();
 
 	Character::Update();
-
 }
