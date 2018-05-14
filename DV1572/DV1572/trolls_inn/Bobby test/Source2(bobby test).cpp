@@ -61,6 +61,7 @@ extern "C" {
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
@@ -112,8 +113,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	wallWithWindow.setMesh(MeshHandler::getWallWithWindow()); 
 	wallWithWindow.setPos(18, 0, 20); 
 
-	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam));
-
+	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam
 	std::unique_ptr<AudioEngine> audEngine;
 	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
 	#ifdef _DEBUG
@@ -147,13 +147,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		{
 			updates++;
 			unprocessed -= 1;
-
-			if (Input::isKeyPressed('9'))
-			{
-				delete gameState;
-				gameState = new GameState(&pickingEvents, &keyEvent, cam);
-			}
-
 			InGameConsole::update(1.0/REFRESH_RATE);
 
 			if (!gameStates.empty())

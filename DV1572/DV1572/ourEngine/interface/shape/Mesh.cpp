@@ -108,8 +108,6 @@ void Mesh::LoadModel(const std::string & path)
 					break;
 				}
 
-	
-
 			// Vertex Buffer Indexed
 			ID3D11Buffer* vertexBuffer = nullptr;
 			D3D11_BUFFER_DESC vBufferDescIndexed;

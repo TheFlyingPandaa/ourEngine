@@ -1,4 +1,6 @@
 #include "Room.h"
+#include "../../Furniture/Table.h"
+#include "../../Furniture/Bed.h"
 
 Mesh Room::s_AABB;
 bool Room::s_isLoaded = false;
@@ -19,11 +21,11 @@ void Room::_initAABB(int x, int y, int sx, int sy, int level)
 
 void Room::_createLight(int x, int y, int sx, int sy, int level)
 {
-	PointLight l;
-	l.setPosition(static_cast<float>(x) + ((float)sx / 2), 2, static_cast<float>(y) + ((float)sy / 2));
-	l.setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
-	l.setSettingsForLight(2.0f, 0.8f);
-	l.setIndex(m_index);
+	PointLight* l = new PointLight();
+	l->setPosition(static_cast<float>(x) + ((float)sx / 2), 2, static_cast<float>(y) + ((float)sy / 2));
+	l->setColor((rand() % 11) * 0.1f, (rand() % 11) * 0.1f, (rand() % 11) * 0.1f);
+	l->setSettingsForLight(2.0f, 0.8f);
+	l->setIndex(m_index);
 	m_lights.push_back(l);
 }
 
@@ -45,7 +47,8 @@ int Room::_index(int x, int y)
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
 {
-	// Do not use i guess
+	// Do not use i guess 
+	//lmao ^
 }
 
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
@@ -57,10 +60,7 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 	_createLight(posX, posY, sizeX, sizeY);
 	m_selected = false;
 
-	for (auto &l : m_lights)
-	{
-		l.addToLightQueue();
-	}
+
 
 
 	this->m_posX = posX;
@@ -87,6 +87,10 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 
 Room::~Room()
 {
+	for (auto& light : m_lights) {
+		delete light;
+		light = nullptr;
+	}
 	for (auto& walls : m_allWalls)
 		delete walls;
 	for (auto& tile : m_roomTiles)
@@ -157,7 +161,15 @@ void Room::Draw()
 
 	for (auto& wall : m_allWalls)
 	{
-		wall->Draw();
+		if (wall)
+		{
+			wall->Draw();
+		}
+	}
+
+	for (auto &l : m_lights)
+	{
+		l->Draw();
 	}
 	
 }
@@ -433,9 +445,10 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 	}
 }
 
-void Room::AddRoomObject(Furniture fut)
+void Room::AddRoomObject(Furniture * fut)
 {
-	m_roomObjects.push_back(new Furniture(fut));
+	Furniture * temp = fut->MakeCopy();
+	m_roomObjects.push_back(temp);
 }
 
 void Room::PickTiles()
@@ -579,9 +592,49 @@ int Room::getAmountOfObjects()
 	return static_cast<int>(m_roomObjects.size());
 }
 
-int Room::getAmountOfSpecificObjects(Furniture compare)
+int Room::getAmountOfSpecificObjects(Furniture * compare)
 {
-	return 0;
+	int amount = 0;
+	if (m_roomObjects.size() <= 0)
+	{
+		return -1;
+	}
+	else
+	{
+		for (size_t i = 0; i < m_roomObjects.size(); i++)
+		{
+			if (m_roomObjects.at(i)->WhatType() == compare->WhatType())
+			{
+				amount++;
+			}
+
+		}
+	}
+	return amount;
+}
+
+int Room::getAmountOfSpecificObjectsNotBusy(Furniture * compare)
+{
+	int amount = 0;
+	if (m_roomObjects.size() <= 0)
+	{
+		return -1;
+	}
+	else
+	{
+		for (size_t i = 0; i < m_roomObjects.size(); i++)
+		{
+			if (m_roomObjects.at(i)->WhatType() == compare->WhatType())
+			{
+				if (false == m_roomObjects.at(i)->getIsBusy())
+				{
+					amount++;
+				}
+			}
+
+		}
+	}
+	return amount;
 }
 
 int Room::getPriceOfAllObjects()
