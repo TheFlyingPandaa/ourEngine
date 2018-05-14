@@ -3,7 +3,6 @@
 #include "../AI_Base/Attributes.h"
 #include "../AI_Base/Customer.h"
 
-
 class Furniture
 {
 public:

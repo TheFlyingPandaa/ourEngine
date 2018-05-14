@@ -1,4 +1,5 @@
 #include "Customer.h"
+#include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
 void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)

@@ -5,8 +5,11 @@
 #include <queue>
 #include <stack>
 #include <chrono>
-#include "../Bobby test/Room/RoomCtrl.h"
+//#include "../Bobby test/Room/RoomCtrl.h"
 #include <iostream>
+
+class RoomCtrl; 
+class Furniture;
 
 enum Race
 {
