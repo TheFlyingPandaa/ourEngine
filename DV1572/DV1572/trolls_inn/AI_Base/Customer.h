@@ -20,6 +20,7 @@ enum Action
 	EatAction,
 	SleepAction,
 	LeavingInnAction,
+	WaitingAction,
 	WalkToInn
 };
 
@@ -32,8 +33,8 @@ enum CustomerState
 	Eating,
 	Sleeping,
 	LeavingInn,
+	Waiting,
 	WalkingToInn
-
 };
 
 class Customer : public Character
@@ -82,6 +83,7 @@ public:
 	// Get desired action
 	Action GetAction() const;
 	void SetAction(Action nextAction);
+	void SetWaiting();
 	void GotPathSetNextAction(Action nextAction);
 
 	int GetQueueEmpty() const;

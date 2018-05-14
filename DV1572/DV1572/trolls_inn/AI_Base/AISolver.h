@@ -10,8 +10,9 @@
 #include <thread>
 
 const int UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT = 1;
-const int WAITING_FOR_SPOT_TIME_LIMIT = 20;
+const int WAITING_FOR_SPOT_TIME_LIMIT = 40;
 using namespace std::chrono_literals;
+
 class AISolver
 {
 private:

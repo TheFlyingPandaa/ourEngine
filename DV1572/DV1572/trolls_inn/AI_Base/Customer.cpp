@@ -142,6 +142,16 @@ void Customer::SetAction(Action nextAction)
 	this->m_stateQueue.push(Idle);
 }
 
+void Customer::SetWaiting()
+{
+	CustomerState saveState = m_stateQueue.front();
+	m_stateQueue.pop();
+	m_stateQueue.pop();
+	m_stateQueue.push(Waiting);
+	m_stateQueue.push(saveState);
+	m_stateQueue.push(Idle);
+}
+
 void Customer::GotPathSetNextAction(Action nextAction)
 {
 	this->m_stateQueue.push(Walking);
