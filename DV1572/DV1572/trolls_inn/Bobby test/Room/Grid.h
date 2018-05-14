@@ -22,7 +22,7 @@ private:
 	Object3D			m_catWalkTile;
 
 	bool _findInVec(std::vector<Node*>& list, Node* node) const;
-	bool _findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const;
+	std::vector<std::shared_ptr<Node>>::iterator _findInVec(std::vector<std::shared_ptr<Node>>& list,const std::shared_ptr<Node>& node) const;
 	
 	int _index(int x, int y) const;
 

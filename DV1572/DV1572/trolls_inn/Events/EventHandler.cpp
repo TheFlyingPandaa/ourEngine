@@ -1,6 +1,7 @@
 #include "EventHandler.h"
 #include <iostream>
 #include "../Mesh Manager/MeshManager.h"
+#include <thread>
 
 EventHandler::EventHandler(Inn * inn, RoomCtrl * roomctl, std::vector<std::shared_ptr<Node>> firstPath, std::vector<std::shared_ptr<Node>> secondPath)
 {
@@ -97,6 +98,15 @@ void EventHandler::Update()
 			std::cout << "EventEnded" << std::endl;
 		}
 	}
+
+#include "../../InGameConsole.h"
+	using namespace std::chrono_literals;
+
+	if (m_inn->getAngryCustomers() >= m_inn->getAngryCustomersCap())
+	{
+		InGameConsole::pushString("Paris hilton did not like your preformance");
+	}
+
 }
 
 void EventHandler::StartCollectEvent()

@@ -24,7 +24,7 @@ Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(
 	{
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
 		
-		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
+		p_object.GetMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
 		p_price = 1000;
 	}
 

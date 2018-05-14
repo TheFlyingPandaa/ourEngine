@@ -64,6 +64,11 @@ Mesh::~Mesh()
 		iBuffer->Release();
 }
 
+void Mesh::LoadModelStr(const std::string & path)
+{
+	LoadModel(path);
+}
+
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<Material*> tempMaterials = DX::getMaterials(path);
@@ -94,11 +99,12 @@ void Mesh::LoadModel(const std::string & path)
 			std::string mttlibName;
 
 			DX::loadOBJContinue(fptr, tempVertices, globalvertices, globalNormals, globalUVs, mttlibName);
+			if (mttlibName == "")
+				break; //This is happening with faulty OBJs, lol
 			DX::CalculateTangents(tempVertices);
 			DX::indexVertices(tempVertices, indices, tempIndexed);
 
-			if (mttlibName == "") 
-				break; //This is happening with faulty OBJs, lol
+			
 
 			for (int i = 0; i < tempMaterials.size(); i ++)
 				if (tempMaterials[i]->getName() == mttlibName)

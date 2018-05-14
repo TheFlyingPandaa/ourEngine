@@ -1,4 +1,5 @@
 #include "MaxHeightMap.h"
+#include "HeightMapGenerator.h"
 
 
 
@@ -11,6 +12,8 @@ HeightMap::HeightMap()
 HeightMap::~HeightMap()
 {
 }
+
+
 
 bool HeightMap::initialize(Application *pApp, HWND hwnd, int mapSize, float offset)
 {
@@ -454,8 +457,6 @@ bool HeightMap::buildHeightMap(ID3D11Device * pDev)
 		texVIndex++;
 	}
 
-	//build the quadtree
-	m_quadTree.initialize(m_indices, m_mapSize, m_offset, pDev);
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData;

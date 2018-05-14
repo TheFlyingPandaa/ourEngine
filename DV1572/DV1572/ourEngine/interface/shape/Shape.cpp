@@ -74,7 +74,7 @@ void Shape::setMesh(Mesh * m)
 	m_mesh = m;
 }
 
-Mesh * Shape::getMesh() const
+Mesh * Shape::GetMesh() const
 {
 	return m_mesh;
 }

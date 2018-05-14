@@ -114,6 +114,9 @@ Inn::Inn()
 	m_receptionPos = DirectX::XMINT2(16, 1);
 
 	m_rent = 0;
+
+	m_innLevel = 1;
+	m_innXPLevel = 0;
 }
 
 Inn::~Inn()
@@ -164,6 +167,10 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
 		
 		m_staffSalaryApplyed = true;
+		if (m_AngryCustomers >= 1)
+		{
+			m_AngryCustomers -= 1;
+		}
 	}
 
 	m_timer += deltaTime;
@@ -226,6 +233,36 @@ void Inn::DecreaseRent(int amount)
 	m_rent -= amount;
 }
 
+void Inn::IncreaseXP(const int amount)
+{
+	m_innXPLevel += amount;
+	if (m_innXPLevel >= m_innLevel * 50)
+	{
+		m_innLevel++;
+		m_innXPLevel = 0;
+		Deposit(m_innLevel * 50);
+		std::string temp;
+		temp = "Level UP: " + std::to_string(m_innLevel);
+		InGameConsole::pushString(temp);
+		std::cout << "LEVEL UP" << std::endl;
+	}
+}
+
+void Inn::AddAngryCustomer()
+{
+	m_AngryCustomers++;
+}
+
+int Inn::getAngryCustomers() const
+{
+	return m_AngryCustomers;
+}
+
+int Inn::getAngryCustomersCap() const
+{
+	return m_angryCustomerCap;
+}
+
 void Inn::GetRefund(int amount)
 {
 	m_economy->GetRefund(amount);
@@ -280,6 +317,7 @@ void Inn::Draw()
 		for (auto element : m_removeVec)
 		{
 			m_withdrawText.erase(m_withdrawText.begin() + element);
+			break;
 		}
 		m_removeVec.clear();
 	}
@@ -304,6 +342,7 @@ void Inn::Draw()
 		{
 			m_depositAmount.erase(m_depositAmount.begin() + element);
 			m_depositText.erase(m_depositText.begin() + element);
+			break;
 		}
 		m_removeVec.clear();
 	}

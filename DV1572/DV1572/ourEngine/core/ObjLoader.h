@@ -9,19 +9,19 @@
 #include <map>
 #include "Dx.h"
 #include "../interface/shape/Material.h"
+#include "../../trolls_inn/Mesh Manager/MeshLoaderPlus.h"
 
 namespace DX
 {
 	static std::vector<Material*> getMaterials(const std::string& path)
 	{
-		bool printSuccess = true;
 		auto getMttlibPath = [&]() -> std::string
 		{
 			std::ifstream fptr;
 			fptr.open(path);
 			if (!fptr)
 			{
-				std::cout << "getMaterials(): Can not open obj file - " << path << std::endl;
+				std::cout << "-----------ERROR:getMaterials(): Can not open obj file - " << path <<" -----------" <<  std::endl;
 				return "";
 			}
 
@@ -41,7 +41,7 @@ namespace DX
 						auto const pos = path.find_last_of('/');
 						std::string newPath = path.substr(0, pos + 1);
 						newPath += mttlibName;
-						if(printSuccess)std::cout << "\nMaterial: Gathering materials from " << newPath << std::endl;
+						std::cout << "\nMaterial: Gathering materials from " << newPath << std::endl;
 						return newPath;
 					}
 				}
@@ -57,7 +57,7 @@ namespace DX
 		fptr.open(mttlibPath);
 		if (!fptr)
 		{
-			std::cout << "getMatrials() Can not open mttlib file - " << mttlibPath << std::endl;
+			std::cout << "-----------ERROR:getMatrials() Can not open mttlib file - " << mttlibPath << " ----------"<<std::endl;
 			return std::vector<Material*>();
 		}
 		
@@ -76,21 +76,21 @@ namespace DX
 					std::string name = "";
 					stream >> name;
 					materials.push_back(new Material(name));
-					if (printSuccess) std::cout << "newmtl " << name << std::endl;
+					std::cout << "newmtl " << name << std::endl;
 				}
 				else if (type == "Ns")
 				{
 					float specularComp = 0.0f;
 					stream >> specularComp;
 					materials.back()->setSpecularExponent(specularComp);
-					if (printSuccess) std::cout << "\tNs " << specularComp << std::endl;
+					std::cout << "\tNs " << specularComp << std::endl;
 				}
 				else if (type == "map_Kd")
 				{
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setDiffuseMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Kd " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					std::cout << "\tmap_Kd " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
 				
 				}
 				else if (type == "map_Bump")
@@ -98,14 +98,14 @@ namespace DX
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setNormalMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Bump " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					std::cout << "\tmap_Bump " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
 				}
 				else if (type == "map_Ks")
 				{
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setHighlightMap(originPath + file);
-					if (printSuccess) std::cout << "\tmap_Ks " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					std::cout << "\tmap_Ks " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
 				}
 			}
 		}
@@ -196,74 +196,74 @@ namespace DX
 		fptr.open(path);
 		if (!fptr)
 		{
-			std::cout << "Can not open " << path << " dickhead!\n";
+			std::cout << "-----------ERROR:loadObj() Can not open " << path << " -----------\n";
+			return;
 		}
-		else
+		
+		std::vector<V> ver;
+		std::vector<VN> nor;
+		std::vector<VT> uv;
+		std::vector<F> face;
+		std::string currentLine = "";
+
+		while(std::getline(fptr, currentLine))
 		{
-			std::vector<V> ver;
-			std::vector<VN> nor;
-			std::vector<VT> uv;
-			std::vector<F> face;
-			std::string currentLine = "";
-
-			while(std::getline(fptr, currentLine))
+			if (currentLine[0] != '#' || currentLine != "")
 			{
-				if (currentLine[0] != '#' || currentLine != "")
+				std::istringstream stream(currentLine);
+				std::string type;
+
+				stream >> type;
+
+				if (type == "v")
 				{
-					std::istringstream stream(currentLine);
-					std::string type;
-
-					stream >> type;
-
-					if (type == "v")
-					{
-						V v;
-						sscanf_s(currentLine.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
-						ver.push_back(v);
-					}
-					else if (type == "vt")
-					{
-						VT vt;
-						sscanf_s(currentLine.c_str(), "%*s %f %f", &vt.u, &vt.v);
-						uv.push_back(vt);
-					}
-					else if (type == "vn")
-					{
-						VN vn;
-						sscanf_s(currentLine.c_str(), "%*s %f %f %f", &vn.x, &vn.y, &vn.z);
-						nor.push_back(vn);
-					}
-					else if (type == "f")
-					{
-						F fa[3];
+					V v;
+					sscanf_s(currentLine.c_str(), "%*s %f %f %f", &v.x, &v.y, &v.z);
+					ver.push_back(v);
+				}
+				else if (type == "vt")
+				{
+					VT vt;
+					sscanf_s(currentLine.c_str(), "%*s %f %f", &vt.u, &vt.v);
+					uv.push_back(vt);
+				}
+				else if (type == "vn")
+				{
+					VN vn;
+					sscanf_s(currentLine.c_str(), "%*s %f %f %f", &vn.x, &vn.y, &vn.z);
+					nor.push_back(vn);
+				}
+				else if (type == "f")
+				{
+					F fa[3];
 						
-						sscanf_s(currentLine.c_str(), "%*s %d/%d/%d %d/%d/%d %d/%d/%d",
-							&fa[0].vIndex, &fa[0].vtIndex, &fa[0].vnIndex,
-							&fa[1].vIndex, &fa[1].vtIndex, &fa[1].vnIndex,
-							&fa[2].vIndex, &fa[2].vtIndex, &fa[2].vnIndex
-						);
-						for (int i = 0; i < 3; i++)
-						{
-							face.push_back(fa[i]);
-						}
+					sscanf_s(currentLine.c_str(), "%*s %d/%d/%d %d/%d/%d %d/%d/%d",
+						&fa[0].vIndex, &fa[0].vtIndex, &fa[0].vnIndex,
+						&fa[1].vIndex, &fa[1].vtIndex, &fa[1].vnIndex,
+						&fa[2].vIndex, &fa[2].vtIndex, &fa[2].vnIndex
+					);
+					for (int i = 0; i < 3; i++)
+					{
+						face.push_back(fa[i]);
 					}
 				}
 			}
-
-			for (size_t i = 0; i < face.size(); i++)
-			{
-				F f = face[i];
-				V v = ver[f.vIndex - 1];
-				VT vt = uv[f.vtIndex - 1];
-				VN vn = nor[f.vnIndex - 1];
-				VERTEX vertex = {
-					v.x, v.y, v.z,
-					vt.u, vt.v,
-					vn.x, vn.y, vn.z
-				};
-				model.push_back(vertex);
-			}
 		}
+
+		for (size_t i = 0; i < face.size(); i++)
+		{
+			F f = face[i];
+			V v = ver[f.vIndex - 1];
+			VT vt = uv[f.vtIndex - 1];
+			VN vn = nor[f.vnIndex - 1];
+			VERTEX vertex = {
+				v.x, v.y, v.z,
+				vt.u, vt.v,
+				vn.x, vn.y, vn.z
+			};
+			model.push_back(vertex);
+		}
+		
 	}
 
 	static void loadOBJInvert(const std::string & path, std::vector<VERTEX> &model)
@@ -272,7 +272,7 @@ namespace DX
 		fptr.open(path);
 		if (!fptr)
 		{
-			std::cout << "Can not open " << path << " dickhead!\n";
+			std::cout << "-----------ERROR:loadObj() Can not open " << path << " -----------\n";
 		}
 		else
 		{
@@ -346,14 +346,15 @@ namespace DX
 	{
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
-
+		MLP::GetInstance().mtx.lock();
 		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
+		MLP::GetInstance().mtx.unlock();
 		return hr == S_OK;
 	}
 
 	static void CalculateTangents(std::vector<VERTEX> &model)
 	{
-		for (int i = 0; i < model.size(); i += 3)
+		for (int i = 0; i < model.size() - 2; i += 3)
 		{
 			int j = i + 1;
 			int k = i + 2;
@@ -395,7 +396,7 @@ namespace DX
 		struct PackedVertex
 		{
 			DirectX::XMFLOAT3 position;
-			DirectX::XMFLOAT3 uv;
+			DirectX::XMFLOAT2 uv;
 			DirectX::XMFLOAT3 normal;
 
 			bool operator<(const PackedVertex& other) const
@@ -404,28 +405,16 @@ namespace DX
 			}
 		};
 
-		//struct VERTEX
-		//{
-		//	float x, y, z;		//Position
-		//	float u, v;			//Texel
-		//	float nx, ny, nz;	//Normal
-		//	float tx, ty, tz;	//Tangent
-		//};
 		std::map<PackedVertex, unsigned short> vertexToOutIndex;
 
 		for (unsigned i = 0; i < vertices.size(); i++)
 		{
 			DirectX::XMFLOAT3 pos;
-			pos.x = vertices[i].x;
-			pos.y = vertices[i].y;
-			pos.z = vertices[i].z;
-			DirectX::XMFLOAT3 uv;
-			uv.x = vertices[i].u;
-			uv.y = vertices[i].v;
+			memcpy(&pos, &vertices[i].x, 3 * sizeof(float));
+			DirectX::XMFLOAT2 uv;
+			memcpy(&uv, &vertices[i].u, 2 * sizeof(float));
 			DirectX::XMFLOAT3 normal;
-			normal.x = vertices[i].nx;
-			normal.y = vertices[i].ny;
-			normal.z = vertices[i].nz;
+			memcpy(&normal, &vertices[i].nx, 3 * sizeof(float));
 			PackedVertex packed = { pos,uv,normal };
 
 			std::map<PackedVertex, unsigned short>::iterator it = vertexToOutIndex.find(packed);

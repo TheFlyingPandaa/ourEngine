@@ -30,12 +30,23 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_startTile = pickedShape;
 					m_buildStage = BuildStage::Selection;
 				}
+				else if(m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 				else
 					m_buildStage = BuildStage::None;
 				break;
 			case BuildStage::Selection:
-				if (pickedShape)
+				if (pickedShape) {
 					m_selectedTile = pickedShape;
+				}
+				else if (m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 				break;
 			case BuildStage::None:
 				if (pickedShape)
@@ -331,6 +342,11 @@ bool BuildState::_selectionBuildHudPick(HUD & h)
 			{
 				m_selectedThing = index;
 				h.SetPressColorOnButton(m_selectedThing);
+				if (m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 			}
 			else
 			{
@@ -450,6 +466,7 @@ void BuildState::_buildRoom()
 		m_roomCtrl->AddRoom(start, end, static_cast<RoomType>(m_selectedThing), grid->extractTiles(start, end));
 		
 		m_inn->Withdraw(area * 20);
+		m_inn->IncreaseXP(area * 5);
 		//m_inn->Deposit(area);
 		//m_inn->UpdateMoney();
 		

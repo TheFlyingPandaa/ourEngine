@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FEC32320-E8FF-4FB6-8808-1FFF63B67497}</ProjectGuid>
     <RootNamespace>DV1572</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -88,6 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -124,10 +125,9 @@
   <ItemGroup>
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
@@ -164,7 +164,6 @@
     <ClCompile Include="trolls_inn\Bobby test\Room\RoomCtrl.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Structure.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Wall.cpp" />
-    <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\GameState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\HUD.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\MainMenu.cpp" />
@@ -179,6 +178,7 @@
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
+    <ClCompile Include="trolls_inn\Mesh Manager\MeshLoaderPlus.cpp" />
     <ClCompile Include="trolls_inn\Mesh Manager\MeshManager.cpp" />
     <ClCompile Include="trolls_inn\Time Management\GameTime.cpp" />
   </ItemGroup>
@@ -186,9 +186,7 @@
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
-    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
@@ -248,6 +246,7 @@
     <ClInclude Include="trolls_inn\Furniture\Bed.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
+    <ClInclude Include="trolls_inn\Mesh Manager\MeshLoaderPlus.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />
     <ClInclude Include="trolls_inn\Time Management\GameTime.h" />
   </ItemGroup>
@@ -448,6 +447,9 @@
     <Library Include="ourEngine\core\Font\FontLibxRL.lib">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="trolls_inn\Resources\tree\tree.mtl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
