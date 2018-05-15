@@ -68,7 +68,6 @@ void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
 
-	m_InnTroll->setSpeed(15.0f);
 	m_solver.Update(*m_InnTroll); 
 
 
