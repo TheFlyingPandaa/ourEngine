@@ -29,6 +29,6 @@ public:
 	static void update(double deltaTime);
 	static void draw();
 
-	static void pushString(const std::string & string);
+	static void pushString(const std::string & string, float r = 1, float g = 1, float b = 1);
 };
 

@@ -41,7 +41,6 @@ namespace DX
 						auto const pos = path.find_last_of('/');
 						std::string newPath = path.substr(0, pos + 1);
 						newPath += mttlibName;
-						std::cout << "\nMaterial: Gathering materials from " << newPath << std::endl;
 						return newPath;
 					}
 				}
@@ -76,21 +75,21 @@ namespace DX
 					std::string name = "";
 					stream >> name;
 					materials.push_back(new Material(name));
-					std::cout << "newmtl " << name << std::endl;
+					
 				}
 				else if (type == "Ns")
 				{
 					float specularComp = 0.0f;
 					stream >> specularComp;
 					materials.back()->setSpecularExponent(specularComp);
-					std::cout << "\tNs " << specularComp << std::endl;
+					
 				}
 				else if (type == "map_Kd")
 				{
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setDiffuseMap(originPath + file);
-					std::cout << "\tmap_Kd " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					if(!result) std::cout << "\tmap_Kd " << file << ".." << "Failed!" << std::endl;
 				
 				}
 				else if (type == "map_Bump")
@@ -98,14 +97,14 @@ namespace DX
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setNormalMap(originPath + file);
-					std::cout << "\tmap_Bump " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					if(!result) std::cout << "\tmap_Bump " << file << ".." << "Failed!" << std::endl;
 				}
 				else if (type == "map_Ks")
 				{
 					std::string file = "";
 					stream >> file;
 					bool result = materials.back()->setHighlightMap(originPath + file);
-					std::cout << "\tmap_Ks " << file << ".." << (result ? "Found" : "Failed!") << std::endl;
+					if(!result)std::cout << "\tmap_Ks " << file << ".." << "Failed!" << std::endl;
 				}
 			}
 		}
@@ -344,9 +343,10 @@ namespace DX
 
 	static bool loadTexture(const std::string & path, ID3D11Resource *& texture, ID3D11ShaderResourceView *& textureView)
 	{
+		MLP::GetInstance().mtx.lock();
 		std::wstring widestr = std::wstring(path.begin(), path.end());
 		const wchar_t* widecstr = widestr.c_str();
-		MLP::GetInstance().mtx.lock();
+		
 		HRESULT hr = DirectX::CreateWICTextureFromFile(DX::g_device,DX::g_deviceContext, widecstr, &texture, &textureView);
 		MLP::GetInstance().mtx.unlock();
 		return hr == S_OK;

@@ -6,7 +6,7 @@
 #include <string>
 #include <mutex>
 
-#define THREADED 0
+#define THREADED 1
 
 enum MESH : short
 {
