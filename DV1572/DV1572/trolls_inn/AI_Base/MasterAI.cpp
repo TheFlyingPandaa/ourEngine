@@ -63,12 +63,14 @@ Staff * MasterAI::getTroll()
 {
 	return m_InnTroll; 
 }
-#include "../../InGameConsole.h"
+
 void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
 
+	m_InnTroll->setSpeed(15.0f);
 	m_solver.Update(*m_InnTroll); 
+
 
 	// Get the elapsed time
 	m_customer_now = m_now = m_clock.now();
@@ -78,6 +80,7 @@ void MasterAI::Update(Camera* cam)
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
+	// Generate new customer if the stars align
 	if (!m_customerSpawned)
 	{
 		double duration = m_nextCustomer->GetTimeSpan().count();
@@ -129,9 +132,6 @@ void MasterAI::Update(Camera* cam)
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
 	}
-	// Set spawn time limit (?)
-	//this->customers.push_back(this->cFC.Update(this->inn.getInnAttributes()));
-	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers
 	std::vector<int> leavingCustomersIDs;
@@ -144,10 +144,6 @@ void MasterAI::Update(Camera* cam)
 		//solver.update(*customer);
 		if (updateCustomerNeeds)
 		{
-			/*std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
-			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
-			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
-			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;*/
 			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
 			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
 			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
@@ -192,10 +188,6 @@ void MasterAI::Update(Camera* cam)
 		}
 		else
 		{
-			/*if (updateCustomerNeeds)
-			{
-				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
-			}*/
 			// Execute the action queue
 			m_solver.Update(*customer, m_inn);
 		}
@@ -232,7 +224,7 @@ void MasterAI::Update(Camera* cam)
 					leavingCustomer->Move(Character::WalkDirection::DOWN);
 				for (int i = 0; i < 16; ++i)
 					leavingCustomer->Move(Character::WalkDirection::RIGHT);
-				leavingCustomer->GotPathSetNextAction(LeavingInnAction);
+				leavingCustomer->GotPathSetNextAction(LeavingInnAction, m_solver.getRoomCtrl());
 
 			}
 
@@ -264,6 +256,67 @@ void MasterAI::Update(Camera* cam)
 		delete this->m_leavingCustomers[index];
 		this->m_leavingCustomers.erase(this->m_leavingCustomers.begin() + index);
 	}
+}
+
+void MasterAI::PickCustomers()
+{
+	for (auto& cust : m_customers)
+	{
+		cust->CheckForPicking();
+	}
+}
+// round float to n decimals precision
+float round_n3(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
+void MasterAI::PickedCustomerShape(Shape * shape)
+{
+	XMFLOAT3 position = shape->getPosition();
+	static XMFLOAT2 customerpath;
+	static int charIndex = -1;
+	static int pathReturn = -1;
+	if (pathReturn == 0 )
+	{
+		pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(customerpath.x, customerpath.y));
+		if(pathReturn == 1)
+		{
+			XMFLOAT2 checkIfNew = m_customers[charIndex]->getPosition();
+			if (checkIfNew.x != customerpath.x && checkIfNew.y != customerpath.y)
+			{
+				m_InnTroll->clearWalkingQueue();
+				customerpath = checkIfNew;
+				pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(round_n3(checkIfNew.x, 1), round_n3(checkIfNew.y, 1)));
+			}
+		}
+		
+
+	}
+	else
+	{
+		for (int i = 0; i < m_customers.size(); i++)
+		{
+			XMFLOAT2 customerPos = m_customers[i]->getPosition();
+			XMFLOAT2 deltaPos(abs(customerPos.x - position.x), abs(customerPos.y - position.z));
+
+			// INSIDE HERE DO WE HAVE A CLICK WITH m_customers[i]
+			if (deltaPos.x < 0.1 && deltaPos.y < 0.1)
+			{
+				m_InnTroll->clearWalkingQueue();
+				customerpath = m_customers[i]->getPosition();
+				
+				charIndex = i;
+				pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(round_n3(customerpath.x,1), round_n3(customerpath.y, 1)));
+
+
+			}
+
+		}
+	}
+	
+	
 }
 
 void MasterAI::Draw()

@@ -162,13 +162,17 @@ void Room::Draw()
 			tile->getQuad().Draw();
 	}
 
-	for (auto& wall : m_allWalls)
+	if (MLP::GetInstance().IsReady(MESH::WALL))
 	{
-		if (wall)
+		for (auto& wall : m_allWalls)
 		{
-			wall->Draw();
+			if (wall)
+			{
+				wall->Draw();
+			}
 		}
 	}
+	
 
 	for (auto &l : m_lights)
 	{
@@ -453,6 +457,7 @@ void Room::AddRoomObject(Furniture * fut)
 	Furniture * temp = fut->MakeCopy();
 	temp->setLightIndex(this->m_index);
 	m_roomObjects.push_back(temp);
+	m_roomObjects[m_roomObjects.size() - 1]->setIndex(m_roomObjects.size()); 
 }
 
 void Room::PickTiles()

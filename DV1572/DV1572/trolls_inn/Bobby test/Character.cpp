@@ -57,9 +57,11 @@ const char* printDir(Character::WalkDirection dir)
 	return "No movement";
 
 }
-#include <iostream>
+
 void Character::Update()
 {
+	XMFLOAT3 modelPos = m_model.getPosition();
+	m_AABB.setPos(modelPos.x, 1.0f, modelPos.z);
 	if (!m_goQueue.empty())
 	{
 		DirectX::XMFLOAT3 pos = m_model.getPosition();
@@ -70,8 +72,6 @@ void Character::Update()
 		if (abs(dir.stepsLeft) <= 0.01f)
 		{
 			dir.stepsLeft = 0.0f;
-			//m_model.setPos(pos.x + 0.5f, pos.y, pos.z); 
-			//printf("%f", pos.x);
 
 			moving = false;
 		}
@@ -122,7 +122,7 @@ void Character::Update()
 
 			static float indexLol = 0.01f;
 			m_modelSpriteIndex = (int)m_modelSpriteIndex % 4;
-			indexLol += 0.04f;
+			indexLol += m_speed/100.0f;
 			if (indexLol >= 1)
 			{
 				m_modelSpriteIndex += static_cast<int>(indexLol);
@@ -188,7 +188,7 @@ void Character::setFloor(int floor)
 
 void Character::setSpeed(float spd)
 {
-	m_speed = spd;
+	m_speed = spd/60.0f;
 }
 
 void Character::setThoughtBubble(Thoughts t)
@@ -330,10 +330,8 @@ void Character::clearWalkingQueue()
 }
 
 void Character::Draw()
-{
+{	
 	DX::submitToInstance(this);
-	if (MLP::GetInstance().IsReady(MESH::BOX_AABB))
-		m_AABB.Draw();
 	if(m_displayThought)
 		DX::submitToInstance(&m_thoughtBubble);
 }
@@ -346,6 +344,11 @@ void Character::setThoughtBubbleMesh(Mesh * bubbleMesh)
 Shape * Character::getShape()
 {
 	return &m_model;
+}
+
+Object3D & Character::getHitBox()
+{
+	return m_AABB;
 }
 
 short Character::getUniqueIndex() const

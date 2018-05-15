@@ -722,8 +722,10 @@ void BuildState::_inputFurniture()
 				if (m_canBuildFurniture)
 				{
 					m_roomCtrl->AddRoomObject(table);
-					m_inn->Withdraw(table->getPrice());
-					//m_inn->UpdateMoney();
+			    m_inn->FurnitureStatAdd(table->getAttributes());
+				  m_inn->Withdraw(table->getPrice());
+				
+				  //m_inn->UpdateMoney();
 				}
 
 				m_buildStage = BuildStage::None;
@@ -762,21 +764,16 @@ void BuildState::_inputFurniture()
 				drawSelectedThing = true;
 				twoStepThingy = true;
 			}
-
-			else
-			{
-				if (twoStepThingy)
-					twoStepThingy = false;
-				else drawSelectedThing = false;
-
-			}
+			//std::cout << m_startTile->getRotation().y << std::endl;
+			//TEMP
+			drawSelectedThing = true;
+			twoStepThingy = true;
 		}
 		else
 			drawSelectedThing = false;
 	}
-	
-
-
+	else
+		drawSelectedThing = false;
 }
 
 

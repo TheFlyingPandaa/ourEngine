@@ -1,6 +1,7 @@
 #include "Table.h"
 #include "../Mesh Manager/MeshManager.h"
-
+int Table::lowPrice = 100;
+int Table::highPrice = 200;
 Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting) : Furniture(pos, mesh)
 {
 	p_gridSize = size;
@@ -15,12 +16,12 @@ Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 		if (size == 1)
 		{
-			p_price = 100;
+			p_price = lowPrice;
 			p_attributes.SetStat(-0.01f);
 		}
 		else
 		{
-			p_price = 200;
+			p_price = highPrice;
 			p_attributes.SetStat(0.01f);
 		}
 	}
@@ -53,5 +54,17 @@ std::string Table::WhatType()
 Furniture * Table::MakeCopy()
 {
 	return new Table(static_cast<const Table&>(*this));
+}
+
+int Table::getPrice(bool low) 
+{
+	if (low)
+	{
+		return lowPrice;
+	}
+	else
+	{
+		return highPrice;
+	}
 }
 

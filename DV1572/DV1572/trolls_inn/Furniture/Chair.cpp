@@ -1,5 +1,8 @@
 #include "Chair.h"
 
+int Chair::lowPrice = 100;
+int Chair::highPrice = 1000;
+
 Chair::Chair(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
 	p_gridSize = 1;
@@ -14,12 +17,12 @@ Chair::Chair(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 		if (meshid == MESH::CHAIR_LOW)
 		{
-			p_price = 100;
+			p_price = lowPrice;
 			p_attributes.SetStat(-0.05f);
 		}
 		else
 		{
-			p_price = 1000;
+			p_price = highPrice;
 			p_attributes.SetStat(0.08f);
 		}
 	}
@@ -51,4 +54,16 @@ std::string Chair::WhatType()
 Furniture * Chair::MakeCopy()
 {
 	return new Chair(static_cast<const Chair&>(*this));;
+}
+
+int Chair::getPrice(bool low)
+{
+	if (low)
+	{
+		return lowPrice;
+	}
+	else
+	{
+		return highPrice;
+	}
 }
