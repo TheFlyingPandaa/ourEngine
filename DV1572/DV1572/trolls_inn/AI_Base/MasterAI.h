@@ -39,6 +39,13 @@ private:
 	void _swap(int index1, int index2, std::vector<int>& ID);
 
 	void _generateCustomer();
+	struct TROLL_CHASE
+	{
+		XMFLOAT2 customerpath;
+		int charIndex;
+		int pathReturn;
+	}* currentChase;
+	void _trollInnChase();
 
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
