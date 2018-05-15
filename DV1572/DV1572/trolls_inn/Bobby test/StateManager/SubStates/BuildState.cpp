@@ -81,33 +81,53 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 		case BuildState::Furniture:
 			if (m_selectedThing == -1)
 			{
-				
-				if (Input::isMouseLeftPressed())
+				if (Input::isMouseLeftPressed() && !m_clickedLast)
 				{
-					if (m_clickedLast == false || pickedShape)
+					if (pickedShape)
 					{
 						m_furnitureDeleteMode = true;
 						m_clickedLast = true;
-						if (pickedShape)
+						
+						DirectX::XMINT2 pos(static_cast<int32_t>(pickedShape->getPosition().x), static_cast<int32_t>(pickedShape->getPosition().z));
+						class::Furniture* newPick = m_roomCtrl->getFurnitureAtPos(pos);
+						if (m_furnitureRemove)
 						{
-							DirectX::XMINT2 pos(static_cast<int32_t>(pickedShape->getPosition().x), static_cast<int32_t>(pickedShape->getPosition().z));
-							if (m_furnitureRemove == nullptr)
+							if (m_cm->ButtonClicked() == -2)
 							{
-								
-								m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
-								m_furnitureRemove->getObject3D().setColor(0, 100, 0);
-							}
-							else if (m_furnitureRemove != m_roomCtrl->getFurnitureAtPos(pos))
-							{
-								m_furnitureRemove->getObject3D().setColor(1, 1, 1);
-								m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
-								m_furnitureRemove->getObject3D().setColor(0, 100, 0);
+								if (m_furnitureRemove == newPick)
+								{
+									m_furnitureRemove->getObject3D().setColor(1, 1, 1);
+									m_furnitureRemove = nullptr;
+								}
+								else
+								{
+									m_furnitureRemove->getObject3D().setColor(1, 1, 1);
+									m_furnitureRemove = newPick;
+									m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+									m_cm->setInfo(m_furnitureRemove->WhatType());
+									m_cm->setPos(Input::getMousePositionLH());
+								}
 							}
 						}
+						else
+						{
+							m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
+							m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+							m_cm->setInfo(m_furnitureRemove->WhatType());
+							m_cm->setPos(Input::getMousePositionLH());
+						}
+						
 					}
-					
+					else if (m_furnitureRemove)
+					{
+						if (m_cm->ButtonClicked() == -2)
+						{
+							m_furnitureRemove->getObject3D().setColor(1, 1, 1);
+							m_furnitureRemove = nullptr;
+						}
+					}
 				}
-				else
+				else if (m_clickedLast && !Input::isMouseLeftPressed())
 				{
 					m_clickedLast = false;
 				}
@@ -667,90 +687,94 @@ void BuildState::_inputDoor()
 
 void BuildState::_inputFurniture()
 {
-	if (m_selectedThing == -1 && Input::isMouseLeftPressed())
+	if (!(m_furnitureRemove && m_cm->ButtonClicked() == 2))
 	{
-		m_roomCtrl->PickAllFurnitures();
-	}
-	if (m_selectedThing != -1)
-	{
-		m_roomCtrl->PickRoomTiles();
-		if (Input::isKeyPressed(Input::LeftArrow))
+		if (m_selectedThing == -1 && Input::isMouseLeftPressed())
 		{
-			table->setRotation(90);
+			m_roomCtrl->PickAllFurnitures();
 		}
-		else if (Input::isKeyPressed(Input::UpArrow))
+		if (m_selectedThing != -1)
 		{
-			table->setRotation(180);
-		}
-		else if (Input::isKeyPressed(Input::DownArrow))
-		{
-			table->setRotation(0);
-		}
-		else if (Input::isKeyPressed(Input::RightArrow))
-		{
-			table->setRotation(270);
-		}
-
-		if (m_startTile && Input::isMouseLeftPressed())
-		{
-			XMINT3 s= table->getPosition();
-			XMINT2 start;
-			start.x = s.x;
-			start.y = s.z;
-			if (m_canBuildFurniture)
+			m_roomCtrl->PickRoomTiles();
+			if (Input::isKeyPressed(Input::LeftArrow))
 			{
-				m_roomCtrl->AddRoomObject(table);
-				m_inn->Withdraw(table->getPrice());
-				//m_inn->UpdateMoney();
+				table->setRotation(90);
+			}
+			else if (Input::isKeyPressed(Input::UpArrow))
+			{
+				table->setRotation(180);
+			}
+			else if (Input::isKeyPressed(Input::DownArrow))
+			{
+				table->setRotation(0);
+			}
+			else if (Input::isKeyPressed(Input::RightArrow))
+			{
+				table->setRotation(270);
 			}
 
-			m_buildStage = BuildStage::None;
-			m_startTile = nullptr;
-			m_selectedTile = nullptr;
-			m_roomPlaceable = false;
-			drawSelectedThing = true;
-			m_canBuildFurniture = false;
-		}
-		
-		else if (m_startTile)
-		{
-			
-			if(table != nullptr)
+			if (m_startTile && Input::isMouseLeftPressed())
 			{
-				DirectX::XMFLOAT3 p(m_startTile->getPosition());
-				table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
-				DirectX::XMINT2 start;
-				start.x = table->getPosition().x;
-				start.y = table->getPosition().z;
-				//this->grid->ResetTileColor(start, start);
-				if (m_inn->getMoney() >= table->getPrice())
+				XMINT3 s = table->getPosition();
+				XMINT2 start;
+				start.x = s.x;
+				start.y = s.z;
+				if (m_canBuildFurniture)
 				{
-					m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
-				}
-				else
-				{
-					m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
+					m_roomCtrl->AddRoomObject(table);
+					m_inn->Withdraw(table->getPrice());
+					//m_inn->UpdateMoney();
 				}
 
+				m_buildStage = BuildStage::None;
+				m_startTile = nullptr;
+				m_selectedTile = nullptr;
+				m_roomPlaceable = false;
+				drawSelectedThing = true;
+				m_canBuildFurniture = false;
 			}
-			
-			
-			//std::cout << m_startTile->getRotation().y << std::endl;
-			//TEMP
-			drawSelectedThing = true;
-			twoStepThingy = true;
+
+			else if (m_startTile)
+			{
+
+				if (table != nullptr)
+				{
+					DirectX::XMFLOAT3 p(m_startTile->getPosition());
+					table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
+					DirectX::XMINT2 start;
+					start.x = table->getPosition().x;
+					start.y = table->getPosition().z;
+					//this->grid->ResetTileColor(start, start);
+					if (m_inn->getMoney() >= table->getPrice())
+					{
+						m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
+					}
+					else
+					{
+						m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
+					}
+
+				}
+
+
+				//std::cout << m_startTile->getRotation().y << std::endl;
+				//TEMP
+				drawSelectedThing = true;
+				twoStepThingy = true;
+			}
+
+			else
+			{
+				if (twoStepThingy)
+					twoStepThingy = false;
+				else drawSelectedThing = false;
+
+			}
 		}
-		
 		else
-		{
-			if (twoStepThingy)
-				twoStepThingy = false;
-			else drawSelectedThing = false;
-
-		}
+			drawSelectedThing = false;
 	}
-	else
-		drawSelectedThing = false;
+	
 
 
 }
@@ -790,6 +814,7 @@ BuildState::~BuildState()
 	if (m_selectedRoom)
 		m_selectedRoom->Select();
 	delete table;
+	delete m_cm;
 }
 
 void BuildState::_init()
@@ -808,6 +833,8 @@ void BuildState::_init()
 	m_furnitureHUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/FurnitureBuildHud.txt");
 
 	m_drawFloatingText = false;
+
+	m_cm = new ClickMenu(ClickMenu::FUR);
 }
 
 void BuildState::Update(double deltaTime)
@@ -828,19 +855,21 @@ void BuildState::Update(double deltaTime)
 			m_selectedRoom = nullptr;
 		}
 	}
-	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isKeyPressed(Input::Del))
+	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isMouseLeftPressed() && !m_clickedLast)
 	{
-		DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
-		DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
-		int price = m_furnitureRemove->getPrice();
-		bool tem = m_roomCtrl->RemoveRoomObject(m_furnitureRemove);
-		if (tem)
+		if (m_cm->ButtonClicked() == 2)
 		{
-			m_inn->Deposit(price / 2);
-			m_furnitureRemove = nullptr;
-			m_furnitureDeleteMode = false;
+			DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
+			DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
+			int price = m_furnitureRemove->getPrice();
+			bool tem = m_roomCtrl->RemoveRoomObject(m_furnitureRemove);
+			if (tem)
+			{
+				m_inn->Deposit(price / 2);
+				m_furnitureRemove = nullptr;
+				m_furnitureDeleteMode = false;
+			}
 		}
-		
 	}
 }
 
@@ -876,8 +905,6 @@ void BuildState::DrawHUD()
 {
 	p_HUD.Draw();
 
-	
-
 	switch (m_currentBuildType)
 	{
 	case CurrentBuildType::RoomBuild:
@@ -890,8 +917,11 @@ void BuildState::DrawHUD()
 		m_furnitureHUD.Draw();
 		break;
 	}
+	if (m_furnitureRemove)
+		m_cm->Draw();
 	if (m_drawFloatingText)
 		m_floatingText.Draw();
+	
 }
 
 void BuildState::HandlePicking(Shape * pickedObject)

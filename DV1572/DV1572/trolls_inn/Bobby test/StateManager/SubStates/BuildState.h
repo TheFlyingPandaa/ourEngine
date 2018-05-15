@@ -6,6 +6,7 @@
 #include "../../../AI_Base/Inn.h"
 #include "../../../Furniture/Bed.h"
 #include "../HUD/InfoBoard.h"
+#include "../HUD/ClickMenu.h"
 
 class BuildState :
 	public SubState
@@ -22,7 +23,9 @@ private:
 	//TEMP
 	Object3D door;
 	Furniture* table;
-	
+	ClickMenu * m_cm;
+
+
 	bool drawSelectedThing;
 	bool twoStepThingy = false;
 	//-----
@@ -61,7 +64,7 @@ private:
 	bool m_canBuildFurniture = false;
 	bool m_furnitureDeleteMode = false;
 	bool m_clickedLast = false;
-	Furniture* m_furnitureRemove;
+	Furniture* m_furnitureRemove = nullptr;
 
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...
 	{
