@@ -18,8 +18,10 @@ void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)
 	}
 }
 
-void Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
+bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 {
+	bool furnitureFound = false;
+
 	XMFLOAT3 roomPos; 
 	if (customerNeed == SleepAction)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
@@ -35,20 +37,25 @@ void Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 
 	for (int i = 0; i < nrOfFurniture; i++)
 	{
-		if (furniture[i]->getOwner() == nullptr) /*&& (furniture[i]->WhatType() == "Bed" ||
+		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar")*/
+			furniture[i]->WhatType() == "Bar"))
 		{
 			furniture[i]->setOwner(this); 
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
+			furnitureFound = true;
 			std::cout << "Furniture occupied!" << std::endl;
 		}
+		/*
 		else
 		{
+			RestartClock(); 
 			setThoughtBubble(ANGRY); 
-		}
+		}*/
 	}
+
+	return furnitureFound;
 }
 
 Customer::Customer()
@@ -165,6 +172,11 @@ CustomerState Customer::GetState() const
 	return m_stateQueue.front();
 }
 
+CustomerState Customer::GetWaitingToDoState() const
+{
+	return m_waitingToDoState;
+}
+
 void Customer::PopToNextState()
 {
 	m_stateQueue.pop();
@@ -175,7 +187,7 @@ void Customer::setOwnedFurniture(Furniture * furnitureOwned)
 	m_ownedFurniture = furnitureOwned; 
 }
 
-void Customer::SetAction(Action nextAction, RoomCtrl* roomCtrl)
+void Customer::SetAction(Action nextAction)
 {
 	switch (nextAction)
 	{
@@ -208,25 +220,26 @@ void Customer::SetAction(Action nextAction, RoomCtrl* roomCtrl)
 		break;
 	}
 
-	if (roomCtrl != nullptr)
-	{
-		if (this->m_stateQueue.back() == SleepAction ||
-			this->m_stateQueue.back() == EatAction ||
-			this->m_stateQueue.back() == DrinkAction)
-		{
-			findNearestRoom(roomCtrl, m_stateQueue.front());
-		}
-	}
-
 	//POPUP HERE (Henrik)
 	// To return the customer to idle after it executed its action
 	this->m_stateQueue.push(Idle);
 }
 
+void Customer::SetWaiting()
+{
+	CustomerState saveState = m_stateQueue.front();
+	m_stateQueue.pop();
+	m_stateQueue.pop();
+	m_stateQueue.push(Waiting);
+	m_stateQueue.push(saveState);
+	m_stateQueue.push(Idle);
+	m_waitingToDoState = saveState;
+}
+
 void Customer::GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl)
 {
 	this->m_stateQueue.push(Walking);
-	this->SetAction(nextAction, roomCtrl);
+	this->SetAction(nextAction);
 }
 
 const char* Customer::GetActionStr() const

@@ -49,6 +49,7 @@ private:
 	Economy m_economy;
 	Race m_race;
 	std::queue<CustomerState> m_stateQueue;
+	CustomerState m_waitingToDoState;
 
 	Furniture* m_ownedFurniture; 
 
@@ -61,7 +62,6 @@ private:
 	int m_waitingForSpotMultiplier;
 
 	void searchForFreeFurniture(RoomCtrl* roomCtrl); 
-	void findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed); 
 
 	// Customer interests update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -85,6 +85,7 @@ public:
 	~Customer();
 
 	void releaseFurniture(); 
+bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
@@ -94,12 +95,13 @@ public:
 
 	// Get desired action
 	Action GetAction() const;
-	void SetAction(Action nextAction, RoomCtrl* roomCtrl = nullptr);
+	void SetAction(Action nextAction);
 	void SetWaiting();
 	void GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl);
 
 	int GetQueueEmpty() const;
 	CustomerState GetState() const;
+	CustomerState GetWaitingToDoState() const;
 	void PopToNextState();
 	
 	void setOwnedFurniture(Furniture* furnitureOwned); 

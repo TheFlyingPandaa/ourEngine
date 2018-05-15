@@ -12,8 +12,20 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
 	// If spot is available in the room at customer position
 	//std::vector<Furniture> furnituresInRoom = this->m_roomctrl->getNoneBusyFurnitureInRoom(customer.getPosition());
-	
-	if (true)
+	bool spotAvailable = false;
+
+	if (m_roomctrl != nullptr)
+	{
+		if (customer.GetState() == SleepAction ||
+			customer.GetState() == EatAction ||
+			customer.GetState() == DrinkAction)
+		{
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetState());
+		}
+		else if (customer.GetState() == Waiting)
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetWaitingToDoState());
+	}
+	if (spotAvailable)
 	{
 		CustomerState state = customer.GetState();
 		int price = 0;
@@ -83,6 +95,9 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 		// Leave inn (?)
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
+		customer.PopToNextState();
+		customer.PopToNextState();
+		customer.PopToNextState();
 	}
 	else
 	{
@@ -346,7 +361,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			}
 			else
 			{
-				customer.PopToNextState(getRoomCtrl());
+				customer.PopToNextState();
 				currentState = customer.GetState();
 			}
 		}
@@ -356,7 +371,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 	{
 		if (customer.walkQueueDone())
 		{
-			customer.PopToNextState(getRoomCtrl());
+			customer.PopToNextState();
 			currentState = customer.GetState();
 		}
 	}
@@ -377,7 +392,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				RequestPath(customer, RoomType::randomStupid);
 				customer.SetAction(WalkAction);
 			}
-			customer.PopToNextState(getRoomCtrl());
+			customer.PopToNextState();
 			break;
 			// Update animations drink, eat, sleep (?)
 		case Waiting:
@@ -400,7 +415,11 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetThirsty() > 0)
 					customer.DoDrinking();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture(); 
+				}
+				
 			}
 			break;
 		case Eating:
@@ -411,7 +430,10 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetHungry() > 0)
 					customer.DoEating();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture();
+				}
 			}
 			break;
 		case Sleeping:
@@ -422,7 +444,10 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetTired() > 0)
 					customer.DoSleeping();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture();
+				}
 			}
 			break;
 		}
@@ -451,8 +476,8 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 			
 		break;
 	}
-	customer.PopToNextState(getRoomCtrl()); // pop Thinking state
-	customer.PopToNextState(getRoomCtrl()); // pop Idle state
+	customer.PopToNextState(); // pop Thinking state
+	customer.PopToNextState(); // pop Idle state
 	if (gotPath == 1)
 	{
 		customer.GotPathSetNextAction(desiredAction, m_roomctrl);

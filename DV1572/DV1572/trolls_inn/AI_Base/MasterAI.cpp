@@ -232,7 +232,7 @@ void MasterAI::Update(Camera* cam)
 		{
 			// Send review to inn if customer reached end of path
 			if (leavingCustomer->walkQueueDone())
-				leavingCustomer->PopToNextState(m_solver.getRoomCtrl());
+				leavingCustomer->PopToNextState();
 			else
 				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
