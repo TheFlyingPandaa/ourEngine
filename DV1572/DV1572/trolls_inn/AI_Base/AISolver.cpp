@@ -1,5 +1,5 @@
-﻿
-#include "AISolver.h"
+﻿#include "AISolver.h"
+
 // round float to n decimals precision
 float round_n2(float num, int dec)
 {
@@ -10,16 +10,44 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	//customer.SetMovingTowardsActionArea(false);
 	// If spot is available in the room at customer position
 	//std::vector<Furniture> furnituresInRoom = this->m_roomctrl->getNoneBusyFurnitureInRoom(customer.getPosition());
-	
-	if (true)
+	bool spotAvailable = false;
+
+	if (m_roomctrl != nullptr)
 	{
+		if (customer.GetState() == SleepAction ||
+			customer.GetState() == EatAction ||
+			customer.GetState() == DrinkAction)
+		{
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetState());
+		}
+		else if (customer.GetState() == Waiting)
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetWaitingToDoState());
+	}
+	if (spotAvailable)
+	{
+		CustomerState state = customer.GetState();
+		int price = 0;
+		std::stringstream ss;
+
 		// Get the seat/bed ID to lock it to the customer
-		
-		// Do quick maff
-		int price = inn->GetDrinkPrice();
+		switch (state)
+		{
+		case Drinking:
+			price = inn->GetDrinkPrice();
+			ss << "A customer bought a drink. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
+			break;
+		case Eating:
+			price = inn->GetFoodPrice();
+			ss << "A customer bought a snack. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
+			break;
+		case Sleeping:
+			price = inn->GetSleepPrice();
+			ss << "A customer rented a room. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
+			break;
+		}
+		InGameConsole::pushString(ss.str());
 		customer.GetEconomy().Withdraw(price);
 		inn->Deposit(price);
 		customer.SetAvailableSpotFound(true);
@@ -41,24 +69,21 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 			
 			break;
 		}*/
-		// Do something because angry, request money?
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(true);
+		customer.SetWaiting();
 	}
 }
 
 void AISolver::_doWaiting(Customer& customer, Inn* inn)
 {
-	// Check if a spot is available
-
 	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > (WAITING_FOR_SPOT_TIME_LIMIT * customer.GetPatience()))
 	{
-		// Do something because angry, request money?
+		// Do something because angry, request money (?)
 		if (customer.GetRace() == Elf)
 		{
-			inn->GetRefund(5);
-			customer.GetEconomy().GetCashback(5);
-			customer.GetAttributes().AddStat(-0.3f);
+			inn->GetRefund(25);
+			customer.GetEconomy().GetCashback(25);
 		}
 		else
 		{
@@ -68,6 +93,11 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 		customer.SetWaitingForSpot(false);
 		// Do angry face emote
 		// Leave inn (?)
+		customer.RestartClock();
+		customer.setThoughtBubble(Character::ANGRY);
+		customer.PopToNextState();
+		customer.PopToNextState();
+		customer.PopToNextState();
 	}
 	else
 	{
@@ -308,8 +338,6 @@ void AISolver::RestartClock()
 
 void AISolver::Update(Customer& customer, Inn* inn)
 {
-
-	
 	// Get the elapsed time
 	this->m_now = this->m_clock.now();
 	this->m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(this->m_now - this->m_start);
@@ -367,72 +395,59 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			customer.PopToNextState();
 			break;
 			// Update animations drink, eat, sleep (?)
-		case Drinking:
-			if (customer.GetAvailableSpotFound())
-			{
-				// Reduce how thirsty the customer is
-				if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-				{
-					if (customer.GetThirsty() > 0)
-						customer.DoDrinking();
-					else
-						customer.PopToNextState();
-				}
-			}
-			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-			{
-				this->_doWaiting(customer, inn);
-			}
-			else
+		case Waiting:
+			if (customer.GetWaitingForSpot())
 			{
 				// Check if there is an open spot
-				this->_checkSpotInRoom(inn, customer);
+				_checkSpotInRoom(inn, customer);
+			}
+			if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+			{
+				_doWaiting(customer, inn);
+			}
+			break;
+			//ADD INCREASED NEEDS WHEN DOING THINGS?!?!?! ------>FROGGE<-------
+		case Drinking:
+			if (!customer.GetAvailableSpotFound())
+				_checkSpotInRoom(inn, customer);
+			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+			{
+				if (customer.GetThirsty() > 0)
+					customer.DoDrinking();
+				else
+				{
+					customer.PopToNextState();
+					customer.releaseFurniture(); 
+				}
+				
 			}
 			break;
 		case Eating:
-			if (customer.GetAvailableSpotFound())
+			if (!customer.GetAvailableSpotFound())
+				_checkSpotInRoom(inn, customer);
+			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
-				// Reduce how hungry the customer is
-				if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+				if (customer.GetHungry() > 0)
+					customer.DoEating();
+				else
 				{
-					if (customer.GetHungry() > 0)
-						customer.DoEating();
-					else
-						customer.PopToNextState();
+					customer.PopToNextState();
+					customer.releaseFurniture();
 				}
-			}
-			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-			{
-				// Check if there is a spot open this time
-				this->_doWaiting(customer, inn);
-			}
-			else
-			{
-				// Check if there is an open spot
-				this->_checkSpotInRoom(inn, customer);
 			}
 			break;
 		case Sleeping:
-			if (customer.GetAvailableSpotFound())
+			if (!customer.GetAvailableSpotFound())
+				_checkSpotInRoom(inn, customer);
+			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
-				// Reduce how tired the customer is
-				if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+				if (customer.GetTired() > 0)
+					customer.DoSleeping();
+				else
 				{
-					if (customer.GetTired() > 0)
-						customer.DoSleeping();
-					else
-						customer.PopToNextState();
+					customer.PopToNextState();
+					customer.releaseFurniture();
 				}
-			}
-			else if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
-			{
-				// Check if there is a spot open this time
-				this->_doWaiting(customer, inn);
-			}
-			else
-			{
-				// Check if there is an open spot
-				this->_checkSpotInRoom(inn, customer);
 			}
 			break;
 		}
@@ -465,7 +480,7 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	customer.PopToNextState(); // pop Idle state
 	if (gotPath == 1)
 	{
-		customer.GotPathSetNextAction(desiredAction);
+		customer.GotPathSetNextAction(desiredAction, m_roomctrl);
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(false);
 		customer.SetWaitingForSpotMultiplier(1);
@@ -488,6 +503,12 @@ void AISolver::Update(Staff& staff, Action desiredAction)
 {
 
 }
+
+RoomCtrl * AISolver::getRoomCtrl()
+{
+	return m_roomctrl; 
+}
+
 
 int AISolver::RequestPath(Character & character, RoomType targetRoom)
 {

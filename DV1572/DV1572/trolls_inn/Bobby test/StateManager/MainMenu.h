@@ -4,7 +4,6 @@
 class MainMenu : public State {
 private:
 	virtual void _init() override;
-
 public:
 	MainMenu(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
 	~MainMenu();

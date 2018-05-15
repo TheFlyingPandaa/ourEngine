@@ -5,6 +5,11 @@
 #include <queue>
 #include <stack>
 #include <chrono>
+//#include "../Bobby test/Room/RoomCtrl.h"
+#include <iostream>
+
+class RoomCtrl; 
+class Furniture;
 
 enum Race
 {
@@ -20,6 +25,7 @@ enum Action
 	EatAction,
 	SleepAction,
 	LeavingInnAction,
+	WaitingAction,
 	WalkToInn
 };
 
@@ -32,8 +38,8 @@ enum CustomerState
 	Eating,
 	Sleeping,
 	LeavingInn,
+	Waiting,
 	WalkingToInn
-
 };
 
 class Customer : public Character
@@ -43,6 +49,9 @@ private:
 	Economy m_economy;
 	Race m_race;
 	std::queue<CustomerState> m_stateQueue;
+	CustomerState m_waitingToDoState;
+
+	Furniture* m_ownedFurniture; 
 
 	// Add a room stack with all the rooms of a specific type (?)
 	// For pathfinding purposes
@@ -51,6 +60,8 @@ private:
 	bool m_availableSpotFound;
 	bool m_waitingForSpot;
 	int m_waitingForSpotMultiplier;
+
+	void searchForFreeFurniture(RoomCtrl* roomCtrl); 
 
 	// Customer interests update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -73,6 +84,9 @@ public:
 	Customer(const Customer &other);
 	~Customer();
 
+	void releaseFurniture(); 
+bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
+
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
 	Race GetRace() const;
@@ -82,11 +96,15 @@ public:
 	// Get desired action
 	Action GetAction() const;
 	void SetAction(Action nextAction);
-	void GotPathSetNextAction(Action nextAction);
+	void SetWaiting();
+	void GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl);
 
 	int GetQueueEmpty() const;
 	CustomerState GetState() const;
+	CustomerState GetWaitingToDoState() const;
 	void PopToNextState();
+	
+	void setOwnedFurniture(Furniture* furnitureOwned); 
 
 	const char* GetActionStr() const;
 	const char* GetStateStr() const;

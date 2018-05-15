@@ -176,5 +176,6 @@
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\HUD\MainHud\LoseHud.txt" />
   </ItemGroup>
 </Project>

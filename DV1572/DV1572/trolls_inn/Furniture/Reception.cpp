@@ -1,5 +1,7 @@
 #include "Reception.h"
 
+int	Reception::lowPrice = 100;
+int Reception::highPrice = 1000;
 Reception::Reception(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
 	p_gridSize = 2;
@@ -14,12 +16,12 @@ Reception::Reception(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Fu
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 		if (meshid == MESH::RECEPTION_LOW)
 		{
-			p_price = 100;
+			p_price = lowPrice;
 			p_attributes.SetStat(-0.08f);
 		}
 		else
 		{
-			p_price = 1000;
+			p_price = highPrice;
 			p_attributes.SetStat(0.08f);
 		}
 	}
@@ -51,4 +53,16 @@ std::string Reception::WhatType()
 Furniture * Reception::MakeCopy()
 {
 	return new Reception(static_cast<const Reception&>(*this));;
+}
+
+int Reception::getPrice(bool low)
+{
+	if (low)
+	{
+		return lowPrice;
+	}
+	else
+	{
+		return highPrice;
+	}
 }

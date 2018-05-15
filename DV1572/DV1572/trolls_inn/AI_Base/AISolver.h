@@ -10,8 +10,9 @@
 #include <thread>
 
 const int UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT = 1;
-const int WAITING_FOR_SPOT_TIME_LIMIT = 20;
+const int WAITING_FOR_SPOT_TIME_LIMIT = 40;
 using namespace std::chrono_literals;
+
 class AISolver
 {
 private:
@@ -34,7 +35,6 @@ private:
 	
 	std::deque<PathThread> futureObjects;
 
-
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
 	~AISolver();
@@ -46,6 +46,8 @@ public:
 	void Update(Customer& customer, Action desiredAction);
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);
+
+	RoomCtrl* getRoomCtrl();
 
 	int RequestPath(Character& character, XMINT2 target);
 	int RequestPath(Character& character, RoomType targetRoom);

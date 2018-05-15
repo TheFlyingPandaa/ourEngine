@@ -3,7 +3,11 @@
 void InfoBoard::_updateScale()
 {
 	DirectX::XMVECTOR size = Text::getStringSize(&m_texts);
-
+	size *= m_texts.getScale();
+	m_background.setWidth(DirectX::XMVectorGetX(size) + m_distFromBoarder * 2);
+	m_background.setHeight(DirectX::XMVectorGetY(size) + m_distFromBoarder * 2);
+	DirectX::XMFLOAT3 p = m_background.getScreenPos();
+	m_texts.setPosition(p.x + m_distFromBoarder, p.y + m_distFromBoarder);
 }
 
 InfoBoard::InfoBoard()

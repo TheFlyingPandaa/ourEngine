@@ -23,20 +23,20 @@ hr 158 120 356 72 0
 
 # Kitchen
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Kitchen.png
-r 168 124 64 64 0 0 0 circle 5 2 2 50 2 2
+r 168 124 64 64 0 0.01 0 circle 5 2 2 50 2 2
 
 # Hallway
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Hallway.png
-r 236 124 64 64 1 0 0 circle 2 5 2 2 50 2
+r 236 124 64 64 1 0.01 0 circle 2 5 2 2 50 2
 
 # BedRoom
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/BedRoom.png
-r 304 124 64 64 2 0 0 circle 2 2 5 2 2 50
+r 304 124 64 64 2 0.01 0 circle 2 2 5 2 2 50
 
 # Reception
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Reception.png
-r 372 124 64 64 3 0 0 circle 2 5 2 50 50 2
+r 372 124 64 64 3 0.01 0 circle 2 5 2 50 50 2
 
 # Bar
 tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/Bar.png
-r 440 124 64 64 4 0 0 circle 2 2 5 2 50 50
+r 440 124 64 64 4 0.01 0 circle 2 2 5 2 50 50

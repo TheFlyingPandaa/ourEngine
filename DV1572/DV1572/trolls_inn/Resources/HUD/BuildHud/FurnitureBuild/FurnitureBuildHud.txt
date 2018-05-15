@@ -23,34 +23,34 @@ hr 228 120 900 148 0
 
 # Table
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyStol.png
-r 236 128 64 64 0 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 236 128 64 64 0 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyTable.png
-r 306 128 64 64 1 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 306 128 64 64 1 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyHighBed.png
-r 376 128 64 64 2 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 376 128 64 64 2 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyLowBed.png
-r 446 128 64 64 3 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 446 128 64 64 3 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyHighBar.png
-r 516 128 64 64 4 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 516 128 64 64 4 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyLowBar.png
-r 586 128 64 64 5 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 586 128 64 64 5 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyHighChair.png
-r 656 128 64 64 6 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 656 128 64 64 6 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyLowChair.png
-r 726 128 64 64 7 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 726 128 64 64 7 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyStove.png
-r 796 128 64 64 8 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 796 128 64 64 8 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyHighReception.png
-r 866 128 64 64 9 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 866 128 64 64 9 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
 
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/BobbyLowReception.png
-r 936 128 64 64 10 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 936 128 64 64 10 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7

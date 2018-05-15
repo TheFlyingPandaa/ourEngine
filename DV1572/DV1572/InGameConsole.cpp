@@ -45,15 +45,23 @@ void InGameConsole::draw()
 
 void InGameConsole::pushString(const std::string & string, float r , float g , float b)
 {
-
 	std::stringstream ss;
 	int rows = 1;
+	int lastRows = 1;
 	for (int i = 0; i < string.length(); i++)
 	{
+		if (string[i] == '\n')
+			rows++;
 		if (i % maxWidth == 0 && i != 0)
 		{
-			rows++;
-			ss << "\n";
+			if (lastRows == rows)
+			{
+				rows++;
+				lastRows++;
+				ss << "\n";
+			}
+			else
+				lastRows++;
 		}
 		ss << string[i];
 	}

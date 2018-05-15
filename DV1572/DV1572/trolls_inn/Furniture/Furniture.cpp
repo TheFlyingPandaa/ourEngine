@@ -2,6 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "Table.h"
+#include "Bar.h"
+#include "Bed.h"
+#include "Chair.h"
 
 Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
 	: m_meshId(mesh)
@@ -63,6 +67,11 @@ DirectX::XMINT3 Furniture::getPosition()
 	return this->pos;
 }
 
+Customer * Furniture::getOwner() const
+{
+	return m_owner; 
+}
+
 int Furniture::getPrice()
 {
 	return p_price;
@@ -91,6 +100,26 @@ void Furniture::setLevel(int amount)
 void Furniture::AddLevel(int amount)
 {
 	p_level += amount;
+}
+
+void Furniture::setIndex(int index)
+{
+	m_index = index; 
+}
+
+void Furniture::setOwner(Customer * owner)
+{
+	m_owner = owner;
+}
+
+int Furniture::getIndex() const
+{
+	return m_index; 
+}
+
+void Furniture::releaseOwnerShip()
+{
+	m_owner = nullptr; 
 }
 
 int Furniture::getRotation()
@@ -179,7 +208,7 @@ void Furniture::setLightIndex(int index)
 
 std::string Furniture::WhatType()
 {
-	return "FUCK";
+	return "This should not be possible, earlier there was nothing here.";
 }
 
 void Furniture::Draw()
@@ -191,6 +220,77 @@ void Furniture::Draw()
 Furniture * Furniture::MakeCopy()
 {
 	return nullptr;
+}
+
+std::string Furniture::getInfo(int index)
+{
+	MESH type = static_cast<MESH>(index);
+	std::string str = "";
+
+	switch (type)
+	{
+	case TABLE_LOW:
+		str += "Simple Table\n";
+		str += "+1 Simple\n";
+		str += "$" + std::to_string(Table::getPrice(true));
+		break;
+	case TABLE_HIGH:
+		str += "Fancy Table\n";
+		str += "+1 Fancy\n";
+		str += "$" + std::to_string(Table::getPrice(false));
+		break;
+	case BED_HIGH:
+		str += "Fancy Bed\n";
+		str += "+8 Fancy\n";
+		str += "$" + std::to_string(Bed::getPrice(false));;
+		break;
+	case BED_LOW:
+		str += "Simple Bed\n";
+		str += "+8 Simple\n";
+		str += "$" + std::to_string(Bed::getPrice(true));;
+		break;
+	case BAR_HIGH:
+		str += "Fancy Bar\n";
+		str += "+4 Fancy\n";
+		str += "$" + std::to_string(Bar::getPrice(false));
+		break;
+	case BAR_LOW:
+		str += "Simple Bar\n";
+		str += "+1 Simple\n";
+		str += "$" + std::to_string(Bar::getPrice(true));;
+		break;
+	case CHAIR_HIGH:
+		str += "Fancy Chair\n";
+		str += "+4 Fancy\n";
+		str += "$" + std::to_string(Chair::getPrice(false));;
+		break;
+	case CHAIR_LOW:
+		str += "Simple Chair\n";
+		str += "+1 Simple\n";
+		str += "$" + std::to_string(Bar::getPrice(true));;
+		break;
+	case STOVE:
+		str += "Stove\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	case RECEPTION_HIGH:
+		str += "Fancy Reception\n";
+		str += "+4 Fancy\n";
+		str += "$" + std::to_string(Bar::getPrice(false));;
+		break;
+	case RECEPTION_LOW:
+		str += "Simple Reception\n";
+		str += "+1 Simple\n";
+		str += "$" + std::to_string(Bar::getPrice(true));;
+		break;
+	default:
+		str = "";
+		break;
+	}
+
+
+	return str;
 }
 
 

@@ -1,4 +1,4 @@
-# This is a file which defines the HUD
+﻿# This is a file which defines the HUD
 # use the 'tx' keyword to define a texture
 # use the 'r' keyword to define a rectangle to use the defined texture
 # all rectangles will share the texture until a new texture is defined
@@ -15,18 +15,5 @@
 # relativeTo:	BL, BR, TR, TL, C, BC, TC, LC, RC
 
 # Button Background
-tx trolls_inn/Resources/HUD/BuildHud/RoomBuild/ButtonBackground.png
-r 228 120 216 148 -1 0.1 0
-
-# Hit box for buttons
-hr 228 120 216 148 0
-
-# LogDoor
-tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/LogDoor.png
-r 236 128 64 64 0 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
-r 304 128 64 64 1 0.01 0 rectangle 
-
-# Window
-tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/ClassicWindow.png
-r 236 196 64 64 2 0.01 0 rectangle 0.9 0.7 0.7 0.7 1 0.7
-r 304 196 64 64 3 0.01 0 rectangle
+tx trolls_inn/Resources/HUD/MainHud/LoseHud.png
+r 0 0 0 0 -1 0.1 0

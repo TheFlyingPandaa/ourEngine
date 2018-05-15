@@ -64,17 +64,17 @@ void InitModels()
 {
 	MLP::GetInstance().LoadMesh(MESH::TERRAIN, "../TerrainLol.txt");
 	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
-	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
-	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception.obj");
-	MLP::GetInstance().LoadMesh(MESH::TABLE, "Table/Table.obj");
-	MLP::GetInstance().LoadMesh(MESH::CHAIR, "Stol.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception2.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception2.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_HIGH, "Table/Table2.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_LOW, "Stol.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
-	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar.obj");
-	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar.obj");
-	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
-	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
-	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar2.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar2.obj");
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair2.obj"); 
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair2.obj");
+	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove2.obj");
 	MLP::GetInstance().LoadMesh(MESH::BOX_AABB, "Box.obj");
 
 }
@@ -109,7 +109,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	int fpsCounter = 0;
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
-
+	bool loose = false;
 	Camera* cam = new OrbitCamera(wnd.getSize(), XMFLOAT3(gameLoadState.camX,gameLoadState.camY, gameLoadState.camZ));
 	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
@@ -204,6 +204,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 
 		fpsCounter++;
+		if (gameState->Exit())
+		{
+			delete gameState;
+			gameState = new MainMenu(&pickingEvents, &keyEvent, cam);
+		}
 		gameState->Draw();
 
 		if (!gameStates.empty())

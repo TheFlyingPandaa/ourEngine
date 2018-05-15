@@ -84,15 +84,25 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
-	if (Input::isKeyPressed('Q'))
+
+	using namespace std::chrono_literals;
+	if (inn->getExitState())
 	{
+		m_exitState = true;
+	}
+	if (inn->getAngryCustomers() >= inn->getAngryCustomersCap())
+	{
+		m_exitState = true;
+	}
+	if (Input::isKeyPressed('Q'))
+	{ 
 		m_eventHandle->StartCollectEvent();
 	}
 
 	if (Input::isKeyPressed('Z'))
 	{
 		std::cout << "EventEnded" << std::endl;
-		m_eventHandle->EndEvent();
+		m_eventHandle->EndEvent(); 
 	}
 	m_eventHandle->Update();
 
@@ -121,6 +131,11 @@ void GameState::Update(double deltaTime)
 
 	this->m_cam->update();
 	m_roomctrl->Update(m_cam);
+	if (inn->GetRecievedReview())
+	{
+		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
+		inn->SetRecievedReviewToFalse();
+	}
 
 	if (!m_subStates.empty())
 	{
@@ -139,11 +154,7 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
-	if (inn->GetRecievedReview())
-	{
-		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
-		inn->SetRecievedReviewToFalse();
-	}
+	
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
 		//m_in++;
