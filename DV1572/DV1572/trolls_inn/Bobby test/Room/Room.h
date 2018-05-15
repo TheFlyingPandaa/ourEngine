@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../../../ourEngine/interface/Interface.h"
+//#include "../../../ourEngine/interface/Interface.h"
 #include "Structure.h"
 #include "../../../ourEngine/interface/light/PointLight.h"
-#include "../../Furniture/Furniture.h"
+//#include "../../Furniture/Furniture.h"
 #include "Node.h"
+
+class Furniture;
 
 enum RoomType {
 	kitchen,

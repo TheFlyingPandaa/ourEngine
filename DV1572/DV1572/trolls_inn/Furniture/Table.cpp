@@ -21,7 +21,7 @@ Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting
 		else
 		{
 			p_price = 200;
-			p_attributes.SetStat(0.01f);
+			p_attributes.SetStat(1.01f);
 		}
 	}
 	else if(setting == 1)

@@ -21,6 +21,8 @@ public:
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
 	DirectX::XMINT3 getPosition();
+	
+	Customer*		getOwner() const; 
 
 	int				getPrice();
 
@@ -30,6 +32,12 @@ public:
 	int				getLevel();
 	void			setLevel(int amount);
 	void			AddLevel(int amount = 1);
+	void			setIndex(int index); 
+	void			setOwner(Customer* owner); 
+
+	int				getIndex() const; 
+
+	void			releaseOwnerShip(); 
 	//void LoadFurnitureStats(std::string path);
 
 	virtual std::string WhatType();
@@ -38,8 +46,12 @@ public:
 
 	virtual Furniture * MakeCopy();
 
+	static std::string getInfo(int index);
+
 private:
 	DirectX::XMINT3 pos;
+	int m_index; 
+	Customer* m_owner; 
 protected:
 	Object3D	p_object;
 	Attributes	p_attributes;

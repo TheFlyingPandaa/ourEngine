@@ -65,6 +65,7 @@ public:
 	void SetRecievedReviewToFalse();
 
 	Attributes GetInnAttributes() const;
+	Attributes & getInnAttributesRef();
 
 	void Update(double deltaTime, TIMEOFDAY TOD);
 	void UpdateMoney();

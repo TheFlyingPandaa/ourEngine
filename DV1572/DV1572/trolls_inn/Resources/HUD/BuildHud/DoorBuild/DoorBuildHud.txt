@@ -23,10 +23,10 @@ hr 228 120 216 148 0
 
 # LogDoor
 tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/LogDoor.png
-r 236 128 64 64 0 0 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
-r 304 128 64 64 1 0 0 rectangle 
+r 236 128 64 64 0 0.01 0 rectangle 0.7 0.7 0.9 0.7 1 0.7
+r 304 128 64 64 1 0.01 0 rectangle 
 
 # Window
 tx trolls_inn/Resources/HUD/BuildHud/DoorBuild/ClassicWindow.png
-r 236 196 64 64 2 0 0 rectangle 0.9 0.7 0.7 0.7 1 0.7
-r 304 196 64 64 3 0 0 rectangle
+r 236 196 64 64 2 0.01 0 rectangle 0.9 0.7 0.7 0.7 1 0.7
+r 304 196 64 64 3 0.01 0 rectangle

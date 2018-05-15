@@ -24,15 +24,15 @@ hr 316 8 208 112 0
 
 # Wall Button
 tx trolls_inn/Resources/HUD/BuildHud/WallsButton.png
-r 324 48 64 64 0 0 0 circle
+r 324 48 64 64 0 0.01 0 circle
 
 # Furnitue Button
 tx trolls_inn/Resources/HUD/BuildHud/FurnitureButton.png
-r 452 48 64 64 1 0 0 circle
+r 452 48 64 64 1 0.01 0 circle
 
 # Door Button
 tx trolls_inn/Resources/HUD/BuildHud/DoorButton.png
-r 388 12 64 64 2 0 0 circle
+r 388 12 64 64 2 0.01 0 circle
 
 # Pause
 tx trolls_inn/Resources/HUD/BuildHud/Pause.png
