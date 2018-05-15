@@ -3,18 +3,18 @@
 #include <sstream>
 #include <iostream>
 
-Furniture::Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh)
+Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
+	: m_meshId(mesh)
 {
 	p_rot = 0;
 	this->pos.x = static_cast<int>(pos.x);
 	this->pos.y = static_cast<int>(pos.y);
 	this->pos.z = static_cast<int>(pos.z);
-
+	p_object.setMesh(MLP::GetInstance().GetMesh(m_meshId));
 	p_isBusy = false;
 
 	p_level = 0;
 }
-
 
 Furniture::~Furniture()
 {
@@ -209,7 +209,8 @@ std::string Furniture::WhatType()
 
 void Furniture::Draw()
 {
-	p_object.Draw();
+	if(MLP::GetInstance().IsReady(m_meshId))
+		p_object.Draw();
 }
 
 Furniture * Furniture::MakeCopy()

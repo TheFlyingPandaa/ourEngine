@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -111,10 +111,11 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -126,6 +127,9 @@
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
@@ -187,6 +191,9 @@
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />
+    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
@@ -427,6 +434,7 @@
   <ItemGroup>
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableCreepyStats.txt" />
     <Text Include="trolls_inn\Furniture\FurnitureStats\TableNormalStats.txt" />
+    <Text Include="trolls_inn\heights.txt" />
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
@@ -449,6 +457,7 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <None Include="trolls_inn\Resources\skybox.mtl" />
     <None Include="trolls_inn\Resources\tree\tree.mtl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

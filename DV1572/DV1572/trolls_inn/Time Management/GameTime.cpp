@@ -13,10 +13,8 @@ GameTime::GameTime()
 	m_seconds = 0.0f; 
 	m_totalSeconds = 0; 
 	m_divider = 255.0f; 
-	m_seconds = 0;
-	m_currentTime = MORNINGTONOON;
 	m_sunCurrentFinalColor = DirectX::XMVECTOR{ 0,0,0 };
-	m_sunStartInterpolate = m_sunCurrentFinalColor;
+	m_sunStartInterpolate = DirectX::XMVECTOR{ 192.0f / m_divider,191.0f / m_divider, 173.0f / m_divider };
 	m_sunRotationStart = m_sunFinalRotation;
 	m_colorScaleFactor = 0.0f;
 	m_sunAngle = 90.0f;

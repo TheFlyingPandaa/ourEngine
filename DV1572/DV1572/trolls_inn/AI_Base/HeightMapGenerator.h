@@ -2,6 +2,7 @@
 #include <vector>
 #include "../../ourEngine/interface/shape/Rectangle.h"
 
+#define NUMBER_OF_TREES 50
 
 class HeightMap
 {
@@ -35,12 +36,11 @@ private:
 	std::vector<float> m_heightValues;
 	std::vector<VERTEX> m_vertices;
 	std::vector<unsigned int> m_indices;
-	
-	Mesh m_mountainMesh;
+
 	RectangleShape rs;
 	RectangleShape water;
-	Mesh m_treeMesh;
 	std::vector<RectangleShape> m_trees;
+	
 
 public:
 	HeightMap(int mapWidth, int stepSize, float noise);

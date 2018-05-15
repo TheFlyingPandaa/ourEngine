@@ -37,9 +37,10 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	hardBed = new Furniture(bed3D->getPosition(), bed);
-	//m_roomctrl->AddRoomObject(*hardBed);
 
+	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
+	m_receptionFur->setRotation(180);
+	m_roomctrl->AddRoomObject(m_receptionFur);
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -61,8 +62,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
-	table.LoadModel("trolls_inn/Resources/Stol.obj");
-
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
@@ -81,10 +80,8 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
+	delete m_receptionFur;
 	delete m_eventHandle;
-	delete bed;
-	delete bed3D;
-	delete hardBed;
 }
 
 // round float to n decimals precision
@@ -98,7 +95,6 @@ void GameState::Update(double deltaTime)
 {
 	if (Input::isKeyPressed('Q'))
 	{
-		//std::cout << "EventStarted" << std::endl;
 		m_eventHandle->StartCollectEvent();
 	}
 
@@ -108,7 +104,7 @@ void GameState::Update(double deltaTime)
 		m_eventHandle->EndEvent();
 	}
 	m_eventHandle->Update();
-	//std::cout << inn.getMoney() << std::endl;
+
 
 	if (m_subStates.empty())
 	{
@@ -135,7 +131,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	c.Update();
 	m_roomctrl->Update(m_cam);
-	//this->grid->Update(this->m_cam);
+
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -168,25 +164,6 @@ void GameState::Update(double deltaTime)
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	
-	//auto currentTime = std::chrono::high_resolution_clock::now();
-	if (Input::isKeyPressed('N')) {
-		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
-	}
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	
-	
-	auto time = std::chrono::high_resolution_clock::now();
-	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
-	
-
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	m_roomctrl->PickRoomTiles();
-	//}
-	//if (Input::isKeyPressed('C'))
-	//{
-	//	m_roomctrl->PickWalls();
-	//}
 	
 }
 
@@ -200,16 +177,6 @@ void GameState::Draw()
 		this->m_grid->Draw();
 	}
 
-
-	//TEST
-	//c.Draw();
-	//this->grid2->Draw();
-	//m_eventHandle->Draw();
-	static bool canRender = false;
-	if (MLP::GetInstance().IsReady("bed"))
-		canRender = true;
-	if(canRender)
-		bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
@@ -244,17 +211,10 @@ void GameState::_resetHudButtonPressedExcept(int index)
 
 void GameState::_init()
 {
-	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
-	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
-	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+
 	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
-	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
+	//MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
 	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
@@ -263,10 +223,7 @@ void GameState::_init()
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
 	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
-	bed3D = new Object3D();
-	bed3D->setMesh(MLP::GetInstance().GetMesh("bed"));
-	bed3D->setPos(17, 0, 8);
-	bed3D->Rotate(0, 90, 0);
+
 }
 
 void GameState::_setHud()

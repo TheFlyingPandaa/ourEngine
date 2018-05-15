@@ -2,11 +2,11 @@
 #include "../../ourEngine/interface/shape/3DObject.h"
 #include "../AI_Base/Attributes.h"
 #include "../AI_Base/Customer.h"
-
+#include "../Mesh Manager/MeshLoaderPlus.h"
 class Furniture
 {
 public:
-	Furniture(DirectX::XMFLOAT3 pos, Mesh * mesh);
+	Furniture(DirectX::XMFLOAT3 pos, MESH mesh);
 	virtual ~Furniture();
 
 	Object3D&	getObject3D();
@@ -60,4 +60,5 @@ protected:
 	bool		p_isBusy;
 
 	int			p_level;
+	MESH		m_meshId;
 };

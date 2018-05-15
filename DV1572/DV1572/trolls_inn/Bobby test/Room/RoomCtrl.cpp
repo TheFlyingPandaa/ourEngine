@@ -413,10 +413,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	return index != -1;
 }
-
+#pragma optimize ("", off)
 
  std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
  {
+
 	 int index = _intersect(pos, XMINT2(1, 1));
 	 int payBack = 0;
 	
@@ -556,7 +557,9 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 } 
 	 _printRoomConnections();
 	 return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
+
  }
+#pragma optimize ("", on)
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
@@ -608,16 +611,21 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			}
 			else
 			{
-				Tile* t = tiles[_index(start.x, start.y - i)];
-				if (t && t->getHasObject() == false)
+				int tileIndex = _index(start.x, start.y - i);
+				if (tileIndex != -1)
 				{
-					t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					Tile* t = tiles[_index(start.x, start.y - i)];
+					if (t && t->getHasObject() == false)
+					{
+						t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					}
+					else if (t)
+					{
+						t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						isFalse = true;
+					}
 				}
-				else if(t)
-				{
-					t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					isFalse = true;
-				}
+				
 			}
 		}
 	}

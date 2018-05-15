@@ -26,16 +26,10 @@ private:
 	};
 
 private:
-	Mesh m;
-	Mesh kitchenTile;
-	Mesh rect;
 	
 	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
-
-	Mesh * bed;
-	Object3D * bed3D;
-	Furniture * hardBed;
+	Furniture* m_receptionFur;
 
 	HeightMap m_background;
 
@@ -59,11 +53,6 @@ private:
 	bool m_move = false;
 	bool m_justMoved = false;
 
-	int m_i = 0;
-	std::future<void> future;
-
-	Mesh table;
-	
 	Inn * inn;
 
 	int m_in = 0;
