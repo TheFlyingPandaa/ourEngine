@@ -1,17 +1,12 @@
 #include "Table.h"
 #include "../Mesh Manager/MeshManager.h"
 
-Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(pos, mesh)
+Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int setting) : Furniture(pos, mesh)
 {
 	p_gridSize = 1;
 	p_rot = 0;
-	if (!mesh)
-	{
-		p_object.setMesh(MeshHandler::getTable());
-	}
-	else {
-		p_object.setMesh(mesh);
-	}
+	p_object.setMesh(MLP::GetInstance().GetMesh(mesh));
+	
 	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
 	//Set Whatever suits
 	//p_attributes
@@ -24,7 +19,7 @@ Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(
 	{
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
 		
-		p_object.getMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
+		p_object.GetMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
 		p_price = 1000;
 	}
 
@@ -43,3 +38,4 @@ Furniture * Table::MakeCopy()
 {
 	return new Table(static_cast<const Table&>(*this));
 }
+

@@ -56,7 +56,7 @@ XMFLOAT4A											DX::g_lightDir;
 void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 {
 	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP& item) {
-		return shape->getMesh()->CheckID(*item.shape->getMesh());
+		return shape->GetMesh()->CheckID(*item.shape->GetMesh());
 	});
 
 	//Converting The worldMatrix into a instanced world matrix.
@@ -108,7 +108,7 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>& queue)
 {
 	auto exisitingEntry = std::find_if(queue.begin(), queue.end(), [&](const INSTANCE_GROUP_INDEXED& item) {
-			return shape->getMesh()->CheckID(*item.shape->getMesh());
+			return shape->GetMesh()->CheckID(*item.shape->GetMesh());
 	});
 
 
@@ -151,7 +151,7 @@ void DX::submitToInstance(Shape* shape, std::vector<DX::INSTANCE_GROUP_INDEXED>&
 void DX::submitToInstance(Character * character)
 {
 	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
-		return character->getShape()->getMesh()->CheckID(*item.shape->getMesh());
+		return character->getShape()->GetMesh()->CheckID(*item.shape->GetMesh());
 	});
 
 	//Converting The worldMatrix into a instanced world matrix.
@@ -199,7 +199,7 @@ void DX::submitToInstance(Character * character)
 void DX::submitToInstance(Billboard* bill)
 {
 	auto exisitingEntry = std::find_if(DX::g_instanceGroupsBillboard.begin(), DX::g_instanceGroupsBillboard.end(), [&](const INSTANCE_GROUP_BILL& item) {
-		return bill->getMesh()->CheckID(*item.shape->getMesh());
+		return bill->GetMesh()->CheckID(*item.shape->GetMesh());
 	});
 
 
@@ -512,7 +512,7 @@ void Window::_drawHUD()
 
 		
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -526,13 +526,13 @@ void Window::_drawHUD()
 		offsets[1] = 0;
 
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 		DX::g_instanceGroupsHUD.pop_front();
 	}
@@ -753,7 +753,7 @@ void Window::_shadowPass(Camera* c)
 
 		UINT32 vertexSize = sizeof(VERTEX);
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -766,13 +766,13 @@ void Window::_shadowPass(Camera* c)
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 		DX::g_InstanceGroupsShadow.pop_front();
 	}
@@ -885,7 +885,7 @@ void Window::_windowPass(Camera * c)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -898,13 +898,13 @@ void Window::_windowPass(Camera * c)
 		offsets[0] = 0;
 		offsets[1] = 0;
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
 
@@ -1228,13 +1228,13 @@ void Window::_billboardPass(const Camera & cam)
 		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
-		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		for (int i = 0; i < instance.shape->GetMesh()->getNumberOfParts(); i++)
 		{
 			instance.shape->ApplyMaterials(i);
 
 			UINT32 vertexSize = sizeof(VERTEX);
 			UINT offset = 0;
-			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer* v = instance.shape->GetMesh()->getVertices(i);
 			ID3D11Buffer * bufferPointers[2];
 			bufferPointers[0] = v;
 			bufferPointers[1] = instanceBuffer;
@@ -1247,12 +1247,12 @@ void Window::_billboardPass(const Camera & cam)
 			offsets[0] = 0;
 			offsets[1] = 0;
 
-			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
+			ID3D11Buffer* indices = instance.shape->GetMesh()->getIndicesBuffer(i);
 
 			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
 		}
 
 		instanceBuffer->Release();
@@ -1325,12 +1325,12 @@ void Window::_geometryPass(const Camera &cam)
 		// Apply shaders
 		instance.shape->ApplyShaders(); //ApplyShaders will set the special shaders
 
-		for (int i = 0; i < instance.shape->getMesh()->getNumberOfParts(); i++)
+		for (int i = 0; i < instance.shape->GetMesh()->getNumberOfParts(); i++)
 		{
 			instance.shape->ApplyMaterials(i);
 
 			UINT offset = 0;
-			ID3D11Buffer* v = instance.shape->getMesh()->getVertices(i);
+			ID3D11Buffer* v = instance.shape->GetMesh()->getVertices(i);
 			ID3D11Buffer * bufferPointers[2];
 			bufferPointers[0] = v;
 			bufferPointers[1] = instanceBuffer;
@@ -1343,12 +1343,12 @@ void Window::_geometryPass(const Camera &cam)
 			offsets[0] = 0;
 			offsets[1] = 0;
 
-			ID3D11Buffer* indices = instance.shape->getMesh()->getIndicesBuffer(i);
+			ID3D11Buffer* indices = instance.shape->GetMesh()->getIndicesBuffer(i);
 
 			DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 			DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 																					
-			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
+			DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(i), (UINT)instance.attribs.size(), 0, 0, 0);
 		}
 		
 		instanceBuffer->Release();
@@ -1413,7 +1413,7 @@ void Window::_skyBoxPass(const Camera& cam)
 		instance.shape->ApplyMaterials();
 
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -1428,13 +1428,13 @@ void Window::_skyBoxPass(const Camera& cam)
 
 
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 		DX::g_instanceGroupsSkyBox.pop_front();
 	}
@@ -1591,7 +1591,7 @@ void Window::_transparencyPass(const Camera & cam)
 		DX::g_deviceContext->VSSetConstantBuffers(0, 1, &m_meshConstantBuffer);
 
 		UINT offset = 0;
-		ID3D11Buffer* v = instance.shape->getMesh()->getVertices();
+		ID3D11Buffer* v = instance.shape->GetMesh()->getVertices();
 		ID3D11Buffer * bufferPointers[2];
 		bufferPointers[0] = v;
 		bufferPointers[1] = instanceBuffer;
@@ -1606,13 +1606,13 @@ void Window::_transparencyPass(const Camera & cam)
 
 
 
-		Mesh* mesh = instance.shape->getMesh();
+		Mesh* mesh = instance.shape->GetMesh();
 		ID3D11Buffer* indices = mesh->getIndicesBuffer();
 
 		DX::g_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, offset);
 		DX::g_deviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 
-		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->getMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
+		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 		DX::g_instanceGroupsTransparancy.pop_front();
 	}
@@ -1807,7 +1807,7 @@ void Window::loadActiveLights(GameTime& gameTime)
 void Window::Flush(Camera* c)
 {
 	//ReportLiveObjects();
-	_windowPass(c);
+	//_windowPass(c);
 	_prepareShadow();
 	_shadowPass(c);
 	if (DEBUG == 1)

@@ -65,7 +65,7 @@ void OrbitCamera::update()
 	
 	XMStoreFloat3(&m_pos, xmCamPos);
 	// --- ZOOM ----
-	if (Input::isMouseMiddlePressed())
+	if (Input::isMouseMiddlePressed() || Input::isKeyPressed(Input::SPACEBAR))
 	{
 		XMVECTOR rotVector = (xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget));
 		XMVECTOR startLA = XMVectorSet(0, 0, -1, 0);

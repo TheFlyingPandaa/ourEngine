@@ -25,6 +25,7 @@ public:
 	Mesh(const Mesh& mesh);
 	
 	~Mesh();
+	void LoadModelStr(const std::string& path);
 	void LoadModel(const std::string &path);
 	void LoadModel(std::vector<VERTEX> &v);
 	void LoadModelInverted(const std::string &path);
