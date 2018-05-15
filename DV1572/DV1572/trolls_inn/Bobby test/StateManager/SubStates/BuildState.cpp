@@ -1,5 +1,9 @@
 #include "BuildState.h"
 #include "../../../Mesh Manager/MeshManager.h"
+#include "../../../Furniture/Stove.h"
+#include "../../../Furniture/Bar.h"
+#include "../../../Furniture/Chair.h"
+#include "../../../Furniture/Reception.h"
 
 #define DEBUG = 1;
 
@@ -137,7 +141,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::TABLE);
+						table = new Table(XMFLOAT3(0, 0, 0), MESH::TABLE,2);
 					}
 				}
 				// Bed High
@@ -170,7 +174,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BAR_HIGH);
+						table = new Bar(XMFLOAT3(0, 0, 0), MESH::BAR_HIGH);
 					}
 				}
 				// Bar low
@@ -181,7 +185,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::BAR_LOW);
+						table = new Bar(XMFLOAT3(0, 0, 0), MESH::BAR_LOW);
 					}
 				}
 
@@ -193,7 +197,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::CHAIR_HIGH);
+						table = new Chair(XMFLOAT3(0, 0, 0), MESH::CHAIR_HIGH);
 					}
 				}
 				// Chair low
@@ -204,7 +208,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::CHAIR_LOW);
+						table = new Chair(XMFLOAT3(0, 0, 0), MESH::CHAIR_LOW);
 					}
 				}
 
@@ -216,7 +220,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::STOVE);
+						table = new Stove(XMFLOAT3(0, 0, 0), MESH::STOVE);
 					}
 				}
 
@@ -228,7 +232,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::RECEPTION_HIGH);
+						table = new Reception(XMFLOAT3(0, 0, 0), MESH::RECEPTION_HIGH);
 					}
 				}
 				// Reception LOW
@@ -239,7 +243,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
+						table = new Reception(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
 					}
 				}
 				
