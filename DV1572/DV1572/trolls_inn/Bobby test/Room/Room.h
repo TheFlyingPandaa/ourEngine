@@ -131,5 +131,6 @@ public:
 	void setIsBuildingDoor(bool tje);
 
 	bool CheckRoomComplete();
+
 };
 

@@ -30,6 +30,10 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
 
+	if (roomPos.x == -1)
+	{
+		return false;
+	}
 	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
 
 	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
