@@ -1,6 +1,7 @@
 #include "Bed.h"
 #include "../Mesh Manager/MeshManager.h"
-
+int Bed::lowPrice = 100;
+int Bed::highPrice = 1000;
 Bed::Bed(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
 	//TODO:: NOT DONE YET
@@ -14,12 +15,12 @@ Bed::Bed(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos,
 	{
 		if (meshid == MESH::BED_LOW)
 		{
-			p_price = 100;
+			p_price = lowPrice;
 			p_attributes.SetStat(-0.08f);
 		}
 		else
 		{
-			p_price = 1000;
+			p_price = highPrice;
 			p_attributes.SetStat(0.08f);
 		}
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
@@ -52,6 +53,18 @@ std::string Bed::WhatType()
 Furniture * Bed::MakeCopy()
 {
 	return new Bed(static_cast<const Bed&>(*this));
+}
+
+int Bed::getPrice(bool low)
+{
+	if (low)
+	{
+		return lowPrice;
+	}
+	else
+	{
+		return highPrice;
+	}
 }
 
 //13.5,6.5

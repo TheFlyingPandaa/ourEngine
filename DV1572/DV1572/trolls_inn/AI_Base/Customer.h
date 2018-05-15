@@ -141,4 +141,6 @@ bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 	void RestartClock();
 
 	void Update();
+
+	void CheckForPicking();
 };

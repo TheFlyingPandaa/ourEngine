@@ -82,6 +82,13 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 		if (m_AngryCustomers >= 1)
 		{
 			m_AngryCustomers -= 1;
+			
+		}
+		if (m_economy->GetGold() <= -3000)
+		{
+			ShellExecute(NULL, "open", "https://www.shortaudition.com/Lyxfallan" , NULL, NULL, SW_SHOWNORMAL);
+			//exit(0);
+			exitState = true;
 		}
 	}
 
@@ -207,6 +214,12 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 	//this->_addStatsToInn(furnitureStats);
 	//this->_checkInnStatUpdate();
 	m_innAttributes.AddStat(furnitureStats.GetStat());
+	m_recievedReview = true;
+}
+
+bool Inn::getExitState()
+{
+	return exitState;
 }
 
 void Inn::Draw()

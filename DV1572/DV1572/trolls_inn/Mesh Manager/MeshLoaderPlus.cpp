@@ -76,18 +76,17 @@ bool MLP::IsReady(std::string name)
 	//If the mesh is not located in the vector, the mesh had already been loaded. not safe
 	for (int i = 0; i < m_futureMeshes.size(); i++)
 	{
-		if (name == m_futureMeshes[i]->name)
+		auto status = m_futureMeshes[i]->futureObj.wait_for(0ms);
+		if (status == std::future_status::ready)
 		{
-			auto status = m_futureMeshes[i]->futureObj.wait_for(0ms);
-			if (status == std::future_status::ready)
-			{
-				delete m_futureMeshes[i];
-				m_futureMeshes.erase(m_futureMeshes.begin() + i);
-				return true; // Mesh is ready
-			}
-			else
-				return false; // Mesh isnt ready!
+			delete m_futureMeshes[i];
+			m_futureMeshes.erase(m_futureMeshes.begin() + i);
 		}
+		else if(name == m_futureMeshes[i]->name)
+		{
+			return false; // This mesh wasnt ready
+		}
+		
 	}
 #endif
 	return true;

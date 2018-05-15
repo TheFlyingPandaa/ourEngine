@@ -14,6 +14,8 @@ class Inn
 {
 private:
 	
+	bool exitState = false;
+
 	Mesh m_m;
 	Mesh m_kitchenTile;
 	Mesh m_rect;
@@ -92,6 +94,8 @@ public:
 	void CustomerReview(Attributes review);
 	// Add stats to the inn based on the furniture placed
 	void FurnitureStatAdd(Attributes furnitureStats);
+	//This is to "crash the game" make the player lose
+	bool getExitState();
 
 	void Draw();
 };

@@ -440,6 +440,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 	};
 
 	auto cmp = [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node>& a2) {return a1->fCost > a2->fCost; };
+	
 	std::priority_queue < std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(cmp)> openQueue(cmp);
 	
 	std::vector<bool> closedListLookUp(m_sizeX * m_sizeY, 0);

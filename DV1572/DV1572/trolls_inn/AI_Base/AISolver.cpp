@@ -512,6 +512,37 @@ RoomCtrl * AISolver::getRoomCtrl()
 
 int AISolver::RequestPath(Character & character, RoomType targetRoom)
 {
+
+	XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
+
+	int xTile = (int)(round_n2(charPos.x, 1) - 0.5f);
+	int yTile = (int)(round_n2(charPos.y, 1) - 0.5f);
+
+	XMINT2 targetPosition = { (int)character.getPosition().x , (int)character.getPosition().y };
+
+	if (targetRoom == RoomType::randomStupid)
+		targetPosition = { (int)rand() % 32, (int)rand() % 32 };
+	else if (targetRoom == RoomType::leave)
+	{
+		targetPosition = { 16,0 };
+	}
+	else
+	{
+		XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(static_cast<float>(xTile), static_cast<float>(yTile)), targetRoom);
+		// There wasnt any good rooms
+		if (xmtarg.x == -1)
+		{
+			return -1; // HENRIK WAS HERE
+		}
+		targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
+	}
+
+	return RequestPath(character, targetPosition);
+
+}
+
+int AISolver::RequestPath(Character & character, XMINT2 targetPosition)
+{
 	bool notPendingPath = false;
 	for(int i = 0; i< futureObjects.size();i++)
 	{
@@ -550,32 +581,11 @@ int AISolver::RequestPath(Character & character, RoomType targetRoom)
 	{
 		if (character.walkQueueDone())
 		{
-			//Shape * obj = this->p_pickingEvent->top();
+			
 			XMFLOAT2 charPos = character.getPosition(); // (x,y) == (x,z,0)
 
 			int xTile = (int)(round_n2(charPos.x, 1) - 0.5f);
 			int yTile = (int)(round_n2(charPos.y, 1) - 0.5f);
-
-			XMINT2 targetPosition = { (int)character.getPosition().x , (int)character.getPosition().y };
-
-			if (targetRoom == RoomType::randomStupid)
-				targetPosition = { (int)rand() % 32, (int)rand() % 32 };
-			else if (targetRoom == RoomType::leave)
-			{
-				targetPosition = { 16,0 };
-			}
-			else
-			{
-				XMFLOAT3 xmtarg = m_roomctrl->getClosestRoom(XMFLOAT2(static_cast<float>(xTile), static_cast<float>(yTile)), targetRoom);
-				// There wasnt any good rooms
-				if (xmtarg.x == -1)
-				{
-					return -1; // HENRIK WAS HERE
-				}
-				targetPosition = { (int)xmtarg.x, (int)xmtarg.z };
-			}
-
-
 
 			XMINT2 startPosition = { xTile, yTile };
 			std::future<std::vector<std::shared_ptr<Node>>>* future = new std::future<std::vector<std::shared_ptr<Node>>>();

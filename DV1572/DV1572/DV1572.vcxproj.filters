@@ -82,6 +82,7 @@
     <ClCompile Include="trolls_inn\Furniture\Bar.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Chair.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Reception.cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InGameConsole.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="trolls_inn\Furniture\Bar.h" />
     <ClInclude Include="trolls_inn\Furniture\Chair.h" />
     <ClInclude Include="trolls_inn\Furniture\Reception.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />
@@ -176,5 +178,6 @@
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\HUD\MainHud\LoseHud.txt" />
   </ItemGroup>
 </Project>

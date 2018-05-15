@@ -6,6 +6,8 @@ MainMenu::MainMenu(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, 
 	std::cout << "hellp\n";
 	this->m_cam = cam;
 	this->_init();
+	m_stateHUD.LoadHud("trolls_inn/Resources/HUD/MainHud/LoseHud.txt");
+
 }
 
 MainMenu::~MainMenu()
