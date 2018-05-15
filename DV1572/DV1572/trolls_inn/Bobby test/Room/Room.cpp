@@ -455,6 +455,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 void Room::AddRoomObject(Furniture * fut)
 {
 	Furniture * temp = fut->MakeCopy();
+	temp->setLightIndex(this->m_index);
 	m_roomObjects.push_back(temp);
 	m_roomObjects[m_roomObjects.size() - 1]->setIndex(m_roomObjects.size()); 
 }

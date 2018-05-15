@@ -13,6 +13,7 @@
 #include "../../Events/EventHandler.h"
 #include "../../Furniture/Table.h"
 #include "../../AI_Base/HeightMapGenerator.h"
+#include "HUD/ClickMenu.h"
 
 class GameState : public State {
 private:
@@ -26,7 +27,6 @@ private:
 	};
 
 private:
-	
 	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
 	Furniture* m_receptionFur;
