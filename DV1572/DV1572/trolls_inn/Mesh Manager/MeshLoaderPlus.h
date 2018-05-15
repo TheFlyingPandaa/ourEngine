@@ -32,7 +32,9 @@ enum MESH : short
 	BAR_HIGH,
 	BAR_LOW,
 
-	STOVE
+	STOVE,
+
+	BOX_AABB
 
 
 

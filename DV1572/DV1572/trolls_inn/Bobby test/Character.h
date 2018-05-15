@@ -34,6 +34,8 @@ private:
 		float stepsLeft;
 	};
 
+	Object3D m_AABB;
+
 	WalkDirection	m_currentDir;
 	Billboard		m_model;
 	int				m_modelSpriteIndex;

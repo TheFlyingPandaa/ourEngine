@@ -237,12 +237,8 @@ void GameState::_handlePicking()
 	bool hudWasPicked = _handleHUDPicking();
 	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 	{
-		m_grid->PickTiles();
-		m_roomctrl->PickRoomTiles();
-
-
-
-		
+		/*m_grid->PickTiles();
+		m_roomctrl->PickRoomTiles();*/
 	}
 
 	if (hudWasPicked)
@@ -261,6 +257,7 @@ void GameState::_handlePicking()
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
+		std::cout << "(" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
 		this->p_pickingEvent->pop();
 
 

@@ -85,22 +85,9 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 	}
 	else
 	{
-		//If the mesh allready exists we just push it into a exsiting queue
-		/*std::cout << worldMat._11 << " " << worldMat._12 << " " << worldMat._13 << " "<< worldMat._14 << std::endl;
-		std::cout << worldMat._21 << " " << worldMat._22 << " " << worldMat._23 << " "<< worldMat._24 << std::endl;
-		std::cout << worldMat._31 << " " << worldMat._32 << " " << worldMat._33 << " "<< worldMat._34 << std::endl;
-		std::cout << worldMat._41 << " " << worldMat._42 << " " << worldMat._43 << " "<< worldMat._44 << std::endl;
-		std::cout << "-----------------" << std::endl;*/
-		/*std::cout << attribDesc.lightIndex << std::endl;
-		std::cout << attribDesc.highLightColor.x << " "<<  attribDesc.highLightColor.y << " " << attribDesc.highLightColor.z << " " << attribDesc.highLightColor.w << std::endl;
-		std::cout << "-----------------" << std::endl;*/
-		try {
-			exisitingEntry->attribs.push_back(attribDesc);
-		}
-		catch(const std::out_of_range& oor)
-		{
-			
-		}
+	
+		exisitingEntry->attribs.push_back(attribDesc);
+		
 	}
 	
 }
