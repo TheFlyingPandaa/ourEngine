@@ -3,14 +3,16 @@ SamplerComparisonState sampAniPoint : register(s1);
 
 Texture2D tDiffuse : register(t0);
 Texture2D tNormal : register(t1);
-Texture2D tPosition : register(t2);
-Texture2D tLIndex : register(t3);
+Texture2D tHighlight : register(t2);
 Texture2D tShadow : register(t4);
-//Texture2D tWindow : register(t5);
 
-cbuffer CAMERA_POS_BUFFER : register(b1)
+cbuffer EVERYTHING_BUFFER : register(b1)
 {
 	float4 camPos;
+	float4 pointLPos[100];
+	float4 pointLColor[100];
+	float4 lightSetup[100];
+	float4 nrOfLights;
 }
 
 cbuffer SUN_BUFFER : register (b2)
@@ -21,43 +23,56 @@ cbuffer SUN_BUFFER : register (b2)
 	float4x4 sunViewProjection;
 }
 
+
+
 cbuffer LIGHTMATRIXBUFFER : register(b9)
 {
 	float4x4 view;
 	float4x4 projection;
 };
 
-cbuffer POINT_LIGHT_COLLECTION_BUFFER : register (b6)
-{
-	float4 pointLPos[100];
-	float4 pointLColor[100];
-	float4 lightSetup[100];
-	float4 nrOfLights;
-}
-
-struct Input
+struct INPUT
 {
 	float4 pos : SV_POSITION;
+	float4 worldPos : WORLDPOS;
 	float2 tex : TEXELS;
+	float3 normal : NORMAL;
+	float3x3 TBN : TBN;
+	float4 color : HIGHLIGHTCOLOR;
+	float lIndex : LIGHTINDEX;
 };
 
-float4 main(Input input) : SV_Target
+float4 main(INPUT input) : SV_Target
 {
-	float3 wordPos = tPosition.Sample(sampAni, input.tex).rgb;
-	float specLevel = tPosition.Sample(sampAni, input.tex).a;
-	float3 normal = tNormal.Sample(sampAni, input.tex).rgb;
-	float3 diffuseSample = tDiffuse.Sample(sampAni, input.tex).rgb;
-	float inside = tNormal.Sample(sampAni, input.tex).a;
-	//return tShadow.Sample(sampAni, input.tex);
+	float3 wordPos = input.worldPos.xyz;
+	float3 normal = (2.0f * tNormal.Sample(sampAni, input.tex) - 1.0f).xyz;
+	normal = normalize(mul(normal, input.TBN));
+	normal = normalize(input.normal + normal);
+	float4 diffuseSample = tDiffuse.Sample(sampAni, input.tex);
+	if (diffuseSample.a < 0.5f)
+		discard;
+	diffuseSample *= input.color;
+	float3 ambient = diffuseSample.xyz * 0.5f;
+	float specLevel = 1; // Vet inte om detta var rätt!
 
-	float3 ambient = diffuseSample * 0.5f;
 
-	float3 finalColorForSun; 
+
+
+	uint index = round(input.lIndex);
+	float4 lIndex;
+	lIndex.a = 1.0f;
+
+	lIndex.r = index % 256;
+	index /= 256;
+	lIndex.g = index % 256;
+	index /= 256;
+	lIndex.b = index % 256;
+	float3 finalColorForSun;
 	//SUN//
 
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
-	float3 sunLightToObject = normalize(sunLightPos.xyz  - wordPos);
-	float3 diffuse = diffuseSample * max(dot(normal, sunLightToObject), 0.0f);
+	float3 sunLightToObject = normalize(sunLightPos.xyz - wordPos);
+	float3 diffuse = diffuseSample.xyz * max(dot(normal, sunLightToObject), 0.0f);
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -84,14 +99,14 @@ float4 main(Input input) : SV_Target
 	float pixelDepth = posLightH.z;
 
 	//float window = 1.0f;
-	
+
 	// If we are in shadow
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
 		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
 		pixelDepth > 0)
 	{
 
-		float margin = acos(saturate(dot(normal,sunLightToObject)));
+		float margin = acos(saturate(dot(normal, sunLightToObject)));
 
 		float epsilon = 0.001 / margin;
 
@@ -104,41 +119,40 @@ float4 main(Input input) : SV_Target
 		{
 			for (int y = -1; y <= 1; ++y)
 			{
-				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x,y) * texelSize), pixelDepth + epsilon));
+				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
 				//window += float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
 			}
 		}
 		shadowCoeff /= 9.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
-	/*	window /= 9.0f;
+		/*	window /= 9.0f;
 		window = 1 - window;*/
 
 	}
 
-//	return float4(window, window, window, 1.0f);
-	
+	//	return float4(window, window, window, 1.0f);
+
 	finalColorForSun = ambient + (diffuse + finalSpec)* sunColor.xyz * shadowCoeff;
-	
-	float3 finalColorForPointLights = float3(0,0,0);
-	float3 tempColor = float3(0,0,0);
-	float3 diffuseForPointLight = float3(0,0,0); 
-	float3 halfWayDirPointLight = float3(0,0,0); 
+
+	float3 finalColorForPointLights = float3(0, 0, 0);
+	float3 tempColor = float3(0, 0, 0);
+	float3 diffuseForPointLight = float3(0, 0, 0);
+	float3 halfWayDirPointLight = float3(0, 0, 0);
 	float specPointLight = 0;
-	float3 finalSpecPointLight = float3(0,0,0);
-	float att = 0; 
+	float3 finalSpecPointLight = float3(0, 0, 0);
+	float att = 0;
 	float specLevelPointLight = specLevel * 0.2f;
 
-	float3 lIndex = tLIndex.Sample(sampAni, input.tex).rgb;
 	int fIndex = (int)(lIndex.x + (lIndex.y * 256) + (lIndex.z * 256 * 256) + 0.5f);
-	
-	for (int i = 0; i < nrOfLights.r; i++)
+
+	[unroll(50)]		for (int i = 0; i < nrOfLights.r; i++)
 	{
 		int index = (int)(pointLColor[i].a + 0.5f);
 		if (index == fIndex)
 		{
 			//Diffuse 
 			float3 pointLightToObject = normalize(pointLPos[i].xyz - wordPos);
-			diffuseForPointLight = diffuseSample * max(dot(normal, pointLightToObject), 0.0f);
+			diffuseForPointLight = diffuseSample.xyz * max(dot(normal, pointLightToObject), 0.0f);
 			//Specular
 			halfWayDirPointLight = normalize(pointLightToObject + viewer);
 			specPointLight = pow(max(dot(normal, halfWayDirPointLight), 0.0f), 32.0f);
@@ -155,7 +169,7 @@ float4 main(Input input) : SV_Target
 		}
 	}
 
-    float3 finalColor = min(finalColorForSun + finalColorForPointLights, float3(1,1,1));
+	float3 finalColor = min(finalColorForSun + finalColorForPointLights, float3(1, 1, 1));
 
 	return float4(finalColor, 1);
 }
