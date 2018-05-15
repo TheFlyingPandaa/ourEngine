@@ -53,7 +53,7 @@ public:
 			true, if the left mouse button is pressed
 			false, if the left mouse button is not pressed
 	*/
-	static bool isMouseLeftPressed();
+	static bool isMouseLeftPressed(bool repeat = true);
 
 	/*
 		Returns

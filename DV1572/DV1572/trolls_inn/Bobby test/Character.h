@@ -88,6 +88,7 @@ public:
 	virtual void Draw();
 	void setThoughtBubbleMesh(Mesh* bubbleMesh);
 	virtual Shape* getShape();
+	Object3D& getHitBox();
 
 
 	short getUniqueIndex() const;

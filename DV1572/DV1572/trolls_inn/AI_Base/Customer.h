@@ -123,4 +123,6 @@ public:
 	void RestartClock();
 
 	void Update();
+
+	void CheckForPicking();
 };

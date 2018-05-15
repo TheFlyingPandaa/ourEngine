@@ -162,13 +162,17 @@ void Room::Draw()
 			tile->getQuad().Draw();
 	}
 
-	for (auto& wall : m_allWalls)
+	if (MLP::GetInstance().IsReady(MESH::WALL))
 	{
-		if (wall)
+		for (auto& wall : m_allWalls)
 		{
-			wall->Draw();
+			if (wall)
+			{
+				wall->Draw();
+			}
 		}
 	}
+	
 
 	for (auto &l : m_lights)
 	{

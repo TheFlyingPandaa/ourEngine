@@ -20,8 +20,6 @@ private:
 	int						m_gridscaleY;
 	int						m_lightIndex;
 	
-
-
 private: 
 	void _buildMatrix();
 	DirectX::XMFLOAT3 _convertToRad(DirectX::XMFLOAT3 deg);
@@ -38,7 +36,7 @@ public:
 	~Shape();
 	void setMesh(Mesh* m);
 	Mesh* GetMesh() const;
-	
+
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);
 	DirectX::XMFLOAT3 getPosition() const;

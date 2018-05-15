@@ -58,9 +58,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	for (int i = 0; i < nrOfButtons; i++)
 		m_hudButtonsPressed.push_back(false);
 	}
-	c.setModel(MeshHandler::getBox());
-	c.setPosition(5 + 0.5f, 5 + 0.5f);
-	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
 	this->m_cam = cam;
 
@@ -84,13 +81,7 @@ GameState::~GameState()
 	delete m_eventHandle;
 }
 
-// round float to n decimals precision
-float round_n(float num, int dec)
-{
-	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
-	float pwr = pow(10.0f, dec);
-	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
-}
+
 void GameState::Update(double deltaTime)
 {
 	if (Input::isKeyPressed('Q'))
@@ -129,7 +120,6 @@ void GameState::Update(double deltaTime)
 
 
 	this->m_cam->update();
-	c.Update();
 	m_roomctrl->Update(m_cam);
 
 	if (!m_subStates.empty())
@@ -212,18 +202,6 @@ void GameState::_resetHudButtonPressedExcept(int index)
 void GameState::_init()
 {
 
-	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	//MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
-	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
-	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
-	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
-	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
-	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
-
 }
 
 void GameState::_setHud()
@@ -239,6 +217,8 @@ void GameState::_handlePicking()
 	{
 		m_grid->PickTiles();
 		m_roomctrl->PickRoomTiles();
+		m_mai->PickCustomers();
+		
 	}
 
 	if (hudWasPicked)
@@ -257,7 +237,7 @@ void GameState::_handlePicking()
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
-		std::cout << "(" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
+		
 		this->p_pickingEvent->pop();
 
 
@@ -268,47 +248,29 @@ void GameState::_handlePicking()
 		}
 
 	
-		if (m_stage == GameStage::Play)
+		if (m_stage == GameStage::Play && Input::isMouseLeftPressed(false))
 		{
 			_handlePickingAi(obj);
-
-			// THREADED BETA
-			// Will cause crashes since we clear the walking queue for the troll
-			//using namespace std::chrono_literals;
-
-			//// Create a promise and get its future.
-			//if (m_i == 0)
-			//{
-			//	m_i++;
-			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			//}
-
-			////	 Use wait_for() with zero milliseconds to check thread status.
-			//auto status = future.wait_for(0ms);
-
-			////	 Print status. And start a new thread if the other thread was finnished
-			//if (status == std::future_status::ready) {
-			//	std::cout << "Thread finished" << std::endl;
-			//	future.get();
-			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-
-			//}
-			//else {
-			//	std::cout << "Thread still running" << std::endl;
-			//}
-
 		}
 
 	}
 }
-
+// round float to n decimals precision
+float round_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 void GameState:: _handlePickingAi(Shape * obj)
 {
-	Staff* troll = m_mai->getTroll(); 
-
-	if (m_stage == GameStage::Play)
+	// If the the y position is 0, then this is a ground tile
+	// else we probably hit an customer
+	if (obj->getPosition().y == 0)
 	{
-	
+		//std::cout << "Tile" << std::endl;
+		Staff* troll = m_mai->getTroll();
+
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
@@ -340,8 +302,13 @@ void GameState:: _handlePickingAi(Shape * obj)
 				troll->Move(troll->getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 			}
 		}
-
 	}
+	else
+	{
+		m_mai->PickedCustomerShape(obj);
+	}
+	
+	
 }
 
 

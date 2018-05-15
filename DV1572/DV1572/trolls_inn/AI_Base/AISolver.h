@@ -47,5 +47,6 @@ public:
 	void Update(Staff& staff);
 	void Update(Staff& staff, Action desiredAction);
 
+	int RequestPath(Character& character, XMINT2 target);
 	int RequestPath(Character& character, RoomType targetRoom);
 };

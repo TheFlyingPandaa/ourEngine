@@ -29,10 +29,6 @@ private:
 
 	std::vector<Room*>	m_rooms;
 
-	Mesh*				m_doorMesh;
-	Mesh*				m_wallMesh;
-	Mesh*				m_tileMesh[ROOM_TYPE_SIZE];
-
 	std::vector<DoorPassage> m_outsideDoorPos;
 	std::vector<DoorPassage> m_roomToRoom;
 	std::vector<std::vector<int>> m_roomConnectionMap;
@@ -54,14 +50,10 @@ public:
 	RoomCtrl();
 	~RoomCtrl();
 
-	void				AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh);
 	void				AddRoomObject(Furniture * furniture);
-	//void				RemoveRoomObject(DirectX::XMINT2 pos);
 	bool				RemoveRoomObject(Furniture* fur);
 	
-	void				setTileMesh(Mesh* tileMesh, RoomType roomType);
 	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size = { 1, 1 });
-	bool				isPlaceableObject(DirectX::XMINT2 pos, int size);
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
 	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
@@ -79,10 +71,7 @@ public:
 
 	int					getRoomConnections(int index) const;
 	
-	//This is a expensiv function many many many for loops
-	//Be conservative when calling
 	void				CreateWalls(Room* currentRoom);
-	void				setDoorMesh(Mesh * mesh);
 	void				CreateDoor(XMFLOAT3 wallPosition);
 	
 	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;

@@ -318,3 +318,8 @@ void Customer::Update()
 	Character::Update();
 
 }
+
+void Customer::CheckForPicking()
+{
+	getHitBox().CheckPick();
+}
