@@ -82,7 +82,6 @@ const char* Customer::GetRaceStr() const
 Action Customer::GetAction() const
 {
 	Action action;
-	//std namespace max breaks code
 	float value = max(max(this->m_tired, this->m_hungry), this->m_thirsty);
 	action = (value == this->m_tired) ? SleepAction : (value == this->m_hungry) ? EatAction : DrinkAction;
 	

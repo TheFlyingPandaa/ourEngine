@@ -63,7 +63,7 @@ Staff * MasterAI::getTroll()
 {
 	return m_InnTroll; 
 }
-#include "../../InGameConsole.h"
+
 void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));

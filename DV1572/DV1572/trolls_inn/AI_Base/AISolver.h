@@ -35,7 +35,6 @@ private:
 	
 	std::deque<PathThread> futureObjects;
 
-
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
 	~AISolver();

@@ -17,21 +17,25 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 	{
 		CustomerState state = customer.GetState();
 		int price = 0;
+		std::stringstream ss;
+
 		// Get the seat/bed ID to lock it to the customer
-		
 		switch (state)
 		{
 		case Drinking:
 			price = inn->GetDrinkPrice();
+			ss << "A customer bought a drink. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
 			break;
 		case Eating:
 			price = inn->GetFoodPrice();
+			ss << "A customer bought a snack. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
 			break;
 		case Sleeping:
 			price = inn->GetSleepPrice();
+			ss << "A customer rented a room. \nYou earned " << std::to_string(price) << " gold!" << std::endl;
 			break;
 		}
-		// Do quick maff
+		InGameConsole::pushString(ss.str());
 		customer.GetEconomy().Withdraw(price);
 		inn->Deposit(price);
 		customer.SetAvailableSpotFound(true);
