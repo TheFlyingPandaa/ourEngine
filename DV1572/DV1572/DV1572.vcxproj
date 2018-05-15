@@ -178,8 +178,12 @@
     <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
     <ClCompile Include="trolls_inn\Events\Events.cpp" />
     <ClCompile Include="trolls_inn\Events\Reward.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Bar.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Chair.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Reception.cpp" />
+    <ClCompile Include="trolls_inn\Furniture\Stove.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Table.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\Economy.cpp" />
     <ClCompile Include="trolls_inn\Mesh Manager\MeshLoaderPlus.cpp" />
@@ -250,8 +254,12 @@
     <ClInclude Include="trolls_inn\Events\EventHandler.h" />
     <ClInclude Include="trolls_inn\Events\Events.h" />
     <ClInclude Include="trolls_inn\Events\Reward.h" />
+    <ClInclude Include="trolls_inn\Furniture\Bar.h" />
     <ClInclude Include="trolls_inn\Furniture\Bed.h" />
+    <ClInclude Include="trolls_inn\Furniture\Chair.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
+    <ClInclude Include="trolls_inn\Furniture\Reception.h" />
+    <ClInclude Include="trolls_inn\Furniture\Stove.h" />
     <ClInclude Include="trolls_inn\Furniture\Table.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshLoaderPlus.h" />
     <ClInclude Include="trolls_inn\Mesh Manager\MeshManager.h" />

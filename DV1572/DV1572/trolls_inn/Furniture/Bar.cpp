@@ -1,35 +1,34 @@
-#include "Table.h"
-#include "../Mesh Manager/MeshManager.h"
+#include "Bar.h"
 
-Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting) : Furniture(pos, mesh)
+Bar::Bar(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
-	p_gridSize = size;
-	p_rot = 90;
-	p_object.setMesh(MLP::GetInstance().GetMesh(mesh));
-	
+	p_gridSize = 2;
+	p_rot = 180;
+	p_object.setMesh(MLP::GetInstance().GetMesh(meshid));
+
 	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
 	//Set Whatever suits
 	//p_attributes
 	if (setting == 0)
 	{
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
-		if (size == 1)
+		if (meshid == MESH::BAR_LOW)
 		{
 			p_price = 100;
 			p_attributes.SetStat(-0.01f);
 		}
 		else
 		{
-			p_price = 200;
-			p_attributes.SetStat(0.01f);
+			p_price = 1000;
+			p_attributes.SetStat(0.04f);
 		}
 	}
-	else if(setting == 1)
+	else if (setting == 1)
 	{
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableCreepyStats.txt");
-		
+
 		p_object.GetMesh()->setDiffuseTexture("trolls_inn/Resources/StolTextureEvil.bmp");
-		if (size == 1)
+		if (meshid == MESH::BAR_LOW)
 		{
 			p_price = 1000;
 		}
@@ -38,20 +37,18 @@ Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting
 			p_price = 2000;
 		}
 	}
-
 }
 
-Table::~Table()
+Bar::~Bar()
 {
 }
 
-std::string Table::WhatType()
+std::string Bar::WhatType()
 {
-	return "Table";
+	return "Bar";
 }
 
-Furniture * Table::MakeCopy()
+Furniture * Bar::MakeCopy()
 {
-	return new Table(static_cast<const Table&>(*this));
+	 return new Bar(static_cast<const Bar&>(*this));;
 }
-
