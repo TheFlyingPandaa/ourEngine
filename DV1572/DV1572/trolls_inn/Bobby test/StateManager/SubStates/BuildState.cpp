@@ -700,9 +700,9 @@ void BuildState::_inputFurniture()
 			if (m_canBuildFurniture)
 			{
 				m_roomCtrl->AddRoomObject(table);
-				m_inn->getInnAttributesRef().AddStat(table->getAttributes().GetStat());
+				m_inn->FurnitureStatAdd(table->getAttributes());
 				m_inn->Withdraw(table->getPrice());
-				m_inn->getInnAttributesRef().GetStat();
+				
 				//m_inn->UpdateMoney();
 			}
 

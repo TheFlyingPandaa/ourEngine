@@ -1,5 +1,7 @@
 #include "Bar.h"
 
+int Bar::lowPrice = 100;
+int Bar::highPrice = 1000;
 Bar::Bar(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
 	p_gridSize = 2;
@@ -14,12 +16,12 @@ Bar::Bar(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos,
 		//LoadFurnitureStats("trolls_inn/Furniture/FurnitureStats/TableNormalStats.txt");
 		if (meshid == MESH::BAR_LOW)
 		{
-			p_price = 100;
+			p_price = lowPrice;
 			p_attributes.SetStat(-0.01f);
 		}
 		else
 		{
-			p_price = 1000;
+			p_price = highPrice;
 			p_attributes.SetStat(0.04f);
 		}
 	}
@@ -51,4 +53,16 @@ std::string Bar::WhatType()
 Furniture * Bar::MakeCopy()
 {
 	 return new Bar(static_cast<const Bar&>(*this));;
+}
+
+int Bar::getPrice(bool low)
+{
+	if (low)
+	{
+		return lowPrice;
+	}
+	else
+	{
+		return highPrice;
+	}
 }

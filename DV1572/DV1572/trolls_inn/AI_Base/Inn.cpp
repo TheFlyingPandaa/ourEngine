@@ -299,6 +299,7 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 	//this->_addStatsToInn(furnitureStats);
 	//this->_checkInnStatUpdate();
 	m_innAttributes.AddStat(furnitureStats.GetStat());
+	m_recievedReview = true;
 }
 
 void Inn::Draw()
