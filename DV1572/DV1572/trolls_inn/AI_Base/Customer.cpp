@@ -136,7 +136,6 @@ void Customer::SetAction(Action nextAction)
 		break;
 	}
 
-	//POPUP HERE (Henrik)
 	// To return the customer to idle after it executed its action
 	this->m_stateQueue.push(Idle);
 }

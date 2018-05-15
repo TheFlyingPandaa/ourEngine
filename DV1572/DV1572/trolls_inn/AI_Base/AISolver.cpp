@@ -10,9 +10,6 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	// If spot is available in the room at customer position
-	//std::vector<Furniture> furnituresInRoom = this->m_roomctrl->getNoneBusyFurnitureInRoom(customer.getPosition());
-	
 	if (true)
 	{
 		CustomerState state = customer.GetState();
