@@ -842,6 +842,7 @@ void BuildState::_init()
 	m_drawFloatingText = false;
 
 	m_cm = new ClickMenu(ClickMenu::FUR);
+
 }
 
 void BuildState::Update(double deltaTime)

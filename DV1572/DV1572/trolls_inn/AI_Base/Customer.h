@@ -138,6 +138,7 @@ public:
 	void DoDrinking();
 
 	std::chrono::duration<double> GetTimeSpan();
+	std::string getInfoText() const;
 	void RestartClock();
 
 	void Update();

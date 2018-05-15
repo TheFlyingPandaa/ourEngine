@@ -7,6 +7,7 @@
 #include <vector>
 #include <chrono>
 #include "../../InGameConsole.h"
+#include "../Bobby test/StateManager/HUD/ClickMenu.h"
 
 const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
 const int CHECK_CUSTOMER_SPAWN = 5;
@@ -25,6 +26,8 @@ private:
 	bool m_customerSpawned;
 
 	Mesh			m_thinkingMesh;
+	bool m_showMenu;
+	ClickMenu* m_customerMenu;
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;

@@ -42,6 +42,8 @@ void MasterAI::_generateCustomer()
 
 void MasterAI::_trollInnChase()
 {
+	m_InnTroll->setSpeed(4.0f);
+	static float lastPathCounter = 0;
 	// Grab the path if it is done
 	if (currentChase->pathReturn == 0) 
 		currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
@@ -49,15 +51,29 @@ void MasterAI::_trollInnChase()
 	// Now when we have the path we need to check if its valid
 	if (currentChase->pathReturn == 1)
 	{
+		lastPathCounter++;
 		XMFLOAT2 trollPos(round_n3(m_InnTroll->getPosition().x,0.0f), round_n3(m_InnTroll->getPosition().y, 0.0f));
 		XMFLOAT2 custPos = m_customers[currentChase->charIndex]->getPosition();
 		XMFLOAT2 deltaPos = XMFLOAT2(abs(custPos.x - trollPos.x), abs(custPos.y - trollPos.y));
 
-		if (deltaPos.x < 0.5f || deltaPos.y < 0.5f)
+		if ((deltaPos.x > 0.5f || deltaPos.y > 0.5f ))
 		{
-			m_InnTroll->clearWalkingQueue();
-			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
-			currentChase->customerpath = custPos;
+			if (lastPathCounter >= 25)
+			{
+				lastPathCounter = 0;
+				m_InnTroll->clearWalkingQueue();
+
+				currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+				currentChase->customerpath = custPos;
+			}
+			
+		}
+		else
+		{
+			std::cout << "Reached the customer!\n";
+			m_InnTroll->setSpeed(2.0f);
+			delete currentChase;
+			currentChase = nullptr;
 		}
 
 	}
@@ -73,6 +89,8 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	m_customerSpawned = true;
 	m_inn = inn;
 	m_InnTroll = new Staff(); 
+	m_showMenu = false;
+	m_customerMenu = new ClickMenu(ClickMenu::MTYPE::FUR);
 	currentChase = nullptr;
 }
 
@@ -91,6 +109,7 @@ MasterAI::~MasterAI()
 		for (auto& customer : m_leavingCustomers)
 			delete customer;
 	delete m_InnTroll; 
+	delete m_customerMenu;
 }
 Staff * MasterAI::getTroll()
 {
@@ -99,6 +118,12 @@ Staff * MasterAI::getTroll()
 
 void MasterAI::Update(Camera* cam)
 {
+	if (m_showMenu)
+	{
+		if (Input::isMouseLeftPressed() && m_customerMenu->ButtonClicked() == 2)
+			m_showMenu = false;
+		return;
+	}
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
 
 	if(currentChase)
@@ -241,6 +266,7 @@ void MasterAI::Update(Camera* cam)
 		{
 			if (currentChase->charIndex == leavingCustomersIDs[i])
 			{
+				InGameConsole::pushString("You can't kill an\nleaving customer!");
 				delete currentChase;
 				currentChase = nullptr;
 			}
@@ -322,18 +348,23 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 	
 	for (int i = 0; i < m_customers.size(); i++)
 	{
+
 		XMFLOAT2 customerPos = m_customers[i]->getPosition();
 		XMFLOAT2 deltaPos(abs(customerPos.x - position.x), abs(customerPos.y - position.z));
 
 		// INSIDE HERE DO WE HAVE A CLICK WITH m_customers[i]
 		if (deltaPos.x < 0.1 && deltaPos.y < 0.1)
 		{
-			m_InnTroll->clearWalkingQueue();
+			m_showMenu = true;
+			m_customerMenu->setInfo(m_customers[i]->getInfoText());
+			m_customerMenu->setPos(Input::getMousePositionLH());
+
+			/*m_InnTroll->clearWalkingQueue();
 			currentChase = new TROLL_CHASE;
 			currentChase->customerpath =XMFLOAT2(round_n3(customerPos.x, 0), round_n3(customerPos.y, 0));
 			currentChase->charIndex = i;
 			
-			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));*/
 
 
 		}
@@ -350,6 +381,9 @@ void MasterAI::Draw()
 	for (auto& leavingCustomer : this->m_leavingCustomers)
 		leavingCustomer->Draw();
 	m_InnTroll->Draw(); 
+
+	if (m_showMenu)
+		m_customerMenu->Draw();
 }
 
 void MasterAI::spawn()

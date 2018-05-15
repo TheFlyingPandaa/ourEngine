@@ -403,6 +403,16 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 	return m_time_span;
 }
 
+std::string Customer::getInfoText() const
+{
+	std::string returnStr;
+	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Type ";
+	returnStr += GetRaceStr();
+	returnStr += "\n";
+	return returnStr;
+}
+
 void Customer::RestartClock()
 {
 	m_start = m_clock.now();
