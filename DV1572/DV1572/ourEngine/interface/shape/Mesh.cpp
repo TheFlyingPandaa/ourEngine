@@ -360,8 +360,9 @@ void Mesh::setDiffuseTexture(const std::string& path)
 {
 	ID3D11Resource* texture;
 	ID3D11ShaderResourceView* textureView;
-	DX::loadTexture(path, texture, textureView);
-	m_materials.back()->setDiffuseMap(textureView, texture);
+	
+	if(DX::loadTexture(path, texture, textureView))
+		m_materials.back()->setDiffuseMap(textureView, texture);
 }
 
 void Mesh::setNormalTexture(const std::string & path)

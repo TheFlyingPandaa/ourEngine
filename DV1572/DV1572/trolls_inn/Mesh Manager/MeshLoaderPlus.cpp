@@ -11,10 +11,14 @@ void MLP::LoadMesh(std::string name, std::string path)
 {
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
+#if THREADED
 		MESH_THREAD* mt = new MESH_THREAD;
 		mt->futureObj = std::async(std::launch::async, &Mesh::LoadModelStr, &m_meshmap[name], "trolls_inn/Resources/" + path);
 		mt->name = name;
 		m_futureMeshes.push_back(mt);
+#else
+		m_meshmap[name].LoadModelStr("trolls_inn/Resources/" + path);
+#endif
 
 	}
 	else
@@ -30,10 +34,14 @@ void MLP::LoadMeshInverted(std::string name, std::string path)
 {
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
+#if THREADED
 		MESH_THREAD* mt = new MESH_THREAD;
 		mt->futureObj = std::async(std::launch::async, &Mesh::LoadModelInverted, &m_meshmap[name], "trolls_inn/Resources/" + path);
 		mt->name = name;
 		m_futureMeshes.push_back(mt);
+#else
+		m_meshmap[name].LoadModelInverted("trolls_inn/Resources/" + path);
+#endif
 	}
 	else
 		throw "Mesh with the same name exists";
@@ -48,10 +56,14 @@ void MLP::LoadMeshRectangle(std::string name)
 {
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
+#if THREADED
 		MESH_THREAD* mt = new MESH_THREAD;
 		mt->futureObj = std::async(std::launch::async, &Mesh::MakeRectangle, &m_meshmap[name]);
 		mt->name = name;
 		m_futureMeshes.push_back(mt);
+#else
+		m_meshmap[name].MakeRectangle();
+#endif
 	
 	}
 	else
@@ -65,6 +77,7 @@ bool MLP::IsReady(short id)
 
 bool MLP::IsReady(std::string name)
 {
+#if THREADED
 	using namespace std::chrono_literals;
 	//If the mesh is not located in the vector, the mesh had already been loaded. not safe
 	for (int i = 0; i < m_futureMeshes.size(); i++)
@@ -82,6 +95,7 @@ bool MLP::IsReady(std::string name)
 				return false; // Mesh isnt ready!
 		}
 	}
+#endif
 	return true;
 }
 

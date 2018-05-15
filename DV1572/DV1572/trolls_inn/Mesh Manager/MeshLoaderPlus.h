@@ -6,6 +6,8 @@
 #include <string>
 #include <mutex>
 
+#define THREADED 0
+
 enum MESH : short
 {
 	// Terrain meshes

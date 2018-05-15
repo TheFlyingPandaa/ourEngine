@@ -2,7 +2,7 @@
 #include <vector>
 #include "../../ourEngine/interface/shape/Rectangle.h"
 
-#define NUMBER_OF_TREES 500
+#define NUMBER_OF_TREES 50
 
 class HeightMap
 {
