@@ -162,6 +162,11 @@ Attributes Inn::GetInnAttributes() const
 	return this->m_innAttributes;
 }
 
+Attributes & Inn::getInnAttributesRef()
+{
+	return m_innAttributes;
+}
+
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
@@ -298,7 +303,6 @@ void Inn::FurnitureStatAdd(Attributes furnitureStats)
 
 void Inn::Draw()
 {
-	
 	for (int i = 0; i < m_withdrawText.size(); i++)
 	{
 		DirectX::XMVECTOR pos = m_withdrawText.at(i).getPosition();
