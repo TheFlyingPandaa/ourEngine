@@ -118,9 +118,9 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 		_traversalPath(parent, dst, src, dst);
 }
 
-void RoomCtrl::AddRoomObject(Furniture furniture)
+void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
-	XMINT2 furPos = { static_cast<int>(furniture.getPosition().x), static_cast<int>(furniture.getPosition().z) };
+	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
@@ -129,41 +129,41 @@ void RoomCtrl::AddRoomObject(Furniture furniture)
 		return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
 	};
 	
-	if (furniture.getRotation() == 0 || furniture.getRotation() == 180)
+	if (furniture->getRotation() == 0 || furniture->getRotation() == 180)
 	{
-		for (int i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
-			if (furniture.getRotation() == 0)
+			if (furniture->getRotation() == 0)
 			{
 				//m_tiles[_index(furniture.getPosition().x,furniture.getPosition().z + i)]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z + i)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z + i)]->setHasObject(true);
 			}
 			else
 			{
 				//m_tiles[furniture.getPosition().x][furniture.getPosition().z - i]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z - i)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z - i)]->setHasObject(true);
 			}
 		}
 	}
-	if (furniture.getRotation() == 90 || furniture.getRotation() == 270)
+	if (furniture->getRotation() == 90 || furniture->getRotation() == 270)
 	{
-		for (int i = 0; i < furniture.getGridSize(); i++)
+		for (int i = 0; i < furniture->getGridSize(); i++)
 		{
-			if (furniture.getRotation() == 90)
+			if (furniture->getRotation() == 90)
 			{
 				//m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
 			}
 			else
 			{
 				//m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
-				m_tiles[_index(furniture.getPosition().x + i, furniture.getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
 			}
 		}
 	}
 
 	//m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setIsWalkeble(false);
-	m_tiles[_index(furniture.getPosition().x, furniture.getPosition().z)]->setHasObject(true);
+	m_tiles[_index(furniture->getPosition().x, furniture->getPosition().z)]->setHasObject(true);
 
 	//furniture.setLightIndex(cr->getRoomIndex());
 	cr->AddRoomObject(furniture);
@@ -446,10 +446,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 }
 	 Room*  cr = m_rooms[index];
 	 auto tiles = cr->getTiles();
-
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 if (x >= 0 && x < cr->getSize().x && y >= 0 && y < cr->getSize().y)
+			 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 else
+			 return -1;
 	 };
 	 
 	if (angle == 0 || angle == 180)
@@ -459,6 +461,9 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			int ii = _index(start.x, start.y + i);
 
 			if (ii >= tiles.size()) {
+				int index = _index(start.x, start.y);
+				if (index == -1)
+					return false;
 				tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				return false;
 			}
@@ -497,18 +502,25 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		{
 			if (angle == 90)
 			{
-				if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
-				{
-					tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
-				}
-				else
-				{
-					tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-					isFalse = true;
-				}
+				int index = _index(start.x + i, start.y);
+				if (index == -1)
+					return false;
+				
+					if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
+					{
+						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					}
+					else
+					{
+						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						isFalse = true;
+					}				
 			}
 			else
 			{
+				int index = _index(start.x - i, start.y);
+				if (index == -1)
+					return false;
 				if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
 				{
 					tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
@@ -691,8 +703,11 @@ void RoomCtrl::Draw()
 {
 	for (Room* r : m_rooms)
 	{
-		r->CastShadow();
-		r->Draw();
+		if (r)
+		{
+			r->CastShadow();
+			r->Draw();
+		}
 	}
 
 }
@@ -896,7 +911,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
 {
 	XMVECTOR  ourPos = XMLoadSInt2(&startPosition);
-	int index = 0;
+	int index = -1;
 	int length = 1000;
 	for (int i = 0; i < m_outsideDoorPos.size(); i++)
 	{
@@ -908,7 +923,10 @@ RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) con
 			index = i;
 		}
 	}
-	return m_outsideDoorPos[index];
+	if (index > -1)
+		return m_outsideDoorPos[index];
+	else
+		throw "NO EXITS";
 }
 
 RoomCtrl::DoorPassage RoomCtrl::getDoorPassage(int index1, int index2) const

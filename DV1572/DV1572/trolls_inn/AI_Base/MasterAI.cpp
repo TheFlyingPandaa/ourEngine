@@ -40,6 +40,7 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	m_customer_start = m_start = m_clock.now();
 	m_customerSpawned = true;
 	m_inn = inn;
+	m_InnTroll = new Staff(); 
 }
 
 MasterAI::~MasterAI()
@@ -56,11 +57,18 @@ MasterAI::~MasterAI()
 	if (m_leavingCustomers.size() > 0)
 		for (auto& customer : m_leavingCustomers)
 			delete customer;
+	delete m_InnTroll; 
+}
+Staff * MasterAI::getTroll()
+{
+	return m_InnTroll; 
 }
 #include "../../InGameConsole.h"
 void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
+
+	m_solver.Update(*m_InnTroll); 
 
 	// Get the elapsed time
 	m_customer_now = m_now = m_clock.now();
@@ -79,6 +87,10 @@ void MasterAI::Update(Camera* cam)
 			{
 				if (duration > 30)
 				{
+					std::stringstream ss;
+					ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 					m_nextCustomer->RestartClock();
 					m_customers.push_back(m_nextCustomer);
 					m_nextCustomer = nullptr;
@@ -90,8 +102,13 @@ void MasterAI::Update(Camera* cam)
 			{
 				if (duration > 15)
 				{
+					std::stringstream ss;
+					ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+					InGameConsole::pushString(ss.str());
 					m_nextCustomer->RestartClock();
 					m_customers.push_back(m_nextCustomer);
+					m_nextCustomer = nullptr;
 					m_customerSpawned = true;
 					m_customer_start = m_clock.now();
 				}
@@ -161,6 +178,10 @@ void MasterAI::Update(Camera* cam)
 				// Customer leaves inn
 				// Save id for leaving customers
 				leavingCustomersIDs.push_back(loopCounter);
+				if (customer->GetThought() == Character::ANGRY)
+				{
+					m_inn->AddAngryCustomer();
+				}
 			}
 			else
 			{
@@ -252,10 +273,10 @@ void MasterAI::Draw()
 		customer->Draw();
 	for (auto& leavingCustomer : this->m_leavingCustomers)
 		leavingCustomer->Draw();
+	m_InnTroll->Draw(); 
 }
 
 void MasterAI::spawn()
 {
 	m_customers.push_back(this->m_cFC.Update(this->m_inn->GetInnAttributes()));
-
 }

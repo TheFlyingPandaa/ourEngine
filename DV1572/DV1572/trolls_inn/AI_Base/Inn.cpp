@@ -96,7 +96,7 @@
 Inn::Inn()
 {
 	m_economy = new Economy(START_MONEY);
-	m_profit = 0;
+	
 	m_timer = 0;
 	m_text = new Text();
 	m_text->setFontType(TXT::Constantina_Big);
@@ -114,6 +114,9 @@ Inn::Inn()
 	m_receptionPos = DirectX::XMINT2(16, 1);
 
 	m_rent = 0;
+
+	m_innLevel = 1;
+	m_innXPLevel = 0;
 }
 
 Inn::~Inn()
@@ -162,23 +165,22 @@ Attributes Inn::GetInnAttributes() const
 void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 {
 	if (TOD == TIMEOFDAY::EVENINGTONIGHT && !m_staffSalaryApplyed) {
-		m_profit -= m_staffSalary - m_rent;
+		
 		m_staffSalaryApplyed = true;
+		if (m_AngryCustomers >= 1)
+		{
+			m_AngryCustomers -= 1;
+		}
 	}
 
 	m_timer += deltaTime;
 	if (m_timer > UPDATE_FREQ)
 	{
 		m_timer = 0;
-		if (m_profit > 0)
-			m_economy->Deposit(std::abs(m_profit));
-		else
-			m_economy->Withdraw(std::abs(m_profit));
 
 		if (TOD != TIMEOFDAY::EVENINGTONIGHT)
 			m_staffSalaryApplyed = false;
 
-		m_profit = 0;
 		m_text->setTextString("$" + std::to_string(m_economy->GetGold()));
 		
 	}
@@ -229,6 +231,36 @@ void Inn::IncreaseRent(int amount)
 void Inn::DecreaseRent(int amount)
 {
 	m_rent -= amount;
+}
+
+void Inn::IncreaseXP(const int amount)
+{
+	m_innXPLevel += amount;
+	if (m_innXPLevel >= m_innLevel * 50)
+	{
+		m_innLevel++;
+		m_innXPLevel = 0;
+		Deposit(m_innLevel * 50);
+		std::string temp;
+		temp = "Level UP: " + std::to_string(m_innLevel);
+		InGameConsole::pushString(temp);
+		std::cout << "LEVEL UP" << std::endl;
+	}
+}
+
+void Inn::AddAngryCustomer()
+{
+	m_AngryCustomers++;
+}
+
+int Inn::getAngryCustomers() const
+{
+	return m_AngryCustomers;
+}
+
+int Inn::getAngryCustomersCap() const
+{
+	return m_angryCustomerCap;
 }
 
 void Inn::GetRefund(int amount)
@@ -285,6 +317,7 @@ void Inn::Draw()
 		for (auto element : m_removeVec)
 		{
 			m_withdrawText.erase(m_withdrawText.begin() + element);
+			break;
 		}
 		m_removeVec.clear();
 	}
@@ -309,6 +342,7 @@ void Inn::Draw()
 		{
 			m_depositAmount.erase(m_depositAmount.begin() + element);
 			m_depositText.erase(m_depositText.begin() + element);
+			break;
 		}
 		m_removeVec.clear();
 	}

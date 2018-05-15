@@ -16,7 +16,7 @@ enum Direction {
 class Wall
 {
 private:
-	Object3D			m_wall;
+	Object3D*			m_wall;
 	XMFLOAT2			m_direction;
 	bool				m_sharedWall;
 	bool				m_isDoor = false;
@@ -48,7 +48,7 @@ public:
 
 	Object3D& getObject3D()
 	{
-		return m_wall;
+		return *m_wall;
 	}
 };
 

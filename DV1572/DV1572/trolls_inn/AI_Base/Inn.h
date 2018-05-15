@@ -5,6 +5,7 @@
 #include <iostream>
 #include "../Time Management/GameTime.h"
 #include "../Bobby test/StateManager/HUD/HUD.h"
+#include "../../InGameConsole.h"
 
 const int START_MONEY = 500;
 const double UPDATE_FREQ = 2.0;
@@ -26,10 +27,17 @@ private:
 	int m_drinkPrice;
 	bool m_recievedReview;
 
+	//Level
+	int m_innLevel;
+	int m_innXPLevel;
+
+	int m_AngryCustomers = 0;
+	int m_angryCustomerCap = 40;
+
 	//void _addStatsToInn(Attributes type);
 	//void _checkInnStatUpdate();
 	Economy*		m_economy;
-	int				m_profit,	m_staffSalary = 420;
+	int				m_staffSalary = 420;
 	int				m_rent;
 	bool			m_staffSalaryApplyed;
 	double			m_timer;
@@ -68,6 +76,12 @@ public:
 
 	void IncreaseRent(int amount);
 	void DecreaseRent(int amount);
+
+	void IncreaseXP(const int amount);
+
+	void AddAngryCustomer();
+	int getAngryCustomers() const;
+	int getAngryCustomersCap() const;
 
 	void changeStaffSalary(int amount);
 	

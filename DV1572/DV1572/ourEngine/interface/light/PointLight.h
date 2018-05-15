@@ -15,7 +15,9 @@ public:
 	PointLight(); 
 	~PointLight();  
 	
-	void addToLightQueue(); 
+#pragma optimize( "", off )
+	void Draw(); 
+#pragma optimize( "", on)
 
 	DirectX::XMFLOAT4A	getPosition() const; 
 	DirectX::XMFLOAT4A	getColor() const;

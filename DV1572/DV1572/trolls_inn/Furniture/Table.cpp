@@ -33,3 +33,13 @@ Table::Table(DirectX::XMFLOAT3 pos, Mesh * mesh, const int setting) : Furniture(
 Table::~Table()
 {
 }
+
+std::string Table::WhatType()
+{
+	return "Table";
+}
+
+Furniture * Table::MakeCopy()
+{
+	return new Table(static_cast<const Table&>(*this));
+}

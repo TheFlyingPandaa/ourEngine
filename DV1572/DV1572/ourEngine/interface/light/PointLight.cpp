@@ -21,9 +21,9 @@ PointLight::~PointLight()
 	
 }
 
-void PointLight::addToLightQueue()
-{
-	DX::g_lightQueue.push_back(this); 
+void PointLight::Draw()
+{	
+	DX::g_lightQueue.push_back(this); 	
 }
 
 DirectX::XMFLOAT4A PointLight::getPosition() const

@@ -202,7 +202,11 @@ void GameState::Draw()
 	gameTime.m_cpyLightToGPU();
 	
 	m_roomctrl->Draw();
-	this->m_grid->Draw();
+	if (m_grid)
+	{
+		this->m_grid->Draw();
+	}
+
 
 	//TEST
 	//c.Draw();
@@ -298,10 +302,6 @@ void GameState::_handlePicking()
 			ss->HandlePicking(nullptr);
 		}
 	}
-
-	if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
-		m_grid->PickTiles();
-
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
@@ -312,7 +312,8 @@ void GameState::_handlePicking()
 		{
 			SubState* ss = m_subStates.top();
 			ss->HandlePicking(obj);
-		}
+		}		
+		_handlePickingAi(obj);
 		
 		/*if (Input::isKeyPressed('G'))
 		{
@@ -346,15 +347,15 @@ void GameState::_handlePicking()
 		
 
 */
+
 		using namespace std::chrono_literals;
 
-		// Create a promise and get its future.
+		/*// Create a promise and get its future.
 		if (m_i == 0)
 		{
 			m_i++;
 			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
 		}
-
 
 		// Use wait_for() with zero milliseconds to check thread status.
 		auto status = future.wait_for(0ms);
@@ -370,52 +371,50 @@ void GameState::_handlePicking()
 			std::cout << "Thread still running" << std::endl;
 		}
 
-		//_handlePickingAi(obj);
+		//_handlePickingAi(obj);*/
 		
 	}
 }
 
-void GameState::_handlePickingAi(Shape * obj)
+void GameState:: _handlePickingAi(Shape * obj)
 {
+	Staff* troll = m_mai->getTroll(); 
+
 	if (m_stage == GameStage::Play)
 	{
-		if (c.walkQueueDone())
+		troll->clearWalkingQueue();
+
+		//Shape * obj = this->p_pickingEvent->top();
+		XMFLOAT2 trollPos = troll->getPosition(); // (x,y) == (x,z,0)
+
+		int xTile = (int)(round_n(trollPos.x, 1) - 0.5f);
+		int yTile = (int)(round_n(trollPos.y, 1) - 0.5f);
+
+
+		XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
+
+		XMINT2 startPosition = { xTile, yTile };
+
+		auto path = getPathAndEatAss(startPosition, targetPosition);
+
+
+		XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+		if (path.size() != 0)
 		{
-			//Shape * obj = this->p_pickingEvent->top();
-			XMFLOAT2 charPos = c.getPosition(); // (x,y) == (x,z,0)
+			m_justMoved = false;
 
-			int xTile = (int)(round_n(charPos.x, 1) - 0.5f);
-			int yTile = (int)(round_n(charPos.y, 1) - 0.5f);
-			
-			
-			XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
-			
-			XMINT2 startPosition = { xTile, yTile };
+			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
-			auto path = getPathAndEatAss(startPosition, targetPosition);
-			
-
-			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
-
-			if (path.size() != 0)
+			for (int i = 0; i < path.size() - 1; i++)
 			{
-				m_justMoved = false;
-
-				c.Move(c.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
-
-				for (int i = 0; i < path.size() - 1; i++)
-				{
-					float lol = 255 * (float(i) / float(path.size()));
-					path[i + 1]->tile->getQuad().setColor(0, 0, lol);
-					c.Move(c.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
-				}
+				float lol = 255 * (float(i) / float(path.size()));
+				path[i + 1]->tile->getQuad().setColor(0, 0, lol);
+				troll->Move(troll->getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 			}
-
 		}
-	}
-	
-	
 
+	}
 }
 
 
@@ -439,9 +438,9 @@ bool GameState::_handleHUDPicking()
 			// Clicked a button
 			while (!m_subStates.empty())
 			{
-				SubState * s = m_subStates.top();
+				SubState * ss = m_subStates.top();
 				m_subStates.pop();
-				delete s;
+				delete ss;
 			}
 			_resetHudButtonPressedExcept(index);
 			m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];

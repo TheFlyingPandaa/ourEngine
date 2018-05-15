@@ -30,12 +30,23 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_startTile = pickedShape;
 					m_buildStage = BuildStage::Selection;
 				}
+				else if(m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 				else
 					m_buildStage = BuildStage::None;
 				break;
 			case BuildStage::Selection:
-				if (pickedShape)
+				if (pickedShape) {
 					m_selectedTile = pickedShape;
+				}
+				else if (m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 				break;
 			case BuildStage::None:
 				if (pickedShape)
@@ -105,6 +116,17 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 					m_furnitureRemove = nullptr;
 				}
+				if (!table)
+				{
+					if (m_selectedThing == 0)
+					{
+						table = new Table(XMFLOAT3(0, 0, 0), nullptr);
+					}
+					else if(m_selectedThing == 1)
+					{
+						table = new Bed(XMFLOAT3(0, 0, 0), nullptr);
+					}
+				}
 			}
 			break;
 		default:
@@ -120,6 +142,11 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 				m_selectedRoom->Select();
 			}
 			m_selectedRoom = nullptr;
+			if (table)
+			{
+				delete table;
+				table = nullptr;
+			}
 			break;
 		}
 	}
@@ -315,6 +342,11 @@ bool BuildState::_selectionBuildHudPick(HUD & h)
 			{
 				m_selectedThing = index;
 				h.SetPressColorOnButton(m_selectedThing);
+				if (m_selectedRoom)
+				{
+					m_selectedRoom->Select();
+					m_selectedRoom = nullptr;
+				}
 			}
 			else
 			{
@@ -434,6 +466,7 @@ void BuildState::_buildRoom()
 		m_roomCtrl->AddRoom(start, end, static_cast<RoomType>(m_selectedThing), grid->extractTiles(start, end));
 		
 		m_inn->Withdraw(area * 20);
+		m_inn->IncreaseXP(area * 5);
 		//m_inn->Deposit(area);
 		//m_inn->UpdateMoney();
 		
@@ -516,7 +549,7 @@ void BuildState::_inputFurniture()
 			start.y = s.z;
 			if (m_canBuildFurniture)
 			{
-				m_roomCtrl->AddRoomObject(*table);
+				m_roomCtrl->AddRoomObject(table);
 				m_inn->Withdraw(table->getPrice());
 				//m_inn->UpdateMoney();
 			}
@@ -532,7 +565,7 @@ void BuildState::_inputFurniture()
 		else if (m_startTile)
 		{
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
-			table->setPosition(p.x , p.y - 0.2f, p.z);
+			table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
 			DirectX::XMINT2 start;
 			start.x = table->getPosition().x;
 			start.y = table->getPosition().z;
@@ -592,7 +625,7 @@ BuildState::BuildState(Camera * cam,
 
 	//TEMP
 	door.setMesh(MeshHandler::getDoor());
-	table = new Table(DirectX::XMFLOAT3(0, 0, 0), nullptr);
+	table = new Bed(DirectX::XMFLOAT3(0, 0, 0), nullptr);
 }
 
 BuildState::~BuildState()

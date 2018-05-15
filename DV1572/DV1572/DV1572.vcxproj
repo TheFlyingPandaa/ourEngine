@@ -125,6 +125,9 @@
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
@@ -137,7 +140,9 @@
     <ClCompile Include="ourEngine\core\WICTextureLoader\WICTextureLoader.cpp" />
     <ClCompile Include="ourEngine\interface\Input.cpp" />
     <ClCompile Include="ourEngine\interface\light\Light.cpp" />
-    <ClCompile Include="ourEngine\interface\light\PointLight.cpp" />
+    <ClCompile Include="ourEngine\interface\light\PointLight.cpp">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="ourEngine\interface\shape\3DObject.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Material.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Mesh.cpp" />
@@ -184,6 +189,9 @@
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
+    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />

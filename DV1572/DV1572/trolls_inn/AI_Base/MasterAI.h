@@ -6,6 +6,7 @@
 #include "Inn.h"
 #include <vector>
 #include <chrono>
+#include "../../InGameConsole.h"
 
 const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
 const int CHECK_CUSTOMER_SPAWN = 5;
@@ -19,6 +20,7 @@ private:
 	std::vector<Customer*> m_customers;
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
+	Staff* m_InnTroll; 
 	CustomerFlowControl m_cFC;
 	bool m_customerSpawned;
 
@@ -42,6 +44,8 @@ public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
 	
+	Staff* getTroll(); 
+
 	void Update(Camera* cam);
 	void Draw();
 

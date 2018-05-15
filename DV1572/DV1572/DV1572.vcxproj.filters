@@ -77,6 +77,7 @@
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\MagnusTestMain.cpp" />
+    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ourEngine\core\Camera\Camera.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
+    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

@@ -67,7 +67,7 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 	XMFLOAT4X4A worldMat;
 
 	XMStoreFloat4x4A(&worldMat, xmWorldMat);
-
+	ZeroMemory(&attribDesc, sizeof(INSTANCE_ATTRIB));
 	memcpy(&attribDesc.u.rows,&worldMat.m[0][0], 16 * sizeof(float));
 	
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
@@ -86,7 +86,21 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 	else
 	{
 		//If the mesh allready exists we just push it into a exsiting queue
-		exisitingEntry->attribs.push_back(attribDesc);
+		/*std::cout << worldMat._11 << " " << worldMat._12 << " " << worldMat._13 << " "<< worldMat._14 << std::endl;
+		std::cout << worldMat._21 << " " << worldMat._22 << " " << worldMat._23 << " "<< worldMat._24 << std::endl;
+		std::cout << worldMat._31 << " " << worldMat._32 << " " << worldMat._33 << " "<< worldMat._34 << std::endl;
+		std::cout << worldMat._41 << " " << worldMat._42 << " " << worldMat._43 << " "<< worldMat._44 << std::endl;
+		std::cout << "-----------------" << std::endl;*/
+		/*std::cout << attribDesc.lightIndex << std::endl;
+		std::cout << attribDesc.highLightColor.x << " "<<  attribDesc.highLightColor.y << " " << attribDesc.highLightColor.z << " " << attribDesc.highLightColor.w << std::endl;
+		std::cout << "-----------------" << std::endl;*/
+		try {
+			exisitingEntry->attribs.push_back(attribDesc);
+		}
+		catch(const std::out_of_range& oor)
+		{
+			
+		}
 	}
 	
 }
@@ -1163,7 +1177,6 @@ void Window::_billboardPass(const Camera & cam)
 			indexLol = 0.0f;
 		}
 	
-	
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
@@ -1502,6 +1515,12 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
+	for (int i = nrOfLights; i < 100; i++)
+	{
+		pointLightCollectionBuffer.positionArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+		pointLightCollectionBuffer.colorArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+		pointLightCollectionBuffer.lightSetup[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
+	}
 	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
@@ -1758,7 +1777,7 @@ void Window::Clear()
 	float c[4] = { 0.0f,0.0f,0.0f,1.0f };
 	DX::g_pickingQueue.clear();
 	DX::g_instanceGroupsPicking.clear();
-
+	DX::g_lightQueue.clear();
 	// WINDOW Test
 	DX::g_instanceGroupWindows.clear();
 	// end window test
@@ -1830,6 +1849,7 @@ void Window::Flush(Camera* c)
 
 void Window::FullReset()
 {
+	//DX::g_lightQueue.clear(); 
 	DX::g_deviceContext->ClearState();
 	_setViewport();
 	DX::g_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
