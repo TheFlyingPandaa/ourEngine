@@ -95,20 +95,23 @@ void GameState::Update(double deltaTime)
 {
 
 	using namespace std::chrono_literals;
-
+	if (inn->getExitState())
+	{
+		m_exitState = true;
+	}
 	if (inn->getAngryCustomers() >= inn->getAngryCustomersCap())
 	{
-		InGameConsole::pushString("Paris hilton did not like your preformance");
+		m_exitState = true;
 	}
 	if (Input::isKeyPressed('Q'))
-	{
+	{ 
 		m_eventHandle->StartCollectEvent();
 	}
 
 	if (Input::isKeyPressed('Z'))
 	{
 		std::cout << "EventEnded" << std::endl;
-		m_eventHandle->EndEvent();
+		m_eventHandle->EndEvent(); 
 	}
 	m_eventHandle->Update();
 

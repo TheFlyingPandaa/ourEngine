@@ -109,7 +109,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	int fpsCounter = 0;
 	float freq = 1000000000.0f / REFRESH_RATE;
 	float unprocessed = 0;
-
+	bool loose = false;
 	Camera* cam = new OrbitCamera(wnd.getSize(), XMFLOAT3(gameLoadState.camX,gameLoadState.camY, gameLoadState.camZ));
 	//wnd.setMousePositionCallback(cam, &Camera::setMousePos);
 	
@@ -204,6 +204,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			pickingEvents.push(picked);
 
 		fpsCounter++;
+		if (gameState->Exit())
+		{
+			delete gameState;
+			gameState = new MainMenu(&pickingEvents, &keyEvent, cam);
+		}
 		gameState->Draw();
 
 		if (!gameStates.empty())

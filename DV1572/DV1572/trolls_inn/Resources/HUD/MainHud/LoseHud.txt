@@ -1,0 +1,19 @@
+﻿# This is a file which defines the HUD
+# use the 'tx' keyword to define a texture
+# use the 'r' keyword to define a rectangle to use the defined texture
+# all rectangles will share the texture until a new texture is defined
+
+# example:
+# tx path/path/path/picture.png
+# r 0 0 0.1 0.08 1 0
+# txt 950 4 0.5 0 0 1 1 0 L
+# Gold
+# r startX startY sizeX sizeY pickable(uniqueIndex(-1 for non pickable)) depth relativeTo.
+# if sizeX or sizeY is 0, this is set as the screen res
+# txt posX posY Scl r g b a rotation allignment (L, C, R) relativeTo
+				0	1	2	3	4	5	6	7	8
+# relativeTo:	BL, BR, TR, TL, C, BC, TC, LC, RC
+
+# Button Background
+tx trolls_inn/Resources/HUD/MainHud/LoseHud.png
+r 0 0 0 0 -1 0.1 0
