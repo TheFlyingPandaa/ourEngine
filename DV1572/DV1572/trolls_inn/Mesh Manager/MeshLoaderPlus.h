@@ -10,33 +10,24 @@
 
 enum MESH : short
 {
+	// Furnitures
+	CHAIR,
+	TABLE,
+	BED_HIGH,
+	BED_LOW,
+	BAR_HIGH,
+	BAR_LOW,
+	CHAIR_HIGH,
+	CHAIR_LOW,
+	STOVE,
+	RECEPTION_HIGH,
+	RECEPTION_LOW,
+
 	// Terrain meshes
 	TREE_BILL,
 	WATER,
 	TERRAIN,
-
-	SKYBOX,
-
-	// Furnitures
-	RECEPTION_LOW,
-	RECEPTION_HIGH,
-	TABLE,
-
-	CHAIR,
-	CHAIR_LOW,
-	CHAIR_HIGH,
-
-	BED_HIGH,
-	BED_LOW,
-
-	BAR_HIGH,
-	BAR_LOW,
-
-	STOVE
-
-
-
-
+	SKYBOX
 };
 
 class MLP

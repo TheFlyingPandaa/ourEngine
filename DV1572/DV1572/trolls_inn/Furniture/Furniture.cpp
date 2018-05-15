@@ -193,4 +193,43 @@ Furniture * Furniture::MakeCopy()
 	return nullptr;
 }
 
+std::string Furniture::getInfo(int index)
+{
+	MESH type = static_cast<MESH>(index);
+	std::string str = "";
+
+	switch (type)
+	{
+	case CHAIR:
+		str += "Uggly Chair";
+
+		break;
+	case TABLE:
+		break;
+	case BED_HIGH:
+		break;
+	case BED_LOW:
+		break;
+	case BAR_HIGH:
+		break;
+	case BAR_LOW:
+		break;
+	case CHAIR_HIGH:
+		break;
+	case CHAIR_LOW:
+		break;
+	case STOVE:
+		break;
+	case RECEPTION_HIGH:
+		break;
+	case RECEPTION_LOW:
+		break;
+	default:
+		break;
+	}
+
+
+	return std::string();
+}
+
 

@@ -317,8 +317,11 @@ bool BuildState::_handleHUDPicking()
 		}
 	}
 
-	if (hudPicked && m_selectedThing >= 0)
+	if (m_selectedThing >= 0)
 	{
+		
+		
+
 		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
 		m_drawFloatingText = true;
 	}
@@ -334,6 +337,8 @@ bool BuildState::_mainHudPick()
 
 	if (index >= 0)
 	{
+		m_drawFloatingText = true;
+		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
 		float cH = 5.0f;
 		float cHL = 2.0f;
 		float cC = 50.0f;
