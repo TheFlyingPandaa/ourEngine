@@ -64,17 +64,17 @@ void InitModels()
 {
 	MLP::GetInstance().LoadMesh(MESH::TERRAIN, "../TerrainLol.txt");
 	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
-	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
-	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception.obj");
-	MLP::GetInstance().LoadMesh(MESH::TABLE_HIGH, "Table/Table.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception2.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception2.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_HIGH, "Table/Table2.obj");
 	MLP::GetInstance().LoadMesh(MESH::TABLE_LOW, "Stol.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar2.obj");
 	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar2.obj");
-	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
-	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
-	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair2.obj"); 
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair2.obj");
+	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove2.obj");
 	MLP::GetInstance().LoadMesh(MESH::BOX_AABB, "Box.obj");
 
 }
