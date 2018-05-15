@@ -5,6 +5,7 @@
 #include "../../../Mesh Manager/MeshManager.h"
 #include "../../../AI_Base/Inn.h"
 #include "../../../Furniture/Bed.h"
+#include "../HUD/InfoBoard.h"
 
 class BuildState :
 	public SubState
@@ -34,6 +35,8 @@ private:
 	Grid *		grid;
 	RoomCtrl*	m_roomCtrl;
 
+	InfoBoard	m_floatingText;
+	bool		m_drawFloatingText;
 
 	// <Main HUD>
 	bool m_madeFullResetMain;
@@ -74,8 +77,8 @@ private:
 	void	_objectBuildInput();
 	bool	_handleHUDPicking();
 	bool	_mainHudPick();
-	bool	_selectionBuildHudPick(HUD & h);
-
+	bool	_selectionBuildHudPick(HUD & h, int & getIndex);
+	
 
 	void	_inputBuildRoom();
 	void	_buildRoom();

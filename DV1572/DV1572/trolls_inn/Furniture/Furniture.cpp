@@ -193,4 +193,75 @@ Furniture * Furniture::MakeCopy()
 	return nullptr;
 }
 
+std::string Furniture::getInfo(int index)
+{
+	MESH type = static_cast<MESH>(index);
+	std::string str = "";
+
+	switch (type)
+	{
+	case TABLE_LOW:
+		str += "Simple Table\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	case TABLE_HIGH:
+		str += "Fancy Table\n";
+		str += "+1 Fancy\n";
+		str += "$200";
+		break;
+	case BED_HIGH:
+		str += "Fancy Bed\n";
+		str += "+8 Fancy\n";
+		str += "$1000";
+		break;
+	case BED_LOW:
+		str += "Simple Bed\n";
+		str += "+8 Simple\n";
+		str += "$100";
+		break;
+	case BAR_HIGH:
+		str += "Fancy Bar\n";
+		str += "+4 Fancy\n";
+		str += "$1000";
+		break;
+	case BAR_LOW:
+		str += "Simple Bar\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	case CHAIR_HIGH:
+		str += "Fancy Bar\n";
+		str += "+4 Fancy\n";
+		str += "$1000";
+		break;
+	case CHAIR_LOW:
+		str += "Simple Bar\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	case STOVE:
+		str += "Stove\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	case RECEPTION_HIGH:
+		str += "Fancy Bar\n";
+		str += "+4 Fancy\n";
+		str += "$1000";
+		break;
+	case RECEPTION_LOW:
+		str += "Simple Bar\n";
+		str += "+1 Simple\n";
+		str += "$100";
+		break;
+	default:
+		str = "";
+		break;
+	}
+
+
+	return str;
+}
+
 
