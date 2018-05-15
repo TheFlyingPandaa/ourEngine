@@ -749,6 +749,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		 {
 			 if (angle == 90)
 			 {
+				 
 				 if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
 				 {
 					 tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
