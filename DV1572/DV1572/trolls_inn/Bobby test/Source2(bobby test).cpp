@@ -70,8 +70,8 @@ void InitModels()
 	MLP::GetInstance().LoadMesh(MESH::CHAIR, "Stol.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
-	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar.obj");
-	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar2.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar2.obj");
 	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
 	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
 	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
