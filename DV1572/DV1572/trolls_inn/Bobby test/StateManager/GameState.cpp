@@ -11,6 +11,7 @@
 #include "../StateManager/SubStates/StatsState.h"
 #include "../StateManager/SubStates/EventsState.h"
 #include "../../Mesh Manager/MeshManager.h"
+#include "../../Mesh Manager/MeshLoaderPlus.h"
 #include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
@@ -36,17 +37,18 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-	hardBed = new Furniture(bed3D->getPosition(), bed);
-	//m_roomctrl->AddRoomObject(*hardBed);
 
+	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
+	m_receptionFur->setRotation(180);
+	m_roomctrl->AddRoomObject(m_receptionFur);
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
 	XMINT2 startPosition = { 0, 0 };
-	auto path1 = getPathAndEatAss(startPosition, targetPosition);
+	auto path1 = std::vector<std::shared_ptr<Node>>();// getPathAndEatAss(startPosition, targetPosition);
 	XMINT2 targetPosition2 = { 32, 0 };
 	XMINT2 startPosition2 = { inn->getReceptionPos().x , inn->getReceptionPos().y };
-	auto path2 = getPathAndEatAss(startPosition, targetPosition);
+	auto path2 = std::vector<std::shared_ptr<Node>>();// getPathAndEatAss(startPosition, targetPosition);
 
 	m_eventHandle = new EventHandler(inn, m_roomctrl,path1,path2);
 	_setHud();
@@ -60,21 +62,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
-	table.LoadModel("trolls_inn/Resources/Stol.obj");
-
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
 	previousKey = -1;	
 
-
-	// Mountains
-	m_mountainsMesh = new Mesh();
-	m_mountainsMesh->MakeRectangle();
-	m_mountains.setRotation(90, 0, 0);
-	m_mountains.setPos(-125, -0.5,-125);
-	m_mountains.setScale(500, 1, 500);
-	m_mountains.setMesh(m_mountainsMesh);
 }
 
 GameState::~GameState()
@@ -88,11 +80,8 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
+	delete m_receptionFur;
 	delete m_eventHandle;
-	delete bed;
-	delete bed3D;
-	delete hardBed;
-	delete m_mountainsMesh;
 }
 
 // round float to n decimals precision
@@ -106,16 +95,16 @@ void GameState::Update(double deltaTime)
 {
 	if (Input::isKeyPressed('Q'))
 	{
-		//std::cout << "EventStarted" << std::endl;
 		m_eventHandle->StartCollectEvent();
 	}
+
 	if (Input::isKeyPressed('Z'))
 	{
 		std::cout << "EventEnded" << std::endl;
 		m_eventHandle->EndEvent();
 	}
 	m_eventHandle->Update();
-	//std::cout << inn.getMoney() << std::endl;
+
 
 	if (m_subStates.empty())
 	{
@@ -142,7 +131,7 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	c.Update();
 	m_roomctrl->Update(m_cam);
-	//this->grid->Update(this->m_cam);
+
 	if (!m_subStates.empty())
 	{
 		m_subStates.top()->Update(deltaTime);
@@ -175,25 +164,6 @@ void GameState::Update(double deltaTime)
 	m_mai->Update(this->m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
 	
-	//auto currentTime = std::chrono::high_resolution_clock::now();
-	if (Input::isKeyPressed('N')) {
-		//m_newState = new MainMenu(p_pickingEvent, p_keyEvents, m_cam);
-	}
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	
-	
-	auto time = std::chrono::high_resolution_clock::now();
-	auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(time - currentTime).count();
-	
-
-	//if (Input::isKeyPressed('D'))
-	//{
-	//	m_roomctrl->PickRoomTiles();
-	//}
-	//if (Input::isKeyPressed('C'))
-	//{
-	//	m_roomctrl->PickWalls();
-	//}
 	
 }
 
@@ -207,18 +177,11 @@ void GameState::Draw()
 		this->m_grid->Draw();
 	}
 
-
-	//TEST
-	//c.Draw();
-	//this->grid2->Draw();
-	//m_eventHandle->Draw();
-	
-	bed3D->Draw();
 	m_mai->Draw();
 	if (!m_subStates.empty())
 		m_subStates.top()->Draw();
 
-	m_mountains.Draw();
+	m_background.Draw();
 
 	if (inn)
 		inn->Draw();
@@ -248,18 +211,10 @@ void GameState::_resetHudButtonPressedExcept(int index)
 
 void GameState::_init()
 {
-	kitchenTile.MakeRectangle();
-	kitchenTile.setDiffuseTexture("trolls_inn/Resources/Untitled.bmp");
-	kitchenTile.setNormalTexture("trolls_inn/Resources/BatmanNormal.png");
-	rect.MakeRectangle();
-	rect.setDiffuseTexture("trolls_inn/Resources/Grass.jpg");
-	rect.setNormalTexture("trolls_inn/Resources/GrassNormal.png");
+
 	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
 	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	this->m.LoadModel("trolls_inn/Resources/Wall3.obj");
-	this->m.setNormalTexture("trolls_inn/Resources/woodNormalMap.jpg");
-	bed = new Mesh();
-	bed->LoadModel("trolls_inn/Resources/Reception/HighReception.obj");
+	//MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
 	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
 	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
 	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
@@ -268,10 +223,7 @@ void GameState::_init()
 	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
 	//bed.LoadModel("trolls_inn/Resources/Window.obj");
 	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
-	bed3D = new Object3D();
-	bed3D->setMesh(bed);
-	bed3D->setPos(17, 0, 8);
-	bed3D->Rotate(0, 90, 0);
+
 }
 
 void GameState::_setHud()
@@ -305,74 +257,48 @@ void GameState::_handlePicking()
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
+		std::cout << "(" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
 		this->p_pickingEvent->pop();
 
-		
+
 		if (!m_subStates.empty())
 		{
 			SubState* ss = m_subStates.top();
 			ss->HandlePicking(obj);
-		}		
-		_handlePickingAi(obj);
-		
-		/*if (Input::isKeyPressed('G'))
-		{
-			Table fut = Table(obj->getPosition(), &table);
-			bool test = this->grid->CheckAndMarkTilesObject(DirectX::XMINT2(obj->getPosition().x, obj->getPosition().z), fut.getGridSize(), fut.getRotation());
-			if (test)
-			{
-				this->grid->AddRoomObject(fut);
-			}
-			
-		}*/
-
-		/*if (Input::isKeyPressed('C'))
-		{
-			m_roomctrl->CreateDoor(obj->getPosition());
 		}
-		else if (Input::isKeyPressed('D'))
-		{
 
-			XMINT2 delPos = { static_cast<int>(obj->getPosition().x), static_cast<int>(obj->getPosition().z) };
-
-			std::vector<Tile*> tiles;
-			XMINT2 roomPos;
-			XMINT2 roomSize;
-			bool remove = m_roomctrl->RemoveRoom(delPos,tiles,roomPos,roomSize);
-			if(remove)
-				grid->insertTiles(roomPos,roomSize,tiles);
-		
-		}
 	
-		
-
-*/
-
-		using namespace std::chrono_literals;
-
-		/*// Create a promise and get its future.
-		if (m_i == 0)
+		if (m_stage == GameStage::Play)
 		{
-			m_i++;
-			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			_handlePickingAi(obj);
+
+			// THREADED BETA
+			// Will cause crashes since we clear the walking queue for the troll
+			//using namespace std::chrono_literals;
+
+			//// Create a promise and get its future.
+			//if (m_i == 0)
+			//{
+			//	m_i++;
+			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+			//}
+
+			////	 Use wait_for() with zero milliseconds to check thread status.
+			//auto status = future.wait_for(0ms);
+
+			////	 Print status. And start a new thread if the other thread was finnished
+			//if (status == std::future_status::ready) {
+			//	std::cout << "Thread finished" << std::endl;
+			//	future.get();
+			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
+
+			//}
+			//else {
+			//	std::cout << "Thread still running" << std::endl;
+			//}
+
 		}
 
-		// Use wait_for() with zero milliseconds to check thread status.
-		auto status = future.wait_for(0ms);
-
-		// Print status. And start a new thread if the other thread was finnished
-		if (status == std::future_status::ready) {
-			//std::cout << "Thread finished" << std::endl;
-			future.get();
-			future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			
-		}
-		else {
-			std::cout << "Thread still running" << std::endl;
-		}
-
-		//_handlePickingAi(obj);*/
-		
 	}
 }
 
@@ -382,6 +308,7 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 	if (m_stage == GameStage::Play)
 	{
+	
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
@@ -701,6 +628,9 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		XMINT2 pos = startPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
+
+		if (0 == m_roomctrl->getRoomConnections(index))
+			return std::vector<std::shared_ptr<Node>>();
 
 		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
 

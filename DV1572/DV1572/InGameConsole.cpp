@@ -43,7 +43,7 @@ void InGameConsole::draw()
 		t->text.Draw();
 }
 
-void InGameConsole::pushString(const std::string & string)
+void InGameConsole::pushString(const std::string & string, float r , float g , float b)
 {
 	std::stringstream ss;
 	int rows = 1;
@@ -70,6 +70,7 @@ void InGameConsole::pushString(const std::string & string)
 	t.setTextString(ss.str());
 	t.setAllignment(TXT::ALLIGN::Right);
 	t.setRelative(Text::RelativeTo::TR);
+	t.setColor(r, g, b);
 	t.setScale(.5f);
 
 	XMVECTOR size = Text::getStringSize(&t);

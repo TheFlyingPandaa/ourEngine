@@ -185,12 +185,12 @@ float RectangleShape::getHeight() const
 
 void RectangleShape::setDiffuseTexture(const std::string & path)
 {
-	getMesh()->setDiffuseTexture(path);
+	GetMesh()->setDiffuseTexture(path);
 }
 
 void RectangleShape::setNormalMap(const std::string & path)
 {
-	getMesh()->setNormalTexture(path);
+	GetMesh()->setNormalTexture(path);
 }
 
 void RectangleShape::DrawAsHud()

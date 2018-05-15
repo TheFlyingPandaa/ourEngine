@@ -1,6 +1,10 @@
 #include "Grid.h"
 #include <math.h>
 #include <memory>
+#include <algorithm>
+#include <chrono>
+#include <unordered_map>
+#include <queue>
 
 bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
 {
@@ -9,12 +13,47 @@ bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
 			return true;
 	return false;
 }
-bool Grid::_findInVec(std::vector<std::shared_ptr<Node>>& list, std::shared_ptr<Node> node) const
+std::vector<std::shared_ptr<Node>>::iterator Grid::_findInVec(std::vector<std::shared_ptr<Node>>& list, const std::shared_ptr<Node>& node) const
 {
-	for (auto& cur : list)
-		if (*cur == *node)
-			return true;
-	return false;
+	for (auto it = list.begin(); it != list.end(); ++it)
+	{
+		if (*(*it) == *node)
+			return it;
+	}
+	return list.end();
+	/*	if (*l == *node)
+			return l;
+	auto first = std::lower_bound(list.begin(), list.end(), node, [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node> &a2) {return a1->fCost < a2->fCost; });
+	if ((!(first == list.end()) && !(node->fCost < (*first)->fCost)))
+		return first;
+	else
+		return list.end();*/
+}
+
+int binSearch(const std::vector<std::shared_ptr<Node>>& list, int left, int right, std::shared_ptr<Node> node)
+{
+	if (right >= left)
+	{
+		int mid = left + (right - left) / 2;
+
+		// If the element is present at the middle 
+		// itself
+		if (*list[mid] == *node)
+			return mid;
+
+		// If element is smaller than mid, then 
+		// it can only be present in left subarray
+		if (*node < *list[mid])
+			return binSearch(list, left, mid - 1, node);
+
+		// Else the element can only be present
+		// in right subarray
+		return binSearch(list, mid + 1, right, node);
+	}
+
+	// We reach here when element is not 
+	// present in array
+	return -1;
 }
 
 int Grid::_index(int x, int y) const
@@ -384,9 +423,11 @@ void Grid::generatePath(Character& character, RoomType targetRoom)
 
 float Grid::getDistance(Tile* t1, Tile* t2)
 {
-	XMVECTOR xmTile = XMLoadFloat3(&t1->getQuad().getPosition());
-	XMVECTOR xmGoal = XMLoadFloat3(&t2->getQuad().getPosition());
-	return XMVectorGetX(XMVector2Length(xmTile - xmGoal));
+	XMFLOAT3 node = t1->getQuad().getPosition();
+	XMFLOAT3 goal = t2->getQuad().getPosition();
+	float dx = std::abs(node.x - goal.x);
+	float dy = std::abs(node.z - goal.z);
+	return 10 * (dx + dy) + (14.14f - 2 * 10.0f) * min(dx, dy);
 }
 
 std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile)
@@ -398,18 +439,20 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		return m_tiles[index];
 	};
 
-	std::vector<std::shared_ptr<Node>> openList;
-	std::vector<std::shared_ptr<Node>> closedList;
+	auto cmp = [](const std::shared_ptr<Node>& a1, const std::shared_ptr<Node>& a2) {return a1->fCost > a2->fCost; };
+	std::priority_queue < std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, decltype(cmp)> openQueue(cmp);
+	
+	std::vector<bool> closedListLookUp(m_sizeX * m_sizeY, 0);
+	std::vector<std::shared_ptr<Node>*> openListLookUp(m_sizeX * m_sizeY, 0);
 
 	std::shared_ptr<Node> current(new Node(startTile, nullptr, 0, getDistance(startTile, endTile)));
 	
-	openList.push_back(current);
+	openQueue.push(current);
 
-	while (openList.size() > 0)
+	while (!openQueue.empty())
 	{
-		std::sort(openList.begin(), openList.end(), [](std::shared_ptr<Node> a1, std::shared_ptr<Node> a2) {return a1->fCost < a2->fCost; });
-		current = openList.at(0);
-
+		current = openQueue.top();
+		openQueue.pop();
 		if (*current == *endTile)
 		{
 			std::vector<std::shared_ptr<Node>> path;
@@ -424,15 +467,15 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			std::reverse(path.begin(), path.end());
 			return path;
 		}
-		
-		closedList.push_back(current);		// add the entry to the closed list
-		openList.erase(openList.begin());   // Remove the entry
 
-		for (int dirIndex = Direction::up; dirIndex != Direction::upright; dirIndex++)
+		closedListLookUp[_index(current->tile->getPosX(),current->tile->getPosY())] = true;
+		openListLookUp[_index(current->tile->getPosX(),current->tile->getPosY())]	= nullptr;
+
+		for (int dirIndex = Direction::up; dirIndex != Direction::noneSpecial; dirIndex++)
 		{
 			
 			Direction dir = static_cast<Direction>(dirIndex);
-			float addedCost = (dirIndex > 3) ? 1.414f : 1.0f;
+			float addedCost = (dirIndex > 3) ? 14.14f : 10.0f;
 			XMFLOAT2 dirFloat;
 			switch (dir)
 			{
@@ -460,10 +503,6 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			case downleft:
 				dirFloat = XMFLOAT2(-1, -1);
 				break;
-			case noneSpecial:
-				break;
-			default:
-				break;
 			}
 			int index = _index(static_cast<int>(current->tile->getQuad().getPosition().x + dirFloat.x), static_cast<int>(current->tile->getQuad().getPosition().z + dirFloat.y));
 			if (index < 0 || index >= m_tiles.size()) continue;
@@ -474,6 +513,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 			if (currentTile == nullptr)
 				continue;
 			
+
 			if (dir == Direction::downleft)
 			{
 				Tile* leftTile = getAdjacentTile(current, -1, 0);
@@ -509,30 +549,35 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 				if (leftTile == nullptr) continue;
 			}
 		
-			
-
-
 			//--Rules End Here--
 
 			float gCost = current->gCost + addedCost;
-
 			float hCost = getDistance(currentTile, endTile);
-			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
-			//pointerBank.push_back(newNode);
 
-			if (_findInVec(closedList,newNode) && gCost >= newNode->gCost)
-				continue;
-			if (!_findInVec(openList, newNode) || gCost < newNode->gCost)
+			std::shared_ptr<Node> newNode (new Node(currentTile, current, gCost, hCost));
+
+			if (closedListLookUp[_index(newNode->tile->getPosX(),newNode->tile->getPosY())] && gCost >= newNode->gCost)
 			{
-				openList.push_back(newNode);
+				continue;
+			}
+
+			int xIndex = newNode->tile->getPosX();
+			int yIndex = newNode->tile->getPosY();
+			int arrIndex = _index(xIndex, yIndex);
+			if (openListLookUp[arrIndex] == nullptr|| gCost < newNode->gCost)
+			{
+				openListLookUp[arrIndex] = &newNode;
+				openQueue.push(newNode);
 				
 			}
-			
+			else if (gCost < (*openListLookUp[arrIndex])->gCost)
+			{
+				(*openListLookUp[arrIndex])->parent = current;
+				(*openListLookUp[arrIndex])->gCost = gCost;
+			}
 			
 		}
-		
-		
 	}
-	
+
 	return std::vector<std::shared_ptr<Node>>();
 }

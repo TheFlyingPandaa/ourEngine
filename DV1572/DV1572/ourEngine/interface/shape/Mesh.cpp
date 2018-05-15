@@ -64,6 +64,11 @@ Mesh::~Mesh()
 		iBuffer->Release();
 }
 
+void Mesh::LoadModelStr(const std::string & path)
+{
+	LoadModel(path);
+}
+
 void Mesh::LoadModel(const std::string & path)
 {
 	std::vector<Material*> tempMaterials = DX::getMaterials(path);
@@ -85,7 +90,6 @@ void Mesh::LoadModel(const std::string & path)
 			std::cout << "Can not open " << path << " dickhead!\n";
 			return;
 		}
-		std::cout << "\nMesh: Reading OBJ: " << path << std::endl;
 		while (fptr)
 		{
 			std::vector<VERTEX> tempVertices;
@@ -94,11 +98,12 @@ void Mesh::LoadModel(const std::string & path)
 			std::string mttlibName;
 
 			DX::loadOBJContinue(fptr, tempVertices, globalvertices, globalNormals, globalUVs, mttlibName);
+			if (mttlibName == "")
+				break; //This is happening with faulty OBJs, lol
 			DX::CalculateTangents(tempVertices);
 			DX::indexVertices(tempVertices, indices, tempIndexed);
 
-			if (mttlibName == "") 
-				break; //This is happening with faulty OBJs, lol
+			
 
 			for (int i = 0; i < tempMaterials.size(); i ++)
 				if (tempMaterials[i]->getName() == mttlibName)
@@ -134,14 +139,7 @@ void Mesh::LoadModel(const std::string & path)
 			hr = DX::g_device->CreateBuffer(&vIndexBufferDesc, &iData, &indexBuffer);
 			m_indexBuffers.push_back(indexBuffer);
 
-			m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));
-
-			std::cout << "MTL: " << mttlibName << std::endl;
-			std::cout << "\tVertices: " << tempVertices.size() << std::endl;
-			float proc = float(tempIndexed.size()) / float(tempVertices.size()) - 1;
-			std::cout << "\tVertices(i): " << tempIndexed.size() << " (" << int(proc * 100.0f) << "%)" << std::endl;
-			std::cout << "\tIndices(i): " << indices.size() << std::endl;
-			
+			m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));			
 		}
 		
 		
@@ -194,7 +192,7 @@ void Mesh::LoadModel(std::vector<VERTEX>& v)
 	m_indexBuffers.push_back(indexBuffer);
 
 	m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));
-	m_materials.push_back(new Material());
+	
 }
 
 void Mesh::LoadModelInverted(const std::string & path)
@@ -222,7 +220,7 @@ void Mesh::LoadModelInverted(const std::string & path)
 		std::cout << "Can not open " << path << " dickhead!\n";
 		return;
 	}
-	std::cout << "\nMesh: Reading OBJ: " << path << std::endl;
+	
 	while (fptr)
 	{
 		std::vector<VERTEX> tempVertices;
@@ -272,11 +270,6 @@ void Mesh::LoadModelInverted(const std::string & path)
 
 		m_nrOfVerticesPerMaterials.push_back(static_cast<int>(indices.size()));
 
-		std::cout << "MTL: " << mttlibName << std::endl;
-		std::cout << "\tVertices: " << tempVertices.size() << std::endl;
-		float proc = float(tempIndexed.size()) / float(tempVertices.size()) - 1;
-		std::cout << "\tVertices(i): " << tempIndexed.size() << " (" << int(proc * 100.0f) << "%)" << std::endl;
-		std::cout << "\tIndices(i): " << indices.size() << std::endl;
 
 	}
 
@@ -294,6 +287,7 @@ void Mesh::LoadModelInverted(const std::string & path)
 
 void Mesh::MakeRectangle()
 {
+	m_materials.push_back(new Material());
 	std::vector<VERTEX> vertices;
 
 	VERTEX v = {
@@ -354,8 +348,9 @@ void Mesh::setDiffuseTexture(const std::string& path)
 {
 	ID3D11Resource* texture;
 	ID3D11ShaderResourceView* textureView;
-	DX::loadTexture(path, texture, textureView);
-	m_materials.back()->setDiffuseMap(textureView, texture);
+	
+	if(DX::loadTexture(path, texture, textureView))
+		m_materials.back()->setDiffuseMap(textureView, texture);
 }
 
 void Mesh::setNormalTexture(const std::string & path)

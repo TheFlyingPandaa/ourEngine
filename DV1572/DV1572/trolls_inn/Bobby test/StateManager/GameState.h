@@ -12,6 +12,7 @@
 #include "../../Events/EventCollection.h"
 #include "../../Events/EventHandler.h"
 #include "../../Furniture/Table.h"
+#include "../../AI_Base/HeightMapGenerator.h"
 
 class GameState : public State {
 private:
@@ -25,20 +26,13 @@ private:
 	};
 
 private:
-	Mesh m;
-	Mesh kitchenTile;
-	Mesh rect;
 	
 	Grid* m_grid;
 	RoomCtrl* m_roomctrl;
+	Furniture* m_receptionFur;
 
-	Mesh * bed;
-	Object3D * bed3D;
-	Furniture * hardBed;
+	HeightMap m_background;
 
-	Object3D m_mountains;
-	Mesh* m_mountainsMesh;
-	
 	MasterAI* m_mai;
 
 	GameTime gameTime; 
@@ -59,11 +53,6 @@ private:
 	bool m_move = false;
 	bool m_justMoved = false;
 
-	int m_i = 0;
-	std::future<void> future;
-
-	Mesh table;
-	
 	Inn * inn;
 
 	int m_in = 0;

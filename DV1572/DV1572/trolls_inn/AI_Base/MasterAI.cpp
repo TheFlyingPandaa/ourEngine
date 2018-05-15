@@ -222,7 +222,7 @@ void MasterAI::Update(Camera* cam)
 					leavingCustomer->Move(Character::WalkDirection::DOWN);
 				for (int i = 0; i < 16; ++i)
 					leavingCustomer->Move(Character::WalkDirection::RIGHT);
-				leavingCustomer->GotPathSetNextAction(LeavingInnAction);
+				leavingCustomer->GotPathSetNextAction(LeavingInnAction, m_solver.getRoomCtrl());
 
 			}
 

@@ -23,6 +23,7 @@
 
 
 #include "../../ourEngine/core/FileReader.h"
+#include "../Mesh Manager/MeshLoaderPlus.h"
 #include "../../ourEngine/interface/shape/SkyBoxObject.h"
 
 #include "../../InGameConsole.h"
@@ -59,9 +60,28 @@ extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
+void InitModels()
+{
+	MLP::GetInstance().LoadMesh(MESH::TERRAIN, "../TerrainLol.txt");
+	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
+	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_HIGH, "Table/Table.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_LOW, "Stol.obj");
+	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
+	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar.obj");
+	MLP::GetInstance().LoadMesh(MESH::BAR_LOW, "Bar/LowBar.obj");
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
+	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
+	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
+	MLP::GetInstance().LoadMesh(MESH::BOX_AABB, "Box.obj");
+
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	
+
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
@@ -77,9 +97,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 
 	Window wnd(hInstance);
-	//wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
 	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
-	//wnd.Init(static_cast<int>(1920), static_cast<int>(1080), "Trolls_inn", gameSettings.fullscreen, working);
+	
+	
+	InitModels();
+	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -98,20 +120,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//Used to manage the time of day. 
 	GameTime gameTime;
 
-	Mesh box;
-	box.LoadModelInverted("trolls_inn/Resources/skybox.obj");
-	box.setDiffuseTexture("trolls_inn/Resources/skybox2.jpg");
+	MLP::GetInstance().LoadMeshInverted(MESH::SKYBOX, "skybox.obj");
 
 	SkyBoxObject boxy;
-	boxy.setMesh(&box);
-
-	Object3D table; 
-	table.setMesh(MeshHandler::getTable()); 
-	table.setPos(20, 0, 20);
-
-	Object3D wallWithWindow; 
-	wallWithWindow.setMesh(MeshHandler::getWallWithWindow()); 
-	wallWithWindow.setPos(18, 0, 20); 
+	boxy.setMesh(MLP::GetInstance().GetMesh(MESH::SKYBOX));
 
 	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam
 	std::unique_ptr<AudioEngine> audEngine;
@@ -172,28 +184,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 					gameStates.push(ref);
 			}
 			
-
-			if (Input::isKeyPressed('P') && !pressed)
-			{
-				/*if (!play)
-				{
-					effect->Stop(false);
-					effect->Play(true);
-					play = true;
-				}
-				else
-				{
-					effect->Play(false);
-					effect->Stop(true);
-					play = false;
-				}
-				
-				pressed = true;*/
-			}
-			else if (!Input::isKeyPressed('P') && pressed)
-			{
-				pressed = false;
-			}
 		}
 		if (!audEngine->Update())
 		{
@@ -202,8 +192,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 			}
 		}
-		//boxy.setPos(cam->getPosition());
-		boxy.Draw();
+	
+		if(MLP::GetInstance().IsReady(MESH::SKYBOX))
+			boxy.Draw();
 
 		InGameConsole::draw();
 
@@ -214,8 +205,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		fpsCounter++;
 		gameState->Draw();
-		table.Draw();
-		wallWithWindow.Draw(); 
 
 		if (!gameStates.empty())
 		{
@@ -259,7 +248,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	delete cam;
 	delete gameState;
 	// MSDN
-
+	MLP::GetInstance().ClearMeshes();
 	MeshHandler::cleanAll();
 	return 0;
 }

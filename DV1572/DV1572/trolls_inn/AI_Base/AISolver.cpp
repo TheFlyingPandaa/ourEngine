@@ -10,7 +10,20 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	if (true)
+	bool spotAvailable = false;
+
+	if (m_roomctrl != nullptr)
+	{
+		if (customer.GetState() == SleepAction ||
+			customer.GetState() == EatAction ||
+			customer.GetState() == DrinkAction)
+		{
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetState());
+		}
+		else if (customer.GetState() == Waiting)
+			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetWaitingToDoState());
+	}
+	if (spotAvailable)
 	{
 		CustomerState state = customer.GetState();
 		int price = 0;
@@ -80,6 +93,9 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 		// Leave inn (?)
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
+		customer.PopToNextState();
+		customer.PopToNextState();
+		customer.PopToNextState();
 	}
 	else
 	{
@@ -397,7 +413,11 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetThirsty() > 0)
 					customer.DoDrinking();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture(); 
+				}
+				
 			}
 			break;
 		case Eating:
@@ -408,7 +428,10 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetHungry() > 0)
 					customer.DoEating();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture();
+				}
 			}
 			break;
 		case Sleeping:
@@ -419,7 +442,10 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				if (customer.GetTired() > 0)
 					customer.DoSleeping();
 				else
+				{
 					customer.PopToNextState();
+					customer.releaseFurniture();
+				}
 			}
 			break;
 		}
@@ -452,7 +478,7 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	customer.PopToNextState(); // pop Idle state
 	if (gotPath == 1)
 	{
-		customer.GotPathSetNextAction(desiredAction);
+		customer.GotPathSetNextAction(desiredAction, m_roomctrl);
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(false);
 		customer.SetWaitingForSpotMultiplier(1);
@@ -474,6 +500,11 @@ void AISolver::Update(Staff& staff)
 void AISolver::Update(Staff& staff, Action desiredAction)
 {
 
+}
+
+RoomCtrl * AISolver::getRoomCtrl()
+{
+	return m_roomctrl; 
 }
 
 

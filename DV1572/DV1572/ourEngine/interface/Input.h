@@ -24,7 +24,8 @@ public:
 		LeftArrow = 37,
 		UpArrow = 38,
 		RightArrow = 39,
-		DownArrow = 40
+		DownArrow = 40,
+		SPACEBAR = 0x20
 		// add more if needed
 	};
 

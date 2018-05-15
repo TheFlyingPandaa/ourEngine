@@ -1,7 +1,7 @@
 #include <chrono>
 #include"Room\Grid.h"
 #include "Room\RoomCtrl.h"
-
+#include "../AI_Base/HeightMapGenerator.h"
 #include <iostream>
 
 const float REFRESH_RATE = 60.0f;
@@ -21,15 +21,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	Window wnd(hInstance);
 	wnd.Init(1280, 720, "Banan");
-	Grid test(0,0,32,32);
-	RoomCtrl ctrl;
-	XMINT2 pos = {6, 0 };
-	XMINT2 pos2 = { 1, 1 };
-	XMINT2 size = { 5,5 };
-
-	ctrl.AddRoom(pos, size, RoomType::reception, test.extractTiles(pos, size));
-	ctrl.AddRoom(pos2, size, RoomType::reception, test.extractTiles(pos2, size));
-
+	Mesh mountainMesh;
+	HeightMap hm(129, 16, 1.0f);
+	RectangleShape rs;
+	mountainMesh.LoadModel("trolls_inn/TerrainLol.txt");
+	rs.setMesh(&mountainMesh);
+	rs.setPos(0, 0, 0);
+	rs.setScale(1, 1, 1);
+	
+	
 	using namespace std::chrono;
 	auto time = steady_clock::now();
 	auto timer = steady_clock::now();
@@ -56,21 +56,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			updates++;
 			unprocessed -= 1;
 			cam->update();
-			ctrl.Update(cam);
 		}
 
 		fpsCounter++;
 		
-		ctrl.Draw();
-		test.Draw();
-
-		/*Shape* picked = nullptr;
-		picked = wnd.getPicked(cam);*/
-
+		rs.Draw();
 		
-			
-
-
 
 		wnd.Flush(cam);
 		wnd.Present();

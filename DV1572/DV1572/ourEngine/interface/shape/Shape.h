@@ -37,7 +37,7 @@ public:
 	Shape();
 	~Shape();
 	void setMesh(Mesh* m);
-	Mesh* getMesh() const;
+	Mesh* GetMesh() const;
 	
 	void setPos(float x, float y, float z);
 	void setPos(DirectX::XMFLOAT3 pos);

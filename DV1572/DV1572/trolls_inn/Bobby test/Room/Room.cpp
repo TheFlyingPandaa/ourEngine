@@ -1,6 +1,7 @@
 #include "Room.h"
 #include "../../Furniture/Table.h"
 #include "../../Furniture/Bed.h"
+#include "../../Mesh Manager/MeshLoaderPlus.h"
 
 Mesh Room::s_AABB;
 bool Room::s_isLoaded = false;
@@ -110,7 +111,7 @@ bool Room::Inside(Tile * t)
 	return	t->getPosX() >= m_posX && t->getPosY() < m_posX + m_sizeX &&
 			t->getPosY() >= m_posY && t->getPosY() < m_posY + m_sizeY;
 }
-#include <iostream>
+
 void Room::Update(Camera * cam)
 {
 	XMFLOAT3 test = { cam->getLookAt().x , 0.0f , cam->getLookAt().z };
@@ -141,7 +142,7 @@ void Room::Update(Camera * cam)
 			}
 			else
 				wall->setScale(1, 1.0f, 1.0f);
-				//std::cout << (angleDegrees/90.0f) << std::endl
+				
 		}
 	}
 }
@@ -149,10 +150,12 @@ void Room::Update(Camera * cam)
 void Room::Draw()
 {
 	m_wholeFloor.Draw();
-
+	
+	
 	for (auto& fur : m_roomObjects)
 		fur->Draw();
 
+	
 	for (auto& tile : m_roomTiles)
 	{
 		if (tile->getQuad().getColor().x != 1.0f)
@@ -449,6 +452,7 @@ void Room::AddRoomObject(Furniture * fut)
 {
 	Furniture * temp = fut->MakeCopy();
 	m_roomObjects.push_back(temp);
+	m_roomObjects[m_roomObjects.size() - 1]->setIndex(m_roomObjects.size()); 
 }
 
 void Room::PickTiles()
