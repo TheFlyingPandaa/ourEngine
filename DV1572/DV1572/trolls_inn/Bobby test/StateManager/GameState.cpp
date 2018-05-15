@@ -131,6 +131,11 @@ void GameState::Update(double deltaTime)
 	this->m_cam->update();
 	c.Update();
 	m_roomctrl->Update(m_cam);
+	if (inn->GetRecievedReview())
+	{
+		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
+		inn->SetRecievedReviewToFalse();
+	}
 
 	if (!m_subStates.empty())
 	{
@@ -149,11 +154,7 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
-	if (inn->GetRecievedReview())
-	{
-		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
-		inn->SetRecievedReviewToFalse();
-	}
+	
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
 		//m_in++;
