@@ -75,6 +75,7 @@ void InitModels()
 	MLP::GetInstance().LoadMesh(MESH::CHAIR_HIGH, "Chair/HighChair.obj"); 
 	MLP::GetInstance().LoadMesh(MESH::CHAIR_LOW, "Chair/LowChair.obj");
 	MLP::GetInstance().LoadMesh(MESH::STOVE, "Stove/Stove.obj");
+	MLP::GetInstance().LoadMesh(MESH::BOX_AABB, "Box.obj");
 
 }
 

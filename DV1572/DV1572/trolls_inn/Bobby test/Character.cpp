@@ -1,5 +1,6 @@
 #include "Character.h" 
 #include "../../ourEngine/core/Dx.h"
+#include "../Mesh Manager/MeshLoaderPlus.h"
 
 // FOr threading
 short Character::s_indexCounter = 0;
@@ -15,10 +16,16 @@ Character::Character()
 	
 	// For threading
 	m_uniqueIndex = s_indexCounter++;
+
+	m_AABB.setMesh(MLP::GetInstance().GetMesh(MESH::BOX_AABB));
+	m_AABB.setPos(16.0f + ((float)1.0f / 2.0f) + 0.001f, 1.0f, 8.0f + ((float)1.0f / 2.0f) - 0.001f);
+	m_AABB.setScale(static_cast<float>(1.0f) + 0.05f, 1.8f, static_cast<float>(1.0f) + 0.05f);
+
 }
 
 Character::Character(const Character & other)
 {
+
 	this->m_currentDir = other.m_currentDir;
 	this->m_model = other.m_model;
 	this->m_floor = other.m_floor;
@@ -325,7 +332,8 @@ void Character::clearWalkingQueue()
 void Character::Draw()
 {
 	DX::submitToInstance(this);
-
+	if (MLP::GetInstance().IsReady(MESH::BOX_AABB))
+		m_AABB.Draw();
 	if(m_displayThought)
 		DX::submitToInstance(&m_thoughtBubble);
 }

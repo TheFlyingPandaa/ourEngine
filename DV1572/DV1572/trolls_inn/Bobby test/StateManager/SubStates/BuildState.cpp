@@ -324,9 +324,17 @@ bool BuildState::_handleHUDPicking()
 
 	if (hover >= 0)
 	{
-		m_floatingText.setString(Furniture::getInfo(hover));
-		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
-		m_drawFloatingText = true;
+		switch (m_currentBuildType)
+		{
+		case Furniture:
+			m_floatingText.setString(Furniture::getInfo(hover));
+			m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+			m_drawFloatingText = true;
+		break;
+		default:
+			break;
+		}
+		
 	}
 	return hudPicked;
 }

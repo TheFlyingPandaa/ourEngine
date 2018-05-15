@@ -126,7 +126,13 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		int xCoord = (x - cr->getPosition().x);
+		int yCoord = (y - cr->getPosition().z);
+		int roomSizeX = cr->getSize().x;
+		int roomSizeY = cr->getSize().y;
+		if (xCoord >= roomSizeX || xCoord < 0) return -1;
+		if (yCoord >= roomSizeY || yCoord < 0) return -1;
+		return static_cast<int>(xCoord + yCoord * cr->getSize().x);
 	};
 	
 	if (furniture->getRotation() == 0 || furniture->getRotation() == 180)
@@ -701,7 +707,13 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		 int xCoord = x - cr->getPosition().x;
+		 int yCoord = y - cr->getPosition().z;
+
+		 if (xCoord >= 0 && xCoord < cr->getSize().x && yCoord >= 0 && yCoord < cr->getSize().y)
+			 return static_cast<int>(xCoord + yCoord * cr->getSize().x);
+		 else
+			 return -1;
 	 };
 
 	 if (angle == 0 || angle == 180)
@@ -709,7 +721,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		 for (int i = 0; i < size; i++)
 		 {
 			 int ii = _index(start.x, start.y + i);
-
+			 if (ii == -1) return false;
 			 if (ii >= tiles.size()) {
 				 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				 return false;
@@ -747,27 +759,32 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 {
 		 for (int i = 0; i < size; i++)
 		 {
+			 int ii = _index(start.x + i, start.y);
+			 if (ii == -1) continue;
+
 			 if (angle == 90)
 			 {
-				 if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
+				
+
+				 if (tiles[ii]->getHasObject() == false)
 				 {
-					 tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 				 }
 				 else
 				 {
-					 tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }
 			 else
 			 {
-				 if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
+				 if (tiles[ii]->getHasObject() == false)
 				 {
-					 tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 				 }
 				 else
 				 {
-					 tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }

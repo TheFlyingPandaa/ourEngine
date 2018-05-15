@@ -27,7 +27,8 @@ enum MESH : short
 	TREE_BILL,
 	WATER,
 	TERRAIN,
-	SKYBOX
+	SKYBOX,
+	BOX_AABB
 };
 
 class MLP
