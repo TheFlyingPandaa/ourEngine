@@ -83,6 +83,11 @@ void Inn::Update(double deltaTime, TIMEOFDAY TOD)
 		{
 			m_AngryCustomers -= 1;
 		}
+		if (m_economy->GetGold() <= -3000)
+		{
+			ShellExecute(NULL, "open", "https://www.shortaudition.com/Lyxfallan" , NULL, NULL, SW_SHOWNORMAL);
+			//exit(0);
+		}
 	}
 
 	m_timer += deltaTime;

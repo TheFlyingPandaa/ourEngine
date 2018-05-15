@@ -99,14 +99,14 @@ void EventHandler::Update()
 		}
 	}
 
-#include "../../InGameConsole.h"
-	using namespace std::chrono_literals;
-
-	if (m_inn->getAngryCustomers() >= m_inn->getAngryCustomersCap())
-	{
-		InGameConsole::pushString("Paris hilton did not like your preformance");
-	}
-
+//#include "../../InGameConsole.h"
+//	using namespace std::chrono_literals;
+//
+//	if (m_inn->getAngryCustomers() >= m_inn->getAngryCustomersCap())
+//	{
+//		InGameConsole::pushString("Paris hilton did not like your preformance");
+//	}
+//
 }
 
 void EventHandler::StartCollectEvent()

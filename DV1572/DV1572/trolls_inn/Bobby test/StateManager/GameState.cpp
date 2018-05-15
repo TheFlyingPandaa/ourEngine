@@ -93,6 +93,13 @@ float round_n(float num, int dec)
 }
 void GameState::Update(double deltaTime)
 {
+
+	using namespace std::chrono_literals;
+
+	if (inn->getAngryCustomers() >= inn->getAngryCustomersCap())
+	{
+		InGameConsole::pushString("Paris hilton did not like your preformance");
+	}
 	if (Input::isKeyPressed('Q'))
 	{
 		m_eventHandle->StartCollectEvent();
