@@ -299,18 +299,29 @@ void BuildState::_objectBuildInput()
 bool BuildState::_handleHUDPicking()
 {
 	bool hudPicked = false;
+	m_drawFloatingText = false;
 	hudPicked = _mainHudPick();
 	if (!hudPicked)
 	{
 		if (m_currentBuildType == CurrentBuildType::RoomBuild)
+		{
 			hudPicked = _selectionBuildHudPick(m_roomHUD);
+		}
 		else if (m_currentBuildType == CurrentBuildType::Door)
+		{
 			hudPicked = _selectionBuildHudPick(m_doorHUD);
+		}
 		else if (m_currentBuildType == CurrentBuildType::Furniture)
+		{
 			hudPicked = _selectionBuildHudPick(m_furnitureHUD);
+		}
 	}
 
-
+	if (hudPicked && m_selectedThing >= 0)
+	{
+		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+		m_drawFloatingText = true;
+	}
 	return hudPicked;
 }
 
@@ -404,16 +415,19 @@ bool BuildState::_mainHudPick()
 				// Rooms Button
 				if (!m_hudButtonsPressed[index])
 					p_HUD.SetColorOnButton(index, cH, cHL, cHL);
+				m_floatingText.setString("Build Rooms");
 				break;
 			case 1:
 				// Furniture Button
 				if (!m_hudButtonsPressed[index])
 					p_HUD.SetColorOnButton(index, cHL, cH, cHL);
+				m_floatingText.setString("Build Furniture");
 				break;
 			case 2:
 				// Door Button
 				if (!m_hudButtonsPressed[index])
 					p_HUD.SetColorOnButton(index, cHL, cHL, cH);
+				m_floatingText.setString("Build Doors");
 				break;
 			}
 
@@ -448,6 +462,8 @@ bool BuildState::_selectionBuildHudPick(HUD & h)
 
 	if (index >= 0)
 	{
+		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+		
 		float cH = 5.0f;
 		float cHL = 2.0f;
 		float cC = 50.0f;
@@ -773,6 +789,8 @@ void BuildState::_init()
 	m_doorHUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/DoorBuild/DoorBuildHud.txt");
 
 	m_furnitureHUD.LoadHud("trolls_inn/Resources/HUD/BuildHud/FurnitureBuild/FurnitureBuildHud.txt");
+
+	m_drawFloatingText = false;
 }
 
 void BuildState::Update(double deltaTime)
@@ -841,6 +859,8 @@ void BuildState::DrawHUD()
 {
 	p_HUD.Draw();
 
+	
+
 	switch (m_currentBuildType)
 	{
 	case CurrentBuildType::RoomBuild:
@@ -853,6 +873,8 @@ void BuildState::DrawHUD()
 		m_furnitureHUD.Draw();
 		break;
 	}
+	if (m_drawFloatingText)
+		m_floatingText.Draw();
 }
 
 void BuildState::HandlePicking(Shape * pickedObject)
