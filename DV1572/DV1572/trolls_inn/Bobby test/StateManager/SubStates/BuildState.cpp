@@ -283,11 +283,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 				m_selectedRoom->Select();
 			}
 			m_selectedRoom = nullptr;
-			if (table)
-			{
-				delete table;
-				table = nullptr;
-			}
+			
 			break;
 		}
 	}
@@ -715,25 +711,39 @@ void BuildState::_inputFurniture()
 
 			if (m_startTile && Input::isMouseLeftPressed())
 			{
-				XMINT3 s = table->getPosition();
-				XMINT2 start;
-				start.x = s.x;
-				start.y = s.z;
-				if (m_canBuildFurniture)
+				if (table)
 				{
-					m_roomCtrl->AddRoomObject(table);
-			    m_inn->FurnitureStatAdd(table->getAttributes());
-				  m_inn->Withdraw(table->getPrice());
-				
-				  //m_inn->UpdateMoney();
-				}
+					XMINT3 s = table->getPosition();
+					if (s.x != -1)
+					{
+						XMINT2 start;
+						start.x = s.x;
+						start.y = s.z;
+						if (m_canBuildFurniture)
+						{
+							m_roomCtrl->AddRoomObject(table);
+							m_inn->FurnitureStatAdd(table->getAttributes());
+							m_inn->Withdraw(table->getPrice());
 
-				m_buildStage = BuildStage::None;
-				m_startTile = nullptr;
-				m_selectedTile = nullptr;
-				m_roomPlaceable = false;
-				drawSelectedThing = true;
-				m_canBuildFurniture = false;
+							//m_inn->UpdateMoney();
+						}
+
+						m_buildStage = BuildStage::None;
+						m_startTile = nullptr;
+						m_selectedTile = nullptr;
+						m_roomPlaceable = false;
+						drawSelectedThing = true;
+						m_canBuildFurniture = false;
+					}
+
+					
+					
+				}
+				else
+				{
+					table = new Table(XMFLOAT3(-1, -1, -1), MESH::TABLE_HIGH,2);
+				}
+				
 			}
 
 			else if (m_startTile)
