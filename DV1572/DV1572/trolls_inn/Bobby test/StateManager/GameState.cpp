@@ -62,7 +62,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
-	previousKey = -1;		
+	previousKey = -1;
+
+
+	dynamic_cast<OrbitCamera*>(m_cam)->Init();
+
 }
 
 GameState::~GameState()

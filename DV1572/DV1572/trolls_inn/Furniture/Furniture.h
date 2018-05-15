@@ -47,6 +47,8 @@ public:
 	virtual Furniture * MakeCopy();
 
 	static std::string getInfo(int index);
+	int getType() const;
+
 
 private:
 	DirectX::XMINT3 pos;

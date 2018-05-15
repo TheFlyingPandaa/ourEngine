@@ -852,10 +852,9 @@ void BuildState::Update(double deltaTime)
 			m_selectedRoom = nullptr;
 		}
 	}
-	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isMouseLeftPressed() && !m_clickedLast)
+	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isMouseLeftPressed() && !m_clickedLast && m_cm->ButtonClicked() == 0)
 	{
-		if (m_cm->ButtonClicked() == 2)
-		{
+		
 			DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
 			DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
 			int price = m_furnitureRemove->getPrice();
@@ -866,7 +865,23 @@ void BuildState::Update(double deltaTime)
 				m_furnitureRemove = nullptr;
 				m_furnitureDeleteMode = false;
 			}
-		}
+		
+		
+	}
+	else if (m_furnitureRemove && m_furnitureDeleteMode && Input::isMouseLeftPressed() && !m_clickedLast && m_cm->ButtonClicked() == 2)
+	{
+		
+			DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
+			DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
+			int price = m_furnitureRemove->getPrice();
+			bool tem = m_roomCtrl->RemoveRoomObject(m_furnitureRemove);
+			if (tem)
+			{
+				m_inn->Deposit(price / 2);
+				m_furnitureRemove = nullptr;
+				m_furnitureDeleteMode = false;
+			}
+		
 	}
 }
 

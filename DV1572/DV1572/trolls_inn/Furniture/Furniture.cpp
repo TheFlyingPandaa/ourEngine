@@ -293,4 +293,9 @@ std::string Furniture::getInfo(int index)
 	return str;
 }
 
+int Furniture::getType() const
+{
+	return static_cast<int>(m_meshId);
+}
+
 
