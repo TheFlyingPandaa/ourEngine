@@ -965,7 +965,7 @@ vn 0.000000 0.000000 -1.000000
 vn 0.000000 0.000000 -1.000000
 s off
 g pCube1
-usemtl Table_initialShadingGroup
+usemtl initialShadingGroup
 f 84/1/1 71/2/2 14/3/3
 f 14/3/4 71/2/5 13/4/6
 f 37/5/7 79/6/8 54/7/9
