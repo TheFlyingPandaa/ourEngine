@@ -56,14 +56,8 @@ void MLP::LoadMeshRectangle(std::string name)
 {
 	if (m_meshmap.find(name) == m_meshmap.end())
 	{
-#if THREADED
-		MESH_THREAD* mt = new MESH_THREAD;
-		mt->futureObj = std::async(std::launch::async, &Mesh::MakeRectangle, &m_meshmap[name]);
-		mt->name = name;
-		m_futureMeshes.push_back(mt);
-#else
+
 		m_meshmap[name].MakeRectangle();
-#endif
 	
 	}
 	else

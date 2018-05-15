@@ -137,7 +137,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Bed(XMFLOAT3(0, 0, 0), MESH::TABLE);
+						table = new Table(XMFLOAT3(0, 0, 0), MESH::TABLE);
 					}
 				}
 				// Bed High
