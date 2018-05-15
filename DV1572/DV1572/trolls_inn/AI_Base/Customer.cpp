@@ -106,6 +106,17 @@ Customer::~Customer()
 {
 }
 
+void Customer::releaseFurniture()
+{
+	if (m_ownedFurniture != nullptr)
+	{
+		m_ownedFurniture->releaseOwnerShip();
+		m_ownedFurniture->setIsBusy(false);
+		m_ownedFurniture = nullptr;
+		std::cout << "Furniture released!" << std::endl;
+	}
+}
+
 Attributes& Customer::GetAttributes()
 {
 	return m_review;
@@ -154,17 +165,9 @@ CustomerState Customer::GetState() const
 	return m_stateQueue.front();
 }
 
-void Customer::PopToNextState(RoomCtrl* roomCtrl)
+void Customer::PopToNextState()
 {
 	m_stateQueue.pop();
-
-	if (m_ownedFurniture != nullptr)
-	{
-		m_ownedFurniture->releaseOwnerShip();
-		m_ownedFurniture->setIsBusy(false);
-		m_ownedFurniture = nullptr;
-		std::cout << "Furniture released!" << std::endl;
-	}
 }
 
 void Customer::setOwnedFurniture(Furniture * furnitureOwned)
@@ -207,9 +210,9 @@ void Customer::SetAction(Action nextAction, RoomCtrl* roomCtrl)
 
 	if (roomCtrl != nullptr)
 	{
-		if (this->m_stateQueue.front() == SleepAction ||
-			this->m_stateQueue.front() == EatAction ||
-			this->m_stateQueue.front() == DrinkAction)
+		if (this->m_stateQueue.back() == SleepAction ||
+			this->m_stateQueue.back() == EatAction ||
+			this->m_stateQueue.back() == DrinkAction)
 		{
 			findNearestRoom(roomCtrl, m_stateQueue.front());
 		}

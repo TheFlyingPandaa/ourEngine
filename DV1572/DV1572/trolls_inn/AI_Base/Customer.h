@@ -25,6 +25,7 @@ enum Action
 	EatAction,
 	SleepAction,
 	LeavingInnAction,
+	WaitingAction,
 	WalkToInn
 };
 
@@ -37,6 +38,7 @@ enum CustomerState
 	Eating,
 	Sleeping,
 	LeavingInn,
+	Waiting,
 	WalkingToInn
 };
 
@@ -82,6 +84,8 @@ public:
 	Customer(const Customer &other);
 	~Customer();
 
+	void releaseFurniture(); 
+
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
 	Race GetRace() const;
@@ -91,11 +95,12 @@ public:
 	// Get desired action
 	Action GetAction() const;
 	void SetAction(Action nextAction, RoomCtrl* roomCtrl = nullptr);
+	void SetWaiting();
 	void GotPathSetNextAction(Action nextAction, RoomCtrl* roomCtrl);
 
 	int GetQueueEmpty() const;
 	CustomerState GetState() const;
-	void PopToNextState(RoomCtrl* roomCtrl);
+	void PopToNextState();
 	
 	void setOwnedFurniture(Furniture* furnitureOwned); 
 

@@ -63,7 +63,7 @@ Staff * MasterAI::getTroll()
 {
 	return m_InnTroll; 
 }
-#include "../../InGameConsole.h"
+
 void MasterAI::Update(Camera* cam)
 {
 	//InGameConsole::pushString(std::to_string(m_customers.size()));
@@ -78,6 +78,7 @@ void MasterAI::Update(Camera* cam)
 	// Check if customer needs shall be updated
 	bool updateCustomerNeeds = false;
 	
+	// Generate new customer if the stars align
 	if (!m_customerSpawned)
 	{
 		double duration = m_nextCustomer->GetTimeSpan().count();
@@ -129,9 +130,6 @@ void MasterAI::Update(Camera* cam)
 		updateCustomerNeeds = true;
 		this->m_start = this->m_clock.now();
 	}
-	// Set spawn time limit (?)
-	//this->customers.push_back(this->cFC.Update(this->inn.getInnAttributes()));
-	// Not enough gold for wanted action = leave (?)
 
 	// Loop through all customers
 	std::vector<int> leavingCustomersIDs;
@@ -144,10 +142,6 @@ void MasterAI::Update(Camera* cam)
 		//solver.update(*customer);
 		if (updateCustomerNeeds)
 		{
-			/*std::cout << "Customer Hungry: " << customer->GetHungry() << std::endl;
-			std::cout << "Customer Tired: " << customer->GetTired() << std::endl;
-			std::cout << "Customer Thirsty: " << customer->GetThirsty() << std::endl;
-			std::cout << "Customer Gold: " << customer->GetEconomy().GetGold() << std::endl;*/
 			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
 			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
 			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
@@ -192,10 +186,6 @@ void MasterAI::Update(Camera* cam)
 		}
 		else
 		{
-			/*if (updateCustomerNeeds)
-			{
-				std::cout << "Customer Action: " << customer->GetStateStr() << std::endl << std::endl;
-			}*/
 			// Execute the action queue
 			m_solver.Update(*customer, m_inn);
 		}

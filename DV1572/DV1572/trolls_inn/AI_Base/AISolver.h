@@ -10,8 +10,9 @@
 #include <thread>
 
 const int UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT = 1;
-const int WAITING_FOR_SPOT_TIME_LIMIT = 20;
+const int WAITING_FOR_SPOT_TIME_LIMIT = 40;
 using namespace std::chrono_literals;
+
 class AISolver
 {
 private:
@@ -33,7 +34,6 @@ private:
 	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 	
 	std::deque<PathThread> futureObjects;
-
 
 public:
 	AISolver(RoomCtrl *roomctrl, Grid* grid);
