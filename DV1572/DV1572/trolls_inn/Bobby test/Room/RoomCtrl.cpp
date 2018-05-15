@@ -1082,7 +1082,7 @@ DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
 		if (_checkRoomType(room, type))
 		{
 			int distance = getLength(position, room->getPosition());
-			if (closestDistance > distance)
+			if (closestDistance > distance && room->CheckRoomComplete())
 			{
 				closestRoom = room;
 				closestDistance = distance;

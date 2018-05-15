@@ -85,7 +85,7 @@ public:
 	~Customer();
 
 	void releaseFurniture(); 
-bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
+	bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
