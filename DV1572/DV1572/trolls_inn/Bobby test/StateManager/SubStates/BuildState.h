@@ -77,7 +77,7 @@ private:
 	void	_objectBuildInput();
 	bool	_handleHUDPicking();
 	bool	_mainHudPick();
-	bool	_selectionBuildHudPick(HUD & h);
+	bool	_selectionBuildHudPick(HUD & h, int & getIndex);
 	
 
 	void	_inputBuildRoom();

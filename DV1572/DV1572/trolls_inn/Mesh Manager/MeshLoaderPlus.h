@@ -11,8 +11,8 @@
 enum MESH : short
 {
 	// Furnitures
-	CHAIR,
-	TABLE,
+	TABLE_LOW,
+	TABLE_HIGH,
 	BED_HIGH,
 	BED_LOW,
 	BAR_HIGH,

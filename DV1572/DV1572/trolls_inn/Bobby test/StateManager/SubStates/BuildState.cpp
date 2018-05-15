@@ -129,7 +129,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Table(XMFLOAT3(0, 0, 0), MESH::CHAIR);
+						table = new Table(XMFLOAT3(0, 0, 0), MESH::TABLE_LOW);
 					}
 					
 				}
@@ -141,7 +141,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					{
 						lastSelected = m_selectedThing;
 						delete table;
-						table = new Table(XMFLOAT3(0, 0, 0), MESH::TABLE,2);
+						table = new Table(XMFLOAT3(0, 0, 0), MESH::TABLE_HIGH,2);
 					}
 				}
 				// Bed High
@@ -305,27 +305,26 @@ bool BuildState::_handleHUDPicking()
 	bool hudPicked = false;
 	m_drawFloatingText = false;
 	hudPicked = _mainHudPick();
+	int hover = -1;
 	if (!hudPicked)
 	{
 		if (m_currentBuildType == CurrentBuildType::RoomBuild)
 		{
-			hudPicked = _selectionBuildHudPick(m_roomHUD);
+			hudPicked = _selectionBuildHudPick(m_roomHUD, hover);
 		}
 		else if (m_currentBuildType == CurrentBuildType::Door)
 		{
-			hudPicked = _selectionBuildHudPick(m_doorHUD);
+			hudPicked = _selectionBuildHudPick(m_doorHUD, hover);
 		}
 		else if (m_currentBuildType == CurrentBuildType::Furniture)
 		{
-			hudPicked = _selectionBuildHudPick(m_furnitureHUD);
+			hudPicked = _selectionBuildHudPick(m_furnitureHUD, hover);
 		}
 	}
 
-	if (m_selectedThing >= 0)
+	if (hover >= 0)
 	{
-		
-		
-
+		m_floatingText.setString(Furniture::getInfo(hover));
 		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
 		m_drawFloatingText = true;
 	}
@@ -462,7 +461,7 @@ bool BuildState::_mainHudPick()
 }
 
 
-bool BuildState::_selectionBuildHudPick(HUD & h)
+bool BuildState::_selectionBuildHudPick(HUD & h, int & getIndex)
 {
 	bool pickedHUD = false;
 	int index = h.PickHud(Input::getMousePositionLH());
@@ -471,6 +470,7 @@ bool BuildState::_selectionBuildHudPick(HUD & h)
 
 	if (index >= 0)
 	{
+		getIndex = index;
 		m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
 		
 		float cH = 5.0f;

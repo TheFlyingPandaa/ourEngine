@@ -66,8 +66,8 @@ void InitModels()
 	MLP::GetInstance().LoadMesh(MESH::TREE_BILL, "tree/treeBillboard.obj");
 	MLP::GetInstance().LoadMesh(MESH::RECEPTION_HIGH, "Reception/HighReception.obj");
 	MLP::GetInstance().LoadMesh(MESH::RECEPTION_LOW, "Reception/LowReception.obj");
-	MLP::GetInstance().LoadMesh(MESH::TABLE, "Table/Table.obj");
-	MLP::GetInstance().LoadMesh(MESH::CHAIR, "Stol.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_HIGH, "Table/Table.obj");
+	MLP::GetInstance().LoadMesh(MESH::TABLE_LOW, "Stol.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_HIGH, "Bed/HighBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BED_LOW, "Bed/LowBed.obj");
 	MLP::GetInstance().LoadMesh(MESH::BAR_HIGH, "Bar/HighBar.obj");
