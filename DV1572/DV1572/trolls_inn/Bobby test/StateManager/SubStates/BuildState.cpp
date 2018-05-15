@@ -733,8 +733,6 @@ void BuildState::_inputFurniture()
 				}
 
 			}
-			
-			
 			//std::cout << m_startTile->getRotation().y << std::endl;
 			//TEMP
 			drawSelectedThing = true;
@@ -751,8 +749,6 @@ void BuildState::_inputFurniture()
 	}
 	else
 		drawSelectedThing = false;
-
-
 }
 
 

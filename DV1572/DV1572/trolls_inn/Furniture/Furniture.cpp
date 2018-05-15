@@ -63,6 +63,11 @@ DirectX::XMINT3 Furniture::getPosition()
 	return this->pos;
 }
 
+Customer * Furniture::getOwner() const
+{
+	return m_owner; 
+}
+
 int Furniture::getPrice()
 {
 	return p_price;
@@ -91,6 +96,26 @@ void Furniture::setLevel(int amount)
 void Furniture::AddLevel(int amount)
 {
 	p_level += amount;
+}
+
+void Furniture::setIndex(int index)
+{
+	m_index = index; 
+}
+
+void Furniture::setOwner(Customer * owner)
+{
+	m_owner = owner;
+}
+
+int Furniture::getIndex() const
+{
+	return m_index; 
+}
+
+void Furniture::releaseOwnerShip()
+{
+	m_owner = nullptr; 
 }
 
 int Furniture::getRotation()
@@ -179,7 +204,7 @@ void Furniture::setLightIndex(int index)
 
 std::string Furniture::WhatType()
 {
-	return "FUCK";
+	return "This should not be possible, earlier there was nothing here.";
 }
 
 void Furniture::Draw()

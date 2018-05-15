@@ -24,5 +24,4 @@ public:
 	~CustomerFlowControl();
 
 	Customer* Update(Attributes innAttributes);
-
 };
