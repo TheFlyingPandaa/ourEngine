@@ -77,17 +77,22 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 {
 	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > (WAITING_FOR_SPOT_TIME_LIMIT * customer.GetPatience()))
 	{
-		// Do something because angry, request money (?)
+		std::stringstream ss;
 		if (customer.GetRace() == Elf)
 		{
+			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 25 gold!" << std::endl;
 			inn->GetRefund(25);
 			customer.GetEconomy().GetCashback(25);
+			customer.GetAttributes().AddStat(-0.15);
 		}
 		else
 		{
+			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 15 gold!" << std::endl;
 			inn->GetRefund(15);
 			customer.GetEconomy().GetCashback(15);
+			customer.GetAttributes().AddStat(0.15);
 		}
+		InGameConsole::pushString(ss.str());
 		customer.SetWaitingForSpot(false);
 		// Do angry face emote
 		// Leave inn (?)
@@ -485,6 +490,9 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	}
 	else if (gotPath == -1)
 	{
+		std::stringstream ss;
+		ss << "A customer is leaving. The\ncustomers needs could not be\nfulfilled!" << std::endl;
+		InGameConsole::pushString(ss.str());
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
 	}

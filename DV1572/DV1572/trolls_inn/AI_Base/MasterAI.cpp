@@ -66,8 +66,11 @@ Staff * MasterAI::getTroll()
 
 void MasterAI::Update(Camera* cam)
 {
-	//InGameConsole::pushString(std::to_string(m_customers.size()));
-
+	if (Input::isKeyPressed('W'))
+	{
+		m_inn->getInnAttributesRef().AddStat(0.25f);
+		m_inn->SetTrue();
+	}
 	m_solver.Update(*m_InnTroll); 
 
 	// Get the elapsed time
@@ -139,12 +142,11 @@ void MasterAI::Update(Camera* cam)
 	// Evaluate what actions customers should take
 	for (auto& customer : this->m_customers)
 	{
-		//solver.update(*customer);
 		if (updateCustomerNeeds)
 		{
-			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
-			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
-			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
+			customer->SetHungry(customer->GetHungry() + customer->GetHungryRate());
+			customer->SetTired(customer->GetTired() + customer->GetTiredRate());
+			customer->SetThirsty(customer->GetThirsty() + customer->GetThirstyRate());
 		}
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty())

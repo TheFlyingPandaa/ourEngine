@@ -63,9 +63,11 @@ public:
 
 	bool GetRecievedReview() const;
 	void SetRecievedReviewToFalse();
+	// VOLATILE SHIT REMOVE IN SHIPPED VERSION
+	void SetTrue();
 
 	Attributes GetInnAttributes() const;
-	Attributes & getInnAttributesRef();
+	Attributes& getInnAttributesRef();
 
 	void Update(double deltaTime, TIMEOFDAY TOD);
 	void UpdateMoney();

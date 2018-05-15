@@ -47,12 +47,6 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			furnitureFound = true;
 			std::cout << "Furniture occupied!" << std::endl;
 		}
-		/*
-		else
-		{
-			RestartClock(); 
-			setThoughtBubble(ANGRY); 
-		}*/
 	}
 
 	return furnitureFound;
@@ -70,7 +64,6 @@ Customer::Customer(Race race, int gold)
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
-	m_review.SetStat(0.1f);
 
 	m_ownedFurniture = nullptr; 
 
