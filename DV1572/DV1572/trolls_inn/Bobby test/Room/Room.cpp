@@ -216,6 +216,37 @@ void Room::setIsBuildingDoor(bool tje)
 	m_isBuildingDoor = tje;
 }
 
+bool Room::CheckRoomComplete()
+{
+	if (m_roomType == RoomType::bedroom)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if (object->WhatType() == "Bed")
+			{
+				return true;
+			}
+		}
+	}
+	else if(m_roomType == RoomType::kitchen)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if(object->WhatType() == "Stove")
+			{
+				return true;
+			}
+			
+		}
+	}
+	else
+	{
+		return true;
+	}
+
+	return false;
+}
+
 float Room::getDistance(Tile * t1, Tile * t2)
 {
 	XMVECTOR xmTile = XMLoadFloat3(&t1->getQuad().getPosition());
