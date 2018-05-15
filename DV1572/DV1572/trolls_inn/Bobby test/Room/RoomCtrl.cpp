@@ -126,7 +126,13 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		return static_cast<int>((x - cr->getPosition().x) + (y - cr->getPosition().z) * cr->getSize().x);
+		int xCoord = (x - cr->getPosition().x);
+		int yCoord = (y - cr->getPosition().z);
+		int roomSizeX = cr->getSize().x;
+		int roomSizeY = cr->getSize().y;
+		if (xCoord >= roomSizeX || xCoord < 0) return -1;
+		if (yCoord >= roomSizeY || yCoord < 0) return -1;
+		return static_cast<int>(xCoord + yCoord * cr->getSize().x);
 	};
 	
 	if (furniture->getRotation() == 0 || furniture->getRotation() == 180)
