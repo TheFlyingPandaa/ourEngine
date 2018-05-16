@@ -117,6 +117,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
 	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
+	if (index == -1) return;
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
@@ -1081,7 +1082,7 @@ DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
 		if (_checkRoomType(room, type))
 		{
 			int distance = getLength(position, room->getPosition());
-			if (closestDistance > distance)
+			if (closestDistance > distance && room->CheckRoomComplete())
 			{
 				closestRoom = room;
 				closestDistance = distance;

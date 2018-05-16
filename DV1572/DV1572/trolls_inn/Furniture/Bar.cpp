@@ -5,7 +5,7 @@ int Bar::highPrice = 1000;
 Bar::Bar(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
 {
 	p_gridSize = 2;
-	p_rot = 180;
+	p_rot = 90;
 	p_object.setMesh(MLP::GetInstance().GetMesh(meshid));
 
 	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);

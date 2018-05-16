@@ -85,7 +85,7 @@ public:
 	~Customer();
 
 	void releaseFurniture(); 
-bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
+	bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
@@ -138,6 +138,7 @@ bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 	void DoDrinking();
 
 	std::chrono::duration<double> GetTimeSpan();
+	std::string getInfoText() const;
 	void RestartClock();
 
 	void Update();

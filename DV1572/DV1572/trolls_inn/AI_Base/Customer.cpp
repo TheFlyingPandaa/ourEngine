@@ -30,6 +30,10 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
 
+	if (roomPos.x == -1)
+	{
+		return false;
+	}
 	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
 
 	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
@@ -397,6 +401,16 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 	m_time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_now - m_start);
 
 	return m_time_span;
+}
+
+std::string Customer::getInfoText() const
+{
+	std::string returnStr;
+	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Type ";
+	returnStr += GetRaceStr();
+	returnStr += "\n";
+	return returnStr;
 }
 
 void Customer::RestartClock()
