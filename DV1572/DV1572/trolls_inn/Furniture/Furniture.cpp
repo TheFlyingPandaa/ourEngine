@@ -10,7 +10,6 @@
 Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
 	: m_meshId(mesh)
 {
-	p_rot = 0;
 	this->pos.x = static_cast<int>(pos.x);
 	this->pos.y = static_cast<int>(pos.y);
 	this->pos.z = static_cast<int>(pos.z);
@@ -60,7 +59,7 @@ void Furniture::setRotation(int rot)
 	p_rot = rot;
 	if (p_rot < 0)
 		p_rot += 360;
-	else if (p_rot > 360)
+	else if (p_rot >= 360)
 		p_rot -= 360;
 
 	p_object.setRotation(0.0f, static_cast<float>(rot) - 90.0f, 0.0f);

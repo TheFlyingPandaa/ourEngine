@@ -135,34 +135,37 @@ void ClickMenu::_initFurnitureMenu()
 {
 	Mesh * m = new Mesh();
 	m->MakeRectangle();
-	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/RotateRight.png");
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/PickUpItem.png");
 
 	RectangleShape * r = new RectangleShape();
+	r->setColor(5, 5, 5);
 	r->setMesh(m);
 	r->setWidth(32);
-	r->setHeight(48);
+	r->setHeight(40);
 
 	m_mesh.push_back(m);
 	m_buttons.push_back(r);
 
 	m = new Mesh();
 	m->MakeRectangle();
-	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/RotateLeft.png");
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/Upgrade.png");
 	r = new RectangleShape();
+	r->setColor(5, 5, 5);
 	r->setMesh(m);
 	r->setWidth(32);
-	r->setHeight(48);
+	r->setHeight(40);
 
 	m_mesh.push_back(m);
 	m_buttons.push_back(r);
 
 	m = new Mesh();
 	m->MakeRectangle();
-	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/Delete.png");
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/Sell.png");
 	r = new RectangleShape();
+	r->setColor(5, 5, 5);
 	r->setMesh(m);
-	r->setWidth(32);
-	r->setHeight(32);
+	r->setWidth(40);
+	r->setHeight(40);
 
 	m_mesh.push_back(m);
 	m_buttons.push_back(r);

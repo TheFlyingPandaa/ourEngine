@@ -713,19 +713,19 @@ bool Room::RemoveThisFurniture(Furniture * fur)
 			int sizeOf = fur->getGridSize();
 			float x = 0;
 			float y = 0;
-			tileIndices.push_back(_index(fur->getPosition().x + 0.5f, fur->getPosition().z + 0.5f));
+			tileIndices.push_back(_index(fur->getPosition().x, fur->getPosition().z));
 			for (int i = 0; i < sizeOf -1; i++)
 			{
 				switch (fur->getRotation())
 				{
 				case 0:
-					y--;
+					y++;
 					break;
 				case 90:
 					x++;
 					break;
 				case 180:
-					y++;
+					y--;
 					break;
 				case 270:
 					x--;
