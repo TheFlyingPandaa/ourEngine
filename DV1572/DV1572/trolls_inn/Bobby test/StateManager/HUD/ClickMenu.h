@@ -26,6 +26,9 @@ public:
 	ClickMenu(MTYPE type);
 	~ClickMenu();
 
+	void ClearSubText();
+	void PushText(const std::string & row);
+
 	void setPos(DirectX::XMFLOAT2 pos);
 
 	//Returns -2 if not even the background is pressed, else -1 or button index

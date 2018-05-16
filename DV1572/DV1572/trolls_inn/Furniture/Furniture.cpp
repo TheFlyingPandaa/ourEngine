@@ -121,6 +121,11 @@ void Furniture::setOwner(Customer * owner)
 	m_owner = owner;
 }
 
+int Furniture::getPriceToLevelUp() const
+{
+	return (p_level + 1) * 100;
+}
+
 int Furniture::getIndex() const
 {
 	return m_index; 

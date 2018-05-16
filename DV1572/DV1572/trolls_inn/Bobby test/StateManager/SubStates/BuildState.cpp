@@ -117,7 +117,11 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 										m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 										m_furnitureRemove = newPick;
 										m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+										m_cm->ClearSubText();
 										m_cm->setInfo(m_furnitureRemove->WhatType());
+										std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType());
+										m_cm->PushText(s);
+
 										m_cm->setPos(Input::getMousePositionLH());
 									}
 								}
@@ -128,7 +132,11 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 								if (m_furnitureRemove)
 								{
 									m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+									m_cm->ClearSubText();
 									m_cm->setInfo(m_furnitureRemove->WhatType());
+									std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType());
+									m_cm->PushText(s);
+
 									m_cm->setPos(Input::getMousePositionLH());
 								}
 							}
@@ -898,8 +906,34 @@ void BuildState::Update(double deltaTime)
 			m_selectedRoom = nullptr;
 		}
 	}
+	if (m_furnitureRemove)
+	{
+		switch (m_cm->ButtonClicked())
+		{
+		case 0:
+			m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+			m_floatingText.setString("Pick Up");
+			m_drawFloatingText = true;
+			break;
+		case 1:
+			m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+			m_floatingText.setString("Level Up\n$" + std::to_string(m_furnitureRemove->getPriceToLevelUp()));
+			m_drawFloatingText = true;
+			break;
+		case 2:
+			m_floatingText.setPosition(Input::getMousePositionLH().x, Input::getMousePositionLH().y);
+			m_floatingText.setString("Sell\n+$" + std::to_string(m_furnitureRemove->getPrice() / 2));
+			m_drawFloatingText = true;
+			break;
+		default:
+			m_drawFloatingText = false;
+			break;
+		}
+	}
+
 	if (m_furnitureRemove && m_furnitureDeleteMode && Input::isMouseLeftPressed() && !m_clickedLast)
 	{
+		m_clickedLast = true;
 		if (m_cm->ButtonClicked() == 0 || m_cm->ButtonClicked() == 2)
 		{
 			if (m_cm->ButtonClicked() == 0)
@@ -928,8 +962,9 @@ void BuildState::Update(double deltaTime)
 			m_furnitureRemove = nullptr;
 			m_furnitureDeleteMode = false;
 		}
-		if (m_cm->ButtonClicked() == 1)
+		else if (m_cm->ButtonClicked() == 1)
 		{
+			m_clickedLast = true;
 			m_inn->Withdraw(m_furnitureRemove->AddLevel(m_inn->getMoney()));
 		}
 	}

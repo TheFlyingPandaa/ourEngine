@@ -122,8 +122,8 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		int xCoord = (x - cr->getPosition().x);
-		int yCoord = (y - cr->getPosition().z);
+		int xCoord = (x - static_cast<int>(cr->getPosition().x));
+		int yCoord = (y - static_cast<int>(cr->getPosition().z));
 		int roomSizeX = cr->getSize().x;
 		int roomSizeY = cr->getSize().y;
 		if (xCoord >= roomSizeX || xCoord < 0) return -1;
@@ -418,7 +418,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 					 // If the wall we are checking is a door
 					 if (wall->getIsDoor() && m_roomToRoom.size())
 					 {
-						 XMFLOAT3 maybeDoorPos = XMFLOAT3(m_roomToRoom[i].one.x, 0.0f, m_roomToRoom[i].one.y);
+						 XMFLOAT3 maybeDoorPos = XMFLOAT3(static_cast<float>(m_roomToRoom[i].one.x), 0.0f, static_cast<float>(m_roomToRoom[i].one.y));
 						 XMFLOAT3 thisDoorPos = wall->getObject3D().getPosition();
 						 XMFLOAT2 diff = XMFLOAT2(abs(maybeDoorPos.x - thisDoorPos.x), abs(maybeDoorPos.z - thisDoorPos.z));
 						 if (diff.x == 0.5f || diff.y == 0.5f)
@@ -440,7 +440,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 						 // If the wall we are checking is a door
 						 if (wall->getIsDoor() && m_roomToRoom.size())
 						 {
-							 XMFLOAT3 maybeDoorPos = XMFLOAT3(m_roomToRoom[i].one.x, 0.0f, m_roomToRoom[i].one.y);
+							 XMFLOAT3 maybeDoorPos = XMFLOAT3(static_cast<float>(m_roomToRoom[i].one.x), 0.0f, static_cast<float>(m_roomToRoom[i].one.y));
 							 XMFLOAT3 thisDoorPos = wall->getObject3D().getPosition();
 							 XMFLOAT2 diff = XMFLOAT2(abs(maybeDoorPos.x - thisDoorPos.x), abs(maybeDoorPos.z - thisDoorPos.z));
 							 if (diff.x == 0.5f || diff.y == 0.5f)
@@ -509,8 +509,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 auto tiles = cr->getTiles();
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 int xCoord = x - cr->getPosition().x;
-		 int yCoord = y - cr->getPosition().z;
+		 int xCoord = x - static_cast<int>(cr->getPosition().x);
+		 int yCoord = y - static_cast<int>(cr->getPosition().z);
 
 		 if (xCoord >= 0 && xCoord < cr->getSize().x && yCoord >= 0 && yCoord < cr->getSize().y)
 			 return static_cast<int>(xCoord + yCoord * cr->getSize().x);
@@ -640,8 +640,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	 auto _index = [&](int x, int y) ->int
 	 {
-		 int xCoord = x - cr->getPosition().x;
-		 int yCoord = y - cr->getPosition().z;
+		 int xCoord = x - static_cast<int>(cr->getPosition().x);
+		 int yCoord = y - static_cast<int>(cr->getPosition().z);
 
 		 if (xCoord >= 0 && xCoord < cr->getSize().x && yCoord >= 0 && yCoord < cr->getSize().y)
 			 return static_cast<int>(xCoord + yCoord * cr->getSize().x);

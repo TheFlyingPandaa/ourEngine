@@ -35,6 +35,8 @@ public:
 	void			setIndex(int index); 
 	void			setOwner(Customer* owner); 
 
+	int				getPriceToLevelUp() const;
+
 	int				getIndex() const; 
 
 	void			releaseOwnerShip(); 

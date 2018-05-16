@@ -65,8 +65,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 
 
 	dynamic_cast<OrbitCamera*>(m_cam)->Init();
-
-	//m_receptionFur = new Table(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW, 2);
 	m_receptionFur = new Reception(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
 
 	m_receptionFur->setPosition(XMFLOAT3(17.5, 0, 7.5));

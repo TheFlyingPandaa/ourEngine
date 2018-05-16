@@ -4,13 +4,13 @@ ClickMenu::ClickMenu(MTYPE type)
 {
 	DirectX::XMFLOAT2 pos = Input::getMousePositionLH();
 	m_background.setMesh(MeshHandler::getPlainRectangle());
-	m_background.setPos(pos.x, pos.y, 0.1);
+	m_background.setPos(pos.x, pos.y, 0.1f);
 	m_background.setWidth(150);
 	m_background.setHeight(150);
 	
 	m_info.setAllignment(TXT::Center);
 	m_info.setRelative(Text::BL);
-	m_info.setScale(0.4);
+	m_info.setScale(0.4f);
 
 	switch (type)
 	{
@@ -37,12 +37,35 @@ ClickMenu::~ClickMenu()
 	m_buttons.clear();
 }
 
+void ClickMenu::ClearSubText()
+{
+	m_texts.clear();
+}
+
+void ClickMenu::PushText(const std::string & row)
+{
+	Text _row;
+	_row.setAllignment(TXT::Center);
+	_row.setRelative(Text::BL);
+	_row.setScale(0.4f);
+	_row.setTextString(row);
+
+	m_texts.push_back(_row);
+}
+
 void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 {
-	m_background.setScreenPos(pos.x, pos.y, 0.1);
+	m_background.setScreenPos(pos.x, pos.y, 0.1f);
 	m_info.setPosition(
 		(pos.x + m_background.getWidth() / 2),
 			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info) * m_info.getScale()) / 2);
+	int counter = 0;
+	for (auto & t : m_texts)
+	{
+		t.setPosition(
+			(pos.x + m_background.getWidth() / 2),
+			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * counter++ * m_info.getScale()) / 2);
+	}
 
 	m_buttons[0]->setScreenPos(
 		pos.x + 10.0f,

@@ -143,7 +143,7 @@ float4 main(INPUT input) : SV_Target
 		{
 			//Diffuse 
 			float3 pointLightToObject = normalize(pointLPos[i].xyz - wordPos);
-			diffuseForPointLight = diffuseSample * max(dot(normal, pointLightToObject), 0.0f);
+            diffuseForPointLight = diffuseSample.xyz * max(dot(normal, pointLightToObject), 0.0f);
 			//Specular
 			halfWayDirPointLight = normalize(pointLightToObject + viewer);
 			specPointLight = pow(max(dot(normal, halfWayDirPointLight), 0.0f), 32.0f);
