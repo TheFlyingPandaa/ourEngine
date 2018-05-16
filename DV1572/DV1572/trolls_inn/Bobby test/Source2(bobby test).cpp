@@ -82,8 +82,7 @@ void InitModels()
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
-	bool working;
-	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);
+	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead();
 	FileReader::GameSaveStates gameLoadState = FileReader::StatesFileRead();
 
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
@@ -97,7 +96,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	
 
 	Window wnd(hInstance);
-	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen, working);
+	wnd.Init(static_cast<int>(gameSettings.width), static_cast<int>(gameSettings.height), "Trolls_inn", gameSettings.fullscreen);
 	
 	
 	InitModels();

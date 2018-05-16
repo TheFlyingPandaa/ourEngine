@@ -7,13 +7,12 @@ struct DS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float4 worldPos : WORLDPOS;
-    float2 tex : TEXCOORD;
+    float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;
 	float lIndex : LIGHTINDEX;
 
-	// TODO: change/add other stuff
 };
 
 // Output control point
@@ -33,7 +32,6 @@ struct HS_CONSTANT_DATA_OUTPUT
 {
 	float EdgeTessFactor[3]			: SV_TessFactor; // e.g. would be [4] for a quad domain
 	float InsideTessFactor			: SV_InsideTessFactor; // e.g. would be Inside[2] for a quad domain
-	// TODO: change/add other stuff
 };
 
 #define NUM_CONTROL_POINTS 3

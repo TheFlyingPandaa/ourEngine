@@ -14,7 +14,6 @@ namespace FileReader
 		float camX, camY, camZ;
 	};
 
-	GameSettings SettingsFileRead(bool &working ,const std::string path = "trolls_inn/settings.txt");
 	GameSettings SettingsFileRead(const std::string path = "trolls_inn/settings.txt");
 
 	GameSaveStates StatesFileRead(const std::string path = "trolls_inn/stateSave.txt");
