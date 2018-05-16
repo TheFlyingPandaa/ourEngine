@@ -10,7 +10,7 @@ public:
 	{
 		FUR,
 		CHA
-	};
+	} m_type;
 
 
 private:

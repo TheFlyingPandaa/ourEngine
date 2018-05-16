@@ -42,6 +42,14 @@ void MasterAI::_generateCustomer()
 
 void MasterAI::_trollInnChase()
 {
+	if (m_InnTroll->getCancelFlag())
+	{
+		m_InnTroll->setCancelFlag(false);
+		delete currentChase;
+		currentChase = nullptr;
+		return;
+	}
+
 	m_InnTroll->setSpeed(4.0f);
 	static float lastPathCounter = 0;
 	// Grab the path if it is done
@@ -56,7 +64,7 @@ void MasterAI::_trollInnChase()
 		XMFLOAT2 custPos = m_customers[currentChase->charIndex]->getPosition();
 		XMFLOAT2 deltaPos = XMFLOAT2(abs(custPos.x - trollPos.x), abs(custPos.y - trollPos.y));
 
-		if ((deltaPos.x > 0.5f || deltaPos.y > 0.5f ))
+		if ((deltaPos.x > 1.0f || deltaPos.y > 1.0f ))
 		{
 			if (lastPathCounter >= 25)
 			{
@@ -90,7 +98,7 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	m_inn = inn;
 	m_InnTroll = new Staff(); 
 	m_showMenu = false;
-	m_customerMenu = new ClickMenu(ClickMenu::MTYPE::FUR);
+	m_customerMenu = new ClickMenu(ClickMenu::MTYPE::CHA);
 	currentChase = nullptr;
 }
 
@@ -116,16 +124,45 @@ Staff * MasterAI::getTroll()
 	return m_InnTroll; 
 }
 
+void MasterAI::CharacterMenu()
+{
+	if (Input::isMouseLeftPressed(false))
+	{
+		if (m_customerMenu->ButtonClicked() == 1)
+		{
+			if (currentChase)
+			{
+				delete currentChase;
+				currentChase = nullptr;
+			}
+			m_InnTroll->clearWalkingQueue();
+			currentChase = new TROLL_CHASE;
+			currentChase->customerpath = XMFLOAT2(round_n3(m_customers[m_selectedCustomer]->getPosition().x, 0), round_n3(m_customers[m_selectedCustomer]->getPosition().y, 0));
+			currentChase->charIndex = m_selectedCustomer;
+
+			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+
+		}
+		else if (m_customerMenu->ButtonClicked() == -2)
+		{
+			m_showMenu = false;
+
+			m_customers[m_selectedCustomer]->getShape()->setColor(1, 1, 1);
+			m_selectedCustomer = -1;
+		
+		}
+		
+	}
+	
+}
+
 void MasterAI::Update(Camera* cam)
 {
-	if (m_showMenu)
-	{
-		if (Input::isMouseLeftPressed() && m_customerMenu->ButtonClicked() == 2)
-			m_showMenu = false;
-		return;
-	}
-	//InGameConsole::pushString(std::to_string(m_customers.size()));
 
+	if (m_showMenu)
+		CharacterMenu();
+
+	// If there is a chase right now
 	if(currentChase)
 		_trollInnChase();
 
@@ -269,6 +306,8 @@ void MasterAI::Update(Camera* cam)
 				InGameConsole::pushString("You can't kill an\nleaving customer!");
 				delete currentChase;
 				currentChase = nullptr;
+				// Reset the color
+				m_customers[leavingCustomersIDs[i]]->getShape()->setColor(1, 1, 1);
 			}
 
 		}
@@ -339,7 +378,7 @@ void MasterAI::PickCustomers()
 void MasterAI::PickedCustomerShape(Shape * shape)
 {
 	XMFLOAT3 position = shape->getPosition();
-	
+	static int lastSelectedCustomer = -1;
 	if (currentChase)
 	{
 		delete currentChase;
@@ -356,15 +395,39 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 		if (deltaPos.x < 0.1 && deltaPos.y < 0.1)
 		{
 			m_showMenu = true;
-			m_customerMenu->setInfo(m_customers[i]->getInfoText());
-			m_customerMenu->setPos(Input::getMousePositionLH());
+			if (lastSelectedCustomer == -1)
+			{
+				lastSelectedCustomer = i;
+				m_selectedCustomer = i;
+				m_selectedCustomerID = m_customers[i]->getUniqueIndex();
+				
+				m_customers[i]->getShape()->setColor(0, 1, 0);
+			}
+			else
+			{
+				if (m_customers[lastSelectedCustomer]->getUniqueIndex() != m_selectedCustomerID)
+				{
+					
+				}
+				else
+				{
+					m_customers[lastSelectedCustomer]->getShape()->setColor(1, 1, 1);
+					lastSelectedCustomer = i;
+					m_selectedCustomer = i;
+					m_selectedCustomerID = m_customers[i]->getUniqueIndex();
 
-			/*m_InnTroll->clearWalkingQueue();
-			currentChase = new TROLL_CHASE;
-			currentChase->customerpath =XMFLOAT2(round_n3(customerPos.x, 0), round_n3(customerPos.y, 0));
-			currentChase->charIndex = i;
+					m_customers[i]->getShape()->setColor(0, 1, 0);
+				}
+				
+			}
+
+			m_customerMenu->setInfo(m_customers[i]->getInfoText());
+		
+			XMINT2 winSize = Input::getWindowSize();
+			m_customerMenu->setPos(XMFLOAT2((winSize.x / 2.0f) - 200.0f, winSize.y *0.01f));
 			
-			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));*/
+
+			
 
 
 		}

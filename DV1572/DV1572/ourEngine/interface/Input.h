@@ -8,6 +8,7 @@ class Input
 private:
 	static bool m_keys[256];
 	static bool m_mouseKeys[3];
+	static bool m_mouseKeys2[3];
 	static DirectX::XMFLOAT2 m_mousePos;
 	static float m_scrollDelta;
 	static DirectX::XMINT2 m_windowSize;

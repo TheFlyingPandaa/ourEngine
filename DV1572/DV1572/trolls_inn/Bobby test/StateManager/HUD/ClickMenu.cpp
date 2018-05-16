@@ -1,9 +1,11 @@
 #include "ClickMenu.h"
 
 ClickMenu::ClickMenu(MTYPE type)
+	: m_type(type)
 {
 	DirectX::XMFLOAT2 pos = Input::getMousePositionLH();
 	m_background.setMesh(MeshHandler::getPlainRectangle());
+	
 	m_background.setPos(pos.x, pos.y, 0.1);
 	m_background.setWidth(150);
 	m_background.setHeight(150);
@@ -12,13 +14,16 @@ ClickMenu::ClickMenu(MTYPE type)
 	m_info.setRelative(Text::BL);
 	m_info.setScale(0.4);
 
-	switch (type)
+	switch (m_type)
 	{
 	case ClickMenu::FUR:
 		_initFurnitureMenu();
 		break;
 	case ClickMenu::CHA:
 		_initCharacterMenu();
+		m_background.GetMesh()->setDiffuseTexture("trolls_inn/Resources/HUD/MainHud/ButtonBackground.png");
+		m_background.setWidth(400);
+		m_background.setHeight(115);
 		break;
 	}
 
@@ -39,19 +44,20 @@ ClickMenu::~ClickMenu()
 
 void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 {
+
 	m_background.setScreenPos(pos.x, pos.y, 0.1);
 	m_info.setPosition(
 		(pos.x + m_background.getWidth() / 2),
-			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info) * m_info.getScale()) / 2);
+			pos.y + m_background.getHeight()- DirectX::XMVectorGetY(Text::getStringSize(&m_info) * m_info.getScale()) / 2);
 
 	m_buttons[0]->setScreenPos(
 		pos.x + 10.0f,
 		pos.y + 10.0f
 	);
-	for (size_t i = 1; i < m_buttons.size() - 1; i++)
+	for (size_t i = 1; i < m_buttons.size(); i++)
 	{
 		m_buttons[i]->setScreenPos(
-			(pos.x + m_background.getWidth() / m_buttons.size()) * i,
+			(pos.x + m_background.getWidth() / (m_buttons.size()*4.0f)) * i,
 		pos.y + 10.0f
 		);
 	}
@@ -147,5 +153,27 @@ void ClickMenu::_initFurnitureMenu()
 
 void ClickMenu::_initCharacterMenu()
 {
+	Mesh * m = new Mesh();
+	m->MakeRectangle();
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/killIcon.png");
+
+	RectangleShape * r = new RectangleShape();
+	r->setMesh(m);
+	r->setWidth(63*2);
+	r->setHeight(44*2);
+
+	m_mesh.push_back(m);
+	m_buttons.push_back(r);
+
+	m = new Mesh();
+	m->MakeRectangle();
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/stealcon.png");
+	r = new RectangleShape();
+	r->setMesh(m);
+	r->setWidth(63*2);
+	r->setHeight(44*2);
+
+	m_mesh.push_back(m);
+	m_buttons.push_back(r);
 
 }

@@ -223,6 +223,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
   		wnd.Present();
 		wnd.FullReset();
 
+
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
 			std::string title;

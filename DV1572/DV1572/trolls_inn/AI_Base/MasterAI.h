@@ -26,8 +26,7 @@ private:
 	bool m_customerSpawned;
 
 	Mesh			m_thinkingMesh;
-	bool m_showMenu;
-	ClickMenu* m_customerMenu;
+	
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -42,13 +41,22 @@ private:
 	void _swap(int index1, int index2, std::vector<int>& ID);
 
 	void _generateCustomer();
+
+	bool m_showMenu;
+	ClickMenu* m_customerMenu;
+
 	struct TROLL_CHASE
 	{
 		XMFLOAT2 customerpath;
 		int charIndex;
 		int pathReturn;
 	}* currentChase;
+
+	int m_selectedCustomer;
+	int m_selectedCustomerID;
+
 	void _trollInnChase();
+	void CharacterMenu();
 
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
