@@ -1,16 +1,12 @@
 #include "TutorialEvent.h"
 
-void TutorialEvent::CallFunction(void(TutorialEvent::*func)())
-{
-	(*this.*func)();
-}
-
 TutorialEvent::TutorialEvent(Inn * inn, RoomCtrl * roomctrl) : Event(inn,roomctrl)
 {
 
-	m_queue.push(&TutorialEvent::_BuildReception);
-	m_queue.push(&TutorialEvent::_BuildReceptionFurniture);
-
+	/*m_queue.push(&TutorialEvent::_BuildReception);
+	m_queue.push(&TutorialEvent::_BuildReceptionFurniture);*/
+	q.Push(&TutorialEvent::_BuildReception);
+	q.Push(&TutorialEvent::_BuildReceptionFurniture);
 }
 
 TutorialEvent::~TutorialEvent()
@@ -19,14 +15,16 @@ TutorialEvent::~TutorialEvent()
 
 void TutorialEvent::Update()
 {
-	if (!m_queue.empty())
+	if (!q.Empty())
 	{
-		CallFunction(m_queue.front());
+		//CallFunction(q.q.front());
+		q.Execute(this);
 	}
 	
-	if (m_queue.empty())
+	if (q.Empty())
 	{
 		exitState();
+		InGameConsole::RemoveStringEvent();
 	}
 }
 
@@ -44,7 +42,7 @@ void TutorialEvent::_BuildReception()
 		if (room->getRoomType() == RoomType::reception)
 		{
 			InGameConsole::pushString("Snyggt byggt, frasig reception");
-			m_queue.pop();
+			q.Pop();
 		}
 	}
 	
@@ -63,7 +61,7 @@ void TutorialEvent::_BuildReceptionFurniture()
 			if (furniture->WhatType() == "Reception")
 			{
 				InGameConsole::pushString("Snyggt byggt, frasig reception");
-				m_queue.pop();
+				q.Pop();
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 
 void Event::exitState()
 {
-
+	m_exit = true;
 }
 
 Event::Event(Inn * inn, RoomCtrl * roomctrl)
