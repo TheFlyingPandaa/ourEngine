@@ -46,13 +46,13 @@ void MasterAI::_trollInnChase()
 	static float lastPathCounter = 0;
 	// Grab the path if it is done
 	if (currentChase->pathReturn == 0) 
-		currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+		currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(static_cast<int32_t>(currentChase->customerpath.x), static_cast<int32_t>(currentChase->customerpath.y)));
 
 	// Now when we have the path we need to check if its valid
 	if (currentChase->pathReturn == 1)
 	{
 		lastPathCounter++;
-		XMFLOAT2 trollPos(round_n3(m_InnTroll->getPosition().x,0.0f), round_n3(m_InnTroll->getPosition().y, 0.0f));
+		XMFLOAT2 trollPos(round_n3(m_InnTroll->getPosition().x,0), round_n3(m_InnTroll->getPosition().y, 0));
 		XMFLOAT2 custPos = m_customers[currentChase->charIndex]->getPosition();
 		XMFLOAT2 deltaPos = XMFLOAT2(abs(custPos.x - trollPos.x), abs(custPos.y - trollPos.y));
 
@@ -63,7 +63,7 @@ void MasterAI::_trollInnChase()
 				lastPathCounter = 0;
 				m_InnTroll->clearWalkingQueue();
 
-				currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+				currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(static_cast<int32_t>(currentChase->customerpath.x), static_cast<int32_t>(currentChase->customerpath.y)));
 				currentChase->customerpath = custPos;
 			}
 			

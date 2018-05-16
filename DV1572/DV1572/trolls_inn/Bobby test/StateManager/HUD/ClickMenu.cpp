@@ -4,13 +4,13 @@ ClickMenu::ClickMenu(MTYPE type)
 {
 	DirectX::XMFLOAT2 pos = Input::getMousePositionLH();
 	m_background.setMesh(MeshHandler::getPlainRectangle());
-	m_background.setPos(pos.x, pos.y, 0.1);
+	m_background.setPos(pos.x, pos.y, 0.1f);
 	m_background.setWidth(150);
 	m_background.setHeight(150);
 	
 	m_info.setAllignment(TXT::Center);
 	m_info.setRelative(Text::BL);
-	m_info.setScale(0.4);
+	m_info.setScale(0.4f);
 
 	switch (type)
 	{
@@ -39,7 +39,7 @@ ClickMenu::~ClickMenu()
 
 void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 {
-	m_background.setScreenPos(pos.x, pos.y, 0.1);
+	m_background.setScreenPos(pos.x, pos.y, 0.1f);
 	m_info.setPosition(
 		(pos.x + m_background.getWidth() / 2),
 			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info) * m_info.getScale()) / 2);

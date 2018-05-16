@@ -160,7 +160,7 @@ std::vector<float> HeightMap::DiamondSqaure::createDiamondSquare(int mapSize, in
 	/*for (int z = 0; z < this->mapSize; z += stepSize)
 		for (int x = 0; x < this->mapSize; x += stepSize)
 			setValue(x, z, 10);*/
-	int mountainHeight = 30;
+	float mountainHeight = 30.0f;
 	for (int z = 0; z < this->mapSize; z += stepSize)
 		this->setValue(0, z, mountainHeight);
 	for (int z = 0; z < this->mapSize; z += stepSize)
@@ -221,9 +221,9 @@ HeightMap::HeightMap()
 		}
 	}
 	rs.setMesh(MLP::GetInstance().GetMesh(MESH::TERRAIN));
-	rs.setPos(-48, -5.04, -49.4);
+	rs.setPos(-48.0f, -5.04f, -49.4f);
 	rs.setScale(1, 1, 1);
-	rs.setUVScale(1.0f);
+	rs.setUVScale(1);
 
 	MLP::GetInstance().LoadMeshRectangle(MESH::WATER);
 	MLP::GetInstance().GetMesh(MESH::WATER)->setDiffuseTexture("trolls_inn/Resources/water.jpg");
