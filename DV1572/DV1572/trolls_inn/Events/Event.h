@@ -2,21 +2,23 @@
 #include "../../trolls_inn/AI_Base/Inn.h"
 #include "../../InGameConsole.h"
 
-template <class t>
+template <class t, typename r>
 class CallQueue
 {
-	void _Execute(void (t::*func)(), t* c)
+	r _Execute(void (t::*func)(), t* c)
 	{
-		(*c.*func)();
+		return (*c.*func)();
 	}
-	std::queue<void(t::*)()> queue;
+	std::queue<r(t::*)()> queue;
 public:
-	void Execute(t * type)
+	
+	r Execute(t * type)
 	{
-		if (!empty())
+		if (!Empty())
 		{
-			_Execute(queue.front(), type);
+			return _Execute(queue.front(), type);
 		}
+		return r();
 	}
 	bool Empty()
 	{
@@ -30,6 +32,12 @@ public:
 	{
 		queue.pop();
 	}
+	size_t Size()
+	{
+		return queue.size();
+	}
+
+	
 };
 
 class Event
