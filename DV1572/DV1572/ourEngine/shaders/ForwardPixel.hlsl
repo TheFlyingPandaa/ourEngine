@@ -59,14 +59,7 @@ float4 main(INPUT input) : SV_Target
 
 
 	uint index = round(input.lIndex);
-	float4 lIndex;
-	lIndex.a = 1.0f;
-
-	lIndex.r = index % 256;
-	index /= 256;
-	lIndex.g = index % 256;
-	index /= 256;
-	lIndex.b = index % 256;
+	
 	float3 finalColorForSun;
 	//SUN//
 
@@ -143,9 +136,9 @@ float4 main(INPUT input) : SV_Target
 	float att = 0;
 	float specLevelPointLight = specLevel * 0.2f;
 
-	int fIndex = (int)(lIndex.x + (lIndex.y * 256) + (lIndex.z * 256 * 256) + 0.5f);
+	int fIndex = index;
 
-	[unroll(50)]		for (int i = 0; i < nrOfLights.r; i++)
+	for (int i = 0; i < nrOfLights.r; i++)
 	{
 		int index = (int)(pointLColor[i].a + 0.5f);
 		if (index == fIndex)
