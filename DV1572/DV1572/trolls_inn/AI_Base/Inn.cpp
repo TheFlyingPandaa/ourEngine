@@ -200,6 +200,7 @@ Text * Inn::GetText()
 
 void Inn::CustomerReview(Attributes review)
 {
+	std::cout << "A customer added " << review.GetStat() << " stats." << std::endl;
 	if (m_innAttributes.GetStat() > 0 && review.GetStat() < 0)
 	{
 		m_innAttributes.AddStat(review.GetStat());

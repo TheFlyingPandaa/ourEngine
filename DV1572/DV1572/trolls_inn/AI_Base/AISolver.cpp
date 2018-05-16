@@ -29,6 +29,11 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		int price = 0;
 		std::stringstream ss;
 
+		if (Waiting == state)
+		{
+			customer.PopToNextState();
+			state = customer.GetState();
+		}
 		// Get the seat/bed ID to lock it to the customer
 		switch (state)
 		{
@@ -50,7 +55,7 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		inn->Deposit(price);
 		customer.SetAvailableSpotFound(true);
 	}
-	else
+	else if (!customer.GetWaitingForSpot())
 	{
 		// Get a path to a new room of the same type (?)
 		/*CustomerState customerState = customer.GetState();
@@ -98,9 +103,7 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 		// Leave inn (?)
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
-		customer.PopToNextState();
-		customer.PopToNextState();
-		customer.PopToNextState();
+		customer.PopStateQueue();
 	}
 	else
 	{
@@ -404,7 +407,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				// Check if there is an open spot
 				_checkSpotInRoom(inn, customer);
 			}
-			if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+			if (customer.GetWaitingForSpot() && m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
 				_doWaiting(customer, inn);
 			}

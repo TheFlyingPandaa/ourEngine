@@ -23,9 +23,9 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	bool furnitureFound = false;
 
 	XMFLOAT3 roomPos; 
-	if (customerNeed == SleepAction)
+	if (customerNeed == Sleeping)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
-	else if (customerNeed == EatAction)
+	else if (customerNeed == Eating)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
@@ -173,6 +173,12 @@ CustomerState Customer::GetWaitingToDoState() const
 void Customer::PopToNextState()
 {
 	m_stateQueue.pop();
+}
+
+void Customer::PopStateQueue()
+{
+	while (0 < m_stateQueue.size())
+		m_stateQueue.pop();
 }
 
 void Customer::setOwnedFurniture(Furniture * furnitureOwned)

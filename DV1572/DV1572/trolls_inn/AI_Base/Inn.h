@@ -21,7 +21,6 @@ private:
 
 	// Inn stuff
 	Attributes m_innAttributes;
-	//Attributes m_innUpdateAttributes;
 	int m_foodPrice;
 	int m_sleepPrice;
 	int m_drinkPrice;
@@ -34,8 +33,6 @@ private:
 	int m_AngryCustomers = 0;
 	int m_angryCustomerCap = 40;
 
-	//void _addStatsToInn(Attributes type);
-	//void _checkInnStatUpdate();
 	Economy*		m_economy;
 	int				m_staffSalary = 420;
 	int				m_rent;

@@ -34,13 +34,42 @@ void MasterAI::_generateCustomer()
 	m_nextCustomer = m_cFC.Update(m_inn->GetInnAttributes());
 }
 
+void MasterAI::_spawnCustomer()
+{
+	m_nextCustomer->RestartClock();
+	m_customers.push_back(m_nextCustomer);
+	m_nextCustomer = nullptr;
+	m_customerSpawned = true;
+	m_customer_start = m_clock.now();
+	m_customersSpawned++;
+	
+	if (Fast != m_spawnRatio)
+	{
+		if (CUSTOMER_FAST_RATIO_LIMIT < m_customersSpawned)
+		{
+			std::cout << "FAST!" << std::endl;
+			m_spawnRatio = Fast;
+		}
+		else if (Slow == m_spawnRatio)
+		{
+			if (CUSTOMER_MEDIUM_RATIO_LIMIT < m_customersSpawned)
+			{
+				std::cout << "MEDIUM!" << std::endl;
+				m_spawnRatio = Medium;
+			}
+		}
+	}
+}
+
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	: m_solver(roomCtrl,grid)
 {
 	m_customer_start = m_start = m_clock.now();
 	m_customerSpawned = true;
+	m_customersSpawned = 0;
+	m_spawnRatio = Slow;
 	m_inn = inn;
-	m_InnTroll = new Staff(); 
+	m_InnTroll = new Staff();
 }
 
 MasterAI::~MasterAI()
@@ -59,6 +88,7 @@ MasterAI::~MasterAI()
 			delete customer;
 	delete m_InnTroll; 
 }
+
 Staff * MasterAI::getTroll()
 {
 	return m_InnTroll; 
@@ -85,37 +115,26 @@ void MasterAI::Update(Camera* cam)
 	if (!m_customerSpawned)
 	{
 		double duration = m_nextCustomer->GetTimeSpan().count();
-		if (duration > CHECK_CUSTOMER_SPAWN)
+		if (m_nextCustomer->GetRace() == Elf)
 		{
-			if (m_nextCustomer->GetRace() == Elf)
+			if (duration > ((ELF_SPAWN_RATIO * CHECK_CUSTOMER_SPAWN) / (m_spawnRatio + 1)))
 			{
-				if (duration > 30)
-				{
-					std::stringstream ss;
-					ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					InGameConsole::pushString(ss.str());
-					m_nextCustomer->RestartClock();
-					m_customers.push_back(m_nextCustomer);
-					m_nextCustomer = nullptr;
-					m_customerSpawned = true;
-					m_customer_start = m_clock.now();
-				}
+				std::stringstream ss;
+				ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				InGameConsole::pushString(ss.str());
+				_spawnCustomer();
 			}
-			else
+		}
+		else
+		{
+			if (duration > ((DWARF_SPAWN_RATIO * CHECK_CUSTOMER_SPAWN) / (m_spawnRatio + 1)))
 			{
-				if (duration > 15)
-				{
-					std::stringstream ss;
-					ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					InGameConsole::pushString(ss.str());
-					m_nextCustomer->RestartClock();
-					m_customers.push_back(m_nextCustomer);
-					m_nextCustomer = nullptr;
-					m_customerSpawned = true;
-					m_customer_start = m_clock.now();
-				}
+				std::stringstream ss;
+				ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				InGameConsole::pushString(ss.str());
+				_spawnCustomer();
 			}
 		}
 	}
@@ -239,7 +258,7 @@ void MasterAI::Update(Camera* cam)
 				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
-				this->m_inn->CustomerReview(leavingCustomer->GetAttributes());
+				m_inn->CustomerReview(leavingCustomer->GetAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}

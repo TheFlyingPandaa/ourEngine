@@ -103,6 +103,7 @@ bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 	CustomerState GetState() const;
 	CustomerState GetWaitingToDoState() const;
 	void PopToNextState();
+	void PopStateQueue();
 	
 	void setOwnedFurniture(Furniture* furnitureOwned); 
 
