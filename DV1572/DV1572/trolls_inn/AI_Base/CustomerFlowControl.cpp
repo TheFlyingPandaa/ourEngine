@@ -65,6 +65,8 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 		break;
 	}
 
+	std::cout << "RANDOM CUSTOMER SPAWNED" << std::endl;
+
 	return newCustomer;
 }
 

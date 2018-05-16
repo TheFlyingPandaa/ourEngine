@@ -132,6 +132,7 @@
     </ClCompile>
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
+    <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />
+    <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\MeterBar.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\BuildState.h" />
     <ClInclude Include="ourEngine\core\Audio\Audio.h" />
@@ -446,6 +448,7 @@
     <Text Include="trolls_inn\Resources\HUD\HUDDesc.txt" />
     <Text Include="trolls_inn\Resources\Aaakali.txt" />
     <Text Include="trolls_inn\Resources\cube.txt" />
+    <Text Include="trolls_inn\Resources\HUD\MainHud\LoseHud.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="trolls_inn\Resources\Untitled.bmp" />

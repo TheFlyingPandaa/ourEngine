@@ -7,11 +7,14 @@
 #include <vector>
 #include <chrono>
 #include "../../InGameConsole.h"
+#include "../Bobby test/StateManager/HUD/ClickMenu.h"
 
 const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
 const int CHECK_CUSTOMER_SPAWN = 5;
 const int DWARF_SPAWN_RATIO = 2;
 const int ELF_SPAWN_RATIO = 5;
+const int CUSTOMER_SUPERFAST_RATIO_LIMIT = 40;//80;
+const int CUSTOMER_FASTER_RATIO_LIMIT = 25;//40;
 const int CUSTOMER_FAST_RATIO_LIMIT = 15;
 const int CUSTOMER_MEDIUM_RATIO_LIMIT = 5;
 
@@ -19,7 +22,9 @@ enum CustomerSpawnRatios
 {
 	Slow,
 	Medium,
-	Fast
+	Fast,
+	Faster,
+	SuperFast
 };
 
 class MasterAI
@@ -31,10 +36,12 @@ private:
 	std::vector<Customer*> m_customers;
 	std::vector<Customer*> m_leavingCustomers;
 	std::vector<Staff> m_staff;
-	Staff* m_InnTroll; 
+	Staff* m_InnTroll;
 	CustomerFlowControl m_cFC;
 
-	Mesh			m_thinkingMesh;
+	Mesh m_thinkingMesh;
+	bool m_showMenu;
+	ClickMenu* m_customerMenu;
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -53,6 +60,13 @@ private:
 
 	void _generateCustomer();
 	void _spawnCustomer();
+	struct TROLL_CHASE
+	{
+		XMFLOAT2 customerpath;
+		int charIndex;
+		int pathReturn;
+	}* currentChase;
+	void _trollInnChase();
 
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
@@ -60,7 +74,16 @@ public:
 	
 	Staff* getTroll(); 
 
+	// Move the time point with a specified duration
+	// Use to remove the impact pausing the game causes
+	std::chrono::high_resolution_clock::time_point SaveTimePoint() const;
+	void UpdateCustomerSpawnTimePoint(std::chrono::duration<double, std::ratio<1, 1>> duration);
+	void UpdateCustomerNeedsTimePoint(std::chrono::duration<double, std::ratio<1, 1>> duration);
+
 	void Update(Camera* cam);
+
+	void PickCustomers();
+	void PickedCustomerShape(Shape* shape);
 	void Draw();
 
 	// TEMP

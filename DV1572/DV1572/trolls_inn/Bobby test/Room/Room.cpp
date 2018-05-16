@@ -162,13 +162,17 @@ void Room::Draw()
 			tile->getQuad().Draw();
 	}
 
-	for (auto& wall : m_allWalls)
+	if (MLP::GetInstance().IsReady(MESH::WALL))
 	{
-		if (wall)
+		for (auto& wall : m_allWalls)
 		{
-			wall->Draw();
+			if (wall)
+			{
+				wall->Draw();
+			}
 		}
 	}
+	
 
 	for (auto &l : m_lights)
 	{
@@ -210,6 +214,48 @@ void Room::CastShadow()
 void Room::setIsBuildingDoor(bool tje)
 {
 	m_isBuildingDoor = tje;
+}
+
+bool Room::CheckRoomComplete()
+{
+	if (m_roomType == RoomType::bedroom)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if (object->WhatType() == "Bed")
+			{
+				return true;
+			}
+		}
+	}
+	else if(m_roomType == RoomType::kitchen)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if(object->WhatType() == "Stove")
+			{
+				return true;
+			}
+			
+		}
+	}
+	else if(m_roomType == RoomType::bar)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if (object->WhatType() == "Bar")
+			{
+				return true;
+			}
+
+		}
+	}
+	else
+	{
+		return true;
+	}
+
+	return false;
 }
 
 float Room::getDistance(Tile * t1, Tile * t2)
@@ -451,6 +497,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 void Room::AddRoomObject(Furniture * fut)
 {
 	Furniture * temp = fut->MakeCopy();
+	temp->setLightIndex(this->m_index);
 	m_roomObjects.push_back(temp);
 	m_roomObjects[m_roomObjects.size() - 1]->setIndex(m_roomObjects.size()); 
 }

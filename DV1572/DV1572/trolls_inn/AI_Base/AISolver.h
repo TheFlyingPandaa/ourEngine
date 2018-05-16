@@ -49,5 +49,6 @@ public:
 
 	RoomCtrl* getRoomCtrl();
 
+	int RequestPath(Character& character, XMINT2 target);
 	int RequestPath(Character& character, RoomType targetRoom);
 };

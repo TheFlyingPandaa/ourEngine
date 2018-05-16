@@ -30,12 +30,16 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
 
+	if (roomPos.x == -1)
+	{
+		return false;
+	}
 	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
 
 	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
 	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
 
-	for (int i = 0; i < nrOfFurniture; i++)
+	for (int i = 0; i < nrOfFurniture && !furnitureFound; i++)
 	{
 		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
@@ -45,7 +49,7 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
 			furnitureFound = true;
-			std::cout << "Furniture occupied!" << std::endl;
+			std::cout << m_ownedFurniture->WhatType() << " occupied!" << std::endl;
 		}
 	}
 
@@ -110,10 +114,10 @@ void Customer::releaseFurniture()
 {
 	if (m_ownedFurniture != nullptr)
 	{
+		std::cout << m_ownedFurniture->WhatType() << " released!" << std::endl;
 		m_ownedFurniture->releaseOwnerShip();
 		m_ownedFurniture->setIsBusy(false);
 		m_ownedFurniture = nullptr;
-		std::cout << "Furniture released!" << std::endl;
 	}
 }
 
@@ -397,6 +401,16 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 	return m_time_span;
 }
 
+std::string Customer::getInfoText() const
+{
+	std::string returnStr;
+	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Type ";
+	returnStr += GetRaceStr();
+	returnStr += "\n";
+	return returnStr;
+}
+
 void Customer::RestartClock()
 {
 	m_start = m_clock.now();
@@ -408,4 +422,9 @@ void Customer::Update()
 		DisableThinkingEmjois();
 
 	Character::Update();
+}
+
+void Customer::CheckForPicking()
+{
+	getHitBox().CheckPick();
 }

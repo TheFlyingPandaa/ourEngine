@@ -31,7 +31,7 @@ public:
 
 	int				getLevel();
 	void			setLevel(int amount);
-	void			AddLevel(int amount = 1);
+	int				AddLevel(int gold,int amount = 1);
 	void			setIndex(int index); 
 	void			setOwner(Customer* owner); 
 

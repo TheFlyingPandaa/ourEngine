@@ -2,6 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "Table.h"
+#include "Bar.h"
+#include "Bed.h"
+#include "Chair.h"
 
 Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
 	: m_meshId(mesh)
@@ -93,9 +97,14 @@ void Furniture::setLevel(int amount)
 	p_level = amount;
 }
 
-void Furniture::AddLevel(int amount)
+int Furniture::AddLevel(int gold,int amount)
 {
+	if ((p_level + 1) * 100 > gold)
+	{
+		return 0;
+	}
 	p_level += amount;
+	return p_level * 100;
 }
 
 void Furniture::setIndex(int index)
@@ -228,42 +237,42 @@ std::string Furniture::getInfo(int index)
 	case TABLE_LOW:
 		str += "Simple Table\n";
 		str += "+1 Simple\n";
-		str += "$100";
+		str += "$" + std::to_string(Table::getPrice(true));
 		break;
 	case TABLE_HIGH:
 		str += "Fancy Table\n";
 		str += "+1 Fancy\n";
-		str += "$200";
+		str += "$" + std::to_string(Table::getPrice(false));
 		break;
 	case BED_HIGH:
 		str += "Fancy Bed\n";
 		str += "+8 Fancy\n";
-		str += "$1000";
+		str += "$" + std::to_string(Bed::getPrice(false));;
 		break;
 	case BED_LOW:
 		str += "Simple Bed\n";
 		str += "+8 Simple\n";
-		str += "$100";
+		str += "$" + std::to_string(Bed::getPrice(true));;
 		break;
 	case BAR_HIGH:
 		str += "Fancy Bar\n";
 		str += "+4 Fancy\n";
-		str += "$1000";
+		str += "$" + std::to_string(Bar::getPrice(false));
 		break;
 	case BAR_LOW:
 		str += "Simple Bar\n";
 		str += "+1 Simple\n";
-		str += "$100";
+		str += "$" + std::to_string(Bar::getPrice(true));;
 		break;
 	case CHAIR_HIGH:
-		str += "Fancy Bar\n";
+		str += "Fancy Chair\n";
 		str += "+4 Fancy\n";
-		str += "$1000";
+		str += "$" + std::to_string(Chair::getPrice(false));;
 		break;
 	case CHAIR_LOW:
-		str += "Simple Bar\n";
+		str += "Simple Chair\n";
 		str += "+1 Simple\n";
-		str += "$100";
+		str += "$" + std::to_string(Bar::getPrice(true));;
 		break;
 	case STOVE:
 		str += "Stove\n";
@@ -271,14 +280,14 @@ std::string Furniture::getInfo(int index)
 		str += "$100";
 		break;
 	case RECEPTION_HIGH:
-		str += "Fancy Bar\n";
+		str += "Fancy Reception\n";
 		str += "+4 Fancy\n";
-		str += "$1000";
+		str += "$" + std::to_string(Bar::getPrice(false));;
 		break;
 	case RECEPTION_LOW:
-		str += "Simple Bar\n";
+		str += "Simple Reception\n";
 		str += "+1 Simple\n";
-		str += "$100";
+		str += "$" + std::to_string(Bar::getPrice(true));;
 		break;
 	default:
 		str = "";

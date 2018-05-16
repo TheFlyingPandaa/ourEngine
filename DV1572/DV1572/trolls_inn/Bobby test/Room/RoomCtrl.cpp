@@ -1,11 +1,6 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
-#include <iostream>
-
-void RoomCtrl::setTileMesh(Mesh * mesh, RoomType roomType)
-{
-	m_tileMesh[roomType] = mesh;
-}
+#include "../../Mesh Manager/MeshLoaderPlus.h"
 
 int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
@@ -122,6 +117,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
 	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
+	if (index == -1) return;
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
@@ -257,37 +253,31 @@ void RoomCtrl::_printRoomConnections() const
 
 RoomCtrl::RoomCtrl()
 {
+	MLP::GetInstance().LoadMeshRectangle(MESH::KITCHENTILE);
+	MLP::GetInstance().GetMesh(MESH::KITCHENTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/KitchenTile.jpg");
+	MLP::GetInstance().GetMesh(MESH::KITCHENTILE)->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+
+	MLP::GetInstance().LoadMeshRectangle(MESH::BEDROOMTILE);
+	MLP::GetInstance().GetMesh(MESH::BEDROOMTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
+	MLP::GetInstance().GetMesh(MESH::BEDROOMTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+
+	MLP::GetInstance().LoadMeshRectangle(MESH::RECEPTIONTILE);
+	MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
+	MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+
+	MLP::GetInstance().LoadMeshRectangle(MESH::HALLWAYTILE);
+	MLP::GetInstance().GetMesh(MESH::HALLWAYTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
+	MLP::GetInstance().GetMesh(MESH::HALLWAYTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+
+	MLP::GetInstance().LoadMeshRectangle(MESH::WOODTILE);
+	MLP::GetInstance().GetMesh(MESH::WOODTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/wood.png");
+	MLP::GetInstance().GetMesh(MESH::WOODTILE)->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 	
-	m_tileMesh[0] = new Mesh();
-	m_tileMesh[0]->MakeRectangle();
-	m_tileMesh[0]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/KitchenTile.jpg");
-	m_tileMesh[0]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 
-	m_tileMesh[1] = new Mesh();
-	m_tileMesh[1]->MakeRectangle();
-	m_tileMesh[1]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
-	m_tileMesh[1]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
-
-	m_tileMesh[2] = new Mesh();
-	m_tileMesh[2]->MakeRectangle();
-	m_tileMesh[2]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
-	m_tileMesh[2]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
-
-	m_tileMesh[3] = new Mesh();
-	m_tileMesh[3]->MakeRectangle();
-	m_tileMesh[3]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
-	m_tileMesh[3]->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
-
-	m_tileMesh[4] = new Mesh();
-	m_tileMesh[4]->MakeRectangle();
-	m_tileMesh[4]->setDiffuseTexture("trolls_inn/Resources/GenericTexture/wood.png");
-	m_tileMesh[4]->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
+	MLP::GetInstance().LoadMesh(MESH::WALL, "wall3.obj");
 	
-	m_wallMesh = new Mesh();
-	m_wallMesh->LoadModel("trolls_inn/Resources/wall3.obj");
-
-	m_doorMesh = new Mesh();
-	m_doorMesh->LoadModel("trolls_inn/Resources/door/Door.obj");
+	MLP::GetInstance().LoadMesh(MESH::DOOR, "door/Door.obj");
+	
 
 	m_buildingDoors = false;
 }
@@ -299,23 +289,7 @@ RoomCtrl::~RoomCtrl()
 	{
 		delete m_rooms[i];
 	}
-
-	delete m_wallMesh;
-	//delete m_tileMesh[0];
-	delete m_doorMesh;
-	for (auto& element : m_tileMesh)
-	{
-		delete element;
-	}
 	m_rooms.clear();
-}
-
-void RoomCtrl::AddRoomObject(DirectX::XMFLOAT3 pos, Mesh * mesh)
-{
-	//Table tempObj = Table(pos, mesh);
-	
-	//m_roomObjects.push_back(tempObj);
-	
 }
 
 
@@ -327,24 +301,24 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	{
 	case kitchen:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[0]);
+		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::KITCHENTILE));
 		break;
 	case bedroom:
 		//Duno just copied the 
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[1]);
+		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::BEDROOMTILE));
 		break;
 	case reception:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[2]);
+		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE));
 		break;
 	case hallway:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[3]);
+		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::HALLWAYTILE));
 		break;
 	case bar:
 		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
-		currentRoom->setFloorMesh(m_tileMesh[4]);
+		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::WOODTILE));
 		break;
 	}
 
@@ -450,7 +424,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 						 if (diff.x == 0.5f || diff.y == 0.5f)
 						 {
 							 wall->setIsDoor(false);
-							 wall->setMesh(m_wallMesh);
+							 wall->setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
 							 // They are located beside eachother
 							 m_roomToRoom.erase(m_roomToRoom.begin() + i);
 							 m_roomToRoom.erase(m_roomToRoom.begin() + i);
@@ -472,7 +446,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 							 if (diff.x == 0.5f || diff.y == 0.5f)
 							 {
 								 wall->setIsDoor(false);
-								 wall->setMesh(m_wallMesh);
+								 wall->setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
 								 // They are located beside eachother
 								 m_roomToRoom.erase(m_roomToRoom.begin() + i);
 								 m_roomToRoom.erase(m_roomToRoom.begin() + (i-1));
@@ -483,50 +457,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 					 }
 				 }
 			 }
-			 
-			 //if (_intersect(m_roomToRoom[i].one) == index)
-			 //{
-				// for (auto& wall : *m_rooms[index]->getAllWalls())
-				// {
-				//	 if (wall->getIsDoor())
-				//	 {
-				//		 XMFLOAT3 wallPos = XMFLOAT3(m_roomToRoom[i].two.x + 0.5f, 0.0f, m_roomToRoom[i].two.y);
-				//		 XMFLOAT3 wallPos2 = wall->getObject3D().getPosition();
-				//		 if (wallPos2.x == wallPos.x && wallPos2.z == wallPos.z)
-				//		 {
-				//			 wall->setMesh(m_wallMesh);
-				//			 wall->setIsDoor(false);
-				//			 // There are two connections after one another
-				//			 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-				//			 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-				//			 i = 0;
-				//		 }
-				//	 }
-				// }
-				//
-				// 
-			 //}
-			 //else if (_intersect(m_roomToRoom[i].two) == index)
-			 //{
-				//
-				// for (auto& wall : *m_rooms[index]->getAllWalls())
-				// {
-				//	 if (wall->getIsDoor())
-				//	 {
-				//		 XMFLOAT3 wallPos = XMFLOAT3(m_roomToRoom[i].two.x, 0.0f, m_roomToRoom[i].two.y);
-				//		 XMFLOAT3 wallPos2 = wall->getObject3D().getPosition();
-				//		 if (wallPos2.x == wallPos.x && wallPos2.z == wallPos.z)
-				//		 {
-				//			 wall->setMesh(m_wallMesh);
-				//			 wall->setIsDoor(false);
-				//			 // There are two connections after one another
-				//			 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-				//			 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-				//			 i = 0;
-				//		 }
-				//	 }
-				// }
-			 //}
 
 		 }
 		 for (int i = 0; i < m_outsideDoorPos.size(); i++)
@@ -969,16 +899,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 
 		}
 	}
-	currentRoom->CreateWallSide(m_wallMesh, allowedWallsDown, down);
-	currentRoom->CreateWallSide(m_wallMesh, allowedWallsUp, up);
-	currentRoom->CreateWallSide(m_wallMesh, allowedWallsRight, right);
-	currentRoom->CreateWallSide(m_wallMesh, allowedWallsLeft, left);
+	currentRoom->CreateWallSide(MLP::GetInstance().GetMesh(MESH::WALL), allowedWallsDown, down);
+	currentRoom->CreateWallSide(MLP::GetInstance().GetMesh(MESH::WALL), allowedWallsUp, up);
+	currentRoom->CreateWallSide(MLP::GetInstance().GetMesh(MESH::WALL), allowedWallsRight, right);
+	currentRoom->CreateWallSide(MLP::GetInstance().GetMesh(MESH::WALL), allowedWallsLeft, left);
 	
-}
-
-void RoomCtrl::setDoorMesh(Mesh * mesh)
-{
-	this->m_doorMesh = mesh;
 }
 
 void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
@@ -993,7 +918,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 				{
 					if (!wall->getIsDoor())
 					{
-						wall->getObject3D().setMesh(m_doorMesh);
+						wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::DOOR));
 						wall->setIsDoor(true);
 						// If the wall is shared, then the door will connect two rooms
 						if (wall->isShared())
@@ -1157,7 +1082,7 @@ DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
 		if (_checkRoomType(room, type))
 		{
 			int distance = getLength(position, room->getPosition());
-			if (closestDistance > distance)
+			if (closestDistance > distance && room->CheckRoomComplete())
 			{
 				closestRoom = room;
 				closestDistance = distance;

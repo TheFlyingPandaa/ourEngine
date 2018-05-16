@@ -58,15 +58,11 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	for (int i = 0; i < nrOfButtons; i++)
 		m_hudButtonsPressed.push_back(false);
 	}
-	c.setModel(MeshHandler::getBox());
-	c.setPosition(5 + 0.5f, 5 + 0.5f);
-	c.setPosition(5 + 0.5f, 5 + 0.5f);
 
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
-	previousKey = -1;	
-
+	previousKey = -1;		
 }
 
 GameState::~GameState()
@@ -84,24 +80,28 @@ GameState::~GameState()
 	delete m_eventHandle;
 }
 
-// round float to n decimals precision
-float round_n(float num, int dec)
-{
-	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
-	float pwr = pow(10.0f, dec);
-	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
-}
+
 void GameState::Update(double deltaTime)
 {
-	if (Input::isKeyPressed('Q'))
+
+	using namespace std::chrono_literals;
+	if (inn->getExitState())
 	{
+		m_exitState = true;
+	}
+	if (inn->getAngryCustomers() >= inn->getAngryCustomersCap())
+	{
+		m_exitState = true;
+	}
+	if (Input::isKeyPressed('Q'))
+	{ 
 		m_eventHandle->StartCollectEvent();
 	}
 
 	if (Input::isKeyPressed('Z'))
 	{
 		std::cout << "EventEnded" << std::endl;
-		m_eventHandle->EndEvent();
+		m_eventHandle->EndEvent(); 
 	}
 	m_eventHandle->Update();
 
@@ -123,13 +123,17 @@ void GameState::Update(double deltaTime)
 	lol = lol2;
 
 	if (Input::isKeyPressed('0'))
-		this->m_mai->spawn();
+		m_mai->spawn();
 
 
 
 	this->m_cam->update();
-	c.Update();
 	m_roomctrl->Update(m_cam);
+	if (inn->GetRecievedReview())
+	{
+		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
+		inn->SetRecievedReviewToFalse();
+	}
 
 	if (!m_subStates.empty())
 	{
@@ -148,22 +152,15 @@ void GameState::Update(double deltaTime)
 		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
-	if (inn->GetRecievedReview())
-	{
-		m_stateHUD.SlideMeterBarWithIndex(0, inn->GetInnAttributes().GetStat(), 0);
-		inn->SetRecievedReviewToFalse();
-	}
+	
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
-		//m_in++;
 	
 	if (Input::isKeyPressed('U'))
 		inn->Withdraw(500);
 
-	m_mai->Update(this->m_cam);
+	m_mai->Update(m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	
-	
 }
 
 void GameState::Draw()
@@ -211,18 +208,6 @@ void GameState::_resetHudButtonPressedExcept(int index)
 void GameState::_init()
 {
 
-	//door.LoadModel("trolls_inn/Resources/door/Door.obj");
-	//door.setNormalTexture("trolls_inn/Resources/door/SickDoorNormal.png");
-	//MLP::GetInstance().LoadMesh("bed", "Reception/HighReception.obj");
-	//bed.LoadModel("trolls_inn/Resources/Bar/HighBar.obj");
-	//bed.LoadModel("trolls_inn/Resources/Table/Table.obj");
-	//bed->LoadModel("trolls_inn/Resources/Bed/LowBed.obj");
-	//bed->LoadModel("trolls_inn/Resources/Chair/HighChair.obj");
-	//bed.LoadModel("trolls_inn/Resources/Stove/Stove.obj");
-	//bed.LoadModel("trolls_inn/Resources/Wall.obj");
-	//bed.LoadModel("trolls_inn/Resources/Window.obj");
-	//bed->LoadModel("trolls_inn/Resources/IgnorSphere.obj");
-
 }
 
 void GameState::_setHud()
@@ -238,6 +223,8 @@ void GameState::_handlePicking()
 	{
 		m_grid->PickTiles();
 		m_roomctrl->PickRoomTiles();
+		m_mai->PickCustomers();
+		
 	}
 
 	if (hudWasPicked)
@@ -256,7 +243,7 @@ void GameState::_handlePicking()
 	while (!p_pickingEvent->empty())
 	{
 		Shape * obj = this->p_pickingEvent->top();
-		std::cout << "(" << obj->getPosition().x << "," << obj->getPosition().y << "," << obj->getPosition().z << ")\n";
+		
 		this->p_pickingEvent->pop();
 
 
@@ -267,47 +254,29 @@ void GameState::_handlePicking()
 		}
 
 	
-		if (m_stage == GameStage::Play)
+		if (m_stage == GameStage::Play && Input::isMouseLeftPressed(false))
 		{
 			_handlePickingAi(obj);
-
-			// THREADED BETA
-			// Will cause crashes since we clear the walking queue for the troll
-			//using namespace std::chrono_literals;
-
-			//// Create a promise and get its future.
-			//if (m_i == 0)
-			//{
-			//	m_i++;
-			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-			//}
-
-			////	 Use wait_for() with zero milliseconds to check thread status.
-			//auto status = future.wait_for(0ms);
-
-			////	 Print status. And start a new thread if the other thread was finnished
-			//if (status == std::future_status::ready) {
-			//	std::cout << "Thread finished" << std::endl;
-			//	future.get();
-			//	future = std::async(std::launch::async, &GameState::_handlePickingAi, this, obj);
-
-			//}
-			//else {
-			//	std::cout << "Thread still running" << std::endl;
-			//}
-
 		}
 
 	}
 }
-
+// round float to n decimals precision
+float round_n(float num, int dec)
+{
+	float m = (num < 0.0f) ? -1.0f : 1.0f;   // check if input is negative
+	float pwr = pow(10.0f, dec);
+	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
+}
 void GameState:: _handlePickingAi(Shape * obj)
 {
-	Staff* troll = m_mai->getTroll(); 
-
-	if (m_stage == GameStage::Play)
+	// If the the y position is 0, then this is a ground tile
+	// else we probably hit an customer
+	if (obj->getPosition().y == 0)
 	{
-	
+		//std::cout << "Tile" << std::endl;
+		Staff* troll = m_mai->getTroll();
+
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
@@ -339,8 +308,13 @@ void GameState:: _handlePickingAi(Shape * obj)
 				troll->Move(troll->getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 			}
 		}
-
 	}
+	else
+	{
+		m_mai->PickedCustomerShape(obj);
+	}
+	
+	
 }
 
 
@@ -366,6 +340,13 @@ bool GameState::_handleHUDPicking()
 			{
 				SubState * ss = m_subStates.top();
 				m_subStates.pop();
+
+				// Update paused time points
+				std::chrono::duration<double, std::ratio<1, 1>> d;
+				std::chrono::high_resolution_clock::time_point now = m_mai->SaveTimePoint();
+				d = std::chrono::duration_cast<std::chrono::duration<double>>(now - m_pauseTimePoint);
+				m_mai->UpdateCustomerSpawnTimePoint(d);
+				m_mai->UpdateCustomerNeedsTimePoint(d);
 				delete ss;
 			}
 			_resetHudButtonPressedExcept(index);
@@ -378,6 +359,7 @@ bool GameState::_handleHUDPicking()
 				// Build Button
 				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
+				m_pauseTimePoint = m_mai->SaveTimePoint();
 				if (m_hudButtonsPressed[index]){
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn));
 					m_stage = GameStage::BuildRoom;
@@ -708,4 +690,3 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 	}
 	return path;
 }
-
