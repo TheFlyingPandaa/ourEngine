@@ -23,7 +23,8 @@ private:
 	//TEMP
 	Object3D door;
 	Furniture* table;
-	ClickMenu * m_cm;
+	ClickMenu * m_cmFur;
+	ClickMenu * m_cmRoom;
 
 
 	bool drawSelectedThing;

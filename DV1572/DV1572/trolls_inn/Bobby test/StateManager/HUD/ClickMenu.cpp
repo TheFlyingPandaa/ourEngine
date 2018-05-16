@@ -20,6 +20,9 @@ ClickMenu::ClickMenu(MTYPE type)
 	case ClickMenu::CHA:
 		_initCharacterMenu();
 		break;
+	case ClickMenu::ROO:
+		_initRoomMenu();
+		break;
 	}
 
 
@@ -174,4 +177,19 @@ void ClickMenu::_initFurnitureMenu()
 void ClickMenu::_initCharacterMenu()
 {
 
+}
+
+void ClickMenu::_initRoomMenu()
+{
+	Mesh * m = new Mesh();
+	m->MakeRectangle();
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/Sell.png");
+	RectangleShape * r = new RectangleShape();
+	r->setColor(5, 5, 5);
+	r->setMesh(m);
+	r->setWidth(50);
+	r->setHeight(50);
+
+	m_mesh.push_back(m);
+	m_buttons.push_back(r);
 }

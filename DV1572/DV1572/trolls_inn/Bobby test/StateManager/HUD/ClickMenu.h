@@ -9,7 +9,8 @@ public:
 	enum MTYPE : short
 	{
 		FUR,
-		CHA
+		CHA,
+		ROO
 	};
 
 
@@ -39,4 +40,5 @@ public:
 private:
 	void _initFurnitureMenu();
 	void _initCharacterMenu();
+	void _initRoomMenu();
 };
