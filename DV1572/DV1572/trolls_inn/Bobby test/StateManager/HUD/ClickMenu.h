@@ -21,10 +21,14 @@ private:
 	int					m_distFromBoarder;
 	std::vector<RectangleShape*> m_buttons;
 	bool m_wasPressed;
+	Mesh* m_recMesh;
 
 public:
 	ClickMenu(MTYPE type);
 	~ClickMenu();
+
+	void ClearSubText();
+	void PushText(const std::string & row);
 
 	void setPos(DirectX::XMFLOAT2 pos);
 
