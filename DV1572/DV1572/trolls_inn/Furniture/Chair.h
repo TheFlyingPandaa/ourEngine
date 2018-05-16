@@ -13,6 +13,7 @@ public:
 	std::string WhatType() override;
 	Furniture * MakeCopy() override;
 
+
 	static int getPrice(bool low);
 	//static int getGridSize();
 };

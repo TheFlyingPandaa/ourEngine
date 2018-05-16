@@ -33,14 +33,14 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
-	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
+	/*m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-
-	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
+*/
+	/*m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
 	m_receptionFur->setRotation(180);
-	m_roomctrl->AddRoomObject(m_receptionFur);
+	m_roomctrl->AddRoomObject(m_receptionFur);*/
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -103,7 +103,7 @@ void GameState::Update(double deltaTime)
 		std::cout << "EventEnded" << std::endl;
 		m_eventHandle->EndEvent(); 
 	}
-	m_eventHandle->Update();
+	m_eventHandle->Update(deltaTime);
 
 
 	if (m_subStates.empty())
