@@ -49,11 +49,15 @@ float4 main(INPUT input) : SV_Target
 	normal = normalize(mul(normal, input.TBN));
 	normal = normalize(input.normal + normal);
 	float4 diffuseSample = tDiffuse.Sample(sampAni, input.tex);
+
 	if (diffuseSample.a < 0.5f)
 		discard;
+
+	
 	diffuseSample *= input.color;
 	float3 ambient = diffuseSample.xyz * 0.5f;
 	float specLevel = 1; // Vet inte om detta var rätt!
+
 
 
 
@@ -113,17 +117,12 @@ float4 main(INPUT input) : SV_Target
 			for (int y = -1; y <= 1; ++y)
 			{
 				shadowCoeff += float(tShadow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
-				//window += float(tWindow.SampleCmpLevelZero(sampAniPoint, shadowTexCoords + (float2(x, y) * texelSize), pixelDepth + epsilon));
 			}
 		}
 		shadowCoeff /= 9.0f;
 		shadowCoeff = max(shadowCoeff, 0.2);
-		/*	window /= 9.0f;
-		window = 1 - window;*/
-
+		
 	}
-
-	//	return float4(window, window, window, 1.0f);
 
 	finalColorForSun = ambient + (diffuse + finalSpec)* sunColor.xyz * shadowCoeff;
 
@@ -137,15 +136,14 @@ float4 main(INPUT input) : SV_Target
 	float specLevelPointLight = specLevel * 0.2f;
 
 	int fIndex = index;
-
 	for (int i = 0; i < nrOfLights.r; i++)
 	{
-		int index = (int)(pointLColor[i].a + 0.5f);
+		int index = pointLColor[i].a;
 		if (index == fIndex)
 		{
 			//Diffuse 
 			float3 pointLightToObject = normalize(pointLPos[i].xyz - wordPos);
-			diffuseForPointLight = diffuseSample.xyz * max(dot(normal, pointLightToObject), 0.0f);
+			diffuseForPointLight = diffuseSample * max(dot(normal, pointLightToObject), 0.0f);
 			//Specular
 			halfWayDirPointLight = normalize(pointLightToObject + viewer);
 			specPointLight = pow(max(dot(normal, halfWayDirPointLight), 0.0f), 32.0f);
@@ -158,7 +156,7 @@ float4 main(INPUT input) : SV_Target
 
 			tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i].xyz;
 
-			finalColorForPointLights += tempColor + finalColorForSun;// (window == 1) ? tempColor : 0;
+			finalColorForPointLights = tempColor;
 		}
 	}
 
