@@ -459,9 +459,6 @@ void GameState::_handleInput()
 			m_move = false;
 	}
 
-	if (Input::isKeyPressed('P'))
-		m_stage = GameStage::Play;
-
 	
 
 	if (Input::isKeyPressed('R') && !m_Rpressed)
