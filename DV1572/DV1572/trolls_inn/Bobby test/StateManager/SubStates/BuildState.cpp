@@ -681,15 +681,24 @@ void BuildState::_inputDoor()
 			m_startTile = nullptr;
 			m_selectedTile = nullptr;
 			m_roomPlaceable = false;
-			m_roomCtrl->CreateDoor(s);
+			m_roomCtrl->CreateDoor(s, door.getRotation().y);
 			drawSelectedThing = true;
 		}
 		else if (m_startTile)
 		{
+			static bool _srot = false;
+			if (Input::isKeyPressed(Input::Comma) || Input::isKeyPressed(Input::Period))
+			{
+				if (!rotationKeyPressed)
+					_srot = !_srot;
+				rotationKeyPressed = true;
+			}
+			else
+				rotationKeyPressed = false;
+
 			DirectX::XMFLOAT3 p(m_startTile->getPosition());
 			door.setPos(p.x, p.y, p.z);
-			//std::cout << m_startTile->getRotation().y << std::endl;
-			door.setRotation(0.0f, DirectX::XMConvertToDegrees(m_startTile->getRotation().y), 0.0f);
+			door.setRotation(0.0f, DirectX::XMConvertToDegrees(m_startTile->getRotation().y) + (_srot * 180.0f), 0.0f);
 			door.setScale(1.01f);
 			//TEMP
 			drawSelectedThing = true;
@@ -785,6 +794,7 @@ void BuildState::_inputFurniture()
 				{
 					DirectX::XMFLOAT3 p(m_startTile->getPosition());
 					table->setPosition(p.x + 0.5f, p.y - 0.2f, p.z + 0.5f);
+					table->setLightIndex(m_startTile->getLightIndex());
 					DirectX::XMINT2 start;
 					start.x = table->getPosition().x;
 					start.y = table->getPosition().z;
