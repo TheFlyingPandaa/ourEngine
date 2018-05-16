@@ -114,7 +114,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 								{
 									m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 									m_furnitureRemove = newPick;
-									m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+									m_furnitureRemove->getObject3D().setColor(0.2f, 2, 0.2f);
 									m_cm->setInfo(m_furnitureRemove->WhatType());
 									m_cm->setPos(Input::getMousePositionLH());
 								}
@@ -123,7 +123,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 						else
 						{
 							m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
-							m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+							m_furnitureRemove->getObject3D().setColor(0.2f, 2, 0.2f);
 							m_cm->setInfo(m_furnitureRemove->WhatType());
 							m_cm->setPos(Input::getMousePositionLH());
 						}

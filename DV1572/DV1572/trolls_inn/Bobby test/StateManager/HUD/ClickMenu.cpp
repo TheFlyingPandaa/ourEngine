@@ -12,7 +12,7 @@ ClickMenu::ClickMenu(MTYPE type)
 	
 	m_info.setAllignment(TXT::Center);
 	m_info.setRelative(Text::BL);
-	m_info.setScale(0.4);
+	m_info.setScale(0.4f);
 
 	switch (m_type)
 	{

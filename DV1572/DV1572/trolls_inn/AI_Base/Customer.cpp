@@ -34,9 +34,9 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	{
 		return false;
 	}
-	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(roomPos.x, roomPos.z)); 
+	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(static_cast<int32_t>(roomPos.x), static_cast<int32_t>(roomPos.z))); 
 
-	int nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
+	size_t nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
 	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
 
 	for (int i = 0; i < nrOfFurniture; i++)
