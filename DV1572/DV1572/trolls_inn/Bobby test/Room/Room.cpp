@@ -239,6 +239,17 @@ bool Room::CheckRoomComplete()
 			
 		}
 	}
+	else if(m_roomType == RoomType::bar)
+	{
+		for (auto object : m_roomObjects)
+		{
+			if (object->WhatType() == "Bar")
+			{
+				return true;
+			}
+
+		}
+	}
 	else
 	{
 		return true;

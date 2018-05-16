@@ -101,9 +101,14 @@ void Furniture::setLevel(int amount)
 	p_level = amount;
 }
 
-void Furniture::AddLevel(int amount)
+int Furniture::AddLevel(int gold,int amount)
 {
+	if ((p_level + 1) * 100 > gold)
+	{
+		return 0;
+	}
 	p_level += amount;
+	return p_level * 100;
 }
 
 void Furniture::setIndex(int index)
