@@ -1,56 +1,18 @@
-#include "../AI_Base/FroggeDebug.h"
-#include <iostream>
-#include <string>
-#include <stack>
 
+#include "../AI_Base/FroggeDebug.h"
 #include "../Bobby test/Room/Grid.h"
 #include "StateManager/State.h"
 #include "StateManager/GameState.h"
 #include "StateManager/MainMenu.h"
 
-#include <iostream>
-#include <chrono>
 
 #include "../Time Management/GameTime.h"
-#include "../../ourEngine/interface/light/PointLight.h"
-#include "../Mesh Manager/MeshManager.h"
 //extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 //}
 //#pragma warning(disable : 4061 4265 4365 4571 4623 4625 4626 4628 4668 4710 4711 4746 4774 4820 4987 5026 5027 5031 5032 5039)
 
-#include "../../ourEngine/core/Audio/Audio.h"
 
-
-#include "../../ourEngine/core/FileReader.h"
-#include "../Mesh Manager/MeshLoaderPlus.h"
-#include "../../ourEngine/interface/shape/SkyBoxObject.h"
-
-#include "../../InGameConsole.h"
-
-#ifdef NDEBUG
-	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
-	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
-#else
-	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxDB.lib")
-	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
-#endif 
-
-//#include <vld.h>
-
-// MSDN Memory Leak Detection
-#define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>
-
-/*#ifdef _DEBUG
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
-// allocations to be of _CLIENT_BLOCK type
-#else
-#define DBG_NEW new
-#endif*/
-// END MSDN
 
 
 

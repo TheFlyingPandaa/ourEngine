@@ -3,8 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include "../Structs.h"
-#include <vector>
-#include <sstream>
+
 #include "WICTextureLoader\WICTextureLoader.h"
 #include <map>
 #include "Dx.h"
