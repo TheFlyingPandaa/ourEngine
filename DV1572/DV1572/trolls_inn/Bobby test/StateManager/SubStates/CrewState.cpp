@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "CrewState.h"
 
 CrewState::CrewState(Camera * cam, std::stack<Shape*>* pickingEvent)

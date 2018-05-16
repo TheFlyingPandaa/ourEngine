@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "EventsState.h"
 
 EventsState::EventsState(Camera * cam, std::stack<Shape*>* pickingEvent)

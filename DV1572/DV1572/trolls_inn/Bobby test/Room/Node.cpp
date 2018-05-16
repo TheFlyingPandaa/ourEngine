@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "Node.h"
 
 Node::Node(Tile * tile, Node * parent, float gCost, float hCost)

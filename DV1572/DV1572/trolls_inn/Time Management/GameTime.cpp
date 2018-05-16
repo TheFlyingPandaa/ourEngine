@@ -1,6 +1,6 @@
+#include "../../OurEngine.h"
+#include "OurEngine.h"
 #include "GameTime.h"
-#include <DirectXMath.h>
-#include "../../ourEngine/core/Dx.h"
 #define PI 3.14159265358979323846f 
 #define DEBUG 0 //DEBUG ON/OFF
 #define sunY 30.0f

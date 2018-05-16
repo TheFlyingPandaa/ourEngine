@@ -1,9 +1,5 @@
 #ifndef LIGHT_H 
 #define LIGHT_H
-#include "../../Structs.h"
-#include <DirectXMath.h>
-#include <d3d11.h>
-#include "../../core/Camera/Camera.h"
 
 using namespace DirectX; 
 class Light

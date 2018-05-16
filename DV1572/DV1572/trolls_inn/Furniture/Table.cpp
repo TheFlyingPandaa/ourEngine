@@ -1,5 +1,5 @@
+#include "OurEngine.h"
 #include "Table.h"
-#include "../Mesh Manager/MeshManager.h"
 int Table::lowPrice = 100;
 int Table::highPrice = 200;
 Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting) : Furniture(pos, mesh)

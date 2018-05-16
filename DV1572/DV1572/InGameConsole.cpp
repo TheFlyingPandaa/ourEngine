@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "InGameConsole.h"
 
 std::vector < InGameConsole::text_t *> InGameConsole::text;

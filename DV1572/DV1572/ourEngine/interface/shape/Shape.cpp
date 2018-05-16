@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Shape.h"
-#include "../../core/Dx.h"
-using namespace DirectX; 
 
 void Shape::_buildMatrix()
 {

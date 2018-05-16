@@ -1,8 +1,5 @@
+#include "OurEngine.h"
 #include "Picking.h"
-#include <d3d11.h>
-#include "../Core/Dx.h"
-#include "../interface/Input.h"
-#pragma comment (lib, "d3d11.lib")
 
 struct OFFSETBUFFER {
 	float temp;

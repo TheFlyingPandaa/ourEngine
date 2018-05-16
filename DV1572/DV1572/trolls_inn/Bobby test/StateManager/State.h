@@ -1,6 +1,6 @@
+#include "../../../OurEngine.h"
 #pragma once
-#include <stack>
-#include "../../../ourEngine/interface/Interface.h"
+
 #include "HUD/HUD.h"
 #include "SubStates\SubState.h"
 

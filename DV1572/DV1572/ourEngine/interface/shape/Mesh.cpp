@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Mesh.h"
-#include "../../core/Dx.h"
-#include "../../core/ObjLoader.h"
 int Mesh::m_idCounter = 0;
 Mesh::Mesh()
 {

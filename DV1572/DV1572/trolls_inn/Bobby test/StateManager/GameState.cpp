@@ -1,17 +1,11 @@
+#include "OurEngine.h"
 #include "GameState.h"
-#include <iostream>
-#include <stdlib.h>
-#include <chrono>
-#include <thread>
-#include <future>
-#include "../../../ourEngine/interface/light/PointLight.h"
-#include "../../../ourEngine/core/Dx.h"
+
+
 #include "../StateManager/SubStates/BuildState.h"
 #include "../StateManager/SubStates/CrewState.h"
 #include "../StateManager/SubStates/StatsState.h"
 #include "../StateManager/SubStates/EventsState.h"
-#include "../../Mesh Manager/MeshManager.h"
-#include "../../Mesh Manager/MeshLoaderPlus.h"
 #include "../../Furniture/Reception.h"
 #include "../../Furniture/Table.h"
 

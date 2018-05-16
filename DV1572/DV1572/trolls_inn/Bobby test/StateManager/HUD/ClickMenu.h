@@ -1,7 +1,6 @@
+#include "../../../../OurEngine.h"
 #pragma once
-#include "../../../../ourEngine/interface/Interface.h"
-#include "../../../Mesh Manager/MeshManager.h"
-#include <vector>
+
 
 class ClickMenu
 {

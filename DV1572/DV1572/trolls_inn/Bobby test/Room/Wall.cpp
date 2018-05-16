@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Structure.h"
-#include <iostream>
-
 
 Wall::Wall(Mesh * mesh, XMFLOAT2 dir)
 {

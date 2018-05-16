@@ -1,5 +1,6 @@
+#include "OurEngine.h"
 #include "PointLight.h"
-#include "../../core/Dx.h"
+
 
 
 void PointLight::_init()

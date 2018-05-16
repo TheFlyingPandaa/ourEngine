@@ -1,5 +1,5 @@
+#include "OurEngine.h"
 #include "Material.h"
-#include "../../core/ObjLoader.h"
 
 Material::Material(std::string name)
 	: m_name(name)

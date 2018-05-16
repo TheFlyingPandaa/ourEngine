@@ -1,7 +1,6 @@
+#include "OurEngine.h"
 #include "Furniture.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
+
 #include "Table.h"
 #include "Bar.h"
 #include "Bed.h"

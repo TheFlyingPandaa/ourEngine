@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Rectangle.h"
-#include "../../core/Dx.h"
-#include "../Input.h"
 
 void RectangleShape::_buildRectangle()
 {

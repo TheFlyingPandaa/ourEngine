@@ -1,5 +1,6 @@
+#include "OurEngine.h"
 #include "SkyBoxObject.h"
-#include "../../core/Dx.h"
+
 SkyBoxObject::SkyBoxObject()
 {
 	setVertexShader(DX::g_skyBoxVertexShader);

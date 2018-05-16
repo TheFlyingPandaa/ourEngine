@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Light.h"
-#include "../../core/Dx.h"
-#include "../Input.h"
 
 void Light::updateMatrix()
 {

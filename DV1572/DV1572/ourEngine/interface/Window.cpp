@@ -1,11 +1,6 @@
-﻿#include "Window.h"
-#include "../core/Dx.h"
-#include <thread>
-#include "../core/Picking.h"
-#include <chrono>
-#include <iostream>
-#include <algorithm> // For std::find_if
-#include "../interface/shape/Billboard.h"
+﻿#include "OurEngine.h"
+#include "Window.h"
+
 #define DEBUG 1
 //Devices
 ID3D11Device* DX::g_device;

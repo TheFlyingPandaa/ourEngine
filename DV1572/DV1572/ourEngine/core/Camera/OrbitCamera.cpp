@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "OrbitCamera.h"
-#include <iostream>
-#include "../../interface/Input.h"
 void OrbitCamera::setMaxTilt(float t)
 {
 	m_tiltCapUp = t;

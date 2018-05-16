@@ -1,17 +1,7 @@
 #pragma once
-#include <windows.h>
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
-#include "../core/Camera/Camera.h"
-#include "shape\Rectangle.h"
-#include "light\PointLight.h"
-#include "Input.h"
+#include "../../OurEngine.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
-#include "../core/RenderDefine.h"
 
 #if DEFERRED_RENDERING
 	const UINT GBUFFER_COUNT = 4;

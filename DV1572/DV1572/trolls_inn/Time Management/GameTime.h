@@ -1,10 +1,6 @@
 #ifndef GAMETIME_H 
 #define GAMETIME_H
-#include <DirectXMath.h>
 #include "../../ourEngine/interface/light/Light.h"
-#include <cmath>
-#include <vector>
-#include <d3d11.h>
 enum TIMEOFDAY
 {
 	MORNINGTONOON,

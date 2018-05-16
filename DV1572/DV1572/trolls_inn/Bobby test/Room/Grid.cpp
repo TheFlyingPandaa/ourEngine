@@ -1,10 +1,5 @@
+#include "OurEngine.h"
 #include "Grid.h"
-#include <math.h>
-#include <memory>
-#include <algorithm>
-#include <chrono>
-#include <unordered_map>
-#include <queue>
 
 bool Grid::_findInVec(std::vector<Node*>& list, Node * node) const
 {

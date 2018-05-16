@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="ourEngine\shaders\3DPixel.hlsl" />
     <FxCompile Include="ourEngine\shaders\3DVertex.hlsl" />
     <FxCompile Include="ourEngine\shaders\billboardPixel.hlsl" />
     <FxCompile Include="ourEngine\shaders\billboardVertex.hlsl" />
@@ -25,7 +24,6 @@
     <ClCompile Include="InGameConsole.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
-    <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Room\Node.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\Source2(bobby test).cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.cpp" />
@@ -84,13 +82,13 @@
     <ClCompile Include="trolls_inn\Furniture\Chair.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Reception.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.cpp" />
+    <ClCompile Include="OurEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />
-    <ClInclude Include="trolls_inn\AI_Base\FroggeDSA.h" />
     <ClInclude Include="trolls_inn\AI_Base\Inn.h" />
     <ClInclude Include="ourEngine\interface\shape\Billboard.h" />
     <ClInclude Include="trolls_inn\Bobby test\Room\Node.h" />

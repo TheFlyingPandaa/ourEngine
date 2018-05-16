@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "EventCollection.h"
-#include <iostream>
-
 
 EventCollection::EventCollection(const int decider,const int goal, const int reward,const int money)
 {

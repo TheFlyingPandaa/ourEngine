@@ -1,7 +1,5 @@
+#include "OurEngine.h"
 #include "EventHandler.h"
-#include <iostream>
-#include "../Mesh Manager/MeshManager.h"
-#include <thread>
 
 EventHandler::EventHandler(Inn * inn, RoomCtrl * roomctl, std::vector<std::shared_ptr<Node>> firstPath, std::vector<std::shared_ptr<Node>> secondPath)
 {

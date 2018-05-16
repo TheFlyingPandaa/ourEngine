@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Text.h"
-#include "../core/Dx.h"
-#include "Input.h"
 
 using namespace DirectX;
 Text::Text()

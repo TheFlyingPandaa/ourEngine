@@ -1,7 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
-#include <DirectXMath.h>
-#include "Window.h"
+#include "../../OurEngine.h"
 class Input
 {
 	friend class Window;

@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "Structure.h"
 
 void Tile::setMesh(Mesh * mesh)

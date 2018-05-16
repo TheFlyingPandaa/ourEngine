@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "MeshLoaderPlus.h"
-#include <thread>
-#include <chrono>
 
 void MLP::LoadMesh(short id, std::string path)
 {

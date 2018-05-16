@@ -1,5 +1,5 @@
+#include "OurEngine.h"
 #include "Billboard.h"
-#include "../../core/Dx.h"
 
 Billboard::Billboard()
 {

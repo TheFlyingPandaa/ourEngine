@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "Stove.h"
 
 Stove::Stove(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)

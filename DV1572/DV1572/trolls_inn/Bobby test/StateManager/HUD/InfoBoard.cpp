@@ -1,3 +1,4 @@
+#include "OurEngine.h"
 #include "InfoBoard.h"
 
 void InfoBoard::_updateScale()

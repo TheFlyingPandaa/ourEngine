@@ -1,5 +1,5 @@
+#include "OurEngine.h"
 #include "3DObject.h"
-#include "../../core/Dx.h"
 
 Object3D::Object3D()
 {

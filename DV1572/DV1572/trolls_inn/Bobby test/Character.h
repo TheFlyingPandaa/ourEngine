@@ -1,8 +1,5 @@
 #pragma once
-#pragma once 
-#include "../../ourEngine/interface/Interface.h" 
-#include <deque> 
-#include <math.h> 
+#include "../../OurEngine.h"
 
 class Character
 {

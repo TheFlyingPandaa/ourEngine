@@ -1,7 +1,5 @@
+#include "OurEngine.h"
 #include "HeightMapGenerator.h"
-#include <iostream>
-#include <fstream>
-#include "../Mesh Manager/MeshLoaderPlus.h"
 
 float HeightMap::DiamondSqaure::fRand()
 {

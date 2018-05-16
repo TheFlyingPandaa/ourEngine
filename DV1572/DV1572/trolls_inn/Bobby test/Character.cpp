@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "Character.h" 
-#include "../../ourEngine/core/Dx.h"
-#include "../Mesh Manager/MeshLoaderPlus.h"
 
 // FOr threading
 short Character::s_indexCounter = 0;

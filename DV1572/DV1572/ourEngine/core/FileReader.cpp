@@ -1,6 +1,5 @@
+#include "OurEngine.h"
 #include "FileReader.h"
-#include <fstream>
-#include <sstream>
 
 FileReader::GameSettings FileReader::SettingsFileRead(const std::string path)
 {

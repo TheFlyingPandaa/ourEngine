@@ -1,5 +1,6 @@
+#include "OurEngine.h"
 #include "Bed.h"
-#include "../Mesh Manager/MeshManager.h"
+
 int Bed::lowPrice = 100;
 int Bed::highPrice = 1000;
 Bed::Bed(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(pos, meshid)
