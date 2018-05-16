@@ -128,7 +128,6 @@ void Character::Update()
 				m_modelSpriteIndex += static_cast<int>(indexLol);
 				indexLol = 0.0f;
 			}
-			
 		}
 	}
 }

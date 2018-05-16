@@ -403,14 +403,13 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	
 	 if (index != -1)
 	 {
-		 
-		 // Room connections
+		  // Room connections
 		 for (int i = 0; i < m_roomToRoom.size(); i++)
 		 {
 			 // If the door entry is located in the deleted room
 			 if (m_roomToRoom[i].roomIndexes[0] == index)
 			 {
-				 // We now found an connection with the deleted room and a exisitng room.
+				 // We now found a connection with the deleted room and an exisitng room.
 				 // Now lets find the connected door
 				 bool doorAlive = true;
 				 for (auto& wall : *m_rooms[index]->getAllWalls())
@@ -433,9 +432,56 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 						 }
 					 }
 				 }
+
+				 //As the m_Room vector's size decrease, the room indexes change. 
+				 //Here, we do the exact same change, but for the room-index arrays in our 
+				 //room connection vector. 
+				 for (int i = 0; i < m_roomToRoom.size(); i++)
+				 {
+					 int firstRoomIndex = _intersect(m_roomToRoom[i].one);
+					 int secondRoomIndex = _intersect(m_roomToRoom[i].two);
+
+					 //If the rooms were found, we can continue
+					 if (firstRoomIndex != -1 && secondRoomIndex != -1)
+					 {
+						 //If the actual room indexes does not match up with the ones stored in the 
+						 //connection array, there is an update needed. 
+						 if (m_rooms[firstRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[0] - 1 ||
+							 m_rooms[secondRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[1] - 1)
+						 {
+							 //In need to update the room indexes. 
+							 m_roomToRoom[i].roomIndexes[0] = m_rooms[firstRoomIndex]->getRoomIndex();
+							 m_roomToRoom[i].roomIndexes[1] = m_rooms[secondRoomIndex]->getRoomIndex();
+						 }
+					 }
+				 }
+
 				 if (doorAlive)
 				 {
-					 for (auto& wall : *m_rooms[m_roomToRoom[i].roomIndexes[1]]->getAllWalls())
+					 //As the m_Room vector's size decrease, the room indexes change. 
+					 //Here, we do the exact same change, but for the room-index arrays in our 
+					 //room connection vector. 
+					 for (int i = 0; i < m_roomToRoom.size(); i++)
+					 {
+						 int firstRoomIndex = _intersect(m_roomToRoom[i].one);
+						 int secondRoomIndex = _intersect(m_roomToRoom[i].two);
+
+						 //If the rooms were found, we can continue
+						 if (firstRoomIndex != -1 && secondRoomIndex != -1)
+						 {
+							 //If the actual room indexes does not match up with the ones stored in the 
+							 //connection array, there is an update needed. 
+							 if (m_rooms[firstRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[0] - 1 ||
+								 m_rooms[secondRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[1] - 1)
+							 {
+								 //In need to update the room indexes. 
+								 m_roomToRoom[i].roomIndexes[0] = m_rooms[firstRoomIndex]->getRoomIndex();
+								 m_roomToRoom[i].roomIndexes[1] = m_rooms[secondRoomIndex]->getRoomIndex();
+							 }
+						 }
+					 }
+
+					for (auto& wall : *m_rooms[m_roomToRoom[i].roomIndexes[1]]->getAllWalls())
 					 {
 						 // If the wall we are checking is a door
 						 if (wall->getIsDoor() && m_roomToRoom.size())
@@ -449,7 +495,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 								 wall->setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
 								 // They are located beside eachother
 								 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-								 m_roomToRoom.erase(m_roomToRoom.begin() + (i-1));
+								 m_roomToRoom.erase(m_roomToRoom.begin() + (i - 1));
 								 i = 0;
 								 doorAlive = false;
 							 }
@@ -457,7 +503,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 					 }
 				 }
 			 }
-
 		 }
 		 for (int i = 0; i < m_outsideDoorPos.size(); i++)
 		 {
@@ -482,8 +527,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 		 delete m_rooms[index];
 		 m_rooms.erase(m_rooms.begin() + index);
 
-		
-
 		 for (auto& r : m_rooms)
 		 {
 			 CreateWalls(r);
@@ -493,7 +536,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	 } 
 	 _printRoomConnections();
 	 return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
-
  }
 #pragma optimize ("", on)
 
@@ -976,10 +1018,8 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 							}
 
 						}
-
 						// We are done!
 						return;
-
 					}
 			
 				}
