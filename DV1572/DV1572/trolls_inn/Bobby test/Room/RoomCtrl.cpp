@@ -159,7 +159,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 			else
 			{
 				//m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
-				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x - i, furniture->getPosition().z)]->setHasObject(true);
 			}
 		}
 	}
@@ -500,12 +500,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
 	 bool isFalse = false;
-	 int index = _intersect(start, XMINT2(1, 1));
-	 if (index == -1)
+	 int indexx = _intersect(start, XMINT2(1, 1));
+	 if (indexx == -1)
 	 {
 		 return false;
 	 }
-	 Room*  cr = m_rooms[index];
+	 Room*  cr = m_rooms[indexx];
 	 auto tiles = cr->getTiles();
 	 auto _index = [&](int x, int y) ->int
 	 {
@@ -522,18 +522,15 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	{
 		for (int i = 0; i < size; i++)
 		{
-			int ii = _index(start.x, start.y + i);
-
-			if (ii >= tiles.size()) {
-				int index = _index(start.x, start.y);
-				if (index == -1)
-					return false;
-				tiles[index]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-				return false;
-			}
+		
 
 			if (angle == 0)
 			{
+				int ii = _index(start.x, start.y + i);
+				if (ii == -1)
+				{
+					return false;
+				}
 				Tile* t = tiles[ii];
 				if (t && t->getHasObject() == false)
 				{
@@ -561,6 +558,10 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 						isFalse = true;
 					}
 				}
+				else
+				{
+					return false;
+				}
 				
 			}
 		}
@@ -587,9 +588,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			}
 			else
 			{
-				int index = _index(start.x - i, start.y);
-				if (index == -1)
+				int ii = _index(start.x - i, start.y);
+				if (ii == -1)
+				{
 					return false;
+				}
 				if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
 				{
 					tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));

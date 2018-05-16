@@ -81,6 +81,7 @@ void InitModels()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	//srand(static_cast<unsigned>(time(0)));
 
 	bool working;
 	FileReader::GameSettings gameSettings = FileReader::SettingsFileRead(working);

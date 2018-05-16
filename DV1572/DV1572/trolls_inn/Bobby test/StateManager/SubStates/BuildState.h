@@ -28,6 +28,7 @@ private:
 
 	bool drawSelectedThing;
 	bool twoStepThingy = false;
+	bool rotationKeyPressed = false;
 	//-----
 	int is = 0;
 
@@ -58,12 +59,14 @@ private:
 	Inn * m_inn;
 	Text m_priceOfRoom;
 	
-	bool m_readyToPick;
+	
 
+	bool m_readyToPick;
 	bool m_doorBuild = false;
 	bool m_canBuildFurniture = false;
 	bool m_furnitureDeleteMode = false;
 	bool m_clickedLast = false;
+	bool m_freeFurniture = false;
 	Furniture* m_furnitureRemove = nullptr;
 
 	enum CurrentBuildType	//This will replace the old system of setting bools aka m_doorBuild =...

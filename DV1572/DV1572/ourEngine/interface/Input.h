@@ -25,7 +25,9 @@ public:
 		UpArrow = 38,
 		RightArrow = 39,
 		DownArrow = 40,
-		SPACEBAR = 0x20
+		SPACEBAR = 0x20,
+		Comma = 0xBC,
+		Period = 0xBE
 		// add more if needed
 	};
 
