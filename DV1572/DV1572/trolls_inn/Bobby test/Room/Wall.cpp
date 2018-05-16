@@ -49,7 +49,7 @@ void Wall::setRotation(float x, float y, float z)
 
 void Wall::setRotation(DirectX::XMFLOAT3 rotation)
 {
-	m_wall->Rotate(rotation);
+	m_wall->setRotation(rotation);
 }
 
 void Wall::setScale(float x, float y, float z)
