@@ -705,14 +705,42 @@ std::vector<Furniture*> Room::getAllRoomFurnitures()
 
 bool Room::RemoveThisFurniture(Furniture * fur)
 {
-	for (int i = 0; i < m_roomObjects.size(); ++i)
+	for (int r = 0; r < m_roomObjects.size(); ++r)
 	{
-		if (m_roomObjects.at(i) == fur)
+		if (m_roomObjects.at(r) == fur)
 		{
+			std::vector<int> tileIndices;
+			int sizeOf = fur->getGridSize();
+			float x = 0;
+			float y = 0;
+			tileIndices.push_back(_index(fur->getPosition().x, fur->getPosition().z));
+			for (int i = 0; i < sizeOf -1; i++)
+			{
+				switch (fur->getRotation())
+				{
+				case 0:
+					y++;
+					break;
+				case 90:
+					x++;
+					break;
+				case 180:
+					y--;
+					break;
+				case 270:
+					x--;
+					break;
+				}
+				tileIndices.push_back(_index(fur->getPosition().x + x, fur->getPosition().z + y));
+			}
+			for (size_t i = 0; i < tileIndices.size(); i++)
+			{
+				m_roomTiles.at(tileIndices[i])->setHasObject(false);
+			}
 			int t = _index(fur->getPosition().x, fur->getPosition().z);
-			m_roomTiles.at(t)->setHasObject(false);
-			delete m_roomObjects.at(i);
-			m_roomObjects.erase(m_roomObjects.begin() + i);
+			delete fur;
+			m_roomObjects.erase(m_roomObjects.begin() + r);
+			
 			return true;
 		}
 	}

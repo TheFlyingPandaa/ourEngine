@@ -52,7 +52,7 @@ std::string Bar::WhatType()
 
 Furniture * Bar::MakeCopy()
 {
-	 return new Bar(static_cast<const Bar&>(*this));;
+	 return new Bar(static_cast<const Bar&>(*this));
 }
 
 int Bar::getPrice(bool low)
