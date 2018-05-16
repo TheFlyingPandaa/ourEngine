@@ -662,7 +662,7 @@ void BuildState::_inputDoor()
 	if (m_selectedThing != -1)
 	{
 		m_roomCtrl->PickWalls();
-		if (m_startTile && Input::isMouseLeftPressed())
+		if (m_startTile && Input::isMouseLeftPressed(false))
 		{
 			XMFLOAT3 s = m_startTile->getPosition();
 			m_buildStage = BuildStage::None;

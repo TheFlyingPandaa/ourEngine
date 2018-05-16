@@ -30,21 +30,20 @@ struct DIRECTIONAL_LIGHT_BUFFER
 	DirectX::XMFLOAT4A pos, dir, color;
 	DirectX::XMFLOAT4X4A viewProjection;
 };
-
+// Used in 3Dvertex.hlsl
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
 	float gridscaleX;
 	float gridscaleY;
 };
-
+// Used in billboardVertex.hlsl
 struct BILLBOARD_MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A	View;
 	DirectX::XMFLOAT4X4A	Projection;
 	DirectX::XMFLOAT4A		CamPos;
 	DirectX::XMFLOAT4A		CamDir;
-	float spriteIndex;
 };
 
 struct PICK_BUFFER
@@ -64,6 +63,26 @@ struct POINT_LIGHT_COLLECTION
 	//a Square Inverse Attenuation
 	DirectX::XMFLOAT4A lightSetup[100];
 	DirectX::XMFLOAT4A nrOfLights; 
+};
+
+struct EVERYTHING_BUFFER
+{
+	// CAMERA_POS_BUFFER
+	DirectX::XMFLOAT4A camPos; 
+	// LIGHTMATRIXBUFFER || SHADOW_MATRIX_BUFFER ALREADY MAPPED AT 9
+		/*DirectX::XMFLOAT4X4A view;
+		DirectX::XMFLOAT4X4A projection;*/
+	//POINT_LIGHT_COLLECTION || POINT_LIGHT_COLLECTION_BUFFER
+	DirectX::XMFLOAT4A positionArray[100];
+	DirectX::XMFLOAT4A colorArray[100];
+	//Setup//
+	//r Range 
+	//g Constant Attenuation
+	//b Inverse Attenuation
+	//a Square Inverse Attenuation
+	DirectX::XMFLOAT4A lightSetup[100];
+	DirectX::XMFLOAT4A nrOfLights;
+
 };
 struct SHADOW_MATRIX_BUFFER
 {

@@ -358,7 +358,6 @@ bool GameState::_handleHUDPicking()
 			{
 			case 0:
 				// Build Button
-				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				if (m_hudButtonsPressed[index]){
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn));
@@ -367,7 +366,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 1:
 				// Crew Button
-				std::cout << "Crew Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
 				if (m_hudButtonsPressed[index])
 				{
@@ -378,7 +376,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 2:
 				// Event Button
-				std::cout << "Event Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cHL, cC);
 				if (m_hudButtonsPressed[index])
 				{
@@ -388,7 +385,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 3:
 				// Stats Button
-				std::cout << "Stats Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL / 4, cC);
 				if (m_hudButtonsPressed[index])
 				{
@@ -466,9 +462,6 @@ void GameState::_handleInput()
 		else
 			m_move = false;
 	}
-
-	if (Input::isKeyPressed('P'))
-		m_stage = GameStage::Play;
 
 	
 

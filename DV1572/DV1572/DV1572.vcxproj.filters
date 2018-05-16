@@ -19,6 +19,7 @@
     <FxCompile Include="ourEngine\shaders\standardHullShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transPixelShader.hlsl" />
     <FxCompile Include="ourEngine\shaders\transVertexShader.hlsl" />
+    <FxCompile Include="ourEngine\shaders\ForwardPixel.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InGameConsole.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="trolls_inn\Furniture\Chair.h" />
     <ClInclude Include="trolls_inn\Furniture\Reception.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.h" />
+    <ClInclude Include="ourEngine\core\RenderDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />

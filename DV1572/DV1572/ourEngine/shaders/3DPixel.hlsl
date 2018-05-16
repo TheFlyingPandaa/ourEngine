@@ -9,7 +9,7 @@ struct INPUT
 {
 	float4 pos : SV_POSITION;
 	float4 worldPos : WORLDPOS;
-	float2 tex : TEXCOORD;
+	float2 tex : TEXELS;
 	float3 normal : NORMAL;
 	float3x3 TBN : TBN;
 	float4 color : HIGHLIGHTCOLOR;

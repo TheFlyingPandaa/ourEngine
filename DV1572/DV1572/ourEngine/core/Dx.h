@@ -13,6 +13,7 @@
 #include "../../ourEngine/core/Font/SpriteBatch.h"
 #include "../../ourEngine/core/Font/SpriteFont.h"
 #include "../../trolls_inn/Bobby test/Character.h"
+#include "RenderDefine.h"
 
 /*
 	This klass needs to be included in the corrisbonding c++ files to be used.
@@ -82,7 +83,13 @@ namespace DX
 
 
 	extern ID3D11VertexShader* g_3DVertexShader;
+	extern ID3D11VertexShader* g_billboardVertexShader;
+#if DEFERRED_RENDERING
+	extern ID3D11PixelShader* g_billboardPixelShader;
 	extern ID3D11PixelShader* g_3DPixelShader;
+#elif FORWARD_RENDERING
+	extern ID3D11PixelShader*	g_forwardPixelShader;
+#endif
 	extern ID3D11InputLayout* g_inputLayout;
 	extern ID3D11InputLayout* g_billInputLayout;
 
@@ -94,8 +101,6 @@ namespace DX
 	extern std::deque<INSTANCE_GROUP>			g_InstanceGroupsShadow;
 	extern std::deque<INSTANCE_GROUP>			g_instanceGroupWindows;
 	extern std::deque<INSTANCE_GROUP_BILL>		g_instanceGroupsBillboard;
-	extern ID3D11VertexShader* g_billboardVertexShader;
-	extern ID3D11PixelShader* g_billboardPixelShader;
 
 	extern void submitToInstance(Shape* shape, std::deque<INSTANCE_GROUP>& queue);
 	extern void submitToInstance(Shape* shape, std::vector<INSTANCE_GROUP_INDEXED>& queue);

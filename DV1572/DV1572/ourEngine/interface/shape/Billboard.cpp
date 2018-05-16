@@ -4,7 +4,11 @@
 Billboard::Billboard()
 {
 	setVertexShader(DX::g_billboardVertexShader);
+#if DEFERRED_RENDERING
 	setPixelShader(DX::g_billboardPixelShader);
+#elif FORWARD_RENDERING
+	setPixelShader(DX::g_forwardPixelShader);
+#endif
 	m_spriteIndex = 0; 
 }
 
