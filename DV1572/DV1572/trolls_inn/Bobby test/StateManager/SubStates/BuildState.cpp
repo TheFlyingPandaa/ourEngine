@@ -79,16 +79,16 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 			if (m_selectedRoom)
 			{
 				m_selectedRoom->Select();
+				m_selectedRoom = nullptr;
 			}
-			m_selectedRoom = nullptr;
 			m_startTile = pickedShape;
 			break;
 		case BuildState::Furniture:
 			if (m_selectedRoom)
 			{
 				m_selectedRoom->Select();
+				m_selectedRoom = nullptr;
 			}
-			m_selectedRoom = nullptr;
 
 			if (m_selectedThing == -1)
 			{
@@ -125,9 +125,12 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 							else
 							{
 								m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
-								m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
-								m_cm->setInfo(m_furnitureRemove->WhatType());
-								m_cm->setPos(Input::getMousePositionLH());
+								if (m_furnitureRemove)
+								{
+									m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+									m_cm->setInfo(m_furnitureRemove->WhatType());
+									m_cm->setPos(Input::getMousePositionLH());
+								}
 							}
 
 						}
@@ -147,16 +150,17 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 					m_clickedLast = false;
 				}
 			}
-			else {
+			else 
+			{
 				m_furnitureDeleteMode = false;
 				m_startTile = pickedShape;
-				if (m_furnitureRemove)
+				/*if (m_furnitureRemove)
 				{
 					m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 					m_furnitureRemove = nullptr;
-				}
-				static int lastSelected = -1;
+				}*/
 				 // Chair (Looks like table)
+				
 				if (m_selectedThing == 0)
 				{
 					// This is the first selected image, the chair
@@ -744,11 +748,12 @@ void BuildState::_inputFurniture()
 							if (!m_freeFurniture)
 							{
 								m_inn->Withdraw(table->getPrice());
-								m_freeFurniture = false;
 							}
 							else
 							{
+								lastSelected = -1;
 								m_selectedThing = -1;
+								m_freeFurniture = false;
 								delete table;
 								table = nullptr;
 							}
@@ -763,15 +768,7 @@ void BuildState::_inputFurniture()
 						drawSelectedThing = true;
 						m_canBuildFurniture = false;
 					}
-
-					
-					
 				}
-				else
-				{
-					table = new Table(XMFLOAT3(-1, -1, -1), MESH::TABLE_HIGH,2);
-				}
-				
 			}
 
 			else if (m_startTile)
@@ -909,8 +906,14 @@ void BuildState::Update(double deltaTime)
 			{
 				m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 				m_selectedThing = m_furnitureRemove->getType();
+				lastSelected = m_selectedThing;
 				if (table) delete table;
 				table = m_furnitureRemove->MakeCopy();
+
+				DirectX::XMFLOAT3 lol(m_furnitureRemove->getPosition().x, m_furnitureRemove->getPosition().y, m_furnitureRemove->getPosition().z);
+				table->setPosition(lol);
+				table->setRotation(m_furnitureRemove->getRotation());
+				table->setLevel(m_furnitureRemove->getLevel());
 				m_freeFurniture = true;
 			}
 			else
@@ -922,13 +925,8 @@ void BuildState::Update(double deltaTime)
 			DirectX::XMFLOAT3 p = m_furnitureRemove->getObject3D().getPosition();
 			DirectX::XMINT2 pos(static_cast<int32_t>(p.x + 0.5f), static_cast<int32_t>(p.z + 0.5f));
 			bool tem = m_roomCtrl->RemoveRoomObject(m_furnitureRemove);
-			if (tem)
-			{
-				
-				m_furnitureRemove = nullptr;
-				m_furnitureDeleteMode = false;
-			}
-
+			m_furnitureRemove = nullptr;
+			m_furnitureDeleteMode = false;
 		}
 		if (m_cm->ButtonClicked() == 1)
 		{

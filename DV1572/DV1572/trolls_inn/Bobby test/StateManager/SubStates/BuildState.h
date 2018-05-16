@@ -29,6 +29,7 @@ private:
 	bool drawSelectedThing;
 	bool twoStepThingy = false;
 	bool rotationKeyPressed = false;
+	int lastSelected = -1;
 	//-----
 	int is = 0;
 
