@@ -76,9 +76,20 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 			}
 			break;
 		case BuildState::Door:
+			if (m_selectedRoom)
+			{
+				m_selectedRoom->Select();
+			}
+			m_selectedRoom = nullptr;
 			m_startTile = pickedShape;
 			break;
 		case BuildState::Furniture:
+			if (m_selectedRoom)
+			{
+				m_selectedRoom->Select();
+			}
+			m_selectedRoom = nullptr;
+
 			if (m_selectedThing == -1)
 			{
 				if (Input::isMouseLeftPressed() && !m_clickedLast)
@@ -877,6 +888,10 @@ void BuildState::Update(double deltaTime)
 				m_furnitureRemove = nullptr;
 				m_furnitureDeleteMode = false;
 			}
+		}
+		if (m_cm->ButtonClicked() == 1)
+		{
+			m_inn->Withdraw(m_furnitureRemove->AddLevel(m_inn->getMoney()));
 		}
 	}
 }
