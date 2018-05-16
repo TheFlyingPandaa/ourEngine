@@ -301,7 +301,7 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 		if (path.size() != 0)
 		{
-			if(troll->getCancelFlag())
+			if(!troll->getCancelFlag())
 				troll->setCancelFlag(true);
 			m_justMoved = false;
 

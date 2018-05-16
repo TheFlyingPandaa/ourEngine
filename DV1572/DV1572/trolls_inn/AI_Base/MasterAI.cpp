@@ -78,15 +78,68 @@ void MasterAI::_trollInnChase()
 		}
 		else
 		{
-			std::cout << "Reached the customer!\n";
+			switch (m_selectedCustAction)
+			{
+			case KILL:
+				_killCustomer(m_selectedCustomer);
+				break;
+			case STEAL:
+				InGameConsole::pushString("stole mani");
+				break;
+			}
+			m_showMenu = false;
 			m_InnTroll->setSpeed(2.0f);
 			delete currentChase;
 			currentChase = nullptr;
+			m_selectedCustomer = -1;
 		}
 
 	}
 
 	
+	
+}
+
+bool MasterAI::_checkValidSelectedCustomer(int index)
+{
+	if (index >= m_customers.size() || index < 0)
+		return false;
+	if (m_customers[index]->getUniqueIndex() != m_selectedCustomerID)
+		return false;
+	
+	return true;
+}
+
+void MasterAI::_killCustomer(int customerIndex)
+{
+	XMVECTOR xmKilledCustPos = XMLoadFloat2(&m_customers[customerIndex]->getPosition());
+	bool caught = false;
+	for (int i = 0; i < m_customers.size(); i++)
+	{
+		if (i == customerIndex) continue;
+
+		XMFLOAT2 otherPos = m_customers[i]->getPosition();
+		float distance = XMVectorGetX(XMVector2Length(xmKilledCustPos - XMLoadFloat2(&otherPos)));
+		if (distance < 5)
+		{
+			m_customers[i]->RestartClock();
+			m_customers[i]->setThoughtBubble(Character::ANGRY);
+			m_inn->AddAngryCustomer();
+			m_customers[i]->setSpeed(3.0f);
+			m_customers[i]->getShape()->setColor(1, 0, 0);
+			
+		}
+	
+	}
+
+	int money = m_customers[customerIndex]->GetEconomy().GetGold();
+	m_inn->Deposit(money);
+
+	delete m_customers[customerIndex];
+	m_customers.erase(m_customers.begin() + customerIndex);
+
+	if(caught)
+		std::cout << "YOU GOT CAUGHT" << std::endl;
 	
 }
 
@@ -128,12 +181,17 @@ void MasterAI::CharacterMenu()
 {
 	if (Input::isMouseLeftPressed(false))
 	{
-		if (m_customerMenu->ButtonClicked() == 1)
+		int button = m_customerMenu->ButtonClicked();
+		if (button == 1 || button == 0)
 		{
 			if (currentChase)
 			{
 				delete currentChase;
 				currentChase = nullptr;
+			}
+			if (!_checkValidSelectedCustomer(m_selectedCustomer))
+			{
+				return;
 			}
 			m_InnTroll->clearWalkingQueue();
 			currentChase = new TROLL_CHASE;
@@ -141,13 +199,21 @@ void MasterAI::CharacterMenu()
 			currentChase->charIndex = m_selectedCustomer;
 
 			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
-
+			switch (button)
+			{
+			case 0:
+				m_selectedCustAction = KILL;
+				break;
+			case 1:
+				m_selectedCustAction = STEAL;
+				break;
+			}
 		}
 		else if (m_customerMenu->ButtonClicked() == -2)
 		{
 			m_showMenu = false;
-
-			m_customers[m_selectedCustomer]->getShape()->setColor(1, 1, 1);
+			if(_checkValidSelectedCustomer(m_selectedCustomer))
+				m_customers[m_selectedCustomer]->getShape()->setColor(1, 1, 1);
 			m_selectedCustomer = -1;
 		
 		}
@@ -238,7 +304,7 @@ void MasterAI::Update(Camera* cam)
 	// Evaluate what actions customers should take
 	for (auto& customer : this->m_customers)
 	{
-		//solver.update(*customer);
+		
 		if (updateCustomerNeeds)
 		{
 			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
@@ -246,7 +312,7 @@ void MasterAI::Update(Camera* cam)
 			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
 		}
 		// Check if the customer is busy or not
-		if (customer->GetQueueEmpty())
+		if (customer->GetQueueEmpty() || customer->GetThought() == Character::ANGRY)
 		{
 			Action desiredAction;
 
@@ -270,6 +336,8 @@ void MasterAI::Update(Camera* cam)
 			{
 				// Customer leaves inn
 				// Save id for leaving customers
+				customer->clearWalkingQueue();
+				customer->ClearQueue();
 				leavingCustomersIDs.push_back(loopCounter);
 				if (customer->GetThought() == Character::ANGRY)
 				{
@@ -395,7 +463,7 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 		if (deltaPos.x < 0.1 && deltaPos.y < 0.1)
 		{
 			m_showMenu = true;
-			if (lastSelectedCustomer == -1)
+			if (!_checkValidSelectedCustomer(lastSelectedCustomer))
 			{
 				lastSelectedCustomer = i;
 				m_selectedCustomer = i;
@@ -405,19 +473,14 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 			}
 			else
 			{
-				if (m_customers[lastSelectedCustomer]->getUniqueIndex() != m_selectedCustomerID)
-				{
-					
-				}
-				else
-				{
-					m_customers[lastSelectedCustomer]->getShape()->setColor(1, 1, 1);
-					lastSelectedCustomer = i;
-					m_selectedCustomer = i;
-					m_selectedCustomerID = m_customers[i]->getUniqueIndex();
+				
+				m_customers[lastSelectedCustomer]->getShape()->setColor(1, 1, 1);
+				lastSelectedCustomer = i;
+				m_selectedCustomer = i;
+				m_selectedCustomerID = m_customers[i]->getUniqueIndex();
 
-					m_customers[i]->getShape()->setColor(0, 1, 0);
-				}
+				m_customers[i]->getShape()->setColor(0, 1, 0);
+				
 				
 			}
 
@@ -425,10 +488,6 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 		
 			XMINT2 winSize = Input::getWindowSize();
 			m_customerMenu->setPos(XMFLOAT2((winSize.x / 2.0f) - 200.0f, winSize.y *0.01f));
-			
-
-			
-
 
 		}
 

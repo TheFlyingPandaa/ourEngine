@@ -186,6 +186,11 @@ void Customer::PopToNextState()
 	m_stateQueue.pop();
 }
 
+void Customer::ClearQueue()
+{
+	while (!m_stateQueue.empty())m_stateQueue.pop();
+}
+
 void Customer::setOwnedFurniture(Furniture * furnitureOwned)
 {
 	m_ownedFurniture = furnitureOwned; 

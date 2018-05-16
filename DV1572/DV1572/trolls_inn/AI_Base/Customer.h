@@ -103,6 +103,7 @@ public:
 	CustomerState GetState() const;
 	CustomerState GetWaitingToDoState() const;
 	void PopToNextState();
+	void ClearQueue();
 	
 	void setOwnedFurniture(Furniture* furnitureOwned); 
 

@@ -42,6 +42,22 @@ private:
 
 	void _generateCustomer();
 
+	
+
+
+	// Customer selection
+	enum CUST_SEL_AC
+	{
+		KILL,
+		STEAL
+	} m_selectedCustAction;
+	int m_selectedCustomer;
+	int m_selectedCustomerID;
+
+	void _trollInnChase();
+
+	void CharacterMenu();
+
 	bool m_showMenu;
 	ClickMenu* m_customerMenu;
 
@@ -50,14 +66,10 @@ private:
 		XMFLOAT2 customerpath;
 		int charIndex;
 		int pathReturn;
-	}* currentChase;
-
-	int m_selectedCustomer;
-	int m_selectedCustomerID;
-
-	void _trollInnChase();
-	void CharacterMenu();
-
+	}*currentChase;
+	bool _checkValidSelectedCustomer(int index);
+	void _killCustomer(int customerIndex);
+	// !customer Selection
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
