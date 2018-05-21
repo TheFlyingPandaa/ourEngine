@@ -15,6 +15,7 @@ Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
 	this->pos.z = static_cast<int>(pos.z);
 	p_object.setMesh(MLP::GetInstance().GetMesh(m_meshId));
 	p_isBusy = false;
+	m_dirtyStat = 0; 
 
 	p_level = 0;
 }
@@ -120,9 +121,24 @@ void Furniture::setOwner(Customer * owner)
 	m_owner = owner;
 }
 
+void Furniture::increaseDirtyLevel()
+{
+	m_dirtyStat += 2; 
+}
+
+void Furniture::cleanFurniture()
+{
+	m_dirtyStat = 0; 
+}
+
 int Furniture::getPriceToLevelUp() const
 {
 	return (p_level + 1) * 100;
+}
+
+int Furniture::getDirtyStat() const
+{
+	return m_dirtyStat; 
 }
 
 int Furniture::getIndex() const

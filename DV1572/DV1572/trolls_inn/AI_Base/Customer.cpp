@@ -1,4 +1,5 @@
 #include "Customer.h"
+#include "../../InGameConsole.h"
 #include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
@@ -43,11 +44,12 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	{
 		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar"))
+			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 1))
 		{
 			furniture[i]->setOwner(this); 
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
+			furniture[i]->increaseDirtyLevel(); 
 			furnitureFound = true;
 		}
 	}

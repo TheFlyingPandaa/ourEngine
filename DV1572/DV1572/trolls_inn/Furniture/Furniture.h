@@ -34,8 +34,11 @@ public:
 	int				AddLevel(int gold,int amount = 1);
 	void			setIndex(int index); 
 	void			setOwner(Customer* owner); 
+	void			increaseDirtyLevel(); 
+	void			cleanFurniture(); 
 
 	int				getPriceToLevelUp() const;
+	int				getDirtyStat() const; 
 
 	int				getIndex() const; 
 
@@ -56,6 +59,8 @@ private:
 	DirectX::XMINT3 pos;
 	int m_index; 
 	Customer* m_owner; 
+	int m_dirtyStat; 
+
 protected:
 	Object3D	p_object;
 	Attributes	p_attributes;
