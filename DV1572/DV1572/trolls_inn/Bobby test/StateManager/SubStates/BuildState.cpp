@@ -116,7 +116,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 									{
 										m_furnitureRemove->getObject3D().setColor(1, 1, 1);
 										m_furnitureRemove = newPick;
-										m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+										m_furnitureRemove->getObject3D().setColor(0.2f, 2.0f, 0.2f);
 										m_cm->ClearSubText();
 										m_cm->setInfo(m_furnitureRemove->WhatType());
 										std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType());
@@ -131,7 +131,7 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 								m_furnitureRemove = m_roomCtrl->getFurnitureAtPos(pos);
 								if (m_furnitureRemove)
 								{
-									m_furnitureRemove->getObject3D().setColor(0.2, 2, 0.2);
+									m_furnitureRemove->getObject3D().setColor(0.2f, 2.0f, 0.2f);
 									m_cm->ClearSubText();
 									m_cm->setInfo(m_furnitureRemove->WhatType());
 									std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType());
@@ -804,7 +804,7 @@ void BuildState::_inputFurniture()
 						m_canBuildFurniture = m_roomCtrl->CheckAndMarkTilesObject(start, table->getGridSize(), table->getRotation());
 						if (!m_canBuildFurniture)
 						{
-							table->getObject3D().setColor(3, 0.1, 0.1);
+							table->getObject3D().setColor(3.0f, 0.1f, 0.1f);
 							m_startTile->setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 						}
 						else
@@ -814,7 +814,7 @@ void BuildState::_inputFurniture()
 					}
 					else
 					{
-						table->getObject3D().setColor(3, 0.1, 0.1);
+						table->getObject3D().setColor(3.0f, 0.1f, 0.1f);
 						m_startTile->setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 						//m_canBuildFurniture = m_roomCtrl->MarkAllTilesRedObject(start, table->getGridSize(), table->getRotation());
 					}
@@ -954,7 +954,7 @@ void BuildState::Update(double deltaTime)
 				if (table) delete table;
 				table = m_furnitureRemove->MakeCopy();
 
-				DirectX::XMFLOAT3 lol(m_furnitureRemove->getPosition().x, m_furnitureRemove->getPosition().y, m_furnitureRemove->getPosition().z);
+				DirectX::XMFLOAT3 lol(static_cast<float>(m_furnitureRemove->getPosition().x), static_cast<float>(m_furnitureRemove->getPosition().y), static_cast<float>(m_furnitureRemove->getPosition().z));
 				table->setPosition(lol);
 				table->setRotation(m_furnitureRemove->getRotation());
 				table->setLevel(m_furnitureRemove->getLevel());

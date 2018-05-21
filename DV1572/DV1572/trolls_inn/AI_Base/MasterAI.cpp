@@ -260,7 +260,7 @@ void MasterAI::CharacterMenu()
 			currentChase->customerpath = XMFLOAT2(round_n3(m_customers[m_selectedCustomer]->getPosition().x, 0), round_n3(m_customers[m_selectedCustomer]->getPosition().y, 0));
 			currentChase->charIndex = m_selectedCustomer;
 
-			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(static_cast<int32_t>(currentChase->customerpath.x), static_cast<int32_t>(currentChase->customerpath.y)));
 			switch (button)
 			{
 			case 0:
