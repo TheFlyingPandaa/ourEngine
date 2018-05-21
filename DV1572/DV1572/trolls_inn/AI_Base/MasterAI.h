@@ -39,9 +39,8 @@ private:
 	Staff* m_InnTroll;
 	CustomerFlowControl m_cFC;
 
-	Mesh m_thinkingMesh;
-	bool m_showMenu;
-	ClickMenu* m_customerMenu;
+	Mesh			m_thinkingMesh;
+	
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
@@ -60,14 +59,35 @@ private:
 
 	void _generateCustomer();
 	void _spawnCustomer();
+
+	
+
+
+	// Customer selection
+	enum CUST_SEL_AC
+	{
+		KILL,
+		STEAL
+	} m_selectedCustAction;
+	int m_selectedCustomer;
+	int m_selectedCustomerID;
+
+	void _trollInnChase();
+
+	void CharacterMenu();
+
+	bool m_showMenu;
+	ClickMenu* m_customerMenu;
+
 	struct TROLL_CHASE
 	{
 		XMFLOAT2 customerpath;
 		int charIndex;
 		int pathReturn;
-	}* currentChase;
-	void _trollInnChase();
-
+	}*currentChase;
+	bool _checkValidSelectedCustomer(int index);
+	void _killCustomer(int customerIndex);
+	// !customer Selection
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();

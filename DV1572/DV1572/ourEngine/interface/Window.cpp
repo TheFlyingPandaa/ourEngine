@@ -13,12 +13,16 @@ ID3D11DeviceContext* DX::g_deviceContext;
 
 //Standard Shaders and Input
 ID3D11VertexShader* DX::g_3DVertexShader;
+#if DEFERRED_RENDERING
 ID3D11PixelShader* DX::g_3DPixelShader;
+ID3D11PixelShader* DX::g_billboardPixelShader;
+#elif FORWARD_RENDERING
+ID3D11PixelShader* DX::g_forwardPixelShader;
+#endif
 ID3D11InputLayout* DX::g_inputLayout;
 ID3D11InputLayout* DX::g_billInputLayout;
 
 ID3D11VertexShader* DX::g_billboardVertexShader;
-ID3D11PixelShader* DX::g_billboardPixelShader;
 
 //Rendering Queues
 std::vector<Shape*> DX::g_skyBoxQueue;
@@ -227,7 +231,10 @@ void DX::CleanUp()
 	DX::g_device->Release();
 	DX::g_deviceContext->Release();
 	DX::g_3DVertexShader->Release();
+#if DEFERRED_RENDERING
 	DX::g_3DPixelShader->Release();
+	DX::g_billboardPixelShader->Release();
+#endif
 	DX::g_inputLayout->Release();
 	DX::g_standardHullShader->Release();
 	DX::g_standardDomainShader->Release();
@@ -380,23 +387,27 @@ void Window::_compileShaders()
 		{ "SPRITEINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 52, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 	};
+
 	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_billboardVertexShader, 
 		L"ourEngine/shaders/billboardVertex.hlsl", "main",
 		inputDescBill, ARRAYSIZE(inputDescBill), DX::g_billInputLayout);
+#if DEFERRED_RENDERING
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_billboardPixelShader,
 		L"ourEngine/shaders/billboardPixel.hlsl", "main");
-	// Billboarding end
-
-	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
-		L"ourEngine/shaders/3DVertex.hlsl", "main",
-		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
 	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_3DPixelShader,
 		L"ourEngine/shaders/3DPixel.hlsl", "main");
-
 	ShaderCreator::CreateVertexShader(DX::g_device, m_deferredVertexShader,
 		L"ourEngine/Shaders/deferredVertexShader.hlsl", "main");
 	ShaderCreator::CreatePixelShader(DX::g_device, m_deferredPixelShader,
 		L"ourEngine/shaders/deferredPixelShader.hlsl", "main");
+#elif FORWARD_RENDERING
+	ShaderCreator::CreatePixelShader(DX::g_device, DX::g_forwardPixelShader,
+		L"ourEngine/shaders/ForwardPixel.hlsl", "main");
+#endif
+	// Billboarding end
+	ShaderCreator::CreateVertexShader(DX::g_device, DX::g_3DVertexShader,
+		L"ourEngine/shaders/3DVertex.hlsl", "main",
+		inputDesc, ARRAYSIZE(inputDesc), DX::g_inputLayout);
 
 	ShaderCreator::CreateVertexShader(DX::g_device, m_transVertexShader,
 		L"ourEngine/shaders/transVertexShader.hlsl", "main");
@@ -769,7 +780,7 @@ void Window::_shadowPass(Camera* c)
 
 void Window::_loadWindowBuffers()
 {
-	D3D11_BUFFER_DESC bDesc;
+	/*D3D11_BUFFER_DESC bDesc;
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bDesc.ByteWidth = sizeof(SHADOW_MATRIX_BUFFER);
 	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -809,12 +820,12 @@ void Window::_loadWindowBuffers()
 	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 
-	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexWindow, &srvDesc, &m_windowDepthTexture);
+	hr = DX::g_device->CreateShaderResourceView(m_depthBufferTexWindow, &srvDesc, &m_windowDepthTexture);*/
 }
 
 void Window::_windowPass(Camera * c)
 {
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	/*DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
 	DX::g_deviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -894,7 +905,7 @@ void Window::_windowPass(Camera * c)
 		DX::g_deviceContext->DrawIndexedInstanced(instance.shape->GetMesh()->getNrOfIndices(), (UINT)instance.attribs.size(), 0, 0, 0);
 		instanceBuffer->Release();
 	}
-
+*/
 
 }
 
@@ -995,8 +1006,12 @@ void Window::_createConstantBuffers()
 	_createBillboardConstantBuffer();
 	_createMeshConstantBuffer();
 	_createPickConstantBuffer();
+#if DEFERRED_RENDERING
 	_createCameraPosConstantBuffer();
 	_createPointLightCollectionBuffer(); 
+#elif FORWARD_RENDERING
+	_createEverythingConstantBuffer();
+#endif
 }
 
 void Window::_createMeshConstantBuffer()
@@ -1037,7 +1052,7 @@ void Window::_createPickConstantBuffer()
 
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_pickingBuffer);
 }
-
+#if DEFERRED_RENDERING
 void Window::_createCameraPosConstantBuffer()
 {
 	D3D11_BUFFER_DESC bDesc; 
@@ -1064,7 +1079,20 @@ void Window::_createPointLightCollectionBuffer()
 
 	HRESULT hr = DX::g_device->CreateBuffer(&bufferDesc, nullptr, &m_pPointLightBuffer);
 }
+#elif FORWARD_RENDERING
+void Window::_createEverythingConstantBuffer()
+{
+	D3D11_BUFFER_DESC bDesc;
+	bDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bDesc.ByteWidth = sizeof(EVERYTHING_BUFFER);
+	bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bDesc.MiscFlags = 0;
+	bDesc.StructureByteStride = 0;
 
+	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_everythingConstantBuffer);
+}
+#endif
 void Window::_createDepthBuffer()
 {
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -1085,12 +1113,9 @@ void Window::_createDepthBuffer()
 	HRESULT hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTex);
 	hr = DX::g_device->CreateDepthStencilView(m_depthBufferTex, NULL, &m_depthStencilView);
 
-
-
-	//hr = DX::g_device->CreateTexture2D(&depthStencilDesc, NULL, &m_depthBufferTexShad);
-	//hr = DX::g_device->CreateDepthStencilView(m_depthBufferTexShad, NULL, &m_depthStencilViewShad);
 }
 
+#if DEFERRED_RENDERING
 void Window::_initGBuffer()
 {
 	D3D11_TEXTURE2D_DESC tDesc{};
@@ -1120,16 +1145,12 @@ void Window::_initGBuffer()
 		DX::g_device->CreateRenderTargetView(g.TextureMap, &rDesc, &g.RTV);
 		DX::g_device->CreateShaderResourceView(g.TextureMap, &sDesc, &g.SRV);
 	}
-
 }
+#endif
 
 void Window::_prepareGeometryPass()
 {
-	//The patchlist is used for tessellation, the tessellator takes patches not points
-	//DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-	//This commented out cuz of the billboarding pass. This will never be fixed lol
-	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
-
+#if DEFERRED_RENDERING
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT];
 
 	for (int i = 0; i < GBUFFER_COUNT; i++)
@@ -1137,7 +1158,7 @@ void Window::_prepareGeometryPass()
 		renderTargets[i] = m_gbuffer[i].RTV;
 	}
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, m_depthStencilView);
-
+#endif
 	_initViewPort();
 	_setViewport();
 
@@ -1147,23 +1168,15 @@ void Window::_prepareGeometryPass()
 
 void Window::_billboardPass(const Camera & cam)
 {
+	// No tessellation
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	
+	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
+
 	DirectX::XMMATRIX View = cam.getViewMatrix();
 	DirectX::XMMATRIX Proj = m_projectionMatrix;
 	View = XMMatrixTranspose(View);
 	Proj = XMMatrixTranspose(Proj);
-	static bool pressed = false;
-	static float index = 1;
-	static float indexLol = 0.01f;
-	
-	
-		index = static_cast<float>((int)index % 4);
-		indexLol += 1.0f;
-		if (indexLol >= 1)
-		{
-			index+= indexLol;
-			indexLol = 0.0f;
-		}
-	
+
 	BILLBOARD_MESH_BUFFER buffer;
 	DirectX::XMStoreFloat4x4A(&buffer.View, View);
 	DirectX::XMStoreFloat4x4A(&buffer.Projection, Proj);
@@ -1171,7 +1184,6 @@ void Window::_billboardPass(const Camera & cam)
 	DirectX::XMFLOAT3 la = cam.getLookAt();
 	buffer.CamPos = DirectX::XMFLOAT4A(p.x, p.y, p.z, 1.0f);
 	buffer.CamDir = DirectX::XMFLOAT4A(la.x, la.y, la.z, 0.0f);
-	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
 	
 
 	if (m_WireFrameDebug == true)
@@ -1200,11 +1212,7 @@ void Window::_billboardPass(const Camera & cam)
 		D3D11_SUBRESOURCE_DATA instData;
 		memset(&instData, 0, sizeof(instData));
 		instData.pSysMem = &instance.attribs[0];
-		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
-		//We copy the data into the attribute part of the layout.
-		//This is what makes instancing special
-
-		
+		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);		
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_billboardConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -1259,6 +1267,8 @@ void Window::_billboardPass(const Camera & cam)
 
 void Window::_geometryPass(const Camera &cam)
 {
+	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
+	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 	DirectX::XMMATRIX view = cam.getViewMatrix();			//Getting the view matrix from the camera.
 	DirectX::XMMATRIX viewProj = view * m_projectionMatrix;	//The smashing it with projection
@@ -1427,11 +1437,13 @@ void Window::_skyBoxPass(const Camera& cam)
 	}
 }
 
+#if DEFERRED_RENDERING
 void Window::_clearTargets()
 {
 	ID3D11RenderTargetView* renderTargets[GBUFFER_COUNT] = { nullptr };
 	DX::g_deviceContext->OMSetRenderTargets(GBUFFER_COUNT, renderTargets, NULL);
 }
+#endif
 
 void Window::_preparePostLight()
 {
@@ -1439,12 +1451,10 @@ void Window::_preparePostLight()
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 }
-
-void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
+#if DEFERRED_RENDERING
+void Window::_lightPass(Camera& cam)
 {
-
 	// WE DO NOT PASS sun buffer correctly
-
 	static bool lol = false;
 	static ID3D11Buffer* m_pSunBuffer;
 
@@ -1487,7 +1497,7 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		DX::g_deviceContext->PSSetShaderResources(adress++, 1, &srv.SRV);
 	}
 	DX::g_deviceContext->PSSetShaderResources(4, 1, &m_shadowDepthTexture);
-	DX::g_deviceContext->PSSetShaderResources(5, 1, &m_windowDepthTexture);
+	//DX::g_deviceContext->PSSetShaderResources(5, 1, &m_windowDepthTexture);
 	DX::g_deviceContext->PSSetConstantBuffers(9, 1, &m_shadowBuffer);
 	
 	//Send lights to GPU
@@ -1502,12 +1512,10 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 		pointLightCollectionBuffer.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
 
 	}
-	for (int i = nrOfLights; i < 100; i++)
-	{
-		pointLightCollectionBuffer.positionArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
-		pointLightCollectionBuffer.colorArray[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
-		pointLightCollectionBuffer.lightSetup[i] = XMFLOAT4A(0.0f, 0.0f, 0.0f, 0.0f);
-	}
+	memset(&pointLightCollectionBuffer.positionArray[nrOfLights], 0, 16 * (100 - (nrOfLights)));
+	memset(&pointLightCollectionBuffer.colorArray[nrOfLights], 0, 16 * (100 - (nrOfLights)));
+	memset(&pointLightCollectionBuffer.lightSetup[nrOfLights], 0, 16 * (100 - (nrOfLights)));
+
 	pointLightCollectionBuffer.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
 
 	D3D11_MAPPED_SUBRESOURCE lightData;
@@ -1534,6 +1542,70 @@ void Window::_lightPass(Camera& cam /*std::vector<Light*> lightQueue*/)
 	DX::g_deviceContext->Draw(4, 0);
 }
 
+#elif FORWARD_RENDERING
+void Window::_renderEverything(const Camera & cam)
+{
+	
+	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+
+	static bool lol = false;
+	static ID3D11Buffer* m_pSunBuffer;
+
+	static DIRECTIONAL_LIGHT_BUFFER m_sunBuffer;
+	if (!lol)
+	{
+		D3D11_BUFFER_DESC sunBdesc;
+		sunBdesc.Usage = D3D11_USAGE_DYNAMIC;
+		sunBdesc.ByteWidth = sizeof(DIRECTIONAL_LIGHT_BUFFER);
+		sunBdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		sunBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		sunBdesc.MiscFlags = 0;
+		sunBdesc.StructureByteStride = 0;
+
+		DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer);
+		lol = true;
+
+	}
+
+	m_sunBuffer.pos = DX::g_lightPos;
+	m_sunBuffer.color = DX::g_lightDir;
+
+	D3D11_MAPPED_SUBRESOURCE sunLightData;
+	DX::g_deviceContext->Map(m_pSunBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &sunLightData);
+	memcpy(sunLightData.pData, &(m_sunBuffer), sizeof(DIRECTIONAL_LIGHT_BUFFER));
+	DX::g_deviceContext->Unmap(m_pSunBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(2, 1, &m_pSunBuffer);
+
+	EVERYTHING_BUFFER eb;
+	memset(&eb, 0, sizeof(EVERYTHING_BUFFER));
+	XMFLOAT3 _camPos = cam.getPosition();
+	eb.camPos.x = _camPos.x;
+	eb.camPos.y = _camPos.y;
+	eb.camPos.z = _camPos.z;
+
+	int nrOfLights = static_cast<int>(DX::g_lightQueue.size());
+	for (int i = 0; i < nrOfLights; i++)
+	{
+		eb.positionArray[i] = DX::g_lightQueue[i]->getPosition();
+		eb.colorArray[i] = DX::g_lightQueue[i]->getColor();
+		eb.colorArray[i].w = static_cast<float>(DX::g_lightQueue[i]->getIndex());
+		eb.lightSetup[i] = DX::g_lightQueue[i]->getLightSetup();
+
+	}
+	eb.nrOfLights = XMFLOAT4A(static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights), static_cast<float>(nrOfLights));
+	D3D11_MAPPED_SUBRESOURCE everythingData;
+	DX::g_deviceContext->Map(m_everythingConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &everythingData);
+	memcpy(everythingData.pData, &eb, sizeof(EVERYTHING_BUFFER));
+	DX::g_deviceContext->Unmap(m_everythingConstantBuffer, 0);
+	DX::g_deviceContext->PSSetConstantBuffers(1, 1, &m_everythingConstantBuffer);
+
+	DX::g_deviceContext->PSSetShaderResources(4, 1, &m_shadowDepthTexture);
+	DX::g_deviceContext->PSSetConstantBuffers(9, 1, &m_shadowBuffer);
+
+	_geometryPass(cam);
+	_billboardPass(cam);
+}
+#endif
 void Window::_transparencyPass(const Camera & cam)
 {
 	
@@ -1656,17 +1728,21 @@ Window::~Window()
 	m_samplerState->Release();
 
 	m_meshConstantBuffer->Release();
+#if DEFERRED_RENDERING
 	//m_pointLightsConstantBuffer->Release();
 	if (m_pointLightsConstantBuffer != nullptr)
 	{
 		m_pointLightsConstantBuffer->Release();
 	}
 	m_cameraPosConstantBuffer->Release();
+#elif FORWARD_RENDERING
+	m_everythingConstantBuffer->Release();
+#endif
 	if (m_lightBuffer != nullptr)
 	{
 		m_lightBuffer->Release();
 	}
-
+#if DEFERRED_RENDERING
 	for (size_t i = 0; i < GBUFFER_COUNT; i++)
 	{
 		m_gbuffer[i].SRV->Release();
@@ -1675,6 +1751,7 @@ Window::~Window()
 	}
 	m_deferredVertexShader->Release();
 	m_deferredPixelShader->Release();
+#endif
 	m_transVertexShader->Release();
 	m_transPixelShader->Release();
 	m_transBlendState->Release();
@@ -1688,6 +1765,7 @@ Window::~Window()
 	m_pickingBuffer->Release();
 	if(m_pickingReadBuffer) m_pickingReadBuffer->Release();
 
+	//TODO (Henrik): We are not using compute shader in this project
 	m_computeConstantBuffer->Release();
 	m_computeOutputBuffer->Release();
 	m_computeReadWriteBuffer->Release();
@@ -1706,7 +1784,7 @@ Window::~Window()
 	
 }
 
-bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bool working)
+bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
 {
 	m_width = width;
 	m_height = height;
@@ -1714,17 +1792,15 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 	m_title = title;
 	m_fullscreen = fullscreen;
 	_initWindow();
-	if (working == false)
-	{
-		MessageBoxA(m_hwnd, "NO SETTINGS FILE WAS WOUND", "NO SETTINGS FILE FOUND", MB_ICONWARNING);
-	}
 	HRESULT hr = _initDirect3DContext();
 	_initFonts();
 	_initViewPort();
 	_setViewport();
 	
 	std::thread t1(&Window::_compileShaders, this); //_compileShaders();
-	std::thread t2(&Window::_initGBuffer, this);	//_initGBuffer();
+#if DEFERRED_RENDERING
+	std::thread t2(&Window::_initGBuffer, this);
+#endif
 	_createConstantBuffers(); 
 	Picking::InitPickingTexture(width, height, m_sampleCount, m_pickingTexture.TextureMap, m_pickingTexture.RTV, m_pickingTexture.SRV, m_pickingReadBuffer);
 	_setSamplerState();
@@ -1740,7 +1816,9 @@ bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen, const bo
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), static_cast<float>(m_width) / m_height, 0.1f, 200.0f); 
 	m_HUDviewProj = m_HUDviewProj * m_projectionMatrix;
 	t1.join();
+#if DEFERRED_RENDERING
 	t2.join();
+#endif
 	ShowWindow(m_hwnd, 10);
 	return true;
 }
@@ -1773,10 +1851,11 @@ void Window::Clear()
 	DX::g_deviceContext->ClearRenderTargetView(m_backBufferRTV, c);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewShad, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-	DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewWindow, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	//DX::g_deviceContext->ClearDepthStencilView(m_depthStencilViewWindow, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	DX::g_deviceContext->OMSetBlendState(nullptr, 0, 0xffffffff);
 	//DX::g_lightsPos.clear();
 	//DX::g_lightsDir.clear();
+#if DEFERRED_RENDERING
 	for (int i = 0; i < GBUFFER_COUNT; i++)
 	{
 		DX::g_deviceContext->ClearRenderTargetView(m_gbuffer[i].RTV, c);
@@ -1784,6 +1863,7 @@ void Window::Clear()
 
 	ID3D11ShaderResourceView* renderTargets[GBUFFER_COUNT] = { nullptr };
 	DX::g_deviceContext->PSSetShaderResources(0, GBUFFER_COUNT, renderTargets);
+#endif
 }
 
 void Window::loadActiveLights(GameTime& gameTime)
@@ -1811,15 +1891,14 @@ void Window::Flush(Camera* c)
 	
 
 	_prepareGeometryPass();
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	//TODO: This is sloppy af, we are running a geometry pass above.
-	DX::g_deviceContext->IASetInputLayout(DX::g_billInputLayout);
+#if DEFERRED_RENDERING
 	_billboardPass(*c);
-	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
-	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	_geometryPass(*c);
 	_clearTargets();
-
 	_lightPass(*c);
+#elif FORWARD_RENDERING
+	_renderEverything(*c);
+#endif
 
 	_preparePostLight();
 	_transparencyPass(*c);
@@ -1828,8 +1907,10 @@ void Window::Flush(Camera* c)
 		_skyBoxPass(*c);
 	if(DX::g_instanceGroupsHUD.size() > 0)
 		_drawHUD();
-	if(m_computeShader != nullptr)
-		//_runComputeShader();
+
+	/*if(m_computeShader != nullptr)
+		_runComputeShader();*/
+
 	if(DX::g_textQueue.size() > 0)
 		_drawText();
 }
@@ -1992,7 +2073,3 @@ DirectX::XMFLOAT2 Window::getSize() const
 	return sizeVec;
 }
 
-DirectX::XMFLOAT2 Window::getMousePos()
-{
-	return m_mousePos;
-}

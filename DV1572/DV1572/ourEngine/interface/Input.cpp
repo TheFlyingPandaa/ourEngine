@@ -3,6 +3,7 @@
 bool Input::m_keys[256];
 
 bool Input::m_mouseKeys[3];
+bool Input::m_mouseKeys2[3];
 DirectX::XMFLOAT2 Input::m_mousePos;
 float Input::m_scrollDelta;
 
@@ -30,13 +31,13 @@ bool Input::isMouseLeftPressed(bool repeat)
 		return m_mouseKeys[0];
 
 	bool result = false; 
-	static bool lol = false;
+
 	bool lol2 = m_mouseKeys[0];
-	if (lol2 && !lol)
+	if (lol2 && !m_mouseKeys2[0])
 	{
 		result = true; 
 	}
-	lol = lol2;
+	m_mouseKeys2[0] = lol2;
 	return result; 
 }
 

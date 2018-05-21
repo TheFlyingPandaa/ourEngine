@@ -6,7 +6,7 @@ Table::Table(DirectX::XMFLOAT3 pos, MESH mesh, const int size ,const int setting
 {
 	p_gridSize = size;
 	p_rot = 90;
-	p_object.setMesh(MLP::GetInstance().GetMesh(mesh));
+	//p_object.setMesh(MLP::GetInstance().GetMesh(mesh));
 	
 	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
 	//Set Whatever suits

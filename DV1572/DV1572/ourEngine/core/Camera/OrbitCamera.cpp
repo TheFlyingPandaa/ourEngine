@@ -17,7 +17,7 @@ OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim, DirectX::XMFLOAT3 pos) : C
 	rotation.x = rotation.y = 0;
 	m_sensitivity = 0.01f;
 	m_tiltCapDown = 0.0f;
-	m_tiltCapUp = 0.5f;
+	m_tiltCapUp = 0.25f;
 	m_zoomSensitivity = 0.5f;
 	m_pos = pos;
 
@@ -32,6 +32,55 @@ void printVec3(const char* name , XMVECTOR vec)
 	XMFLOAT3 debugVec;
 	XMStoreFloat3(&debugVec, vec);
 	std::cout << name << " (" <<debugVec.x << "," << debugVec.y << "," << debugVec.z <<")"<<std::endl;
+}
+
+void OrbitCamera::Init()
+{
+	float cursorDetectProc = 0.5f;
+	float speed = 0.5f;
+	XMFLOAT2 fakePos(315, 45);
+	XMVECTOR xmMouse = XMLoadFloat2(&fakePos);
+
+	fakePos.x = 0;
+	fakePos.y = 0;
+
+	XMVECTOR xmLastMouse = XMLoadFloat2(&fakePos);
+	XMVECTOR xmDelta = xmMouse - xmLastMouse;
+	XMStoreFloat2(&m_lastMouse, xmMouse);
+	XMFLOAT2 delta;
+
+	XMStoreFloat2(&delta, xmDelta);
+	float xDeltaMouse = delta.x;
+	float yDeltaMouse = delta.y;
+
+	XMVECTOR xmCamPos = XMLoadFloat3(&m_pos);
+	XMVECTOR xmLookAt = XMVector3Normalize(XMLoadFloat3(&m_lookAt));
+
+	XMVECTOR rotVector = (xmCamPos + (XMVector3Normalize(xmLookAt) * m_distanceFromTarget));
+	XMVECTOR startLA = XMVectorSet(0, 0, -1, 0);
+
+	float potentialTilt = rotation.x - yDeltaMouse * m_sensitivity;
+
+	if (abs(potentialTilt) < XM_PI * m_tiltCapUp && potentialTilt < 0.0f)
+	{
+		rotation.x -= yDeltaMouse * m_sensitivity;
+	}
+	rotation.y += xDeltaMouse * m_sensitivity;
+
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, 0.0f);
+
+	XMVECTOR newLookAt = XMVector3Normalize(XMVector3Transform(startLA, rot));
+	XMVECTOR newPos = rotVector + (-newLookAt * m_distanceFromTarget);
+
+	xmCamPos = newPos;
+	xmLookAt = newLookAt;
+
+	XMStoreFloat3(&m_lookAt, xmLookAt);
+	XMStoreFloat3(&m_pos, xmCamPos);
+
+	m_pos.x = 16;
+
+	setViewMatrix();
 }
 
 void OrbitCamera::update()
@@ -56,7 +105,7 @@ void OrbitCamera::update()
 
 	float potDist = m_distanceFromTarget - modifier;
 
-	if (potDist > 2.0f && potDist < 50.0f)
+	if (potDist > 2.0f && potDist < 30.0f)
 	{
 		m_distanceFromTarget -= modifier;
 

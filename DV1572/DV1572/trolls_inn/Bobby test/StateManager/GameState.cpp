@@ -12,6 +12,7 @@
 #include "../StateManager/SubStates/EventsState.h"
 #include "../../Mesh Manager/MeshManager.h"
 #include "../../Mesh Manager/MeshLoaderPlus.h"
+#include "../../Furniture/Reception.h"
 #include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
@@ -38,9 +39,7 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
 
-	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
-	m_receptionFur->setRotation(180);
-	m_roomctrl->AddRoomObject(m_receptionFur);
+	
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -62,7 +61,16 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
-	previousKey = -1;		
+	previousKey = -1;
+
+
+	dynamic_cast<OrbitCamera*>(m_cam)->Init();
+	m_receptionFur = new Reception(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
+
+	m_receptionFur->setPosition(XMFLOAT3(17.5, 0, 7.5));
+	m_receptionFur->setRotation(270);
+	m_roomctrl->AddRoomObject(m_receptionFur);
+	delete m_receptionFur;
 }
 
 GameState::~GameState()
@@ -76,7 +84,7 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
-	delete m_receptionFur;
+	//delete m_receptionFur;
 	delete m_eventHandle;
 }
 
@@ -297,6 +305,8 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 		if (path.size() != 0)
 		{
+			if(!troll->getCancelFlag())
+				troll->setCancelFlag(true);
 			m_justMoved = false;
 
 			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
@@ -357,7 +367,6 @@ bool GameState::_handleHUDPicking()
 			{
 			case 0:
 				// Build Button
-				std::cout << "Build Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				m_pauseTimePoint = m_mai->SaveTimePoint();
 				if (m_hudButtonsPressed[index]){
@@ -367,7 +376,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 1:
 				// Crew Button
-				std::cout << "Crew Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL, cHL);
 				if (m_hudButtonsPressed[index])
 				{
@@ -378,7 +386,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 2:
 				// Event Button
-				std::cout << "Event Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cHL, cHL, cC);
 				if (m_hudButtonsPressed[index])
 				{
@@ -388,7 +395,6 @@ bool GameState::_handleHUDPicking()
 				break;
 			case 3:
 				// Stats Button
-				std::cout << "Stats Button Pressed\n";
 				m_stateHUD.SetColorOnButton(index, cC, cHL / 4, cC);
 				if (m_hudButtonsPressed[index])
 				{
@@ -466,9 +472,6 @@ void GameState::_handleInput()
 		else
 			m_move = false;
 	}
-
-	if (Input::isKeyPressed('P'))
-		m_stage = GameStage::Play;
 
 	
 

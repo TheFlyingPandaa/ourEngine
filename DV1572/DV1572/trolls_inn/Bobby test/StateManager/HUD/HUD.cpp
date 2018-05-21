@@ -577,7 +577,7 @@ MeterBar * HUD::getMeterBarWithIndex(int index)
 			return m;
 		}
 	}
-
+	return nullptr;
 }
 
 MeterBar * HUD::getMeterBarAtMousePosition()
@@ -587,6 +587,7 @@ MeterBar * HUD::getMeterBarAtMousePosition()
 		if (_checkAgainstRectangle(Input::getMousePositionLH(), *m->getNeedle()))
 			return m;	
 	}
+	return nullptr;
 }
 
 void HUD::Draw()

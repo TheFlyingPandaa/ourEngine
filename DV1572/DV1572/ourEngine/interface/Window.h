@@ -11,7 +11,11 @@
 #include "Input.h"
 #include "../../trolls_inn/Time Management/GameTime.h"
 
-const UINT GBUFFER_COUNT = 4;
+#include "../core/RenderDefine.h"
+
+#if DEFERRED_RENDERING
+	const UINT GBUFFER_COUNT = 4;
+#endif
 
 class Window
 {
@@ -22,7 +26,6 @@ private:
 		ID3D11RenderTargetView*		RTV;
 		ID3D11ShaderResourceView*	SRV;
 	};
-
 	struct computeBuffer {
 		float temp;
 		float temp2;
@@ -52,19 +55,24 @@ private:
 
 	ID3D11Buffer*			m_meshConstantBuffer;
 	ID3D11Buffer*			m_billboardConstantBuffer;
+#if DEFERRED_RENDERING
 	ID3D11Buffer*			m_pointLightsConstantBuffer;
 	ID3D11Buffer*			m_cameraPosConstantBuffer;
+#elif FORWARD_RENDERING
+	ID3D11Buffer*			m_everythingConstantBuffer;
+#endif
 	ID3D11Buffer*			m_lightBuffer; 
 	ID3D11Buffer*			m_pPointLightBuffer; 
 	
 
 	INT						m_sampleCount;
 
+#if DEFERRED_RENDERING
 	//Deferred Rendering
 	GBUFFER					m_gbuffer[GBUFFER_COUNT];
 	ID3D11VertexShader*		m_deferredVertexShader;
 	ID3D11PixelShader*		m_deferredPixelShader;
-
+#endif
 	//Transpar
 	ID3D11VertexShader*		m_transVertexShader;
 	ID3D11PixelShader*		m_transPixelShader;
@@ -99,20 +107,17 @@ private:
 	ID3D11ShaderResourceView * m_shadowDepthTexture = nullptr;
 	XMMATRIX				m_shadowProjMatrix;
 
-	// WindowPass
-	ID3D11DepthStencilView* m_depthStencilViewWindow;
-	ID3D11Texture2D*		m_depthBufferTexWindow;
-	ID3D11Buffer		*	m_windowsBuffer;
-	// Use the same shadow vertex and pixel shader
-	ID3D11ShaderResourceView * m_windowDepthTexture;
+	//// WindowPass
+	//ID3D11DepthStencilView* m_depthStencilViewWindow;
+	//ID3D11Texture2D*		m_depthBufferTexWindow;
+	//ID3D11Buffer		*	m_windowsBuffer;
+	//// Use the same shadow vertex and pixel shader
+	//ID3D11ShaderResourceView * m_windowDepthTexture;
 
 	//DEBUG
 	ID3D11RasterizerState*	m_WireFrame;
 	bool					m_WireFrameDebug = false;;
 
-
-	// Input
-	DirectX::XMFLOAT2 m_mousePos;
 
 	DirectX::XMMATRIX m_HUDviewProj;
 
@@ -129,21 +134,29 @@ private:
 	void	_createMeshConstantBuffer();
 	void	_createBillboardConstantBuffer();
 	void	_createPickConstantBuffer();
+#if DEFERRED_RENDERING
 	void	_createCameraPosConstantBuffer(); 
 	void	_createPointLightCollectionBuffer(); 
+#elif FORWARD_RENDERING
+	void	_createEverythingConstantBuffer();
+#endif
 
 
 	void	_createDepthBuffer();
 	
 	// Deferred Rendering
+#if DEFERRED_RENDERING
 	void	_initGBuffer();
-	void	_prepareGeometryPass();
-	void	_billboardPass(const Camera& cam);
-	void	_geometryPass(const Camera & cam);
 	void	_clearTargets();
+	void	_lightPass(Camera& cam);
+#elif FORWARD_RENDERING
+	void	_renderEverything(const Camera& cam);
+#endif
+	void	_billboardPass(const Camera & cam);
+	void	_geometryPass(const Camera &cam);
+	void	_prepareGeometryPass();
 	void	_preparePostLight();
 	void	_skyBoxPass(const Camera & cam);
-	void	_lightPass(Camera& cam/*std::vector<Light*> lightQueue*/);
 	//Transparency
 	void	_transparencyPass(const Camera & cam);
 	void	_initTransparency();
@@ -177,7 +190,7 @@ public:
 	Window(HINSTANCE h);
 	~Window();
 
-	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0, const bool working = true);
+	bool Init(int width, int height, LPCSTR title, BOOL fullscreen = 0);
 	void PollEvents();
 	bool isOpen();
 	void Clear();
@@ -195,5 +208,4 @@ public:
 	void setMouseMiddleScreen();
 	void setTitle(LPCSTR string);
 	DirectX::XMFLOAT2 getSize() const;
-	DirectX::XMFLOAT2 getMousePos();
 };
