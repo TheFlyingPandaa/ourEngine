@@ -23,9 +23,9 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	bool furnitureFound = false;
 
 	XMFLOAT3 roomPos; 
-	if (customerNeed == SleepAction)
+	if (customerNeed == Sleeping)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
-	else if (customerNeed == EatAction)
+	else if (customerNeed == Eating)
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
 	else
 		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
@@ -39,7 +39,7 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	size_t nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
 	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
 
-	for (int i = 0; i < nrOfFurniture; i++)
+	for (int i = 0; i < nrOfFurniture && !furnitureFound; i++)
 	{
 		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
@@ -49,14 +49,8 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
 			furnitureFound = true;
-			std::cout << "Furniture occupied!" << std::endl;
+			std::cout << m_ownedFurniture->WhatType() << " occupied!" << std::endl;
 		}
-		/*
-		else
-		{
-			RestartClock(); 
-			setThoughtBubble(ANGRY); 
-		}*/
 	}
 
 	return furnitureFound;
@@ -74,7 +68,6 @@ Customer::Customer(Race race, int gold)
 	m_availableSpotFound = false;
 	m_race = race;
 	m_economy = Economy(gold);
-	m_review.SetStat(0.1f);
 
 	m_ownedFurniture = nullptr; 
 
@@ -121,10 +114,10 @@ void Customer::releaseFurniture()
 {
 	if (m_ownedFurniture != nullptr)
 	{
+		std::cout << m_ownedFurniture->WhatType() << " released!" << std::endl;
 		m_ownedFurniture->releaseOwnerShip();
 		m_ownedFurniture->setIsBusy(false);
 		m_ownedFurniture = nullptr;
-		std::cout << "Furniture released!" << std::endl;
 	}
 }
 
@@ -186,9 +179,10 @@ void Customer::PopToNextState()
 	m_stateQueue.pop();
 }
 
-void Customer::ClearQueue()
+void Customer::PopStateQueue()
 {
-	while (!m_stateQueue.empty())m_stateQueue.pop();
+	while (0 < m_stateQueue.size())
+		m_stateQueue.pop();
 }
 
 void Customer::setOwnedFurniture(Furniture * furnitureOwned)
@@ -229,7 +223,6 @@ void Customer::SetAction(Action nextAction)
 		break;
 	}
 
-	//POPUP HERE (Henrik)
 	// To return the customer to idle after it executed its action
 	this->m_stateQueue.push(Idle);
 }

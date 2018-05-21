@@ -176,7 +176,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 						gameStates.push(ref);
 				}
 			}
-			else {
+			else
+			{
 				gameState->Update(1.0 / REFRESH_RATE);
 				State* ref = gameState->NewState();
 				

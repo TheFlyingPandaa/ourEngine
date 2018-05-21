@@ -6,6 +6,7 @@ float round_n3(float num, int dec)
 	float pwr = pow(10.0f, dec);
 	return float((float)floor((double)num * m * pwr + 0.5) / pwr) * m;
 }
+
 void MasterAI::_sortVectorID(std::vector<int>& ID)
 {
 	int highestValueIndex;
@@ -38,6 +39,49 @@ void MasterAI::_swap(int index1, int index2, std::vector<int>& ID)
 void MasterAI::_generateCustomer()
 {
 	m_nextCustomer = m_cFC.Update(m_inn->GetInnAttributes());
+}
+
+void MasterAI::_spawnCustomer()
+{
+	m_nextCustomer->RestartClock();
+	m_customers.push_back(m_nextCustomer);
+	m_nextCustomer = nullptr;
+	m_customerSpawned = true;
+	m_customer_start = m_clock.now();
+	m_customersSpawned++;
+	
+	if (SuperFast != m_spawnRatio)
+	{
+		if (CUSTOMER_SUPERFAST_RATIO_LIMIT < m_customersSpawned)
+		{
+			std::cout << "SUPERFAST!" << std::endl;
+			m_spawnRatio = SuperFast;
+		}
+		else if (Faster == m_spawnRatio)
+		{
+			if (CUSTOMER_FASTER_RATIO_LIMIT < m_customersSpawned)
+			{
+				std::cout << "FASTER!" << std::endl;
+				m_spawnRatio = Faster;
+			}
+		}
+		else if (Fast == m_spawnRatio)
+		{
+			if (CUSTOMER_FAST_RATIO_LIMIT < m_customersSpawned)
+			{
+				std::cout << "FAST!" << std::endl;
+				m_spawnRatio = Fast;
+			}
+		}
+		else if (Slow == m_spawnRatio)
+		{
+			if (CUSTOMER_MEDIUM_RATIO_LIMIT < m_customersSpawned)
+			{
+				std::cout << "MEDIUM!" << std::endl;
+				m_spawnRatio = Medium;
+			}
+		}
+	}
 }
 
 void MasterAI::_trollInnChase()
@@ -148,6 +192,8 @@ MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 {
 	m_customer_start = m_start = m_clock.now();
 	m_customerSpawned = true;
+	m_customersSpawned = 0;
+	m_spawnRatio = Slow;
 	m_inn = inn;
 	m_InnTroll = new Staff(); 
 	m_showMenu = false;
@@ -172,9 +218,25 @@ MasterAI::~MasterAI()
 	delete m_InnTroll; 
 	delete m_customerMenu;
 }
+
 Staff * MasterAI::getTroll()
 {
 	return m_InnTroll; 
+}
+
+std::chrono::high_resolution_clock::time_point MasterAI::SaveTimePoint() const
+{
+	return m_clock.now();
+}
+
+void MasterAI::UpdateCustomerSpawnTimePoint(std::chrono::duration<double, std::ratio<1, 1>> duration)
+{
+	m_customer_start = m_customer_start + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(duration);
+}
+
+void MasterAI::UpdateCustomerNeedsTimePoint(std::chrono::duration<double, std::ratio<1, 1>> duration)
+{
+	m_start = m_start + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(duration);
 }
 
 void MasterAI::CharacterMenu()
@@ -247,37 +309,26 @@ void MasterAI::Update(Camera* cam)
 	if (!m_customerSpawned)
 	{
 		double duration = m_nextCustomer->GetTimeSpan().count();
-		if (duration > CHECK_CUSTOMER_SPAWN)
+		if (m_nextCustomer->GetRace() == Elf)
 		{
-			if (m_nextCustomer->GetRace() == Elf)
+			if (duration > ((ELF_SPAWN_RATIO * CHECK_CUSTOMER_SPAWN) / (m_spawnRatio + 1)))
 			{
-				if (duration > 30)
-				{
-					std::stringstream ss;
-					ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					InGameConsole::pushString(ss.str());
-					m_nextCustomer->RestartClock();
-					m_customers.push_back(m_nextCustomer);
-					m_nextCustomer = nullptr;
-					m_customerSpawned = true;
-					m_customer_start = m_clock.now();
-				}
+				std::stringstream ss;
+				ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				InGameConsole::pushString(ss.str());
+				_spawnCustomer();
 			}
-			else
+		}
+		else
+		{
+			if (duration > ((DWARF_SPAWN_RATIO * CHECK_CUSTOMER_SPAWN) / (m_spawnRatio + 1)))
 			{
-				if (duration > 15)
-				{
-					std::stringstream ss;
-					ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-					InGameConsole::pushString(ss.str());
-					m_nextCustomer->RestartClock();
-					m_customers.push_back(m_nextCustomer);
-					m_nextCustomer = nullptr;
-					m_customerSpawned = true;
-					m_customer_start = m_clock.now();
-				}
+				std::stringstream ss;
+				ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
+				InGameConsole::pushString(ss.str());
+				_spawnCustomer();
 			}
 		}
 	}
@@ -304,12 +355,11 @@ void MasterAI::Update(Camera* cam)
 	// Evaluate what actions customers should take
 	for (auto& customer : this->m_customers)
 	{
-		
 		if (updateCustomerNeeds)
 		{
-			customer->SetHungry(customer->GetHungry() + (1 * customer->GetHungryRate()));
-			customer->SetTired(customer->GetTired() + (1 * customer->GetTiredRate()));
-			customer->SetThirsty(customer->GetThirsty() + (1 * customer->GetThirstyRate()));
+			customer->SetHungry(customer->GetHungry() + customer->GetHungryRate());
+			customer->SetTired(customer->GetTired() + customer->GetTiredRate());
+			customer->SetThirsty(customer->GetThirsty() + customer->GetThirstyRate());
 		}
 		// Check if the customer is busy or not
 		if (customer->GetQueueEmpty() || customer->GetThought() == Character::ANGRY)
@@ -337,7 +387,7 @@ void MasterAI::Update(Camera* cam)
 				// Customer leaves inn
 				// Save id for leaving customers
 				customer->clearWalkingQueue();
-				customer->ClearQueue();
+				customer->PopStateQueue();
 				leavingCustomersIDs.push_back(loopCounter);
 				if (customer->GetThought() == Character::ANGRY)
 				{
@@ -416,7 +466,7 @@ void MasterAI::Update(Camera* cam)
 				this->m_solver.Update(*leavingCustomer, this->m_inn);
 			if (leavingCustomer->GetState() == LeavingInn)
 			{
-				this->m_inn->CustomerReview(leavingCustomer->GetAttributes());
+				m_inn->CustomerReview(leavingCustomer->GetAttributes());
 				// If customer sent review then delete the customer
 				goneCustomers.push_back(loopCounter);
 			}
