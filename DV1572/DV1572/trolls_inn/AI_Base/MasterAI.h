@@ -60,9 +60,6 @@ private:
 	void _generateCustomer();
 	void _spawnCustomer();
 
-	
-
-
 	// Customer selection
 	enum CUST_SEL_AC
 	{
