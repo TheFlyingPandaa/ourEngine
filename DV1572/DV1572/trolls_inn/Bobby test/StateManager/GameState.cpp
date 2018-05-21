@@ -128,13 +128,12 @@ void GameState::Update(double deltaTime)
 	bool lol2 = Input::isKeyPressed('L');
 	if (lol2 && !lol)
 	{
-
 		this->m_mai->spawn();
 	}
 	lol = lol2;
 
 	if (Input::isKeyPressed('0'))
-		this->m_mai->spawn();
+		m_mai->spawn();
 
 
 
@@ -166,15 +165,12 @@ void GameState::Update(double deltaTime)
 	
 	if (Input::isKeyPressed('Y'))
 		inn->Deposit(500);
-		//m_in++;
 	
 	if (Input::isKeyPressed('U'))
 		inn->Withdraw(500);
 
-	m_mai->Update(this->m_cam);
+	m_mai->Update(m_cam);
 	gameTime.updateCurrentTime(static_cast<float>(deltaTime));
-	
-	
 }
 
 void GameState::Draw()
@@ -356,6 +352,13 @@ bool GameState::_handleHUDPicking()
 			{
 				SubState * ss = m_subStates.top();
 				m_subStates.pop();
+
+				// Update paused time points
+				std::chrono::duration<double, std::ratio<1, 1>> d;
+				std::chrono::high_resolution_clock::time_point now = m_mai->SaveTimePoint();
+				d = std::chrono::duration_cast<std::chrono::duration<double>>(now - m_pauseTimePoint);
+				m_mai->UpdateCustomerSpawnTimePoint(d);
+				m_mai->UpdateCustomerNeedsTimePoint(d);
 				delete ss;
 			}
 			_resetHudButtonPressedExcept(index);
@@ -367,6 +370,7 @@ bool GameState::_handleHUDPicking()
 			case 0:
 				// Build Button
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
+				m_pauseTimePoint = m_mai->SaveTimePoint();
 				if (m_hudButtonsPressed[index]){
 					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn));
 					m_stage = GameStage::BuildRoom;
@@ -691,4 +695,3 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 	}
 	return path;
 }
-

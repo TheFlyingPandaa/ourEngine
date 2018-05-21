@@ -32,7 +32,9 @@ private:
 
 	HeightMap m_background;
 
+	// AI
 	MasterAI* m_mai;
+	std::chrono::high_resolution_clock::time_point m_pauseTimePoint;
 
 	GameTime gameTime; 
 	GameStage m_stage;

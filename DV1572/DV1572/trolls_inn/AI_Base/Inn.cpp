@@ -64,12 +64,17 @@ void Inn::SetRecievedReviewToFalse()
 	m_recievedReview = false;
 }
 
+void Inn::SetTrue()
+{
+	m_recievedReview = true;
+}
+
 Attributes Inn::GetInnAttributes() const
 {
 	return this->m_innAttributes;
 }
 
-Attributes & Inn::getInnAttributesRef()
+Attributes& Inn::getInnAttributesRef()
 {
 	return m_innAttributes;
 }
@@ -200,19 +205,23 @@ Text * Inn::GetText()
 	return m_text;
 }
 
-// Change to one standard function for all stat adds?
 void Inn::CustomerReview(Attributes review)
 {
-	//this->_addStatsToInn(review);
-	//this->_checkInnStatUpdate();
-	m_innAttributes.AddStat(review.GetStat());
-	m_recievedReview = true;
+	std::cout << "A customer added " << review.GetStat() << " stats." << std::endl;
+	if (m_innAttributes.GetStat() > 0 && review.GetStat() < 0)
+	{
+		m_innAttributes.AddStat(review.GetStat());
+		m_recievedReview = true;
+	}
+	else if (m_innAttributes.GetStat() < 0 && review.GetStat() > 0)
+	{
+		m_innAttributes.AddStat(review.GetStat());
+		m_recievedReview = true;
+	}
 }
 
 void Inn::FurnitureStatAdd(Attributes furnitureStats)
 {
-	//this->_addStatsToInn(furnitureStats);
-	//this->_checkInnStatUpdate();
 	m_innAttributes.AddStat(furnitureStats.GetStat());
 	m_recievedReview = true;
 }

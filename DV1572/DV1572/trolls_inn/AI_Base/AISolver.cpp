@@ -10,8 +10,6 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	// If spot is available in the room at customer position
-	//std::vector<Furniture> furnituresInRoom = this->m_roomctrl->getNoneBusyFurnitureInRoom(customer.getPosition());
 	bool spotAvailable = false;
 
 	if (m_roomctrl != nullptr)
@@ -31,6 +29,11 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		int price = 0;
 		std::stringstream ss;
 
+		if (Waiting == state)
+		{
+			customer.PopToNextState();
+			state = customer.GetState();
+		}
 		// Get the seat/bed ID to lock it to the customer
 		switch (state)
 		{
@@ -52,7 +55,7 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		inn->Deposit(price);
 		customer.SetAvailableSpotFound(true);
 	}
-	else
+	else if (!customer.GetWaitingForSpot())
 	{
 		// Get a path to a new room of the same type (?)
 		/*CustomerState customerState = customer.GetState();
@@ -79,25 +82,28 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 {
 	if ((this->m_rNG.GenerateRandomNumber(1, 5) * customer.GetWaitingForSpotMultiplier()) > (WAITING_FOR_SPOT_TIME_LIMIT * customer.GetPatience()))
 	{
-		// Do something because angry, request money (?)
+		std::stringstream ss;
 		if (customer.GetRace() == Elf)
 		{
+			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 25 gold!" << std::endl;
 			inn->GetRefund(25);
 			customer.GetEconomy().GetCashback(25);
+			customer.GetAttributes().AddStat(-0.15);
 		}
 		else
 		{
+			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 15 gold!" << std::endl;
 			inn->GetRefund(15);
 			customer.GetEconomy().GetCashback(15);
+			customer.GetAttributes().AddStat(0.15);
 		}
+		InGameConsole::pushString(ss.str());
 		customer.SetWaitingForSpot(false);
 		// Do angry face emote
 		// Leave inn (?)
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
-		customer.PopToNextState();
-		customer.PopToNextState();
-		customer.PopToNextState();
+		customer.PopStateQueue();
 	}
 	else
 	{
@@ -401,7 +407,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				// Check if there is an open spot
 				_checkSpotInRoom(inn, customer);
 			}
-			if (customer.GetWaitingForSpot() && this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+			if (customer.GetWaitingForSpot() && m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
 			{
 				_doWaiting(customer, inn);
 			}
@@ -487,6 +493,9 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 	}
 	else if (gotPath == -1)
 	{
+		std::stringstream ss;
+		ss << "A customer is leaving. The\ncustomers needs could not be\nfulfilled!" << std::endl;
+		InGameConsole::pushString(ss.str());
 		customer.RestartClock();
 		customer.setThoughtBubble(Character::ANGRY);
 	}
