@@ -10,7 +10,6 @@
 Furniture::Furniture(DirectX::XMFLOAT3 pos, MESH mesh)
 	: m_meshId(mesh)
 {
-	p_rot = 0;
 	this->pos.x = static_cast<int>(pos.x);
 	this->pos.y = static_cast<int>(pos.y);
 	this->pos.z = static_cast<int>(pos.z);
@@ -58,7 +57,11 @@ void Furniture::setPosition(float x, float y, float z)
 void Furniture::setRotation(int rot)
 {
 	p_rot = rot;
-	//p_object.setRotation(0, rot * (-90), 0);
+	if (p_rot < 0)
+		p_rot += 360;
+	else if (p_rot >= 360)
+		p_rot -= 360;
+
 	p_object.setRotation(0.0f, static_cast<float>(rot) - 90.0f, 0.0f);
 }
 
@@ -115,6 +118,11 @@ void Furniture::setIndex(int index)
 void Furniture::setOwner(Customer * owner)
 {
 	m_owner = owner;
+}
+
+int Furniture::getPriceToLevelUp() const
+{
+	return (p_level + 1) * 100;
 }
 
 int Furniture::getIndex() const
@@ -296,6 +304,11 @@ std::string Furniture::getInfo(int index)
 
 
 	return str;
+}
+
+int Furniture::getType() const
+{
+	return static_cast<int>(m_meshId);
 }
 
 

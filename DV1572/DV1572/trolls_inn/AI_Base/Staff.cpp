@@ -5,6 +5,7 @@ Staff::Staff() : Character()
 	m_trollMesh.LoadModel("trolls_inn/Resources/SpritesheetSample/troll.obj"); 
 	m_level.SetLevel(1);
 	this->setModel(&m_trollMesh);
+	m_cancelFlag = false;
 }
 
 Staff::Staff(Professions profession)
@@ -30,4 +31,14 @@ Professions Staff::GetProfession() const
 LevelTracker& Staff::GetLevelTracker()
 {
 	return this->m_level;
+}
+
+void Staff::setCancelFlag(bool flag)
+{
+	m_cancelFlag = flag;
+}
+
+bool Staff::getCancelFlag() const
+{
+	return m_cancelFlag;
 }

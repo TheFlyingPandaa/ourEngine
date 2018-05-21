@@ -72,7 +72,7 @@ public:
 	int					getRoomConnections(int index) const;
 	
 	void				CreateWalls(Room* currentRoom);
-	void				CreateDoor(XMFLOAT3 wallPosition);
+	void				CreateDoor(XMFLOAT3 wallPosition, float rot = 0.0f);
 	
 	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;
 	DoorPassage			getDoorPassage(int index1, int index2) const;

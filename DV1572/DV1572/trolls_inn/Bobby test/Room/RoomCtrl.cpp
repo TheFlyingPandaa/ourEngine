@@ -159,7 +159,7 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 			else
 			{
 				//m_tiles[furniture.getPosition().x - i][furniture.getPosition().z]->setIsWalkeble(false);
-				m_tiles[_index(furniture->getPosition().x + i, furniture->getPosition().z)]->setHasObject(true);
+				m_tiles[_index(furniture->getPosition().x - i, furniture->getPosition().z)]->setHasObject(true);
 			}
 		}
 	}
@@ -542,12 +542,12 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
 	 bool isFalse = false;
-	 int index = _intersect(start, XMINT2(1, 1));
-	 if (index == -1)
+	 int indexx = _intersect(start, XMINT2(1, 1));
+	 if (indexx == -1)
 	 {
 		 return false;
 	 }
-	 Room*  cr = m_rooms[index];
+	 Room*  cr = m_rooms[indexx];
 	 auto tiles = cr->getTiles();
 	 auto _index = [&](int x, int y) ->int
 	 {
@@ -564,26 +564,23 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	{
 		for (int i = 0; i < size; i++)
 		{
-			int ii = _index(start.x, start.y + i);
-
-			if (ii >= tiles.size()) {
-				int index = _index(start.x, start.y);
-				if (index == -1)
-					return false;
-				tiles[index]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
-				return false;
-			}
+		
 
 			if (angle == 0)
 			{
+				int ii = _index(start.x, start.y + i);
+				if (ii == -1)
+				{
+					return false;
+				}
 				Tile* t = tiles[ii];
 				if (t && t->getHasObject() == false)
 				{
-					t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					//t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
 				}
 				else if(t)
 				{
-					t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 					isFalse = true;
 				}
 			}
@@ -595,13 +592,17 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 					Tile* t = tiles[_index(start.x, start.y - i)];
 					if (t && t->getHasObject() == false)
 					{
-						t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+						//t->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
 					}
 					else if (t)
 					{
-						t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						//t->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 						isFalse = true;
 					}
+				}
+				else
+				{
+					return false;
 				}
 				
 			}
@@ -619,26 +620,28 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				
 					if (tiles[_index(start.x + i, start.y)]->getHasObject() == false)
 					{
-						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+						//tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
 					}
 					else
 					{
-						tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+						//tiles[_index(start.x + i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 						isFalse = true;
 					}				
 			}
 			else
 			{
-				int index = _index(start.x - i, start.y);
-				if (index == -1)
+				int ii = _index(start.x - i, start.y);
+				if (ii == -1)
+				{
 					return false;
+				}
 				if (tiles[_index(start.x - i, start.y)]->getHasObject() == false)
 				{
-					tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+					//tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
 				}
 				else
 				{
-					tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+					//tiles[_index(start.x - i, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 					isFalse = true;
 				}
 			}
@@ -647,19 +650,19 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	if (tiles[_index(start.x, start.y)]->getHasObject() == true)
 	{
-		tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+		//tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 		return false;
 	}
 	else
 	{
 		if (isFalse == true)
 		{
-			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+			//tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 			return false;
 		}
 		else
 		{
-			tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
+			//tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(0.5f, 5.0f, 0.5f));
 			return true;
 		}
 	}
@@ -695,7 +698,7 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			 int ii = _index(start.x, start.y + i);
 			 if (ii == -1) return false;
 			 if (ii >= tiles.size()) {
-				 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
+				 //tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(5.5f, 0.5f, 0.5f));
 				 return false;
 			 }
 
@@ -704,11 +707,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				 Tile* t = tiles[ii];
 				 if (t && t->getHasObject() == false)
 				 {
-					 t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
+					// t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
 				 }
 				 else if (t)
 				 {
-					 t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }
@@ -717,11 +720,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 				 Tile* t = tiles[_index(start.x, start.y - i)];
 				 if (t && t->getHasObject() == false)
 				 {
-					 t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
+					// t->getQuad().setColor(XMFLOAT3(8.0f, 0.5f, 0.5f));
 				 }
 				 else if (t)
 				 {
-					 t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// t->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }
@@ -740,11 +743,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 				 if (tiles[ii]->getHasObject() == false)
 				 {
-					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 				 }
 				 else
 				 {
-					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }
@@ -752,11 +755,11 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 			 {
 				 if (tiles[ii]->getHasObject() == false)
 				 {
-					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 				 }
 				 else
 				 {
-					 tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+					// tiles[ii]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 					 isFalse = false;
 				 }
 			 }
@@ -765,19 +768,19 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 	 if (tiles[_index(start.x, start.y)]->getHasObject() == true)
 	 {
-		 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+		// tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 		 return false;
 	 }
 	 else
 	 {
 		 if (isFalse == true)
 		 {
-			 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+			 //tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 			 return false;
 		 }
 		 else
 		 {
-			 tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
+			// tiles[_index(start.x, start.y)]->getQuad().setColor(XMFLOAT3(8.5f, 0.5f, 0.5f));
 			 return false;
 		 }
 	 }
@@ -948,7 +951,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 	
 }
 
-void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
+void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 {
 	for (auto& rooms : m_rooms)
 	{
@@ -960,7 +963,13 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition)
 				{
 					if (!wall->getIsDoor())
 					{
-						wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::DOOR));
+							wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::DOOR));
+						if (rot != 0.0)
+						{
+							DirectX::XMFLOAT3 r = wall->getObject3D().getRotation();
+							r.y = DirectX::XMConvertToDegrees(rot);
+							wall->setRotation(r);
+						}
 						wall->setIsDoor(true);
 						// If the wall is shared, then the door will connect two rooms
 						if (wall->isShared())

@@ -20,7 +20,7 @@ public:
 	void			setLightIndex(int index);
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
-	DirectX::XMINT3 getPosition();
+	virtual	 DirectX::XMINT3 getPosition();
 	
 	Customer*		getOwner() const; 
 
@@ -35,6 +35,8 @@ public:
 	void			setIndex(int index); 
 	void			setOwner(Customer* owner); 
 
+	int				getPriceToLevelUp() const;
+
 	int				getIndex() const; 
 
 	void			releaseOwnerShip(); 
@@ -47,6 +49,8 @@ public:
 	virtual Furniture * MakeCopy();
 
 	static std::string getInfo(int index);
+	int getType() const;
+
 
 private:
 	DirectX::XMINT3 pos;

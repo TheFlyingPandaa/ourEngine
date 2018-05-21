@@ -12,6 +12,7 @@
 #include "../StateManager/SubStates/EventsState.h"
 #include "../../Mesh Manager/MeshManager.h"
 #include "../../Mesh Manager/MeshLoaderPlus.h"
+#include "../../Furniture/Reception.h"
 #include "../../Furniture/Table.h"
 
 GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent, Camera * cam) : State(pickingEvent, keyEvent)
@@ -33,14 +34,14 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
-	m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
+	/*m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
 		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
 			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-
-	m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
+*/
+	/*m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
 	m_receptionFur->setRotation(180);
-	m_roomctrl->AddRoomObject(m_receptionFur);
+	m_roomctrl->AddRoomObject(m_receptionFur);*/
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -62,7 +63,16 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->m_cam = cam;
 
 	m_mai = new MasterAI(m_roomctrl, m_grid, inn);
-	previousKey = -1;		
+	previousKey = -1;
+
+
+	dynamic_cast<OrbitCamera*>(m_cam)->Init();
+	m_receptionFur = new Reception(XMFLOAT3(0, 0, 0), MESH::RECEPTION_LOW);
+
+	m_receptionFur->setPosition(XMFLOAT3(17.5, 0, 7.5));
+	m_receptionFur->setRotation(270);
+	m_roomctrl->AddRoomObject(m_receptionFur);
+	delete m_receptionFur;
 }
 
 GameState::~GameState()
@@ -76,7 +86,7 @@ GameState::~GameState()
 		m_subStates.pop();
 	}
 	delete inn;
-	delete m_receptionFur;
+	//delete m_receptionFur;
 	delete m_eventHandle;
 }
 
@@ -103,7 +113,7 @@ void GameState::Update(double deltaTime)
 		std::cout << "EventEnded" << std::endl;
 		m_eventHandle->EndEvent(); 
 	}
-	m_eventHandle->Update();
+	m_eventHandle->Update(deltaTime);
 
 
 	if (m_subStates.empty())
@@ -301,6 +311,8 @@ void GameState:: _handlePickingAi(Shape * obj)
 
 		if (path.size() != 0)
 		{
+			if(!troll->getCancelFlag())
+				troll->setCancelFlag(true);
 			m_justMoved = false;
 
 			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));

@@ -20,7 +20,7 @@ private:
 	Professions m_profession;
 	DirectX::XMFLOAT2 m_position; 
 	Mesh m_trollMesh; 
-
+	bool m_cancelFlag;
 public:
 	Staff();
 	Staff(Professions profession);
@@ -29,4 +29,9 @@ public:
 
 	Professions GetProfession() const;
 	LevelTracker& GetLevelTracker();
+
+	//For chase
+	void setCancelFlag(bool flag);
+	bool getCancelFlag() const;
+
 };
