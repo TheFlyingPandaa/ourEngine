@@ -9,7 +9,7 @@ ClickMenu::ClickMenu(MTYPE type)
 	m_recMesh->MakeRectangle();
 	m_background.setMesh(m_recMesh);
 	
-	m_background.setPos(pos.x, pos.y, 0.1);
+	m_background.setPos(pos.x, pos.y, 0.1f);
 	m_background.setWidth(150);
 	m_background.setHeight(150);
 	
@@ -75,7 +75,7 @@ void ClickMenu::PushText(const std::string & row)
 void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 {
 
-	m_background.setScreenPos(pos.x, pos.y, 0.1);
+	m_background.setScreenPos(pos.x, pos.y, 0.1f);
 	m_info.setPosition(
 		(pos.x + m_background.getWidth() / 2),
 			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info) * m_info.getScale()) / 2);
@@ -84,7 +84,7 @@ void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 	{
 		t.setPosition(
 			(pos.x + m_background.getWidth() / 2),
-			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * counter++ * m_info.getScale()) / 2);
+			pos.y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * static_cast<float>(counter++) * m_info.getScale()) / 2.0f);
 	}
 
 	m_buttons[0]->setScreenPos(
