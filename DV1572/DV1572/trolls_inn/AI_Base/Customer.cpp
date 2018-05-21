@@ -49,7 +49,6 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
 			furnitureFound = true;
-			std::cout << m_ownedFurniture->WhatType() << " occupied!" << std::endl;
 		}
 	}
 
@@ -114,7 +113,6 @@ void Customer::releaseFurniture()
 {
 	if (m_ownedFurniture != nullptr)
 	{
-		std::cout << m_ownedFurniture->WhatType() << " released!" << std::endl;
 		m_ownedFurniture->releaseOwnerShip();
 		m_ownedFurniture->setIsBusy(false);
 		m_ownedFurniture = nullptr;

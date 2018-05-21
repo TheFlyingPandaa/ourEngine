@@ -6,10 +6,6 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 	Customer* newCustomer = nullptr;
 	int probabilityForCustomerSpawnOfSpecificRace = static_cast<int>(abs(100 * innAttributes.GetStat()));
 	int rNGUpperLimit = 100 - probabilityForCustomerSpawnOfSpecificRace;
-	
-	std::cout << "---------------------------------------------------------\n";
-	std::cout << "Probability: " << probabilityForCustomerSpawnOfSpecificRace << std::endl;
-	std::cout << "Inn stats: " << innAttributes.GetStat() << std::endl;
 
 	if (rNGUpperLimit == 0)
 	{
@@ -18,9 +14,6 @@ Customer* CustomerFlowControl::_evaluate(Attributes innAttributes)
 	else
 	{
 		int randomNumber = m_rNG.GenerateRandomNumber(1, 100);
-		
-		std::cout << "Random number: " << randomNumber << std::endl;
-		std::cout << "---------------------------------------------------------\n";
 
 		if (randomNumber > rNGUpperLimit)
 			newCustomer = _generateCustomerBasedOnInnAttributes(innAttributes);
@@ -64,8 +57,6 @@ Customer* CustomerFlowControl::_generateRandomCustomer()
 		newCustomer = new Customer(Dwarf, m_rNG.GenerateRandomNumber(50, 150));
 		break;
 	}
-
-	std::cout << "RANDOM CUSTOMER SPAWNED" << std::endl;
 
 	return newCustomer;
 }

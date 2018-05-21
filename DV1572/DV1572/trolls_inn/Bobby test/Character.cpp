@@ -322,10 +322,13 @@ bool Character::walkQueueDone() const
 
 void Character::clearWalkingQueue()
 {
-	m_goQueue.clear(); 
-	float xPos = getPosition().x;
-	float yPos = getPosition().y; 
-	setPosition(float(xPos) + 0.5f, float(yPos) + 0.5f); 
+	if (m_goQueue.size())
+	{
+		Character::Go g = m_goQueue.front();
+		m_goQueue.clear(); 
+		m_goQueue.push_back(g);
+
+	}
 }
 
 void Character::Draw()

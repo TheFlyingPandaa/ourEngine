@@ -158,8 +158,6 @@ void GameState::Update(double deltaTime)
 			if (ref)
 				m_subStates.push(ref);
 		}
-		return;
-		
 	}
 	inn->Update(deltaTime, gameTime.getTimePeriod());
 	

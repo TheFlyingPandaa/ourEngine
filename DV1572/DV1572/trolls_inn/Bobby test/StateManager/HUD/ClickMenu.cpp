@@ -61,6 +61,15 @@ void ClickMenu::PushText(const std::string & row)
 	_row.setTextString(row);
 
 	m_texts.push_back(_row);
+
+	int counter = 0;
+	for (auto & t : m_texts)
+	{
+		t.setPosition(
+			(m_background.getScreenPos().x + m_background.getWidth() / 2),
+			m_background.getScreenPos().y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * counter++ * m_info.getScale()) / 2);
+	}
+
 }
 
 void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
@@ -79,18 +88,22 @@ void ClickMenu::setPos(DirectX::XMFLOAT2 pos)
 	}
 
 	m_buttons[0]->setScreenPos(
-		pos.x + 10.0f,
+		pos.x + 3.0f,
 		pos.y + 10.0f
 	);
 	for (size_t i = 1; i < m_buttons.size(); i++)
 	{
-		m_buttons[i]->setScreenPos(
-			(pos.x + m_background.getWidth() / (m_buttons.size()*4.0f)) * i,
+		/*m_buttons[i]->setScreenPos(
+			(pos.x + m_background.getWidth() / (m_buttons.size() * i) + (i - 1) * m_buttons[i]->getWidth()),
 		pos.y + 10.0f
+		);*/
+		m_buttons[i]->setScreenPos(
+			pos.x + i * (m_buttons[i]->getWidth() + 6.0f),
+			pos.y + 10.0f
 		);
 	}
 	m_buttons[m_buttons.size() - 1]->setScreenPos(
-		pos.x + m_background.getWidth() - m_buttons[m_buttons.size() - 1]->getWidth() - 10.0f,
+		pos.x + m_background.getWidth() - m_buttons[m_buttons.size() - 1]->getWidth() - 3.0f,
 		pos.y + 10.0f
 	);
 }
@@ -160,6 +173,18 @@ void ClickMenu::_initFurnitureMenu()
 	m = new Mesh();
 	m->MakeRectangle();
 	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/Upgrade.png");
+	r = new RectangleShape();
+	r->setColor(5, 5, 5);
+	r->setMesh(m);
+	r->setWidth(32);
+	r->setHeight(40);
+
+	m_mesh.push_back(m);
+	m_buttons.push_back(r);
+
+	m = new Mesh();
+	m->MakeRectangle();
+	m->setDiffuseTexture("trolls_inn/Resources/HUD/ClickHUD/makeMePure.png");
 	r = new RectangleShape();
 	r->setColor(5, 5, 5);
 	r->setMesh(m);
