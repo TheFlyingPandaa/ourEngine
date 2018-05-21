@@ -86,13 +86,13 @@ void MasterAI::_spawnCustomer()
 
 void MasterAI::_trollInnChase()
 {
-	if (currentChase->customerpath.y < 0)
+	/*if (currentChase->customerpath.y < 0)
 	{
 		m_InnTroll->setCancelFlag(false);
 		delete currentChase;
 		currentChase = nullptr;
 		return;
-	}
+	}*/
 	if (m_InnTroll->getCancelFlag())
 	{
 		m_InnTroll->setCancelFlag(false);

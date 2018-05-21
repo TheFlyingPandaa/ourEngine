@@ -114,8 +114,12 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition)
 {
 	Tile* startTile = m_grid->getTile(startPosition.x, startPosition.y);
-	Tile* targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
-
+	Tile* targetTile;
+	//if (m_grid->getTile(targetPosition.x, targetPosition.y))
+	//{
+	//	return std::vector<std::shared_ptr<Node>>();
+	//}
+	targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
 	std::vector<std::shared_ptr<Node>> path;
 	// Outside -> OutSide
 	if (startTile && targetTile)
