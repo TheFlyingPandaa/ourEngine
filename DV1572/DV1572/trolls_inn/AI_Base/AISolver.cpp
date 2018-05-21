@@ -88,14 +88,14 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 25 gold!" << std::endl;
 			inn->GetRefund(25);
 			customer.GetEconomy().GetCashback(25);
-			customer.GetAttributes().AddStat(-0.15);
+			customer.GetAttributes().AddStat(-0.15f);
 		}
 		else
 		{
 			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 15 gold!" << std::endl;
 			inn->GetRefund(15);
 			customer.GetEconomy().GetCashback(15);
-			customer.GetAttributes().AddStat(0.15);
+			customer.GetAttributes().AddStat(0.15f);
 		}
 		InGameConsole::pushString(ss.str());
 		customer.SetWaitingForSpot(false);
@@ -114,8 +114,12 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition)
 {
 	Tile* startTile = m_grid->getTile(startPosition.x, startPosition.y);
-	Tile* targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
-
+	Tile* targetTile;
+	//if (m_grid->getTile(targetPosition.x, targetPosition.y))
+	//{
+	//	return std::vector<std::shared_ptr<Node>>();
+	//}
+	targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
 	std::vector<std::shared_ptr<Node>> path;
 	// Outside -> OutSide
 	if (startTile && targetTile)

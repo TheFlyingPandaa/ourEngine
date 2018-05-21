@@ -1085,6 +1085,10 @@ std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 
 Room * RoomCtrl::getRoomAt(int index)
 {
+	if (index == -1)
+	{
+		return nullptr;
+	}
 	return m_rooms[index];
 }
 

@@ -86,6 +86,13 @@ void MasterAI::_spawnCustomer()
 
 void MasterAI::_trollInnChase()
 {
+	/*if (currentChase->customerpath.y < 0)
+	{
+		m_InnTroll->setCancelFlag(false);
+		delete currentChase;
+		currentChase = nullptr;
+		return;
+	}*/
 	if (m_InnTroll->getCancelFlag())
 	{
 		m_InnTroll->setCancelFlag(false);
@@ -93,7 +100,7 @@ void MasterAI::_trollInnChase()
 		currentChase = nullptr;
 		return;
 	}
-
+	
 	m_InnTroll->setSpeed(4.0f);
 	static float lastPathCounter = 0;
 	// Grab the path if it is done
@@ -260,7 +267,7 @@ void MasterAI::CharacterMenu()
 			currentChase->customerpath = XMFLOAT2(round_n3(m_customers[m_selectedCustomer]->getPosition().x, 0), round_n3(m_customers[m_selectedCustomer]->getPosition().y, 0));
 			currentChase->charIndex = m_selectedCustomer;
 
-			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(currentChase->customerpath.x, currentChase->customerpath.y));
+			currentChase->pathReturn = m_solver.RequestPath(*m_InnTroll, XMINT2(static_cast<int32_t>(currentChase->customerpath.x), static_cast<int32_t>(currentChase->customerpath.y)));
 			switch (button)
 			{
 			case 0:
@@ -286,7 +293,6 @@ void MasterAI::CharacterMenu()
 
 void MasterAI::Update(Camera* cam)
 {
-
 	if (m_showMenu)
 		CharacterMenu();
 

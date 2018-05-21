@@ -731,7 +731,7 @@ bool Room::RemoveThisFurniture(Furniture * fur)
 					x--;
 					break;
 				}
-				tileIndices.push_back(_index(fur->getPosition().x + x, fur->getPosition().z + y));
+				tileIndices.push_back(_index(fur->getPosition().x + static_cast<int>(x), fur->getPosition().z + static_cast<int>(y)));
 			}
 			for (size_t i = 0; i < tileIndices.size(); i++)
 			{

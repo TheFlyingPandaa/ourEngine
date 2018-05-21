@@ -216,6 +216,10 @@ void Grid::insertTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size, std::vector<Ti
 
 Tile * Grid::getTile(int x, int y)
 {
+	if (_index(x, y) == -1)
+	{
+		return nullptr;
+	}
 	return m_tiles[_index(x,y)];
 }
 
