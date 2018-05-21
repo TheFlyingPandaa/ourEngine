@@ -226,29 +226,6 @@ void RoomCtrl::_printRoomConnections() const
 		}
 		std::cout << std::endl;
 	}
-
-	/*std::cout << "Room " << m_rooms.size() - 1 << "->" << 0 << ": ";
-	for (int i = 0; i < m_tempPath.size(); i++)
-		std::cout << m_tempPath[i] << " ";
-	std::cout << std::endl;
-	for (int i = 0; i < m_roomConnectionMap.size(); i++)
-	{
-		for (int ii = 0; ii < m_roomConnectionMap[i].size(); ii++)
-		{
-			for (int j = 0; j < m_roomToRoom.size(); j++)
-			{
-				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
-				{
-					std::cout << "Room " << i << "-> " << ii << "\n";
-					std::cout << "One door Pos: (" << m_roomToRoom[j].one.x << "," << m_roomToRoom[j].one.y << ")\n";
-					std::cout << "Two door Pos: (" << m_roomToRoom[j].two.x << "," << m_roomToRoom[j].two.y << ")\n";
-				}
-			}
-
-		}
-	}*/
-
-
 }
 
 RoomCtrl::RoomCtrl()

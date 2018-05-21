@@ -236,6 +236,9 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		XMINT2 tPos = targetPosition;
 		int index2 = m_roomctrl->_intersect(entranceDoor.two);
 		Room* entranceRoom = m_roomctrl->getRoomAt(index2);
+		// Somehow the entranceroom went nullptr
+		if (!entranceRoom || !targetRoom)
+			return std::vector<std::shared_ptr<Node>>();
 
 		if (*entranceRoom == *targetRoom)
 		{
