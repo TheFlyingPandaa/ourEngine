@@ -68,9 +68,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\CrewState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\EventsState.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.cpp" />
-    <ClCompile Include="trolls_inn\Events\EventCollection.cpp" />
     <ClCompile Include="trolls_inn\Events\EventHandler.cpp" />
-    <ClCompile Include="trolls_inn\Events\Events.cpp" />
     <ClCompile Include="trolls_inn\Events\Reward.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Bed.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Furniture.cpp" />
@@ -84,6 +82,8 @@
     <ClCompile Include="trolls_inn\Furniture\Chair.cpp" />
     <ClCompile Include="trolls_inn\Furniture\Reception.cpp" />
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.cpp" />
+    <ClCompile Include="trolls_inn\Events\Event.cpp" />
+    <ClCompile Include="trolls_inn\Events\TutorialEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InGameConsole.h" />
@@ -143,9 +143,7 @@
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\InfoBoard.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\StatsState.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\SubStates\SubState.h" />
-    <ClInclude Include="trolls_inn\Events\EventCollection.h" />
     <ClInclude Include="trolls_inn\Events\EventHandler.h" />
-    <ClInclude Include="trolls_inn\Events\Events.h" />
     <ClInclude Include="trolls_inn\Events\Reward.h" />
     <ClInclude Include="trolls_inn\Furniture\Bed.h" />
     <ClInclude Include="trolls_inn\Furniture\Furniture.h" />
@@ -159,6 +157,8 @@
     <ClInclude Include="trolls_inn\Furniture\Reception.h" />
     <ClInclude Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.h" />
     <ClInclude Include="ourEngine\core\RenderDefine.h" />
+    <ClInclude Include="trolls_inn\Events\Event.h" />
+    <ClInclude Include="trolls_inn\Events\TutorialEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />

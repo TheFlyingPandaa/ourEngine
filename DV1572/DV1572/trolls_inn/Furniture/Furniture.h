@@ -20,7 +20,7 @@ public:
 	void			setLightIndex(int index);
 	void			setPosition(DirectX::XMFLOAT3 pos);
 	void			setPosition(float x, float y, float z);
-	DirectX::XMINT3 getPosition();
+	virtual	 DirectX::XMINT3 getPosition();
 	
 	Customer*		getOwner() const; 
 
