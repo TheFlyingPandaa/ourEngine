@@ -9,7 +9,6 @@
 #include <future>
 #include "../../AI_Base/MasterAI.h"
 #include "../../AI_Base/Inn.h"
-#include "../../Events/EventCollection.h"
 #include "../../Events/EventHandler.h"
 #include "../../Furniture/Table.h"
 #include "../../AI_Base/HeightMapGenerator.h"

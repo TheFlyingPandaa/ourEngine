@@ -9,7 +9,7 @@ Chair::Chair(DirectX::XMFLOAT3 pos, MESH meshid, const int setting) : Furniture(
 	p_rot = 0;
 	p_object.setMesh(MLP::GetInstance().GetMesh(meshid));
 
-	p_object.setPos(pos.x + 0.5f, pos.y - 0.2f, pos.z + 0.5f);
+	p_object.setPos(pos.x + 0.5f, pos.y + 0.2f, pos.z + 0.5f);
 	//Set Whatever suits
 	//p_attributes
 	if (setting == 0)
@@ -55,6 +55,8 @@ Furniture * Chair::MakeCopy()
 {
 	return new Chair(static_cast<const Chair&>(*this));;
 }
+
+
 
 int Chair::getPrice(bool low)
 {
