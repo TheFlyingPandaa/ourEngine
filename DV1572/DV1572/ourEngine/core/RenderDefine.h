@@ -1,5 +1,5 @@
 #pragma once
 
-#define DEFERRED_RENDERING 0
+#define DEFERRED_RENDERING false
 
 #define FORWARD_RENDERING !DEFERRED_RENDERING
