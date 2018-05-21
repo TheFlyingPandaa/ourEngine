@@ -92,7 +92,7 @@ void Furniture::setIsBusy(bool busy)
 
 int Furniture::getLevel()
 {
-	return 0;
+	return p_level;
 }
 
 void Furniture::setLevel(int amount)

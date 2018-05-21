@@ -54,22 +54,28 @@ void MasterAI::_spawnCustomer()
 	{
 		if (CUSTOMER_SUPERFAST_RATIO_LIMIT < m_customersSpawned)
 		{
+			std::cout << "------------------------------" << std::endl;
 			std::cout << "SUPERFAST!" << std::endl;
+			std::cout << "------------------------------" << std::endl;
 			m_spawnRatio = SuperFast;
-		}
-		else if (Faster == m_spawnRatio)
-		{
-			if (CUSTOMER_FASTER_RATIO_LIMIT < m_customersSpawned)
-			{
-				std::cout << "FASTER!" << std::endl;
-				m_spawnRatio = Faster;
-			}
 		}
 		else if (Fast == m_spawnRatio)
 		{
+			if (CUSTOMER_FASTER_RATIO_LIMIT < m_customersSpawned)
+			{
+				std::cout << "------------------------------" << std::endl;
+				std::cout << "FASTER!" << std::endl;
+				std::cout << "------------------------------" << std::endl;
+				m_spawnRatio = Faster;
+			}
+		}
+		else if (Medium == m_spawnRatio)
+		{
 			if (CUSTOMER_FAST_RATIO_LIMIT < m_customersSpawned)
 			{
+				std::cout << "------------------------------" << std::endl;
 				std::cout << "FAST!" << std::endl;
+				std::cout << "------------------------------" << std::endl;
 				m_spawnRatio = Fast;
 			}
 		}
@@ -197,6 +203,7 @@ void MasterAI::_killCustomer(int customerIndex)
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
 	: m_solver(roomCtrl,grid)
 {
+	m_servedCustomers = 0;
 	m_customer_start = m_start = m_clock.now();
 	m_customerSpawned = true;
 	m_customersSpawned = 0;
@@ -321,7 +328,6 @@ void MasterAI::Update(Camera* cam)
 			{
 				std::stringstream ss;
 				ss << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-				std::cout << "An " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 				InGameConsole::pushString(ss.str());
 				_spawnCustomer();
 			}
@@ -332,7 +338,6 @@ void MasterAI::Update(Camera* cam)
 			{
 				std::stringstream ss;
 				ss << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
-				std::cout << "A " << m_nextCustomer->GetRaceStr() << " has arrived!" << std::endl;
 				InGameConsole::pushString(ss.str());
 				_spawnCustomer();
 			}
@@ -340,7 +345,7 @@ void MasterAI::Update(Camera* cam)
 	}
 	else
 	{
-		if (m_customer_spawn_timer.count() > 30)
+		if (m_customer_spawn_timer.count() > (30 / ((m_spawnRatio * 2) + 1)))
 		{
 			m_customerSpawned = false;
 			_generateCustomer();
@@ -398,6 +403,13 @@ void MasterAI::Update(Camera* cam)
 				if (customer->GetThought() == Character::ANGRY)
 				{
 					m_inn->AddAngryCustomer();
+					m_servedCustomers--;
+					InGameConsole::pushString("Your score went down with 1.\nThe new score is: " + std::to_string(m_servedCustomers));
+				}
+				else
+				{
+					m_servedCustomers++;
+					InGameConsole::pushString("Your score went up with 1.\nThe new score is: " + std::to_string(m_servedCustomers));
 				}
 			}
 			else
@@ -427,7 +439,7 @@ void MasterAI::Update(Camera* cam)
 		{
 			if (currentChase->charIndex == leavingCustomersIDs[i])
 			{
-				InGameConsole::pushString("You can't kill an\nleaving customer!");
+				InGameConsole::pushString("You can't kill a\nleaving customer!");
 				delete currentChase;
 				currentChase = nullptr;
 				// Reset the color

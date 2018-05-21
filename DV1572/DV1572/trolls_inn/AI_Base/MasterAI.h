@@ -10,12 +10,12 @@
 #include "../Bobby test/StateManager/HUD/ClickMenu.h"
 
 const int UPDATE_FREQUENCY_CUSTOMER_NEEDS = 10;
-const int CHECK_CUSTOMER_SPAWN = 5;
+const int CHECK_CUSTOMER_SPAWN = 2;
 const int DWARF_SPAWN_RATIO = 2;
-const int ELF_SPAWN_RATIO = 5;
-const int CUSTOMER_SUPERFAST_RATIO_LIMIT = 40;//80;
-const int CUSTOMER_FASTER_RATIO_LIMIT = 25;//40;
-const int CUSTOMER_FAST_RATIO_LIMIT = 15;
+const int ELF_SPAWN_RATIO = 4;
+const int CUSTOMER_SUPERFAST_RATIO_LIMIT = 25;
+const int CUSTOMER_FASTER_RATIO_LIMIT = 15;
+const int CUSTOMER_FAST_RATIO_LIMIT = 10;
 const int CUSTOMER_MEDIUM_RATIO_LIMIT = 5;
 
 enum CustomerSpawnRatios
@@ -40,7 +40,9 @@ private:
 	CustomerFlowControl m_cFC;
 
 	Mesh			m_thinkingMesh;
-	
+
+	// Customer serving score
+	int m_servedCustomers; // Minus score for every angry customer
 
 	// Customer needs update variables
 	std::chrono::high_resolution_clock m_clock;
