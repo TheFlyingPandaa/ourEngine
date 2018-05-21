@@ -387,7 +387,7 @@ void MasterAI::Update(Camera* cam)
 				// Customer leaves inn
 				// Save id for leaving customers
 				customer->clearWalkingQueue();
-				customer->ClearQueue();
+				customer->PopStateQueue();
 				leavingCustomersIDs.push_back(loopCounter);
 				if (customer->GetThought() == Character::ANGRY)
 				{
