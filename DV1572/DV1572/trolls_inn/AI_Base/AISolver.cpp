@@ -14,9 +14,9 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 
 	if (m_roomctrl != nullptr)
 	{
-		if (customer.GetState() == SleepAction ||
-			customer.GetState() == EatAction ||
-			customer.GetState() == DrinkAction)
+		if (customer.GetState() == Sleeping ||
+			customer.GetState() == Eating ||
+			customer.GetState() == Drinking)
 		{
 			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetState());
 		}
@@ -57,21 +57,6 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 	}
 	else if (!customer.GetWaitingForSpot())
 	{
-		// Get a path to a new room of the same type (?)
-		/*CustomerState customerState = customer.GetState();
-
-		switch (customerState)
-		{
-		case Drinking:
-
-			break;
-		case Eating:
-			
-			break;
-		case Sleeping:
-			
-			break;
-		}*/
 		customer.SetAvailableSpotFound(false);
 		customer.SetWaitingForSpot(true);
 		customer.SetWaiting();
@@ -85,16 +70,16 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 		std::stringstream ss;
 		if (customer.GetRace() == Elf)
 		{
-			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 25 gold!" << std::endl;
-			inn->GetRefund(25);
-			customer.GetEconomy().GetCashback(25);
+			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 50 gold!" << std::endl;
+			inn->GetRefund(50);
+			customer.GetEconomy().GetCashback(50);
 			customer.GetAttributes().AddStat(-0.15);
 		}
 		else
 		{
-			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 15 gold!" << std::endl;
-			inn->GetRefund(15);
-			customer.GetEconomy().GetCashback(15);
+			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 70 gold!" << std::endl;
+			inn->GetRefund(70);
+			customer.GetEconomy().GetCashback(70);
 			customer.GetAttributes().AddStat(0.15);
 		}
 		InGameConsole::pushString(ss.str());
@@ -392,15 +377,11 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			if (customer.GetHungry() < 5 && customer.GetThirsty() < 5 && customer.GetTired() < 5)
 			{
 				// Get a path to a new location
-				// Walk towards a room with the highest value (?) (Tired, Hungry or Thirsty)
-				// Go explore (?)
-				// Get race desires (?)
 				RequestPath(customer, RoomType::randomStupid);
 				customer.SetAction(WalkAction);
 			}
 			customer.PopToNextState();
 			break;
-			// Update animations drink, eat, sleep (?)
 		case Waiting:
 			if (customer.GetWaitingForSpot())
 			{
@@ -412,7 +393,6 @@ void AISolver::Update(Customer& customer, Inn* inn)
 				_doWaiting(customer, inn);
 			}
 			break;
-			//ADD INCREASED NEEDS WHEN DOING THINGS?!?!?! ------>FROGGE<-------
 		case Drinking:
 			if (!customer.GetAvailableSpotFound())
 				_checkSpotInRoom(inn, customer);
