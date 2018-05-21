@@ -11,6 +11,8 @@ TutorialEvent::TutorialEvent(Inn * inn, RoomCtrl * roomctrl) : Event(inn,roomctr
 	q.Push(&TutorialEvent::_BuildBedRoom);
 	q.Push(&TutorialEvent::_BuildBedRoomBed);
 	q.Push(&TutorialEvent::_BuildKitchenRoom);
+	q.Push(&TutorialEvent::_BuildKitchenStove);
+	q.Push(&TutorialEvent::_BuildKitchenTable);
 	
 }
 
@@ -142,6 +144,46 @@ void TutorialEvent::_BuildKitchenRoom()
 			InGameConsole::pushString("Snyggt byggt, frasig Kitchen");
 			m_inn->Deposit(350);
 			q.Pop();
+		}
+	}
+}
+
+void TutorialEvent::_BuildKitchenStove()
+{
+	InGameConsole::RemoveStringEvent();
+	InGameConsole::pushStringEvent("Build a Stove : Reward $150");
+	std::vector<Room*> rooms = m_roomCtrl->getAllTheRooms();
+	for (auto room : rooms)
+	{
+		std::vector<Furniture*> fur = room->getAllRoomFurnitures();
+		for (auto furniture : fur)
+		{
+			if (furniture->WhatType() == "Stove")
+			{
+				InGameConsole::pushString("Snyggt byggt, frasig Stove");
+				m_inn->Deposit(150);
+				q.Pop();
+			}
+		}
+	}
+}
+
+void TutorialEvent::_BuildKitchenTable()
+{
+	InGameConsole::RemoveStringEvent();
+	InGameConsole::pushStringEvent("Build a Table : Reward $250");
+	std::vector<Room*> rooms = m_roomCtrl->getAllTheRooms();
+	for (auto room : rooms)
+	{
+		std::vector<Furniture*> fur = room->getAllRoomFurnitures();
+		for (auto furniture : fur)
+		{
+			if (furniture->WhatType() == "Table")
+			{
+				InGameConsole::pushString("Snyggt byggt, frasig Table");
+				m_inn->Deposit(250);
+				q.Pop();
+			}
 		}
 	}
 }

@@ -14,6 +14,8 @@ private:
 	void _BuildBedRoom();
 	void _BuildBedRoomBed();
 	void _BuildKitchenRoom();
+	void _BuildKitchenStove();
+	void _BuildKitchenTable();
 
 public:
 	TutorialEvent(Inn * inn, RoomCtrl * roomctrl);
