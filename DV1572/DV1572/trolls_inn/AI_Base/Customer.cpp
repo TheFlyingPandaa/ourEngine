@@ -1,5 +1,6 @@
 #include "Customer.h"
 #include "../../InGameConsole.h"
+#include "RandomNumberGenerator.h"
 #include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
@@ -44,13 +45,21 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	{
 		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 1))
+			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 10))
 		{
 			furniture[i]->setOwner(this); 
 			m_ownedFurniture = furniture[i]; 
 			m_ownedFurniture->setIsBusy(true);
 			furniture[i]->increaseDirtyLevel(); 
 			furnitureFound = true;
+		}
+	}
+	for (int i = 0; i < roomCtrl->getAllTheRooms().size(); i++)
+	{
+		nrOfFurniture = roomCtrl->getAllTheRooms().at(i)->getAllRoomFurnitures().size(); 
+		for (int k = 0; k < nrOfFurniture; k++)
+		{
+
 		}
 	}
 
