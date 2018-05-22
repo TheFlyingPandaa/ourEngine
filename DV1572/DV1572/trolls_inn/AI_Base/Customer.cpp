@@ -1,5 +1,6 @@
 #include "Customer.h"
 #include "../../InGameConsole.h"
+#include "RandomNumberGenerator.h"
 #include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
@@ -44,7 +45,7 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	{
 		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
 			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 1))
+			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 10))
 		{
 			furniture[i]->setOwner(this); 
 			m_ownedFurniture = furniture[i]; 
@@ -53,6 +54,27 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			furnitureFound = true;
 		}
 	}
+	/*for (int i = 0; i < roomCtrl->getAllTheRooms().size(); i++)
+	{
+		roomToCheck = roomCtrl->getAllTheRooms().at(i);
+		furniture = roomToCheck->getAllRoomFurnitures(); 
+		nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
+		
+		for (int k = 0; k < nrOfFurniture; k++)
+		{
+			if (!furniture[k]->getIsBusy() && 
+				(furniture[k]->WhatType() == "Bed" ||
+				furniture[k]->WhatType() == "Table" ||
+				furniture[k]->WhatType() == "Bar"))
+			{
+				furniture[k]->setOwner(this);
+				m_ownedFurniture = furniture[k];
+				m_ownedFurniture->setIsBusy(true);
+				furniture[k]->increaseDirtyLevel();
+				furnitureFound = true;
+			}
+		}
+	}*/
 
 	return furnitureFound;
 }
