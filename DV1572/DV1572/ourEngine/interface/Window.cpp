@@ -7,6 +7,8 @@
 #include <algorithm> // For std::find_if
 #include "../interface/shape/Billboard.h"
 #define DEBUG 1
+
+#pragma comment(lib, "winmm")
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -1887,6 +1889,22 @@ void Window::Flush(Camera* c)
 		{
 			m_WireFrameDebug = false;
 		}
+	}
+	
+	if (Input::isKeyPressed(Input::F5))
+	{
+		if (m_volume >= 100) {
+			m_volume -= 100;
+		}
+		
+		waveOutSetVolume(NULL, m_volume);
+	}
+	if (Input::isKeyPressed(Input::F6))
+	{
+		if (m_volume <= 65435) {
+			m_volume += 100;
+		}
+		waveOutSetVolume(NULL, m_volume);
 	}
 	
 

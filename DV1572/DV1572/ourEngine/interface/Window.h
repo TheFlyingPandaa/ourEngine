@@ -123,6 +123,8 @@ private:
 
 	D3D11_VIEWPORT m_viewport;
 
+	int m_volume = 65535/2; //Half blast volume
+
 private:
 	bool	_initWindow();
 	HRESULT _initDirect3DContext();
