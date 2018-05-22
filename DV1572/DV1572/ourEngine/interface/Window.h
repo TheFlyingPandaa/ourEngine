@@ -1,7 +1,6 @@
 #pragma once
 #include <windows.h>
 #include <d3d11.h>
-#include <dxgidebug.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #pragma comment (lib, "d3d11.lib")
@@ -26,11 +25,6 @@ private:
 		ID3D11Texture2D*			TextureMap;
 		ID3D11RenderTargetView*		RTV;
 		ID3D11ShaderResourceView*	SRV;
-		void Release() {
-			if (TextureMap) TextureMap->Release();
-			if (RTV) RTV->Release();
-			if (SRV) SRV->Release();
-		}
 	};
 	struct computeBuffer {
 		float temp;
@@ -50,7 +44,6 @@ private:
 	BOOL					m_fullscreen;
 	ID3D11RenderTargetView*	m_backBufferRTV;
 	IDXGISwapChain*			m_swapChain;
-	
 	
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11Texture2D*		m_depthBufferTex;
@@ -192,19 +185,6 @@ private:
 
 	void	_initFonts();
 	void	_drawText();
-
-	//debug
-	void	_deb(IUnknown * ptr)
-	{
-		if (ptr == nullptr)
-			return;
-		ID3D11Debug* d = nullptr;
-		HRESULT Result = (ptr)->QueryInterface(__uuidof(ID3D11Debug), (void**)&d);
-		if (d)
-			Result = d->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-		else
-			return;
-	}
 
 public:
 	Window(HINSTANCE h);
