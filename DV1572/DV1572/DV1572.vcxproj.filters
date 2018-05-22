@@ -84,6 +84,7 @@
     <ClCompile Include="trolls_inn\Bobby test\StateManager\HUD\ClickMenu.cpp" />
     <ClCompile Include="trolls_inn\Events\Event.cpp" />
     <ClCompile Include="trolls_inn\Events\TutorialEvent.cpp" />
+    <ClCompile Include="ourEngine\interface\OurMusic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InGameConsole.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="ourEngine\core\RenderDefine.h" />
     <ClInclude Include="trolls_inn\Events\Event.h" />
     <ClInclude Include="trolls_inn\Events\TutorialEvent.h" />
+    <ClInclude Include="ourEngine\interface\OurMusic.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="ourEngine\core\Audio\AudioLibxDB.lib" />

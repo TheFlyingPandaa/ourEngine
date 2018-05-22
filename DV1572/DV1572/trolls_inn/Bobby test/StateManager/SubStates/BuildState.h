@@ -7,6 +7,7 @@
 #include "../../../Furniture/Bed.h"
 #include "../HUD/InfoBoard.h"
 #include "../HUD/ClickMenu.h"
+#include "../../../../ourEngine/interface/OurMusic.h"
 
 class BuildState :
 	public SubState
@@ -25,6 +26,8 @@ private:
 	Furniture* table;
 	ClickMenu * m_cm;
 
+	DirectX::SoundEffectInstance* m_hudClick;
+	DirectX::SoundEffectInstance* m_hudSnap;
 
 	bool drawSelectedThing;
 	bool twoStepThingy = false;

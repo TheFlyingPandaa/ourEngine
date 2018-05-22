@@ -6,6 +6,7 @@
 #include "../Time Management/GameTime.h"
 #include "../Bobby test/StateManager/HUD/HUD.h"
 #include "../../InGameConsole.h"
+#include "../../ourEngine/interface/OurMusic.h"
 
 const int START_MONEY = 500;
 const double UPDATE_FREQ = 2.0;
@@ -13,7 +14,10 @@ const double UPDATE_FREQ = 2.0;
 class Inn
 {
 private:
-	
+	DirectX::SoundEffectInstance* m_moneyGain;
+	DirectX::SoundEffectInstance* m_moneyLose;
+
+
 	bool exitState = false;
 
 	Mesh m_m;

@@ -4,6 +4,11 @@ Inn::Inn()
 {
 	m_economy = new Economy(START_MONEY);
 	
+	m_moneyGain	= OurMusic::LoadSound("trolls_inn/Resources/sounds/Money_gain.wav");
+	m_moneyLose	= OurMusic::LoadSound("trolls_inn/Resources/sounds/Money.wav");
+	m_moneyLose->SetVolume(0.3f);
+
+
 	m_timer = 0;
 	m_text = new Text();
 	m_text->setFontType(TXT::Constantina_Big);
@@ -29,6 +34,8 @@ Inn::Inn()
 Inn::~Inn()
 {
 	delete m_economy;
+	delete m_moneyGain;
+	delete m_moneyLose;
 	/*
 	delete m_text;
 	m_text = nullptr;*/
@@ -131,6 +138,9 @@ void Inn::Deposit(int amount)
 	m_depositText.at(m_depositText.size() - 1).setTextString("$ " + std::to_string(amount));
 	m_depositText.at(m_depositText.size() - 1).setAllignment(TXT::Right);
 	m_depositAmount.push_back(amount);
+	if (m_moneyGain->GetState() == DirectX::SoundState::PLAYING)
+		m_moneyGain->Stop();
+	m_moneyGain->Play();
 	//UpdateMoney();
 }
 
@@ -145,6 +155,9 @@ void Inn::Withdraw(int amount)
 	m_withdrawText.at(m_withdrawText.size() - 1).setTextString("$ " + std::to_string(amount));
 	m_withdrawText.at(m_withdrawText.size() - 1).setAllignment(TXT::Right);
 	m_economy->Withdraw(amount);
+	if (m_moneyLose->GetState() == DirectX::SoundState::PLAYING)
+		m_moneyLose->Stop();
+	m_moneyLose->Play();
 	UpdateMoney();
 }
 
