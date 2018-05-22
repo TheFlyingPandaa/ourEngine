@@ -119,8 +119,9 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 										m_furnitureRemove->getObject3D().setColor(0.2f, 2.0f, 0.2f);
 										m_cm->ClearSubText();
 										m_cm->setInfo(m_furnitureRemove->WhatType());
+										std::string clean = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
 										std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel" + std::to_string(m_furnitureRemove->getLevel());
-										m_cm->PushText(s);
+										m_cm->PushText(s + clean);
 										m_cm->setPos(Input::getMousePositionLH());
 									}
 								}
@@ -134,7 +135,8 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 									m_cm->ClearSubText();
 									m_cm->setInfo(m_furnitureRemove->WhatType());
 									std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel: " + std::to_string(m_furnitureRemove->getLevel());
-									m_cm->PushText(s);
+									std::string clean = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
+									m_cm->PushText(s + clean);
 
 									m_cm->setPos(Input::getMousePositionLH());
 								}
@@ -1017,7 +1019,8 @@ void BuildState::Update(double deltaTime)
 			//m_cm->setInfo(m_furnitureRemove->WhatType());
 			m_cm->ClearSubText();
 			std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel: " + std::to_string(m_furnitureRemove->getLevel());
-			m_cm->PushText(s);
+			std::string clean = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
+			m_cm->PushText(s + clean);
 		}
 		else if (m_cm->ButtonClicked() == 2)
 		{

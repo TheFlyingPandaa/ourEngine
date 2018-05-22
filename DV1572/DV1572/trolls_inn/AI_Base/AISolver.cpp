@@ -10,7 +10,7 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	bool spotAvailable = false;
+	XMINT2 spotAvailable = XMINT2(0,0);
 
 	if (m_roomctrl != nullptr)
 	{
@@ -23,7 +23,7 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		else if (customer.GetState() == Waiting)
 			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetWaitingToDoState());
 	}
-	if (spotAvailable)
+	if (spotAvailable.x != -1 && spotAvailable.y != -1)
 	{
 		CustomerState state = customer.GetState();
 		int price = 0;

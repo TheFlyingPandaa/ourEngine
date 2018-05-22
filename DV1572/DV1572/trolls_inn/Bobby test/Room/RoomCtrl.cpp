@@ -1248,3 +1248,16 @@ void RoomCtrl::setIsBuildingDoor(bool tje)
 	m_buildingDoors = tje;
 }
 
+std::vector<Room*> RoomCtrl::getAllRoomsOfType(RoomType type)
+{
+	std::vector<Room*> roomsOfWishedType; 
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		if (m_rooms[i]->getRoomType() == type)
+		{
+			roomsOfWishedType.push_back(m_rooms[i]); 
+		}
+	}
+	return roomsOfWishedType; 
+}
+
