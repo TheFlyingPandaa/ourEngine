@@ -20,6 +20,7 @@ struct INPUT
 
 	float4 color : HIGHLIGHTCOLOR;
 	float lIndex : LIGHTINDEX;
+
 };
 
 struct OUTPUT

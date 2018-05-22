@@ -117,8 +117,9 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		XMINT2 pos = targetPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
-
-		if (0 == m_roomctrl->getRoomConnections(index))
+		// If there is no entrane door, then its not neeeded to continue
+		
+		if (0 == m_roomctrl->HasEntranceDoor() && 0 == m_roomctrl->getRoomConnections(index))
 			return std::vector<std::shared_ptr<Node>>();
 
 		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);

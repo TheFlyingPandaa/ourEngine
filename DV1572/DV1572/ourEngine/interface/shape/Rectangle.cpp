@@ -34,6 +34,7 @@ RectangleShape::RectangleShape(float w, float h) : Shape()
 
 RectangleShape::~RectangleShape()
 {
+
 }
 
 void RectangleShape::setScreenPos(float x, float y, float depth)

@@ -520,7 +520,10 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		XMINT2 pos = targetPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
-
+		
+		// If we are outside and want to get in there needs to be an entrance door
+		if (0 == m_roomctrl->HasEntranceDoor())
+			return std::vector<std::shared_ptr<Node>>();
 		if (0 == m_roomctrl->getRoomConnections(index))
 			return std::vector<std::shared_ptr<Node>>();
 
@@ -633,7 +636,9 @@ std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosit
 		XMINT2 pos = startPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
-
+		// If we are inside and want to get out there need to be an entrance door present
+		if(0 == m_roomctrl->HasEntranceDoor())
+			return std::vector<std::shared_ptr<Node>>();
 		if (0 == m_roomctrl->getRoomConnections(index))
 			return std::vector<std::shared_ptr<Node>>();
 

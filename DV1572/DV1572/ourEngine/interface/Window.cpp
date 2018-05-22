@@ -1560,6 +1560,7 @@ void Window::_lightPass(Camera& cam)
 void Window::_renderEverything(const Camera & cam)
 {
 	
+
 	DX::g_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	DIRECTIONAL_LIGHT_BUFFER m_sunBuffer;
@@ -1787,8 +1788,9 @@ Window::~Window()
 	ID3D11Debug* DebugDevice = nullptr;
 	HRESULT Result = DX::g_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&DebugDevice);
 	Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-	DX::SafeRelease(&DX::g_device);
+
 	DX::SafeRelease(&DX::g_deviceContext);
+	DX::SafeRelease(&DX::g_device);
 	
 	
 }
@@ -1882,7 +1884,7 @@ void Window::loadActiveLights(GameTime& gameTime)
 
 void Window::Flush(Camera* c)
 {
-	//ReportLiveObjects();
+
 	//_windowPass(c);
 	_prepareShadow();
 	_shadowPass(c);
@@ -1942,7 +1944,7 @@ Shape * Window::getPicked(Camera* c)
 
 void Window::Present()
 {
-	m_swapChain->Present(0, 0);
+	m_swapChain->Present(1, 0);
 }
 
 LRESULT Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -45,6 +45,7 @@ private:
 	void				_traversalPath(int parent[], int j, int src, int dst);
 
 	void				_printRoomConnections() const;
+	void				_removeFromRoomToRoom(int room1, int room2);
 
 public:
 	RoomCtrl();
@@ -70,9 +71,11 @@ public:
 	void				Draw();
 
 	int					getRoomConnections(int index) const;
+	int					HasEntranceDoor() const;
 	
 	void				CreateWalls(Room* currentRoom);
 	void				CreateDoor(XMFLOAT3 wallPosition, float rot = 0.0f);
+	bool				RemoveDoor(XMFLOAT3 wallPosition);
 	
 	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;
 	DoorPassage			getDoorPassage(int index1, int index2) const;

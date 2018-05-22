@@ -241,14 +241,12 @@ HeightMap::HeightMap()
 		int z = rand() % mapSize;
 
 		if (x >= 29 && x <= 100 && z >= 20 && z <= 100) continue;
-	
-			RectangleShape shape;
 			
-			shape.setMesh(MLP::GetInstance().GetMesh(MESH::TREE_BILL));
-			int index = x + (mapSize * z);
-			shape.setPos(x + gridPosition.x, (m_heightValues[index] + gridPosition.y) + 2.8f, z + gridPosition.z);
-			shape.setScale(4, 6, 4);
-			m_trees.push_back(shape);
+		m_trees.emplace_back();
+		m_trees.back().setMesh(MLP::GetInstance().GetMesh(MESH::TREE_BILL));
+		int index = x + (mapSize * z);
+		m_trees.back().setPos(x + gridPosition.x, (m_heightValues[index] + gridPosition.y) + 2.8f, z + gridPosition.z);
+		m_trees.back().setScale(4, 6, 4);
 
 				
 	}
