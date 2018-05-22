@@ -77,6 +77,7 @@ public:
 	void				CreateDoor(XMFLOAT3 wallPosition, float rot = 0.0f);
 	bool				RemoveDoor(XMFLOAT3 wallPosition);
 	
+	std::vector<DoorPassage>&	getAllEntranceDoors();
 	DoorPassage			getClosestEntranceDoor(XMINT2 startPosition) const;
 	DoorPassage			getDoorPassage(int index1, int index2) const;
 
