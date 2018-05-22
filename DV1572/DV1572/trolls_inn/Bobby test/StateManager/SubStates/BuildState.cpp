@@ -385,8 +385,11 @@ bool BuildState::_mainHudPick()
 {
 	bool pickedHUD = false;
 	int index = p_HUD.PickHud(Input::getMousePositionLH());
-
+	static int lastHover = -1;
 	if (index != -2) pickedHUD = true;
+
+	if (index < 0)
+		lastHover = -1;
 
 	if (index >= 0)
 	{
@@ -405,6 +408,9 @@ bool BuildState::_mainHudPick()
 			// Clicked a button
 			m_hudButtonsPressed[index] = !m_hudButtonsPressed[index];
 			m_clickedLastFrame = true;
+			if (m_hudClick->GetState() == DirectX::SoundState::PLAYING)
+				m_hudClick->Stop();
+			m_hudClick->Play();
 
 			switch (index)
 			{
@@ -465,6 +471,14 @@ bool BuildState::_mainHudPick()
 					picked = i;
 			}
 			
+			if (lastHover != index)
+			{
+				lastHover = index;
+				if (m_hudSnap->GetState() == DirectX::SoundState::PLAYING)
+					m_hudSnap->Stop();
+				m_hudSnap->Play();
+			}
+
 			p_HUD.ResetColorsExcept(picked);
 
 			switch (index)
@@ -515,8 +529,12 @@ bool BuildState::_selectionBuildHudPick(HUD & h, int & getIndex)
 {
 	bool pickedHUD = false;
 	int index = h.PickHud(Input::getMousePositionLH());
-	
+	static int lastHover = -1;
+
 	if (index != -2) pickedHUD = true;
+	if (index < 0)
+		lastHover = -1;
+
 
 	if (index >= 0)
 	{
@@ -528,6 +546,9 @@ bool BuildState::_selectionBuildHudPick(HUD & h, int & getIndex)
 		float cC = 50.0f;
 		if (!m_clickedLastFrame && Input::isMouseLeftPressed())
 		{
+			if (m_hudClick->GetState() == DirectX::SoundState::PLAYING)
+				m_hudClick->Stop();
+			m_hudClick->Play();
 			// Clicked a button
 			m_clickedLastFrame = true;
 			if (m_selectedThing != index)
@@ -548,6 +569,14 @@ bool BuildState::_selectionBuildHudPick(HUD & h, int & getIndex)
 		}
 		else
 		{
+			if (index != lastHover)
+			{
+				lastHover = index;
+				if (m_hudSnap->GetState() == DirectX::SoundState::PLAYING)
+					m_hudSnap->Stop();
+				m_hudSnap->Play();
+			}
+
 			h.ResetColorsExcept(m_selectedThing);
 			if (m_selectedThing != index)
 				h.SetHoverColorOnButton(index);
@@ -874,10 +903,15 @@ BuildState::~BuildState()
 		m_selectedRoom->Select();
 	delete table;
 	delete m_cm;
+	delete m_hudSnap;
+	delete m_hudClick;
 }
 
 void BuildState::_init()
 {
+	m_hudClick = OurMusic::LoadSound("trolls_inn/Resources/sounds/click_menu.wav");
+	m_hudSnap = OurMusic::LoadSound("trolls_inn/Resources/sounds/snap_menu.wav");
+	m_hudSnap->SetVolume(0.5f);
 	m_madeFullResetMain = true;
 	m_selectedThing = -1;
 	m_selectedRoom = nullptr;
