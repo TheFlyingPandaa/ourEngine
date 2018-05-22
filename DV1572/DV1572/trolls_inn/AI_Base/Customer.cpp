@@ -54,14 +54,27 @@ bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 			furnitureFound = true;
 		}
 	}
-	for (int i = 0; i < roomCtrl->getAllTheRooms().size(); i++)
+	/*for (int i = 0; i < roomCtrl->getAllTheRooms().size(); i++)
 	{
-		nrOfFurniture = roomCtrl->getAllTheRooms().at(i)->getAllRoomFurnitures().size(); 
+		roomToCheck = roomCtrl->getAllTheRooms().at(i);
+		furniture = roomToCheck->getAllRoomFurnitures(); 
+		nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
+		
 		for (int k = 0; k < nrOfFurniture; k++)
 		{
-
+			if (!furniture[k]->getIsBusy() && 
+				(furniture[k]->WhatType() == "Bed" ||
+				furniture[k]->WhatType() == "Table" ||
+				furniture[k]->WhatType() == "Bar"))
+			{
+				furniture[k]->setOwner(this);
+				m_ownedFurniture = furniture[k];
+				m_ownedFurniture->setIsBusy(true);
+				furniture[k]->increaseDirtyLevel();
+				furnitureFound = true;
+			}
 		}
-	}
+	}*/
 
 	return furnitureFound;
 }
