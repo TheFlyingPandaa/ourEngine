@@ -22,6 +22,18 @@
 */
 namespace DX
 {
+	// Use when releasing
+	// Source: https://msdn.microsoft.com/en-us/library/windows/desktop/dd940435(v=vs.85).aspx
+	template <class T> void SafeRelease(T **ppT)
+	{
+		if (*ppT)
+		{
+			(*ppT)->Release();
+			*ppT = NULL;
+		}
+		
+	}
+
 	
 	extern ID3D11Device* g_device;
 	extern ID3D11DeviceContext* g_deviceContext;

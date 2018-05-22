@@ -53,6 +53,7 @@ Shape::Shape()
 	m_ds	= nullptr;
 	m_gs	= nullptr;
 	m_ps	= nullptr;
+	m_instanceBuffer = nullptr;
 	m_worldMatrix = XMMatrixIdentity();
 	m_pos = { 0, 0, 0 };
 	m_rot = { 0,0,0 };
@@ -66,7 +67,12 @@ Shape::Shape()
 
 Shape::~Shape()
 {
-
+	/*DX::SafeRelease(&m_vs);
+	DX::SafeRelease(&m_hs);
+	DX::SafeRelease(&m_ds);
+	DX::SafeRelease(&m_gs);
+	DX::SafeRelease(&m_ps);
+	DX::SafeRelease(&m_instanceBuffer);*/
 }
 
 void Shape::setMesh(Mesh * m)
