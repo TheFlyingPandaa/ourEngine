@@ -16,7 +16,8 @@ public:
 		DOWNRIGHT,
 		DOWNLEFT,
 		LEFT,
-		RIGHT
+		RIGHT,
+		NONE
 	};
 
 	enum Thoughts
@@ -92,4 +93,7 @@ public:
 
 
 	short getUniqueIndex() const;
+
+public:
+	void getStepsLeft(float & x, float & y);
 };
