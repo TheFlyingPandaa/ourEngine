@@ -219,14 +219,12 @@ void RoomCtrl::_printRoomConnections() const
 		}
 		std::cout << std::endl;
 	}
-
-
 }
 
 void RoomCtrl::_removeFromRoomToRoom(int room1, int room2)
 {
 	int removesCounter = 0;
-	for (std::vector<DoorPassage>::iterator it = m_roomToRoom.begin(); 
+	for (std::vector<DoorPassage>::iterator it = m_roomToRoom.begin();
 		it != m_roomToRoom.end();
 		)
 	{
@@ -234,7 +232,7 @@ void RoomCtrl::_removeFromRoomToRoom(int room1, int room2)
 		if ((room1 == c.roomIndexes[0] && room2 == c.roomIndexes[1])
 			|| (room2 == c.roomIndexes[0] && room1 == c.roomIndexes[1]))
 		{
-			it = m_roomToRoom.erase(it); 
+			it = m_roomToRoom.erase(it);
 			removesCounter++;
 		}
 		else
@@ -286,29 +284,23 @@ RoomCtrl::~RoomCtrl()
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
-	Room * currentRoom = nullptr;
+	Room * currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::KITCHENTILE));
 		break;
 	case bedroom:
-		//Duno just copied the 
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::BEDROOMTILE));
 		break;
 	case reception:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE));
 		break;
 	case hallway:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::HALLWAYTILE));
 		break;
 	case bar:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::WOODTILE));
 		break;
 	}

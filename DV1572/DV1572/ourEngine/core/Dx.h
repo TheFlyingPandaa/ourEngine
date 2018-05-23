@@ -64,6 +64,8 @@ namespace DX
 
 		DirectX::XMFLOAT4A highLightColor;
 		float lightIndex;
+		float gridScaleX;
+		float gridScaleY;
 	};
 
 	struct INSTANCE_ATTRIB_BILL

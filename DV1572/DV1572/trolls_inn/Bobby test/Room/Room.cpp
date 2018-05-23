@@ -80,7 +80,9 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
 	//TODO //Fix scale?? CHEFEN GET ON IT
-	m_wholeFloor.setUVScale(sizeX);
+	m_wholeFloor.setUVScaleX(m_sizeX);
+	m_wholeFloor.setUVScaleY(m_sizeY);
+	
 
 	m_roomType = roomType;
 
@@ -183,7 +185,7 @@ void Room::Draw()
 
 std::string Room::toString() const
 {
-	return "meh";
+	return "meh"; // WHO DID THIS 
 }
 
 int Room::getRoomIndex() const
