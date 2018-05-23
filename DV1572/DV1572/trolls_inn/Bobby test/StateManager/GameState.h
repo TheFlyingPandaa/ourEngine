@@ -13,6 +13,7 @@
 #include "../../Furniture/Table.h"
 #include "../../AI_Base/HeightMapGenerator.h"
 #include "HUD/ClickMenu.h"
+#include "../../../ourEngine/interface/OurMusic.h"
 
 class GameState : public State {
 private:
@@ -31,6 +32,10 @@ private:
 	Furniture* m_receptionFur;
 
 	HeightMap m_background;
+
+	DirectX::SoundEffectInstance* m_music;
+	DirectX::SoundEffectInstance* m_hudClick;
+	DirectX::SoundEffectInstance* m_hudSnap;
 
 	// AI
 	MasterAI* m_mai;

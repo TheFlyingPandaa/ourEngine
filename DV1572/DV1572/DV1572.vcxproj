@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="InGameConsole.cpp" />
+    <ClCompile Include="ourEngine\interface\OurMusic.cpp" />
     <ClCompile Include="ourEngine\interface\shape\Billboard.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\HeightMapGenerator.cpp" />
     <ClCompile Include="trolls_inn\AI_Base\FroggeDSA.cpp">
@@ -195,6 +196,7 @@
   <ItemGroup>
     <ClInclude Include="InGameConsole.h" />
     <ClInclude Include="ourEngine\core\RenderDefine.h" />
+    <ClInclude Include="ourEngine\interface\OurMusic.h" />
     <ClInclude Include="trolls_inn\AI_Base\FroggeDebug.h" />
     <ClInclude Include="trolls_inn\AI_Base\AISolver.h" />
     <ClInclude Include="trolls_inn\AI_Base\HeightMapGenerator.h" />

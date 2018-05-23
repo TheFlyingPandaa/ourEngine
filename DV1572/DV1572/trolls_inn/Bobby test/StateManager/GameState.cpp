@@ -88,6 +88,9 @@ GameState::~GameState()
 	delete inn;
 	//delete m_receptionFur;
 	delete m_eventHandle;
+	delete m_music;
+	delete m_hudSnap;
+	delete m_hudClick;
 }
 
 
@@ -215,7 +218,12 @@ void GameState::_resetHudButtonPressedExcept(int index)
 
 void GameState::_init()
 {
-
+	m_music = OurMusic::LoadSound("trolls_inn/Resources/sounds/ambient_background.wav");
+	m_hudClick = OurMusic::LoadSound("trolls_inn/Resources/sounds/click_menu.wav");
+	m_hudSnap = OurMusic::LoadSound("trolls_inn/Resources/sounds/snap_menu.wav");
+	m_hudSnap->SetVolume(0.5f);
+	if (m_music)
+		m_music->Play(true);
 }
 
 void GameState::_setHud()
@@ -332,9 +340,11 @@ bool GameState::_handleHUDPicking()
 {
 	bool pickedHUD = false;
 	int index = m_stateHUD.PickHud(Input::getMousePositionLH());
+	static int lastHover = -1;
 
 	if (index != -2) pickedHUD = true;
-		
+	if (index < 0)
+		lastHover = -1;
 	
 	if (index >= 0)
 	{
@@ -344,6 +354,9 @@ bool GameState::_handleHUDPicking()
 		m_madeFullReset = false;
 		if (!m_clickedLastFrame && Input::isMouseLeftPressed())
 		{
+			if (m_hudClick->GetState() == DirectX::SoundState::PLAYING)
+				m_hudClick->Stop();
+			m_hudClick->Play();
 			m_lastClickedIndex = index;
 			// Clicked a button
 			while (!m_subStates.empty())
@@ -407,6 +420,14 @@ bool GameState::_handleHUDPicking()
 		}
 		else
 		{
+			if (index != lastHover)
+			{
+				lastHover = index;
+				if (m_hudSnap->GetState() == DirectX::SoundState::PLAYING)
+					m_hudSnap->Stop();
+				m_hudSnap->Play();
+			}
+
 			switch (index)
 			{
 			case 0:

@@ -49,7 +49,6 @@ GameTime::GameTime()
 
 GameTime::~GameTime()
 {
-	m_pSunBuffer->Release();
 }
 #include "../../ourEngine/interface/Input.h"
 void GameTime::updateCurrentTime(float refreshRate)

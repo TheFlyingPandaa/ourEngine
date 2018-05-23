@@ -19,7 +19,7 @@
 //}
 //#pragma warning(disable : 4061 4265 4365 4571 4623 4625 4626 4628 4668 4710 4711 4746 4774 4820 4987 5026 5027 5031 5032 5039)
 
-#include "../../ourEngine/core/Audio/Audio.h"
+#include "../../ourEngine/interface/OurMusic.h"
 
 
 #include "../../ourEngine/core/FileReader.h"
@@ -27,15 +27,6 @@
 #include "../../ourEngine/interface/shape/SkyBoxObject.h"
 
 #include "../../InGameConsole.h"
-
-#ifdef NDEBUG
-	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxRL.lib")
-	#pragma comment (lib, "ourEngine/core/Font/FontLibxRL.lib")
-#else
-	#pragma comment (lib, "ourEngine/core/Audio/AudioLibxDB.lib")
-	#pragma comment (lib, "ourEngine/core/Font/FontLibxDB.lib")
-#endif 
-
 //#include <vld.h>
 
 // MSDN Memory Leak Detection
@@ -126,16 +117,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	boxy.setMesh(MLP::GetInstance().GetMesh(MESH::SKYBOX));
 
 	//gameStates.push(new GameState(&pickingEvents, &keyEvent, cam
-	std::unique_ptr<AudioEngine> audEngine;
-	AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
-	#ifdef _DEBUG
-	eflags = eflags | AudioEngine_Debug;
-	#endif
-	audEngine = std::make_unique<AudioEngine>(eflags);
-	std::unique_ptr<SoundEffect> soundEffect;
-	soundEffect = std::make_unique<SoundEffect>(audEngine.get(), L"trolls_inn/Resources/lolol.wav");
-	auto effect = soundEffect->CreateInstance();
-	//effect->Play(true);
 	
 	bool pressed = false;
 	bool play = false;
@@ -186,13 +167,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			
 		}
-		if (!audEngine->Update())
-		{
-			// No audio device is active
-			if (audEngine->IsCriticalError())
-			{
-			}
-		}
 	
 		if(MLP::GetInstance().IsReady(MESH::SKYBOX))
 			boxy.Draw();
@@ -225,6 +199,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
   		wnd.Present();
 		wnd.FullReset();
 
+		OurMusic::Update();
 
 		if (duration_cast<milliseconds>(steady_clock::now() - timer).count() > 1000)
 		{
@@ -257,6 +232,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// MSDN
 	MLP::GetInstance().ClearMeshes();
 	MeshHandler::cleanAll();
+	OurMusic::Clear();
 	return 0;
 }
 

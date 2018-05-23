@@ -7,6 +7,8 @@
 #include <algorithm> // For std::find_if
 #include "../interface/shape/Billboard.h"
 #define DEBUG 1
+
+#pragma comment(lib, "winmm")
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -229,28 +231,16 @@ void DX::submitToInstance(Billboard* bill)
 }
 void DX::CleanUp()
 {
-	
-	DX::g_3DVertexShader->Release();
-	DX::g_deviceContext->Release();
-#if DEFERRED_RENDERING
-	DX::g_billboardPixelShader->Release();
-	DX::g_3DPixelShader->Release();
-#elif FORWARD_RENDERING
-	g_forwardPixelShader->Release();
-#endif
-	DX::g_standardDomainShader->Release();
-	DX::g_standardHullShader->Release();
-	DX::g_inputLayout->Release();
-
-
-	DX::g_billInputLayout->Release();
-	g_billboardVertexShader->Release();
-
-	DX::g_skyBoxVertexShader->Release();
-	DX::g_skyBoxPixelShader->Release();	
-
-
 	DX::g_device->Release();
+	DX::g_deviceContext->Release();
+	DX::g_3DVertexShader->Release();
+#if DEFERRED_RENDERING
+	DX::g_3DPixelShader->Release();
+	DX::g_billboardPixelShader->Release();
+#endif
+	DX::g_inputLayout->Release();
+	DX::g_standardHullShader->Release();
+	DX::g_standardDomainShader->Release();
 }
 
 
@@ -570,8 +560,6 @@ void Window::_initComputeShader()
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 	hr = 0;
-	if (m_computeConstantBuffer)
-		m_computeConstantBuffer->Release();
 	hr = DX::g_device->CreateBuffer(&bufferDesc, nullptr, &m_computeConstantBuffer);
 	if (FAILED(hr))
 	{
@@ -590,8 +578,6 @@ void Window::_initComputeShader()
 	outputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
 	hr = 0;
-	if (m_computeOutputBuffer)
-		m_computeOutputBuffer->Release();
 	hr = DX::g_device->CreateBuffer(&outputDesc, 0, &m_computeOutputBuffer);
 	if (FAILED(hr))
 	{
@@ -603,8 +589,6 @@ void Window::_initComputeShader()
 	outputDesc.BindFlags = 0;
 	outputDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
-	if (m_computeReadWriteBuffer)
-		m_computeReadWriteBuffer->Release();
 	hr = DX::g_device->CreateBuffer(&outputDesc, 0, &m_computeReadWriteBuffer);
 	if (FAILED(hr))
 	{
@@ -722,11 +706,9 @@ void Window::_prepareShadow()
 	wfdesc.FillMode = D3D11_FILL_SOLID;
 	wfdesc.CullMode = D3D11_CULL_BACK;
 	wfdesc.DepthClipEnable = true;
-	if (m_WireFrame != nullptr) {
-		m_WireFrame->Release();
-	}
 	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 	DX::g_deviceContext->RSSetState(m_WireFrame);
+
 	m_viewport.Height = 2048;
 	m_viewport.Width = 2048;
 	m_viewport.MinDepth = 0.f;
@@ -1047,8 +1029,6 @@ void Window::_createMeshConstantBuffer()
 	bDesc.MiscFlags = 0;
 	bDesc.StructureByteStride = 0;
 
-	if (m_meshConstantBuffer)
-		m_meshConstantBuffer->Release();
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_meshConstantBuffer);
 }
 
@@ -1062,8 +1042,6 @@ void Window::_createBillboardConstantBuffer()
 	bDesc.MiscFlags = 0;
 	bDesc.StructureByteStride = 0;
 
-	if (m_billboardConstantBuffer)
-		m_billboardConstantBuffer->Release();
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_billboardConstantBuffer);
 }
 
@@ -1077,8 +1055,6 @@ void Window::_createPickConstantBuffer()
 	bDesc.MiscFlags = 0;
 	bDesc.StructureByteStride = 0;
 
-	if (m_pickingBuffer)
-		m_pickingBuffer->Release();
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_pickingBuffer);
 }
 #if DEFERRED_RENDERING
@@ -1119,8 +1095,6 @@ void Window::_createEverythingConstantBuffer()
 	bDesc.MiscFlags = 0;
 	bDesc.StructureByteStride = 0;
 
-	if (m_everythingConstantBuffer)
-		m_everythingConstantBuffer->Release();
 	HRESULT hr = DX::g_device->CreateBuffer(&bDesc, nullptr, &m_everythingConstantBuffer);
 }
 #endif
@@ -1223,11 +1197,8 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
-		if (m_WireFrame != nullptr) {
-			m_WireFrame->Release();
-		}
-			DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
-			DX::g_deviceContext->RSSetState(m_WireFrame);
+		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
+		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
 
 	ID3D11Buffer* instanceBuffer = nullptr;
@@ -1294,12 +1265,8 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
-		if (m_WireFrame != nullptr) {
-			m_WireFrame->Release();
-		}
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
-		
 	}
 }
 
@@ -1325,9 +1292,6 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
-		if (m_WireFrame != nullptr) {
-			m_WireFrame->Release();
-		}
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1397,9 +1361,6 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
-		if (m_WireFrame != nullptr) {
-			m_WireFrame->Release();
-		}
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1603,8 +1564,7 @@ void Window::_renderEverything(const Camera & cam)
 		sunBdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		sunBdesc.MiscFlags = 0;
 		sunBdesc.StructureByteStride = 0;
-		if (m_pSunBuffer)
-			m_pSunBuffer->Release();
+
 		DX::g_device->CreateBuffer(&sunBdesc, nullptr, &m_pSunBuffer);
 		lol = true;
 
@@ -1647,7 +1607,6 @@ void Window::_renderEverything(const Camera & cam)
 
 	_geometryPass(cam);
 	_billboardPass(cam);
-	
 }
 #endif
 void Window::_transparencyPass(const Camera & cam)
@@ -1736,8 +1695,7 @@ void Window::_initTransparency()
 	omDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	omDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	if (m_transBlendState != nullptr)
-		m_transBlendState->Release();
+
 	DX::g_device->CreateBlendState(&omDesc, &m_transBlendState);
 }
 
@@ -1762,20 +1720,16 @@ Window::Window(HINSTANCE h)
 
 Window::~Window()
 {
-	//ID3D11Debug* DebugDevice = nullptr;
-	//HRESULT Result = DX::g_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&DebugDevice);
-	//Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-
-	
-
 	m_backBufferRTV->Release();
 	m_swapChain->Release();
 
 	m_depthStencilView->Release();
-	m_depthBufferTex->Release();	
+	m_depthBufferTex->Release();
+
+	//m_projectionMatrix->Release();
 
 	m_samplerState->Release();
-	m_samplerStatePoint->Release();
+
 	m_meshConstantBuffer->Release();
 #if DEFERRED_RENDERING
 	//m_pointLightsConstantBuffer->Release();
@@ -1787,6 +1741,10 @@ Window::~Window()
 #elif FORWARD_RENDERING
 	m_everythingConstantBuffer->Release();
 #endif
+	if (m_lightBuffer != nullptr)
+	{
+		m_lightBuffer->Release();
+	}
 #if DEFERRED_RENDERING
 	for (size_t i = 0; i < GBUFFER_COUNT; i++)
 	{
@@ -1797,31 +1755,19 @@ Window::~Window()
 	m_deferredVertexShader->Release();
 	m_deferredPixelShader->Release();
 #endif
-	m_billboardConstantBuffer->Release();
-
-	if (m_lightBuffer != nullptr)
-	{
-		m_lightBuffer->Release();
-	}
-
-
 	m_transVertexShader->Release();
 	m_transPixelShader->Release();
 	m_transBlendState->Release();
-	/*
+
 	if(m_pickingTexture.SRV) m_pickingTexture.SRV->Release();
 	if(m_pickingTexture.RTV) m_pickingTexture.RTV->Release();
 	if(m_pickingTexture.TextureMap) m_pickingTexture.TextureMap->Release();
-	*/
-	
-	m_pickingTexture.Release();
-	if (m_pickingOffsetBuffer)
-		m_pickingOffsetBuffer->Release();
+
 	m_pickingVertexShader->Release();
 	m_pickingPixelShader->Release();
 	m_pickingBuffer->Release();
 	if(m_pickingReadBuffer) m_pickingReadBuffer->Release();
-	
+
 	//TODO (Henrik): We are not using compute shader in this project
 	m_computeConstantBuffer->Release();
 	m_computeOutputBuffer->Release();
@@ -1829,27 +1775,16 @@ Window::~Window()
 	m_computeUAV->Release();
 	m_computeShader->Release();
 
+	DX::CleanUp();
 	
 	//This is for leaking, I have no idea
-	//DX::g_device->Release();
-	//DX::g_device->Release();
-
-	m_hudVertexShader->Release();
-	m_hudPixelShader->Release();
+	ID3D11Debug* DebugDevice = nullptr;
+	HRESULT Result = DX::g_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&DebugDevice);
+	Result = DebugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	DX::g_device->Release();
+	DX::g_device->Release();
 	
-	m_depthStencilViewShad->Release();
-	m_depthBufferTexShad->Release();
-	m_shadowVertex->Release();
-	m_shadowPixel->Release();
-	m_shadowBuffer->Release();
-	m_shadowDepthTexture->Release();
-
-	m_WireFrame->Release();
-	DX::CleanUp();
-	DX::g_device->AddRef();
-	_deb(DX::g_device);	
-
-
+	
 }
 
 bool Window::Init(int width, int height, LPCSTR title, BOOL fullscreen)
@@ -1955,6 +1890,22 @@ void Window::Flush(Camera* c)
 		{
 			m_WireFrameDebug = false;
 		}
+	}
+	
+	if (Input::isKeyPressed(Input::F5))
+	{
+		if (m_volume >= 100) {
+			m_volume -= 100;
+		}
+		
+		waveOutSetVolume(NULL, m_volume);
+	}
+	if (Input::isKeyPressed(Input::F6))
+	{
+		if (m_volume <= 65435) {
+			m_volume += 100;
+		}
+		waveOutSetVolume(NULL, m_volume);
 	}
 	
 

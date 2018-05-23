@@ -28,7 +28,9 @@ public:
 		DownArrow = 40,
 		SPACEBAR = 0x20,
 		Comma = 0xBC,
-		Period = 0xBE
+		Period = 0xBE,
+		F5 = 0x74,
+		F6 = 0x75
 		// add more if needed
 	};
 
