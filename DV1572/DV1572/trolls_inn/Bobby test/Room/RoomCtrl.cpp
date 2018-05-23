@@ -272,29 +272,23 @@ RoomCtrl::~RoomCtrl()
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
-	Room * currentRoom = nullptr;
+	Room * currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::KITCHENTILE));
 		break;
 	case bedroom:
-		//Duno just copied the 
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::BEDROOMTILE));
 		break;
 	case reception:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE));
 		break;
 	case hallway:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::HALLWAYTILE));
 		break;
 	case bar:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::WOODTILE));
 		break;
 	}

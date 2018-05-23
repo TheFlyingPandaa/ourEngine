@@ -46,6 +46,8 @@ namespace ShaderCreator //Maybe subject to change
 		//But there is no reasen to keep the program going, it will only mess with the shaders
 		//So this is to shorten DebugTime
 		device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &vertexShader);
+		ID3D11ShaderReflection* pReflector = NULL;
+		D3DReflect(pVS->GetBufferPointer(), pVS->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)pReflector);
 		
 		if (FAILED(hr = device->CreateInputLayout(inputDesc, arraySize, pVS->GetBufferPointer(), pVS->GetBufferSize(), &inputLayout)))
 		{

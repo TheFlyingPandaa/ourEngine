@@ -76,7 +76,8 @@ void DX::submitToInstance(Shape* shape, std::deque<DX::INSTANCE_GROUP>& queue)
 	
 	attribDesc.highLightColor = shape->getColor(); //This allowes us to use a "click highlight"
 	attribDesc.lightIndex = static_cast<float>(shape->getLightIndex());
-	
+	attribDesc.gridScaleX = static_cast<float>(shape->getGridScaleX());
+	attribDesc.gridScaleY = static_cast<float>(shape->getGridScaleY());
 	// Unique Mesh
 	if (exisitingEntry == queue.end())
 	{
@@ -381,7 +382,9 @@ void Window::_compileShaders()
 		{ "INSTANCEWORLDFOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		//This is the attribute that allows the color change without constant buffer
 		{ "HIGHLIGHTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
-		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		{ "LIGHTINDEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "GRIDSCALEX", 0, DXGI_FORMAT_R32_FLOAT, 1, 84, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "GRIDSCALEY", 0, DXGI_FORMAT_R32_FLOAT, 1, 88, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	
 	// Billboarding
@@ -1346,9 +1349,7 @@ void Window::_geometryPass(const Camera &cam)
 		HRESULT hr = DX::g_device->CreateBuffer(&instBuffDesc, &instData, &instanceBuffer);
 		//We copy the data into the attribute part of the layout.
 		//This is what makes instancing special
-		
-		meshBuffer.gridscaleX = static_cast<float>(instance.shape->getGridScaleX());
-		meshBuffer.gridscaleY = static_cast<float>(instance.shape->getGridScaleY());
+	
 
 		D3D11_MAPPED_SUBRESOURCE dataPtr;
 		DX::g_deviceContext->Map(m_meshConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
