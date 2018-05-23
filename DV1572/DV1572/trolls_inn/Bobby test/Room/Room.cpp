@@ -46,12 +46,6 @@ int Room::_index(int x, int y)
 	return(xCoord + yCoord * m_sizeX);
 }
 
-Room::Room(int posX, int posY, int sizeX, int sizeY, Mesh * m)
-{
-	// Do not use i guess 
-	//lmao ^
-}
-
 Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType)
 {
 	if (!s_isLoaded)
