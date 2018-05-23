@@ -822,8 +822,6 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsUp[i] = false;
 						wall->setIsShared(true);
-						if (allowedWallsDown[i] && wall->getIsDoor())
-							allowedWallsDown[i] = false;
 				
 					}
 

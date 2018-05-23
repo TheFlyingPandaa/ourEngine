@@ -582,6 +582,50 @@ void Room::DeleteWalls()
 	{
 		if (false == (*it)->getIsDoor())
 		{
+			int counter = 0;
+			for (auto& up : m_upWalls)
+			{
+				if (*(*it) == *up)
+				{
+					m_upWalls[counter] = nullptr;
+					m_upWalls.erase(m_upWalls.begin() + counter);
+					break;
+				}
+				counter++;
+			}
+			counter = 0;
+			for (auto& up : m_downWalls)
+			{
+				if (*(*it) == *up)
+				{
+					m_downWalls[counter] = nullptr;
+					m_downWalls.erase(m_downWalls.begin() + counter);
+					break;
+				}
+				counter++;
+			}
+			counter = 0;
+			for (auto& up : m_rightWalls)
+			{
+				if (*(*it) == *up)
+				{
+					m_rightWalls[counter] = nullptr;
+					m_rightWalls.erase(m_rightWalls.begin() + counter);
+					break;
+				}
+				counter++;
+			}
+			counter = 0;
+			for (auto& up : m_leftWalls)
+			{
+				if (*(*it) == *up)
+				{
+					m_leftWalls[counter] = nullptr;
+					m_leftWalls.erase(m_leftWalls.begin() + counter);
+					break;
+				}
+				counter++;
+			}
 			delete *it;
 			*it = nullptr;
 			it = m_allWalls.erase(it);
@@ -592,12 +636,6 @@ void Room::DeleteWalls()
 			std::cout << "Was a door \n";
 		}
 	}
-
-
-	m_upWalls.clear();
-	m_downWalls.clear();
-	m_rightWalls.clear();
-	m_leftWalls.clear();
 }
 
 void Room::Select()
