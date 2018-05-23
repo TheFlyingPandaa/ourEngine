@@ -293,13 +293,18 @@ void GameState:: _handlePickingAi(Shape * obj)
 		//std::cout << "Tile" << std::endl;
 		Staff* troll = m_mai->getTroll();
 
+		float xLol, yLol;
+		troll->getStepsLeft(xLol, yLol);
+		//xLol = yLol = 0.0f;
 		troll->clearWalkingQueue();
 
 		//Shape * obj = this->p_pickingEvent->top();
 		XMFLOAT2 trollPos = troll->getPosition(); // (x,y) == (x,z,0)
+		trollPos.x += xLol;
+		trollPos.y += yLol;
 
-		int xTile = (int)(round_n(trollPos.x, 1) - 0.5f);
-		int yTile = (int)(round_n(trollPos.y, 1) - 0.5f);
+		int xTile = (int)trollPos.x;// (int)(round_n(trollPos.x, 1) - 0.5f);
+		int yTile = (int)trollPos.y;//(int)(round_n(trollPos.y, 1) - 0.5f);
 
 
 		XMINT2 targetPosition = { (int)obj->getPosition().x , (int)obj->getPosition().z };
@@ -316,6 +321,9 @@ void GameState:: _handlePickingAi(Shape * obj)
 			if(!troll->getCancelFlag())
 				troll->setCancelFlag(true);
 			m_justMoved = false;
+
+			/*if (Input::isKeyPressed('G'))
+				int lolXD420 = 0;*/
 
 			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
