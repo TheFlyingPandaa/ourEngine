@@ -57,7 +57,6 @@ public:
 	int					_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size = { 1, 1 });
 
 	void				AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force = false);
-	bool				RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
 	std::tuple<bool,int> RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize);
 
 	bool				CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle = 0);
@@ -71,7 +70,7 @@ public:
 	void				Draw();
 
 	int					getRoomConnections(int index) const;
-	int					HasEntranceDoor() const;
+	int					HasEntranceDoor(int index) const;
 	
 	void				CreateWalls(Room* currentRoom);
 	void				CreateDoor(XMFLOAT3 wallPosition, float rot = 0.0f);

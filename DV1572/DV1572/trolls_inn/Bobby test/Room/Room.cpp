@@ -438,17 +438,33 @@ void Room::setFloorMesh(Mesh * mesh)
 
 void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 {
+	std::vector<Wall*> currentWalls(m_allWalls);
 	if (side == up)
 	{
 		for (int i = 0; i < m_sizeX; ++i)
 		{
 			if (allowed[i])
 			{
-				Wall* newWallUp = new Wall(mesh, { 0, -1 });
-				newWallUp->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY + m_sizeY));
-				m_allWalls.push_back(newWallUp);
-				m_upWalls.push_back(newWallUp);
+				XMFLOAT2 newPos(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY + m_sizeY));
+				bool canBuild = true;
+				for (auto& cw : currentWalls)
+				{
+					XMFLOAT2 currentWallPos(cw->getObject3D().getPosition().x, cw->getObject3D().getPosition().z);
+					if (newPos.x == currentWallPos.x && currentWallPos.y == newPos.y)
+					{
+						canBuild = false;
+						break;
+					}
+				}
+				if (canBuild)
+				{
+					Wall* newWallUp = new Wall(mesh, { 0, -1 });
+					newWallUp->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY + m_sizeY));
+					m_allWalls.push_back(newWallUp);
+					m_upWalls.push_back(newWallUp);
+				}
 			}
+				
 		}
 	}
 	else if (side == down)
@@ -457,10 +473,24 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 		{
 			if (allowed[i])
 			{
-				Wall* newWallLow = new Wall(mesh, { 0,1 });
-				newWallLow->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY));
-				m_allWalls.push_back(newWallLow);
-				m_downWalls.push_back(newWallLow);
+				XMFLOAT2 newPos(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY));
+				bool canBuild = true;
+				for (auto& cw : currentWalls)
+				{
+					XMFLOAT2 currentWallPos(cw->getObject3D().getPosition().x, cw->getObject3D().getPosition().z);
+					if (newPos.x == currentWallPos.x && currentWallPos.y == newPos.y)
+					{
+						canBuild = false;
+					}
+				}
+				if (canBuild)
+				{
+					Wall* newWallLow = new Wall(mesh, { 0,1 });
+					newWallLow->setPosition(newPos);
+					m_allWalls.push_back(newWallLow);
+					m_downWalls.push_back(newWallLow);
+				}
+				
 			}
 		}
 	}
@@ -470,11 +500,24 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 		{
 			if (allowed[i])
 			{
-				Wall* newWallLeft = new Wall(mesh, { 1, 0 });
-				newWallLeft->setRotation(0, 90, 0);
-				newWallLeft->setPosition(static_cast<float>(m_posX), static_cast<float>(m_posY + i) + 0.5f);
-				m_allWalls.push_back(newWallLeft);
-				m_leftWalls.push_back(newWallLeft);
+				XMFLOAT2 newPos(static_cast<float>(m_posX), static_cast<float>(m_posY + i) + 0.5f);
+				bool canBuild = true;
+				for (auto& cw : currentWalls)
+				{
+					XMFLOAT2 currentWallPos(cw->getObject3D().getPosition().x, cw->getObject3D().getPosition().z);
+					if (newPos.x == currentWallPos.x && currentWallPos.y == newPos.y)
+					{
+						canBuild = false;
+					}
+				}
+				if (canBuild)
+				{
+					Wall* newWallLeft = new Wall(mesh, { 1, 0 });
+					newWallLeft->setRotation(0, 90, 0);
+					newWallLeft->setPosition(static_cast<float>(m_posX), static_cast<float>(m_posY + i) + 0.5f);
+					m_allWalls.push_back(newWallLeft);
+					m_leftWalls.push_back(newWallLeft);
+				}
 			}
 		}
 	}
@@ -485,11 +528,24 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 
 			if (allowed[i])
 			{
-				Wall* newWallRight = new Wall(mesh, { -1, 0 });
-				newWallRight->setRotation(0, 90, 0);
-				newWallRight->setPosition(static_cast<float>(m_posX + m_sizeX), static_cast<float>(m_posY + i) + 0.5f);
-				m_allWalls.push_back(newWallRight);
-				m_rightWalls.push_back(newWallRight);
+				XMFLOAT2 newPos(static_cast<float>(m_posX + m_sizeX), static_cast<float>(m_posY + i) + 0.5f);
+				bool canBuild = true;
+				for (auto& cw : currentWalls)
+				{
+					XMFLOAT2 currentWallPos(cw->getObject3D().getPosition().x, cw->getObject3D().getPosition().z);
+					if (newPos.x == currentWallPos.x && currentWallPos.y == newPos.y)
+					{
+						canBuild = false;
+					}
+				}
+				if (canBuild)
+				{
+					Wall* newWallRight = new Wall(mesh, { -1, 0 });
+					newWallRight->setRotation(0, 90, 0);
+					newWallRight->setPosition(static_cast<float>(m_posX + m_sizeX), static_cast<float>(m_posY + i) + 0.5f);
+					m_allWalls.push_back(newWallRight);
+					m_rightWalls.push_back(newWallRight);
+				}
 			}
 
 		}
@@ -523,6 +579,31 @@ void Room::PickFurnitures()
 {
 	for (auto& obj : m_roomObjects)
 		obj->getObject3D().CheckPick();
+}
+
+void Room::DeleteWalls()
+{
+	auto it = m_allWalls.begin();
+	for (; it != m_allWalls.end(); )
+	{
+		if (false == (*it)->getIsDoor())
+		{
+			delete *it;
+			*it = nullptr;
+			it = m_allWalls.erase(it);
+		}
+		else
+		{
+			it++;
+			std::cout << "Was a door \n";
+		}
+	}
+
+
+	m_upWalls.clear();
+	m_downWalls.clear();
+	m_rightWalls.clear();
+	m_leftWalls.clear();
 }
 
 void Room::Select()

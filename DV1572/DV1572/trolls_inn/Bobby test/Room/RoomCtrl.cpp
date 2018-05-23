@@ -355,28 +355,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 }
 
-// Recieves tile pos, it knows what room you picked.
-// returns the room tiles and position and size
-// sent these into grid->insertTiles();
 
- bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
-{
-	int index = _intersect(pos, XMINT2(1, 1));
-	
-	if (index != -1)
-	{
 
-		backtiles = m_rooms[index]->ReturnTiles();
-		XMFLOAT3 _pos = m_rooms[index]->getPosition();
-		delSize = m_rooms[index]->getSize();
-		delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
-		delete m_rooms[index];
-		m_rooms.erase(m_rooms.begin() + index);
-	}
-	
-	return index != -1;
-}
-#pragma optimize ("", off)
 
 std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
 {
@@ -449,6 +429,10 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 
 		for (auto& r : m_rooms)
 		{
+			r->DeleteWalls();
+		}
+		for (auto& r : m_rooms)
+		{
 			CreateWalls(r);
 		}
 
@@ -457,7 +441,7 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 	_printRoomConnections();
 	return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
 }
-#pragma optimize ("", on)
+
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
@@ -764,12 +748,21 @@ int RoomCtrl::getRoomConnections(int index) const
 	{
 		connections += m_roomConnectionMap[index][i];
 	}
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		connections += m_outsideDoorPos[i].roomIndexes[1] == index;
+	}
 	return connections;
 }
 
-int RoomCtrl::HasEntranceDoor() const
+int RoomCtrl::HasEntranceDoor(int index) const
 {
-	return m_outsideDoorPos.size();
+	for (auto& c : m_outsideDoorPos)
+	{
+		if (c.roomIndexes[1] == index)
+			return true;
+	}
+	return false;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -808,29 +801,19 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 				allowedWallsUp.push_back(true);
 				for (auto& wall : room->getWalls(Direction::up))
 				{
-					
-				
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
-					if ((lol.x == upPos.x && lol.y == upPos.y))
+					if ((lol.x == upPos.x && lol.y == upPos.y) )
 					{
 						allowedWallsDown[i] = false;
 						wall->setIsShared(true);
-						if (wall->getIsDoor())
-						{
-							allowedWallsUp[i] = false;
-							wall->setIsShared(false);
-						}
+						
 					}
-					
-					
-					
-					
+
 				}
 
 				for (auto& wall : room->getWalls(Direction::down))
 				{
-					
 					
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z + currentRoomSizeY };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
@@ -839,15 +822,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					{
 						allowedWallsUp[i] = false;
 						wall->setIsShared(true);
-						if (wall->getIsDoor())
-						{
+						if (allowedWallsDown[i] && wall->getIsDoor())
 							allowedWallsDown[i] = false;
-							wall->setIsShared(false);
-						}
+				
 					}
-					
-					
-					
+
 				}
 
 			}
@@ -863,15 +842,11 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 					
 					XMFLOAT2 lol = { currentRoomPos.x + currentRoomSizeX , currentRoomPos.z + i };
 					XMFLOAT2 leftPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
-					if ((lol.x == leftPos.x && lol.y == leftPos.y))
+					if ((lol.x == leftPos.x && lol.y == leftPos.y) )
 					{
 						allowedWallsRight[i] = false;
 						wall->setIsShared(true);
-						if (wall->getIsDoor())
-						{
-							allowedWallsLeft[i] = false;
-							wall->setIsShared(false);
-						}
+				
 					}
 					
 					
@@ -880,19 +855,13 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 
 				for (auto& wall : room->getWalls(Direction::right))
 				{
-					
-					
 					XMFLOAT2 lol = { currentRoomPos.x, currentRoomPos.z + i };
 					XMFLOAT2 rightPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
 					if ((lol.x == rightPos.x && lol.y == rightPos.y))
 					{
 						allowedWallsLeft[i] = false;
 						wall->setIsShared(true);
-						if (wall->getIsDoor())
-						{
-							allowedWallsRight[i] = false;
-							wall->setIsShared(false);
-						}
+
 					}
 					
 					
@@ -1012,7 +981,7 @@ bool RoomCtrl::RemoveDoor(XMFLOAT3 wallPosition)
 			if (wallPos.x == wallPosition.x && wallPos.z == wallPosition.z)
 			{
 				//// Should be a door
-				assert(wall->getIsDoor());
+				//assert(wall->getIsDoor());
 					
 				wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
 				wall->setIsDoor(false);

@@ -62,6 +62,7 @@ private:
 
 	bool m_roomIncompleete = false;
 
+
 public:
 	Room(int posX = 0, int posY = 0, int sizeX = 0, int sizeY = 0, Mesh * m = nullptr);	
 	Room(int posX, int posY , int sizeX, int sizeY, std::vector<Tile*> tiles, RoomType roomType);
@@ -77,6 +78,7 @@ public:
 	void		PickTiles();
 	void		PickWalls();
 	void		PickFurnitures();
+	void		DeleteWalls();
 	
 	void				Select();
 

@@ -99,12 +99,8 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition)
 {
 	Tile* startTile = m_grid->getTile(startPosition.x, startPosition.y);
-	Tile* targetTile;
-	//if (m_grid->getTile(targetPosition.x, targetPosition.y))
-	//{
-	//	return std::vector<std::shared_ptr<Node>>();
-	//}
-	targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
+	Tile* targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
+
 	std::vector<std::shared_ptr<Node>> path;
 	// Outside -> OutSide
 	if (startTile && targetTile)
@@ -117,11 +113,14 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		XMINT2 pos = targetPosition;
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
-		// If there is no entrane door, then its not neeeded to continue
-		
-		if (0 == m_roomctrl->HasEntranceDoor() && 0 == m_roomctrl->getRoomConnections(index))
-			return std::vector<std::shared_ptr<Node>>();
 
+		// If the target room has no connecting doors
+		if (m_roomctrl->getRoomConnections(index) == false)
+		{
+			std::cout << "Has no connected rooms!\n";
+			return std::vector<std::shared_ptr<Node>>();
+		}
+	
 		auto entranceDoors = m_roomctrl->getAllEntranceDoors();
 		Room* entranceRoom = nullptr;
 		int thisindex = -1;
@@ -146,6 +145,11 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 					break;
 				}
 			}
+		}
+		if (thisindex == -1) // This means that we didnt find any entrance doors!
+		{
+			std::cout << "We didnt find any entrance doors\n";
+			return std::vector<std::shared_ptr<Node>>();
 		}
 		// Now do we wanna walk to the entrance
 		path = m_grid->findPath(startTile, m_grid->getTile(entranceDoors[thisindex].one.x, entranceDoors[thisindex].one.y));
@@ -211,7 +215,10 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		Room* startRoom = m_roomctrl->getRoomAt(indexForTarget);
 
 		if (0 == m_roomctrl->getRoomConnections(index))
+		{
+			std::cout << "Has no connected rooms\n";
 			return std::vector<std::shared_ptr<Node>>();
+		}
 
 		if (*targetRoom == *startRoom)
 		{
@@ -284,7 +291,10 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		
 		// Somehow the entranceroom went nullptr
 		if (!entranceRoom || !targetRoom)
+		{
+			std::cout << "entranceRoom or targetRoom was nullptr\n";
 			return std::vector<std::shared_ptr<Node>>();
+		}
 
 		if (*entranceRoom == *targetRoom)
 		{
