@@ -703,6 +703,8 @@ void Window::_prepareShadow()
 	wfdesc.FillMode = D3D11_FILL_SOLID;
 	wfdesc.CullMode = D3D11_CULL_BACK;
 	wfdesc.DepthClipEnable = true;
+	if (m_WireFrame)
+		m_WireFrame->Release();
 	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 	DX::g_deviceContext->RSSetState(m_WireFrame);
 
@@ -1194,6 +1196,8 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
+		if (m_WireFrame)
+			m_WireFrame->Release();
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1262,6 +1266,8 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
+		if (m_WireFrame)
+			m_WireFrame->Release();
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1289,6 +1295,8 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
+		if (m_WireFrame)
+			m_WireFrame->Release();
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1360,6 +1368,8 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
+		if (m_WireFrame)
+			m_WireFrame->Release();
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1773,6 +1783,8 @@ Window::~Window()
 	m_computeReadWriteBuffer->Release();
 	m_computeUAV->Release();
 	m_computeShader->Release();
+	if (m_WireFrame)
+		m_WireFrame->Release();
 
 	DX::CleanUp();
 	
