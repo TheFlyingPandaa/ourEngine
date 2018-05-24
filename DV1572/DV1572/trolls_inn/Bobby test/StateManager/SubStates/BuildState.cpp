@@ -118,8 +118,10 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 										m_furnitureRemove = newPick;
 										m_furnitureRemove->getObject3D().setColor(0.2f, 2.0f, 0.2f);
 										m_cm->ClearSubText();
-										m_cm->setInfo(m_furnitureRemove->WhatType());
-										std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel" + std::to_string(m_furnitureRemove->getLevel());
+										//m_cm->setInfo(m_furnitureRemove->WhatType());
+										std::string s = "\n\n\n\n\n" + m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + 
+											"\nLevel" + std::to_string(m_furnitureRemove->getLevel())
+											+ "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
 										m_cm->PushText(s);
 										m_cm->setPos(Input::getMousePositionLH());
 									}
@@ -132,8 +134,10 @@ void BuildState::_handleBuildRoom(Shape * pickedShape)
 								{
 									m_furnitureRemove->getObject3D().setColor(0.2f, 2.0f, 0.2f);
 									m_cm->ClearSubText();
-									m_cm->setInfo(m_furnitureRemove->WhatType());
-									std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel: " + std::to_string(m_furnitureRemove->getLevel());
+									//m_cm->setInfo(m_furnitureRemove->WhatType());
+									std::string s = "\n\n\n\n\n" + m_furnitureRemove->getInfo(m_furnitureRemove->getType()) +
+										"\nLevel: " + std::to_string(m_furnitureRemove->getLevel())
+										+ "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
 									m_cm->PushText(s);
 
 									m_cm->setPos(Input::getMousePositionLH());
@@ -1016,7 +1020,10 @@ void BuildState::Update(double deltaTime)
 			m_inn->Withdraw(m_furnitureRemove->AddLevel(m_inn->getMoney()));
 			//m_cm->setInfo(m_furnitureRemove->WhatType());
 			m_cm->ClearSubText();
-			std::string s = m_furnitureRemove->getInfo(m_furnitureRemove->getType()) + "\nLevel: " + std::to_string(m_furnitureRemove->getLevel());
+			std::string s = "\n\n\n\n\n" + m_furnitureRemove->getInfo(m_furnitureRemove->getType()) +
+				"\nLevel" + std::to_string(m_furnitureRemove->getLevel())
+				+ "\nClean: " + std::to_string(m_furnitureRemove->getDirtyStat());
+
 			m_cm->PushText(s);
 		}
 		else if (m_cm->ButtonClicked() == 2)
@@ -1024,6 +1031,7 @@ void BuildState::Update(double deltaTime)
 			//Clean button pressed
 			
 			std::cout << "clean pressed \n";
+			m_furnitureRemove->cleanFurniture(); 
 			m_clickedLast = true;
 
 		}

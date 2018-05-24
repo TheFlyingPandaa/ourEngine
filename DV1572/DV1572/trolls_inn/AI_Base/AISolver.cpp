@@ -10,7 +10,7 @@ float round_n2(float num, int dec)
 
 void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 {
-	bool spotAvailable = false;
+	XMINT2 spotAvailable = XMINT2(0,0);
 
 	if (m_roomctrl != nullptr)
 	{
@@ -23,7 +23,7 @@ void AISolver::_checkSpotInRoom(Inn* inn, Customer& customer)
 		else if (customer.GetState() == Waiting)
 			spotAvailable = customer.findNearestRoom(m_roomctrl, customer.GetWaitingToDoState());
 	}
-	if (spotAvailable)
+	if (spotAvailable.x != -1 && spotAvailable.y != -1)
 	{
 		CustomerState state = customer.GetState();
 		int price = 0;
@@ -447,6 +447,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 void AISolver::Update(Customer& customer, Action desiredAction)
 {
 	CustomerState currentState = customer.GetState();	
+	XMINT2 targetPosition; 
 	int gotPath = -1;
 	switch (currentState)
 	{
@@ -454,13 +455,19 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 		switch (desiredAction)
 		{
 		case DrinkAction:
-			gotPath = RequestPath(customer, RoomType::bar);
+			targetPosition = customer.findNearestRoom(m_roomctrl, Drinking); 
+			if (targetPosition.x != -1 && targetPosition.y != -1)
+			gotPath = RequestPath(customer,targetPosition);
 			break;
 		case EatAction:
-			gotPath = RequestPath(customer, RoomType::kitchen);
+			targetPosition = customer.findNearestRoom(m_roomctrl, Eating);
+			if (targetPosition.x != -1 && targetPosition.y != -1)
+			gotPath = RequestPath(customer, targetPosition);
 			break;
 		case SleepAction:
-			gotPath = RequestPath(customer, RoomType::bedroom);
+			targetPosition = customer.findNearestRoom(m_roomctrl, Sleeping);
+			if (targetPosition.x != -1 && targetPosition.y != -1)
+			gotPath = RequestPath(customer, targetPosition);
 			break;
 		}
 			

@@ -1,5 +1,6 @@
 #include "Customer.h"
 #include "../../InGameConsole.h"
+#include "RandomNumberGenerator.h"
 #include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
@@ -19,42 +20,45 @@ void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)
 	}
 }
 
-bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
+XMINT2 Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 {
 	bool furnitureFound = false;
+	std::vector<Room*> roomsOfNeededType; 
 
-	XMFLOAT3 roomPos; 
 	if (customerNeed == Sleeping)
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(bedroom);
 	else if (customerNeed == Eating)
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(kitchen);
 	else
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(bar); 
 
-	if (roomPos.x == -1)
+	std::vector<Furniture*> furniture; 
+	XMINT2 targetPos; 
+	targetPos = XMINT2(-1, -1); 
+
+	for (int i = 0; i < roomsOfNeededType.size() && !furnitureFound; i++)
 	{
-		return false;
-	}
-	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(static_cast<int32_t>(roomPos.x), static_cast<int32_t>(roomPos.z))); 
+		furniture = roomsOfNeededType[i]->getAllRoomFurnitures(); 
 
-	size_t nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
-	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
-
-	for (int i = 0; i < nrOfFurniture && !furnitureFound; i++)
-	{
-		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
-			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 1))
+		if(furniture.size() > 0)
 		{
-			furniture[i]->setOwner(this); 
-			m_ownedFurniture = furniture[i]; 
-			m_ownedFurniture->setIsBusy(true);
-			furniture[i]->increaseDirtyLevel(); 
-			furnitureFound = true;
+			for (int k = 0; k < furniture.size() && !furnitureFound; k++)
+			{
+				if (!furniture[k]->getIsBusy() && (furniture[k]->WhatType() == "Bed" ||
+					furniture[k]->WhatType() == "Table" ||
+					furniture[k]->WhatType() == "Bar" && furniture[k]->getDirtyStat() < 10))
+				{
+					targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().z);
+					furniture[k]->setOwner(this);
+					m_ownedFurniture = furniture[k];
+					m_ownedFurniture->setIsBusy(true);
+					furniture[k]->increaseDirtyLevel();
+					furnitureFound = true;
+				}
+			}
 		}
 	}
-
-	return furnitureFound;
+	return targetPos; 
 }
 
 Customer::Customer()
