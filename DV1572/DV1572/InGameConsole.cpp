@@ -158,11 +158,11 @@ void InGameConsole::pushStringEvent(const std::string & string, float r, float g
 	float x = DirectX::XMVectorGetX(size);
 	x *= .5f;
 
-	t.setPosition(static_cast<float>(0), y);
+	t.setPosition(static_cast<float>(64), y);
 
 
 	text_t * t_t = new text_t();
-	t_t->position = DirectX::XMINT2(0, static_cast<int32_t>(y));
+	t_t->position = DirectX::XMINT2(64, static_cast<int32_t>(y));
 	t_t->text = t;
 	t_t->rows = rows;
 	t_t->size = static_cast<int32_t>(y);
