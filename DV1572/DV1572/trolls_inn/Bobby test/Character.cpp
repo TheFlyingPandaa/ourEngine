@@ -57,7 +57,7 @@ const char* printDir(Character::WalkDirection dir)
 	return "No movement";
 
 }
-
+#include <iostream>
 void Character::Update()
 {
 	XMFLOAT3 modelPos = m_model.getPosition();
@@ -65,17 +65,19 @@ void Character::Update()
 	if (!m_goQueue.empty())
 	{
 		DirectX::XMFLOAT3 pos = m_model.getPosition();
+		std::cout << "\rPos (" << (int)pos.x << "," << (int)pos.y << "," << (int)pos.z << ")" <<std::flush;
 		bool moving = true;
 
 		Go dir = m_goQueue.front();
-
+		
 		if (abs(dir.stepsLeft) <= 0.01f)
 		{
 			dir.stepsLeft = 0.0f;
 			moving = false;
 			XMFLOAT2 p = getPosition();
 			XMINT2 ip((int)p.x, (int)p.y);
-			setPosition(ip.x + 0.5f, ip.y + 0.5f);
+			// (Henrik) Denna fuckade kunderna i deras cat walk
+			//setPosition(ip.x + 0.5f, ip.y + 0.5f);
 		}
 		
 		if (!moving)
@@ -196,8 +198,6 @@ void Character::setSpeed(float spd)
 
 void Character::setThoughtBubble(Thoughts t)
 {
-	if (m_displayThought)
-		return;
 	m_displayThought = true;
 	switch (t)
 	{
@@ -324,13 +324,20 @@ bool Character::walkQueueDone() const
 	return m_goQueue.size() == 0;
 }
 
-void Character::clearWalkingQueue()
+void Character::clearWalkingQueue(bool force)
 {
 	if (m_goQueue.size())
 	{
-		Character::Go g = m_goQueue.front();
-		m_goQueue.clear(); 
-		m_goQueue.push_back(g);
+		if (force)
+		{
+			m_goQueue.clear();
+		}
+		else
+		{
+			Character::Go g = m_goQueue.front();
+			m_goQueue.clear(); 
+			m_goQueue.push_back(g);
+		}
 	}
 }
 

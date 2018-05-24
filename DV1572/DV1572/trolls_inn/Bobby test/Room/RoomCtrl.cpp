@@ -19,7 +19,6 @@ int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 
 bool RoomCtrl::_checkLegal(Room * room)
 {
-
 	return dynamic_cast<Room*>(room) == nullptr;
 }
 
@@ -272,7 +271,6 @@ RoomCtrl::RoomCtrl()
 	m_buildingDoors = false;
 }
 
-
 RoomCtrl::~RoomCtrl()
 {
 	for (size_t i = 0; i < m_rooms.size(); i++)
@@ -281,7 +279,6 @@ RoomCtrl::~RoomCtrl()
 	}
 	m_rooms.clear();
 }
-
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
@@ -355,9 +352,6 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 	}
 
 }
-
-
-
 
 std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
 {
@@ -443,8 +437,7 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 	return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
 }
 
-
- bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
+bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
 	 bool isFalse = false;
 	 int indexx = _intersect(start, XMINT2(1, 1));
@@ -574,7 +567,7 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 	return true;
  }
 
- bool RoomCtrl::MarkAllTilesRedObject(DirectX::XMINT2 start, int size, int angle)
+bool RoomCtrl::MarkAllTilesRedObject(DirectX::XMINT2 start, int size, int angle)
  {
 	 bool isFalse = false;
 	 int index = _intersect(start, XMINT2(1, 1));
@@ -1119,6 +1112,7 @@ DirectX::XMFLOAT3 RoomCtrl::getClosestRoom(XMFLOAT2 position, RoomType type)
 	
 		return (int)XMVectorGetX(XMVector3Length(second - first));
 	};
+
 	Room* closestRoom = nullptr;
 	int closestDistance = 99999;
 	for (auto& room : m_rooms)

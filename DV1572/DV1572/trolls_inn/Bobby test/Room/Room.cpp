@@ -342,13 +342,13 @@ std::vector<std::shared_ptr<Node>> Room::findPath(Tile * startTile, Tile * endTi
 			if (currentTile == nullptr)
 				continue;
 			bool shouldContinue = false;
-			for (auto& object : m_roomObjects)
+			/*for (auto& object : m_roomObjects)
 			{
 				if (currentTile->getPosition().x == object->getPosition().x
 					&& currentTile->getPosition().y == object->getPosition().z)
 					shouldContinue = true;
 
-			}
+			}*/
 
 			if (shouldContinue) continue;
 

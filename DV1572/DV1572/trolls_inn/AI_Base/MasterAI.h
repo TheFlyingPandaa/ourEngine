@@ -86,6 +86,7 @@ private:
 	}*currentChase;
 	bool _checkValidSelectedCustomer(int index);
 	void _killCustomer(int customerIndex);
+	void _stealCustomer(int customerIndex);
 	// !customer Selection
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);

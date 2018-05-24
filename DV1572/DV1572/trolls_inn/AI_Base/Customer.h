@@ -92,6 +92,7 @@ public:
 	Economy& GetEconomy();
 	Race GetRace() const;
 
+	XMINT2 getOwnerFurniturePosition()	const;
 	const char* GetRaceStr() const;
 
 	// Get desired action

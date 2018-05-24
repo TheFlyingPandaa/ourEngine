@@ -35,35 +35,48 @@ XMINT2 Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 	std::vector<Furniture*> furniture; 
 	XMINT2 targetPos; 
 	targetPos = XMINT2(-1, -1); 
-
-	for (int i = 0; i < roomsOfNeededType.size() && !furnitureFound; i++)
+	if (m_ownedFurniture == nullptr)
 	{
-		furniture = roomsOfNeededType[i]->getAllRoomFurnitures(); 
-
-		if(furniture.size() > 0)
+		for (int i = 0; i < roomsOfNeededType.size() && !furnitureFound; i++)
 		{
-			for (int k = 0; k < furniture.size() && !furnitureFound; k++)
+			furniture = roomsOfNeededType[i]->getAllRoomFurnitures();
+
+			if (furniture.size() > 0)
 			{
-				if (!furniture[k]->getIsBusy() && (furniture[k]->WhatType() == "Bed" ||
-					furniture[k]->WhatType() == "Table" ||
-					furniture[k]->WhatType() == "Bar" && furniture[k]->getDirtyStat() < 10))
+				for (int k = 0; k < furniture.size() && !furnitureFound; k++)
 				{
-					targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().z);
-					furniture[k]->setOwner(this);
-					m_ownedFurniture = furniture[k];
-					m_ownedFurniture->setIsBusy(true);
-					furniture[k]->increaseDirtyLevel(); 
-					furnitureFound = true;
+					int dirtyStat = furniture[k]->getDirtyStat();
+					if (dirtyStat)
+					{
+						furniture[k]->getObject3D().setColor(float(dirtyStat) / 10.0f, 0.0f, 0.0f);
+					}
+					if (!furniture[k]->getIsBusy() &&
+						(furniture[k]->WhatType() == "Bed" ||
+							furniture[k]->WhatType() == "Table" ||
+							furniture[k]->WhatType() == "Bar") && (
+								dirtyStat < 10)
+						)
+					{
+						targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().z);
+						furniture[k]->setOwner(this);
+						setOwnedFurniture(furniture[k]);
+						m_ownedFurniture->setIsBusy(true);
+						furniture[k]->increaseDirtyLevel();
+						furnitureFound = true;
+					}
 				}
 			}
 		}
 	}
+	
+	
 	return targetPos; 
 }
 
 Customer::Customer()
 {
 	m_ownedFurniture = nullptr; 
+	
 }
 
 Customer::Customer(Race race, int gold)
@@ -90,7 +103,6 @@ Customer::Customer(Race race, int gold)
 		m_thirstyRate = 0.8f;
 		m_patience = 3.0f;
 	}
-
 	SetAction(WalkToInn);
 }
 
@@ -138,6 +150,13 @@ Economy& Customer::GetEconomy()
 Race Customer::GetRace() const
 {
 	return m_race;
+}
+
+XMINT2 Customer::getOwnerFurniturePosition() const
+{
+	if (m_ownedFurniture == nullptr)
+		return XMINT2(-1, -1);
+	return XMINT2(m_ownedFurniture->getPosition().x, m_ownedFurniture->getPosition().z);
 }
 
 const char* Customer::GetRaceStr() const
@@ -378,21 +397,21 @@ void Customer::SetThirsty(float value)
 
 void Customer::DoEating()
 {
-	this->m_hungry--;
+	this->m_hungry-= 0.01f;
 	if (m_hungry < 0)
 		m_hungry = 0;
 }
 
 void Customer::DoSleeping()
 {
-	this->m_tired--;
+	this->m_tired-= 0.01f;
 	if (m_tired < 0)
 		m_tired = 0;
 }
 
 void Customer::DoDrinking()
 {
-	this->m_thirsty--;
+	this->m_thirsty-= 0.01f;
 	if (m_thirsty < 0)
 		m_thirsty = 0;
 }
@@ -408,10 +427,13 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 std::string Customer::getInfoText() const
 {
 	std::string returnStr;
-	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Gold " + std::to_string(int(m_economy.GetGold())) + "\n";
 	returnStr += "Type ";
 	returnStr += GetRaceStr();
 	returnStr += "\n";
+	returnStr += "Hungry: " + std::to_string(int(m_hungry)) + "\n";
+	returnStr += "Tired: " + std::to_string(int(m_tired)) + "\n";
+	returnStr += "Thirsty: " + std::to_string(int(m_thirsty)) + "\n";
 	return returnStr;
 }
 

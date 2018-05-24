@@ -134,7 +134,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		auto dt = duration_cast<nanoseconds>(currentTime - time).count();
 		time = steady_clock::now();
 
-		unprocessed += dt / freq;
+		unprocessed += (dt / freq) + (Input::isKeyPressed('A')*3);
 
 		while (unprocessed > 1)
 		{

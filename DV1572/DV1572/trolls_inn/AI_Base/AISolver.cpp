@@ -445,30 +445,47 @@ void AISolver::Update(Customer& customer, Inn* inn)
 	CustomerState currentState = customer.GetState();
 	customer.Update();
 
+	
 	if (currentState == WalkingToInn)
 	{
 		if (customer.walkQueueDone())
 		{
 			if (customer.getPosition().y < 0)
 			{
+			
 				// Walk along the catwalk then upwards towards the gridsystem where the rooms are located
-				RandomNumberGenerator gen;
-				int length = gen.GenerateRandomNumber(1, 16);
-				for (int i = 0; i < length; ++i)
+				customer.clearWalkingQueue();
+				for (int i = 0; i < 16; ++i)
 					customer.Move(Character::WalkDirection::RIGHT);
 				for (int i = 0; i < 3; ++i)
 					customer.Move(Character::WalkDirection::UP);
+
 			}
 			else
 			{
-				customer.PopToNextState();
-				currentState = customer.GetState();
+				// if reception thread is finished, then we pop this pussy
+				int status = RequestPath(customer, RoomType::reception);
+				if (status == 1)
+				{
+					customer.PopToNextState();
+					customer.SetAction(WalkAction);
+					currentState = customer.GetState();
+
+				}
+				else if (status == -1)
+				{
+
+					customer.RestartClock();
+					customer.setThoughtBubble(Character::ANGRY);
+				}
+
 			}
 		}
 	}
 
 	if (currentState == Walking)
 	{
+	
 		if (customer.walkQueueDone())
 		{
 			customer.PopToNextState();
@@ -478,6 +495,7 @@ void AISolver::Update(Customer& customer, Inn* inn)
 
 	if (currentState != Walking)
 	{
+	
 		switch (currentState)
 		{
 		case Idle:
@@ -485,9 +503,13 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			// Do customer want to walk around or take an action
 			if (customer.GetHungry() < 5 && customer.GetThirsty() < 5 && customer.GetTired() < 5)
 			{
-				// Get a path to a new location
-				RequestPath(customer, RoomType::randomStupid);
-				customer.SetAction(WalkAction);
+				if (customer.walkQueueDone())
+				{
+					// Get a path to a new location
+					RequestPath(customer, RoomType::randomStupid);
+					customer.SetAction(WalkAction);
+
+				}
 			}
 			customer.PopToNextState();
 			break;
@@ -501,49 +523,63 @@ void AISolver::Update(Customer& customer, Inn* inn)
 			{
 				_doWaiting(customer, inn);
 			}
+			
 			break;
 		case Drinking:
 			if (!customer.GetAvailableSpotFound())
 				_checkSpotInRoom(inn, customer);
-			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+			
+			if (customer.GetThirsty() > 0)
 			{
-				if (customer.GetThirsty() > 0)
-					customer.DoDrinking();
-				else
-				{
-					customer.PopToNextState();
-					customer.releaseFurniture(); 
-				}
-				
+				customer.DoDrinking();
+				customer.PopStateQueue();
+				customer.SetAction(DrinkAction);
+				customer.SetAction(Action::WaitingAction);
 			}
+			else
+			{
+				customer.PopToNextState();
+				customer.releaseFurniture();
+			}
+				
+			
 			break;
 		case Eating:
 			if (!customer.GetAvailableSpotFound())
 				_checkSpotInRoom(inn, customer);
-			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+
+			
+			if (customer.GetHungry() > 0)
 			{
-				if (customer.GetHungry() > 0)
-					customer.DoEating();
-				else
-				{
-					customer.PopToNextState();
-					customer.releaseFurniture();
-				}
+				customer.DoEating();
+				customer.PopStateQueue();
+				customer.SetAction(EatAction);
+				customer.SetAction(Action::WaitingAction);
 			}
+			else
+			{
+				customer.PopToNextState();
+				customer.releaseFurniture();
+			}
+			
 			break;
 		case Sleeping:
 			if (!customer.GetAvailableSpotFound())
 				_checkSpotInRoom(inn, customer);
-			if (this->m_time_span.count() > UPDATE_FREQUENCY_EAT_DRINK_SLEEP_WAIT)
+		
+			if (customer.GetTired() > 0)
 			{
-				if (customer.GetTired() > 0)
-					customer.DoSleeping();
-				else
-				{
-					customer.PopToNextState();
-					customer.releaseFurniture();
-				}
+				customer.DoSleeping();
+				customer.PopStateQueue();
+				customer.SetAction(SleepAction);
+				customer.SetAction(Action::WaitingAction);
 			}
+			else
+			{
+				customer.PopToNextState();
+				customer.releaseFurniture();
+			}
+			
 			break;
 		}
 	}
@@ -552,32 +588,41 @@ void AISolver::Update(Customer& customer, Inn* inn)
 void AISolver::Update(Customer& customer, Action desiredAction)
 {
 	CustomerState currentState = customer.GetState();	
-	XMINT2 targetPosition; 
+	XMINT2 targetPosition = customer.getOwnerFurniturePosition();
 	int gotPath = -1;
-	switch (currentState)
+	if(targetPosition.x != -1)
+		gotPath = RequestPath(customer, targetPosition);
+	else
 	{
-	case Thinking:
-		switch (desiredAction)
+		switch (currentState)
 		{
-		case DrinkAction:
-			targetPosition = customer.findNearestRoom(m_roomctrl, Drinking); 
-			if (targetPosition.x != -1 && targetPosition.y != -1)
-			gotPath = RequestPath(customer,targetPosition);
-			break;
-		case EatAction:
-			targetPosition = customer.findNearestRoom(m_roomctrl, Eating);
-			if (targetPosition.x != -1 && targetPosition.y != -1)
-			gotPath = RequestPath(customer, targetPosition);
-			break;
-		case SleepAction:
-			targetPosition = customer.findNearestRoom(m_roomctrl, Sleeping);
-			if (targetPosition.x != -1 && targetPosition.y != -1)
-			gotPath = RequestPath(customer, targetPosition);
+		case Thinking:
+			switch (desiredAction)
+			{
+			case DrinkAction:
+				targetPosition = customer.findNearestRoom(m_roomctrl, Drinking);
+				if (targetPosition.x == -1)
+					break;
+				gotPath = RequestPath(customer, targetPosition);
+				break;
+			case EatAction:
+				targetPosition = customer.findNearestRoom(m_roomctrl, Eating);
+				if (targetPosition.x == -1)
+					break;
+				gotPath = RequestPath(customer, targetPosition);
+				break;
+			case SleepAction:
+				targetPosition = customer.findNearestRoom(m_roomctrl, Sleeping);
+				if (targetPosition.x == -1)
+					break;
+				gotPath = RequestPath(customer, targetPosition);
+				break;
+			}
+
 			break;
 		}
-			
-		break;
 	}
+
 	customer.PopToNextState(); // pop Thinking state
 	customer.PopToNextState(); // pop Idle state
 	if (gotPath == 1)
@@ -601,7 +646,65 @@ void AISolver::Update(Customer& customer, Action desiredAction)
 
 void AISolver::Update(Staff& staff)
 {
-	staff.Update(); 
+	
+	staff.Update();
+	if (staff.isCleaning())
+	{
+		XMFLOAT2 trollPos = staff.getPosition();
+		Furniture* furtoclean = staff.getCleaningFurniture();
+		XMINT2 targetPosition = { (int)furtoclean->getPosition().x , (int)furtoclean->getPosition().z };
+		XMINT2 deltaPos = { (int)abs(trollPos.x - targetPosition.x),(int)abs(trollPos.y - targetPosition.y) };
+		if (deltaPos.x < 2 && deltaPos.y < 2)
+		{
+			staff.cleanFurniture();
+			return;
+		}
+		
+		
+		if (staff.walkQueueDone())
+		{
+			staff.setSpeed(3.0f);
+			float xLol, yLol;
+			staff.getStepsLeft(xLol, yLol);
+			//xLol = yLol = 0.0f;
+			staff.clearWalkingQueue();
+
+			//Shape * obj = this->p_pickingEvent->top();
+			
+			trollPos.x += xLol;
+			trollPos.y += yLol;
+
+			int xTile = (int)trollPos.x;// (int)(round_n(trollPos.x, 1) - 0.5f);
+			int yTile = (int)trollPos.y;//(int)(round_n(trollPos.y, 1) - 0.5f);
+
+
+
+			XMINT2 startPosition = { xTile, yTile };
+
+			auto path = GetPathAndSmokeGrass(startPosition, targetPosition);
+
+
+			XMFLOAT3 oldPos = { float(xTile),0.0f, float(yTile) };
+
+			if (path.size() != 0)
+			{
+				if (!staff.getCancelFlag())
+					staff.setCancelFlag(true);
+
+
+				staff.Move(staff.getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
+
+				for (int i = 0; i < path.size() - 1; i++)
+				{
+					float lol = 255 * (float(i) / float(path.size()));
+					path[i + 1]->tile->getQuad().setColor(0, 0, lol);
+					staff.Move(staff.getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
+				}
+			}
+		}
+		
+	}
+
 }
 
 void AISolver::Update(Staff& staff, Action desiredAction)
@@ -614,7 +717,10 @@ RoomCtrl * AISolver::getRoomCtrl()
 	return m_roomctrl; 
 }
 
-
+// Return 
+// -1: if failed
+//  0: if pending
+//  1: if succedded
 int AISolver::RequestPath(Character & character, RoomType targetRoom)
 {
 
