@@ -42,13 +42,13 @@ XMINT2 Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 
 		if(furniture.size() > 0)
 		{
-			for (int k = 0; k < furniture.size(); k++)
+			for (int k = 0; k < furniture.size() && !furnitureFound; k++)
 			{
 				if (!furniture[k]->getIsBusy() && (furniture[k]->WhatType() == "Bed" ||
 					furniture[k]->WhatType() == "Table" ||
 					furniture[k]->WhatType() == "Bar" && furniture[k]->getDirtyStat() < 10))
 				{
-					targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().y);
+					targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().z);
 					furniture[k]->setOwner(this);
 					m_ownedFurniture = furniture[k];
 					m_ownedFurniture->setIsBusy(true);
