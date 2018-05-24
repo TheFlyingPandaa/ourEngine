@@ -96,7 +96,7 @@ Customer* CustomerFlowControl::Update(Attributes innAttributes)
 	nextCustomer->setThoughtBubbleMesh(&m_thinkingMesh);
 
 	// Set needs for the customer
-	nextCustomer->SetHungry(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
+	nextCustomer->SetHungry(10);//;static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
 	nextCustomer->SetTired(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
 	nextCustomer->SetThirsty(static_cast<float>(this->m_rNG.GenerateRandomNumber(0, 4)));
 	

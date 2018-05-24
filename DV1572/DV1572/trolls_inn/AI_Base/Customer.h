@@ -51,6 +51,7 @@ private:
 	std::queue<CustomerState> m_stateQueue;
 	CustomerState m_waitingToDoState;
 
+	
 	Furniture* m_ownedFurniture; 
 
 	// Add a room stack with all the rooms of a specific type (?)
@@ -85,12 +86,13 @@ public:
 	~Customer();
 
 	void releaseFurniture(); 
-	bool findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
+	XMINT2 findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed);
 
 	Attributes& GetAttributes();
 	Economy& GetEconomy();
 	Race GetRace() const;
 
+	XMINT2 getOwnerFurniturePosition()	const;
 	const char* GetRaceStr() const;
 
 	// Get desired action

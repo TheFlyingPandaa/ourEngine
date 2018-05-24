@@ -1,5 +1,6 @@
 #include "Customer.h"
 #include "../../InGameConsole.h"
+#include "RandomNumberGenerator.h"
 #include "../Bobby test/Room/RoomCtrl.h"
 
 //Only do this from time to time, no need to do it every frame
@@ -19,47 +20,63 @@ void Customer::searchForFreeFurniture(RoomCtrl* roomCtrl)
 	}
 }
 
-bool Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
+XMINT2 Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 {
 	bool furnitureFound = false;
+	std::vector<Room*> roomsOfNeededType; 
 
-	XMFLOAT3 roomPos; 
 	if (customerNeed == Sleeping)
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bedroom);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(bedroom);
 	else if (customerNeed == Eating)
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), kitchen);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(kitchen);
 	else
-		roomPos = roomCtrl->getClosestRoom(this->getPosition(), bar);
+		roomsOfNeededType = roomCtrl->getAllRoomsOfType(bar); 
 
-	if (roomPos.x == -1)
+	std::vector<Furniture*> furniture; 
+	XMINT2 targetPos; 
+	targetPos = XMINT2(-1, -1); 
+	if (m_ownedFurniture == nullptr)
 	{
-		return false;
-	}
-	Room* roomToCheck = roomCtrl->getRoomAtPos(XMINT2(static_cast<int32_t>(roomPos.x), static_cast<int32_t>(roomPos.z))); 
-
-	size_t nrOfFurniture = roomToCheck->getAllRoomFurnitures().size(); 
-	std::vector<Furniture*> furniture = roomToCheck->getAllRoomFurnitures(); 
-
-	for (int i = 0; i < nrOfFurniture && !furnitureFound; i++)
-	{
-		if (!furniture[i]->getIsBusy() && (furniture[i]->WhatType() == "Bed" ||
-			furniture[i]->WhatType() == "Table" ||
-			furniture[i]->WhatType() == "Bar" && furniture[i]->getDirtyStat() < 1))
+		for (int i = 0; i < roomsOfNeededType.size() && !furnitureFound; i++)
 		{
-			furniture[i]->setOwner(this); 
-			m_ownedFurniture = furniture[i]; 
-			m_ownedFurniture->setIsBusy(true);
-			furniture[i]->increaseDirtyLevel(); 
-			furnitureFound = true;
+			furniture = roomsOfNeededType[i]->getAllRoomFurnitures();
+
+			if (furniture.size() > 0)
+			{
+				for (int k = 0; k < furniture.size() && !furnitureFound; k++)
+				{
+					int dirtyStat = furniture[k]->getDirtyStat();
+					if (dirtyStat)
+					{
+						furniture[k]->getObject3D().setColor(float(dirtyStat) / 10.0f, 0.0f, 0.0f);
+					}
+					if (!furniture[k]->getIsBusy() &&
+						(furniture[k]->WhatType() == "Bed" ||
+							furniture[k]->WhatType() == "Table" ||
+							furniture[k]->WhatType() == "Bar") && (
+								dirtyStat < 10)
+						)
+					{
+						targetPos = XMINT2(furniture[k]->getPosition().x, furniture[k]->getPosition().z);
+						furniture[k]->setOwner(this);
+						setOwnedFurniture(furniture[k]);
+						m_ownedFurniture->setIsBusy(true);
+						furniture[k]->increaseDirtyLevel();
+						furnitureFound = true;
+					}
+				}
+			}
 		}
 	}
-
-	return furnitureFound;
+	
+	
+	return targetPos; 
 }
 
 Customer::Customer()
 {
 	m_ownedFurniture = nullptr; 
+	
 }
 
 Customer::Customer(Race race, int gold)
@@ -86,7 +103,6 @@ Customer::Customer(Race race, int gold)
 		m_thirstyRate = 0.8f;
 		m_patience = 3.0f;
 	}
-
 	SetAction(WalkToInn);
 }
 
@@ -134,6 +150,13 @@ Economy& Customer::GetEconomy()
 Race Customer::GetRace() const
 {
 	return m_race;
+}
+
+XMINT2 Customer::getOwnerFurniturePosition() const
+{
+	if (m_ownedFurniture == nullptr)
+		return XMINT2(-1, -1);
+	return XMINT2(m_ownedFurniture->getPosition().x, m_ownedFurniture->getPosition().z);
 }
 
 const char* Customer::GetRaceStr() const
@@ -374,21 +397,21 @@ void Customer::SetThirsty(float value)
 
 void Customer::DoEating()
 {
-	this->m_hungry--;
+	this->m_hungry-= 0.01f;
 	if (m_hungry < 0)
 		m_hungry = 0;
 }
 
 void Customer::DoSleeping()
 {
-	this->m_tired--;
+	this->m_tired-= 0.01f;
 	if (m_tired < 0)
 		m_tired = 0;
 }
 
 void Customer::DoDrinking()
 {
-	this->m_thirsty--;
+	this->m_thirsty-= 0.01f;
 	if (m_thirsty < 0)
 		m_thirsty = 0;
 }
@@ -404,10 +427,13 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 std::string Customer::getInfoText() const
 {
 	std::string returnStr;
-	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Gold " + std::to_string(int(m_economy.GetGold())) + "\n";
 	returnStr += "Type ";
 	returnStr += GetRaceStr();
 	returnStr += "\n";
+	returnStr += "Hungry: " + std::to_string(int(m_hungry)) + "\n"; 
+	returnStr += "Tired: " + std::to_string(int(m_tired)) + "\n"; 
+	returnStr += "Thirsty: " + std::to_string(int(m_thirsty)) + "\n";
 	return returnStr;
 }
 

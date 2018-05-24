@@ -391,7 +391,7 @@ bool GameState::_handleHUDPicking()
 				m_stateHUD.SetColorOnButton(index, cHL, cC, cHL);
 				m_pauseTimePoint = m_mai->SaveTimePoint();
 				if (m_hudButtonsPressed[index]){
-					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn));
+					m_subStates.push(new BuildState(m_cam, p_pickingEvent, m_grid, m_roomctrl, inn, m_mai->getTroll()));
 					m_stage = GameStage::BuildRoom;
 				}
 				break;

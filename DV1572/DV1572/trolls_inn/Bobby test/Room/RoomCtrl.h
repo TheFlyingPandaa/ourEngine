@@ -100,5 +100,7 @@ public:
 
 	bool getIsBuildingDoor();
 	void setIsBuildingDoor(bool tje);
+
+	std::vector<Room*> getAllRoomsOfType(RoomType type); 
 };
 

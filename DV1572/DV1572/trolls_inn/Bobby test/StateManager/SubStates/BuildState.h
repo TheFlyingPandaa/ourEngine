@@ -8,6 +8,7 @@
 #include "../HUD/InfoBoard.h"
 #include "../HUD/ClickMenu.h"
 #include "../../../../ourEngine/interface/OurMusic.h"
+#include "../../../AI_Base/Staff.h"
 
 class BuildState :
 	public SubState
@@ -62,6 +63,7 @@ private:
 
 	Inn * m_inn;
 	Text m_priceOfRoom;
+	Staff* m_innTroll;
 	
 	
 
@@ -102,7 +104,7 @@ public:
 	BuildState(Camera * cam, 
 	std::stack<Shape *>* pickingEvent,
 	Grid * grid,
-	RoomCtrl* roomCtrl, Inn * i);
+	RoomCtrl* roomCtrl, Inn * i, Staff* troll);
 	~BuildState();
 	
 	

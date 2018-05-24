@@ -6,6 +6,7 @@ Staff::Staff() : Character()
 	m_level.SetLevel(1);
 	this->setModel(&m_trollMesh);
 	m_cancelFlag = false;
+	m_isCleaning = false;
 }
 
 Staff::Staff(Professions profession)
@@ -41,4 +42,26 @@ void Staff::setCancelFlag(bool flag)
 bool Staff::getCancelFlag() const
 {
 	return m_cancelFlag;
+}
+
+void Staff::setCleaning(bool flag, Furniture* furToBeClean)
+{
+	m_isCleaning = flag;
+	m_fur = furToBeClean;
+}
+
+bool Staff::isCleaning() const
+{
+	return m_isCleaning;
+}
+
+Furniture * Staff::getCleaningFurniture() const
+{
+	return m_fur;
+}
+
+void Staff::cleanFurniture()
+{
+	m_fur->cleanFurniture();
+	m_isCleaning = false;
 }

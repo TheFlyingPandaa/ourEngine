@@ -2,6 +2,7 @@
 #include "LevelTracker.h"
 #include "../Bobby test/Character.h"
 #include <DirectXMath.h>
+#include "../Furniture/Furniture.h"
 
 enum Professions
 {
@@ -21,6 +22,11 @@ private:
 	DirectX::XMFLOAT2 m_position; 
 	Mesh m_trollMesh; 
 	bool m_cancelFlag;
+	
+	// This code sucks(Henrik)
+	Furniture* m_fur;
+	bool m_isCleaning;
+	
 public:
 	Staff();
 	Staff(Professions profession);
@@ -33,5 +39,11 @@ public:
 	//For chase
 	void setCancelFlag(bool flag);
 	bool getCancelFlag() const;
+
+	// For cleaning
+	void setCleaning(bool flag, Furniture* furToBeClean);
+	bool isCleaning() const;
+	Furniture* getCleaningFurniture() const;
+	void cleanFurniture();
 
 };

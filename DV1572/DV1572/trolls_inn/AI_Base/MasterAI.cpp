@@ -141,7 +141,7 @@ void MasterAI::_trollInnChase()
 				_killCustomer(m_selectedCustomer);
 				break;
 			case STEAL:
-				InGameConsole::pushString("stole mani");
+				_stealCustomer(m_selectedCustomer);
 				break;
 			}
 			m_showMenu = false;
@@ -198,6 +198,38 @@ void MasterAI::_killCustomer(int customerIndex)
 	if(caught)
 		std::cout << "YOU GOT CAUGHT" << std::endl;
 	
+}
+
+void MasterAI::_stealCustomer(int customerIndex)
+{
+	float totalCustomerMoney = m_customers[customerIndex]->GetEconomy().GetGold();
+
+	RandomNumberGenerator rg;
+	int randNum = rg.GenerateRandomNumber(0, 100);
+
+	int currentLevel = m_InnTroll->GetLevelTracker().GetLevel();
+
+	float chanceToGetDick = 1.0f / (currentLevel + 1);
+
+	if (randNum >= (chanceToGetDick * 100))
+	{
+		// Successfull stealing
+		totalCustomerMoney *= 0.5f;
+		m_customers[customerIndex]->GetEconomy().Withdraw(totalCustomerMoney);
+		m_inn->Deposit(totalCustomerMoney);
+		InGameConsole::pushString("You stole money $" + std::to_string((int)totalCustomerMoney));
+	}
+	else
+	{
+		// Not Successfull stealing
+		m_customers[customerIndex]->RestartClock();
+		m_customers[customerIndex]->setThoughtBubble(Character::ANGRY);
+		m_inn->AddAngryCustomer();
+		m_customers[customerIndex]->setSpeed(3.0f);
+		m_customers[customerIndex]->getShape()->setColor(1, 0, 0);
+
+	}
+
 }
 
 MasterAI::MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn)
@@ -465,7 +497,8 @@ void MasterAI::Update(Camera* cam)
 		if (leavingCustomer->GetQueueEmpty())
 		{
 			// Customer wants path to exit
-			int result = m_solver.RequestPath(*leavingCustomer, leave);
+			leavingCustomer->clearWalkingQueue(true);
+			int result = m_solver.RequestPath(*leavingCustomer, { 16,0 });
 			if (result == 1)
 			{
 				RandomNumberGenerator gen;
@@ -535,6 +568,7 @@ void MasterAI::PickedCustomerShape(Shape * shape)
 		// INSIDE HERE DO WE HAVE A CLICK WITH m_customers[i]
 		if (deltaPos.x < 0.1 && deltaPos.y < 0.1)
 		{
+			if (customerPos.y <= 0) break;
 			m_showMenu = true;
 			if (!_checkValidSelectedCustomer(lastSelectedCustomer))
 			{
