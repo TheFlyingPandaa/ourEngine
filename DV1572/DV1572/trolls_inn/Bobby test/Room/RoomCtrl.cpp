@@ -383,7 +383,7 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 				XMFLOAT3 wallPosition(((t2.x + t1.x) * 0.5f) + 0.5f, 0.0f, ((t2.z + t1.z) * 0.5f) + 0.5f);
 				std::cout << "delete wallPos (" << wallPosition.x << "," << wallPosition.z << ")\n";
 				assert(RemoveDoor(wallPosition));
-				assert(oldSize != m_roomToRoom.size());
+				//assert(oldSize != m_roomToRoom.size());
 				oldSize = m_roomToRoom.size();
 			}
 			
@@ -922,7 +922,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 							m_roomToRoom.push_back(dp2);
 
 							_makeRoomConnection(room1Index, room2Index);
-							//_printRoomConnections();
+							_printRoomConnections();
 						}
 						else // This door leads to the outside
 						{
@@ -1052,8 +1052,24 @@ std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 	// We cant perfrom dijkstra on the same room
 	if(indexes[0] != indexes[1])
 		_dijkstra(indexes[0], indexes[1]);
+	if (m_tempPath.size())
+	{
+		if (m_tempPath.size() == 1)
+			m_tempPath.clear();
+		else
+		{
+			for (int i = 0; i < m_tempPath.size() - 1; i++)
+			{
+				if (m_roomConnectionMap[m_tempPath[i]][m_tempPath[i + 1]] == 0)
+				{
+					m_tempPath.clear();
+					break;
+				}
+			}
+		}
+	}
 
-		
+	
 	return m_tempPath;
 }
 
