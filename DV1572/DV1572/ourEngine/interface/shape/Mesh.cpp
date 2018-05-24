@@ -59,9 +59,9 @@ Mesh::~Mesh()
 		}
 	}
 	for (auto& vBuffer : m_vertexBuffers)
-		vBuffer->Release();
+		DX::SafeRelease(&vBuffer);
 	for (auto& iBuffer : m_indexBuffers)
-		iBuffer->Release();
+		DX::SafeRelease(&iBuffer);
 }
 
 void Mesh::LoadModelStr(const std::string & path)

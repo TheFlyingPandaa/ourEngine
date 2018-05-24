@@ -12,7 +12,6 @@ private:
 	ID3D11DomainShader*		m_ds;
 	ID3D11GeometryShader*	m_gs;
 	ID3D11PixelShader*		m_ps;
-	ID3D11Buffer*			m_instanceBuffer;
 
 	DirectX::XMMATRIX		m_worldMatrix;
 	DirectX::XMFLOAT4A		m_highLightColor;
@@ -71,8 +70,6 @@ public:
 	void CheckPick();
 	void	CastShadow();
 	void WindowDraw();
-	//void setScale(float x, float y, float z);
-	//void setScale(float masterScale);
 	const DirectX::XMMATRIX& getWorld() const;
 	
 	DirectX::XMFLOAT4A getColor();

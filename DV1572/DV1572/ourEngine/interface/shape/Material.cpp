@@ -18,28 +18,13 @@ Material::Material(std::string name)
 
 Material::~Material()
 {
-	if (m_diffuseTexture)
-	{
-		m_diffuseTexture->Release();
-		m_diffuseTexture = nullptr;
-	}
-	if (m_diffuseResource)
-	{
-		m_diffuseResource->Release();
-		m_diffuseTexture = nullptr;
-	}
-	if (m_normalTexture)
-	{
-		m_normalTexture->Release();
-		m_normalTexture = nullptr;
-	}
-		
-	if (m_normalResource)
-		m_normalResource->Release();
-	if (m_highlightTexture)
-		m_highlightTexture->Release();
-	if (m_highlightResource)
-		m_highlightResource->Release();
+	DX::SafeRelease(&m_diffuseTexture);
+	DX::SafeRelease(&m_diffuseResource);
+	DX::SafeRelease(&m_normalTexture);
+	DX::SafeRelease(&m_normalResource);
+	DX::SafeRelease(&m_highlightTexture);
+	DX::SafeRelease(&m_highlightResource);
+
 }
 
 void Material::setDiffuseMap(ID3D11ShaderResourceView* srv, ID3D11Resource* res)

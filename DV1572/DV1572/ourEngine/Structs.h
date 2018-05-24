@@ -34,8 +34,6 @@ struct DIRECTIONAL_LIGHT_BUFFER
 struct MESH_BUFFER
 {
 	DirectX::XMFLOAT4X4A VP;
-	float gridscaleX;
-	float gridscaleY;
 };
 // Used in billboardVertex.hlsl
 struct BILLBOARD_MESH_BUFFER

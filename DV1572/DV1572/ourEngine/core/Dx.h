@@ -20,8 +20,23 @@
 	The globals in this klass is not really globals, but rather semi globals.
 	This klass may be reached within the engine
 */
+
+#define CAST(t,v) static_cast<t>(v)
+
 namespace DX
 {
+	// Use when releasing
+	// Source: https://msdn.microsoft.com/en-us/library/windows/desktop/dd940435(v=vs.85).aspx
+	template <class T> void SafeRelease(T **ppT)
+	{
+		if (*ppT)
+		{
+			(*ppT)->Release();
+			*ppT = NULL;
+		}
+		
+	}
+
 	
 	extern ID3D11Device* g_device;
 	extern ID3D11DeviceContext* g_deviceContext;
@@ -52,6 +67,8 @@ namespace DX
 
 		DirectX::XMFLOAT4A highLightColor;
 		float lightIndex;
+		float gridScaleX;
+		float gridScaleY;
 	};
 
 	struct INSTANCE_ATTRIB_BILL

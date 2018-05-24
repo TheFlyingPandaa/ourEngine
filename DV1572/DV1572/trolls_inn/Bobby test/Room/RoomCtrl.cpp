@@ -1,6 +1,7 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
 #include "../../Mesh Manager/MeshLoaderPlus.h"
+#define CAST(t,v) static_cast<t>(v)
 
 int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
@@ -48,6 +49,7 @@ void RoomCtrl::_dijkstra(int src, int dst)
 		return min_index;
 	};
 
+	
 	if (m_roomConnectionMap[src].size() == 1) return;
 
 	int* dist = new int[m_roomConnectionMap[src].size()];  // The output array. dist[i] will hold
@@ -63,9 +65,10 @@ void RoomCtrl::_dijkstra(int src, int dst)
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < m_roomConnectionMap[src].size(); i++)
 	{
-		parent[src] = -1;
+		parent[i] = -1;
 		dist[i] = INT_MAX;
 		sptSet[i] = false;
+		
 	}
 
 	// Distance of source vertex from itself is always 0
@@ -98,12 +101,19 @@ void RoomCtrl::_dijkstra(int src, int dst)
 
 	}
 
-
-	// print the constructed distance array
-	_getSolution(dist, parent, src, dst);
+	int counter = 0;
+	for (int i = 0; i < m_roomConnectionMap[src].size(); i++)
+	{
+		if (parent[i] == -1)
+			counter++;
+	}
+	if(counter != m_roomConnectionMap[src].size())
+		_getSolution(dist, parent, src, dst);
+	
 	delete[] dist;
 	delete[] parent;
 	delete[] sptSet;
+	
 }
 
 void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
@@ -115,15 +125,15 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 
 void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
-	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
+	XMINT2 furPos = { CAST(int,furniture->getPosition().x), CAST(int,furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
 	if (index == -1) return;
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		int xCoord = (x - static_cast<int>(cr->getPosition().x));
-		int yCoord = (y - static_cast<int>(cr->getPosition().z));
+		int xCoord = (x - CAST(int,cr->getPosition().x));
+		int yCoord = (y - CAST(int,cr->getPosition().z));
 		int roomSizeX = cr->getSize().x;
 		int roomSizeY = cr->getSize().y;
 		if (xCoord >= roomSizeX || xCoord < 0) return -1;
@@ -171,28 +181,12 @@ void RoomCtrl::AddRoomObject(Furniture * furniture)
 	cr->AddRoomObject(furniture);
 }
 
-//void RoomCtrl::RemoveRoomObject(DirectX::XMINT2 pos)
-//{
-//	int index = _intersect(pos, XMINT2(1, 1));
-//	if (index != -1)
-//	{
-//		std::vector<Furniture*> temp = m_rooms[index]->getAllRoomFurnitures();
-//		//delete temp.at(0);
-//		
-//		
-//	}
-//}
-
 bool RoomCtrl::RemoveRoomObject(Furniture * fur)
 {
 	int index = _intersect(XMINT2(fur->getPosition().x, fur->getPosition().z), XMINT2(1, 1));
 	if (index != -1)
 	{
 		return m_rooms[index]->RemoveThisFurniture(fur);
-
-		//delete temp.at(0);
-
-
 	}
 	return false;
 }
@@ -207,7 +201,7 @@ void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 	m_tempPath.push_back(j);
 }
 
-#include <iostream>
+
 void RoomCtrl::_printRoomConnections() const
 {
 	
@@ -226,29 +220,25 @@ void RoomCtrl::_printRoomConnections() const
 		}
 		std::cout << std::endl;
 	}
+}
 
-	/*std::cout << "Room " << m_rooms.size() - 1 << "->" << 0 << ": ";
-	for (int i = 0; i < m_tempPath.size(); i++)
-		std::cout << m_tempPath[i] << " ";
-	std::cout << std::endl;
-	for (int i = 0; i < m_roomConnectionMap.size(); i++)
+void RoomCtrl::_removeFromRoomToRoom(int room1, int room2)
+{
+	int removesCounter = 0;
+	for (std::vector<DoorPassage>::iterator it = m_roomToRoom.begin();
+		it != m_roomToRoom.end();
+		)
 	{
-		for (int ii = 0; ii < m_roomConnectionMap[i].size(); ii++)
+		DoorPassage c = *it;
+		if ((room1 == c.roomIndexes[0] && room2 == c.roomIndexes[1])
+			|| (room2 == c.roomIndexes[0] && room1 == c.roomIndexes[1]))
 		{
-			for (int j = 0; j < m_roomToRoom.size(); j++)
-			{
-				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
-				{
-					std::cout << "Room " << i << "-> " << ii << "\n";
-					std::cout << "One door Pos: (" << m_roomToRoom[j].one.x << "," << m_roomToRoom[j].one.y << ")\n";
-					std::cout << "Two door Pos: (" << m_roomToRoom[j].two.x << "," << m_roomToRoom[j].two.y << ")\n";
-				}
-			}
-
+			it = m_roomToRoom.erase(it);
+			removesCounter++;
 		}
-	}*/
-
-
+		else
+			it++;
+	}
 }
 
 RoomCtrl::RoomCtrl()
@@ -295,29 +285,23 @@ RoomCtrl::~RoomCtrl()
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
-	Room * currentRoom = nullptr;
+	Room * currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::KITCHENTILE));
 		break;
 	case bedroom:
-		//Duno just copied the 
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::BEDROOMTILE));
 		break;
 	case reception:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE));
 		break;
 	case hallway:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::HALLWAYTILE));
 		break;
 	case bar:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::WOODTILE));
 		break;
 	}
@@ -372,172 +356,93 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 }
 
-// Recieves tile pos, it knows what room you picked.
-// returns the room tiles and position and size
-// sent these into grid->insertTiles();
 
- bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
+
+
+std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
 {
+
 	int index = _intersect(pos, XMINT2(1, 1));
+	int payBack = 0;
 	
 	if (index != -1)
 	{
+		
 
+		// Remove all this rooms doors
+		std::vector<DoorPassage> cpy(m_roomToRoom);
+		int oldSize = CAST(int,m_roomToRoom.size());
+	
+		for (auto& dp : cpy)
+		{
+			if (dp.roomIndexes[0] == index)
+			{
+				XMFLOAT3 t1(CAST(float,dp.one.x), 0.0f, CAST(float,dp.one.y));
+				XMFLOAT3 t2(CAST(float,dp.two.x), 0.0f, CAST(float,dp.two.y));
+
+				// t1 -> t2
+				XMFLOAT3 wallPosition(((t2.x + t1.x) * 0.5f) + 0.5f, 0.0f, ((t2.z + t1.z) * 0.5f) + 0.5f);
+				std::cout << "delete wallPos (" << wallPosition.x << "," << wallPosition.z << ")\n";
+				assert(RemoveDoor(wallPosition));
+				//assert(oldSize != m_roomToRoom.size());
+				oldSize = static_cast<int>(m_roomToRoom.size());
+			}
+			
+		}
+
+	
+		std::cout << "Size of m_roomToRoom= " << m_roomToRoom.size() << "\n";
+		
+		
+		for (int i = 0; i < m_outsideDoorPos.size(); i++)
+		{
+			if (m_outsideDoorPos[i].roomIndexes[1] == index)
+			{
+				m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
+				i = 0;
+			}
+		}
+
+		for (auto& row : m_roomConnectionMap)
+		{
+			row.erase(row.begin() + index);
+		}
+		m_roomConnectionMap.erase(m_roomConnectionMap.begin() + index);
+
+		payBack = m_rooms[index]->getPriceOfAllObjects();
 		backtiles = m_rooms[index]->ReturnTiles();
 		XMFLOAT3 _pos = m_rooms[index]->getPosition();
 		delSize = m_rooms[index]->getSize();
 		delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
 		delete m_rooms[index];
 		m_rooms.erase(m_rooms.begin() + index);
-	}
-	
-	return index != -1;
+		for (int i = 0; i < m_roomToRoom.size(); i++)
+		{
+			int firstRoomIndex = _intersect(m_roomToRoom[i].one);
+			int secondRoomIndex = _intersect(m_roomToRoom[i].two);
+
+
+			m_roomToRoom[i].roomIndexes[0] = firstRoomIndex;
+			m_roomToRoom[i].roomIndexes[1] = secondRoomIndex;
+
+
+		}
+
+		for (auto& r : m_rooms)
+		{
+			r->DeleteWalls();
+		}
+		for (auto& r : m_rooms)
+		{
+			CreateWalls(r);
+		}
+
+		payBack += (delSize.x * delSize.y) * 20;
+		} 
+	_printRoomConnections();
+	return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
 }
-#pragma optimize ("", off)
 
- std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
- {
-
-	 int index = _intersect(pos, XMINT2(1, 1));
-	 int payBack = 0;
-	
-	 if (index != -1)
-	 {
-		  // Room connections
-		 for (int i = 0; i < m_roomToRoom.size(); i++)
-		 {
-			 // If the door entry is located in the deleted room
-			 if (m_roomToRoom[i].roomIndexes[0] == index)
-			 {
-				 // We now found a connection with the deleted room and an exisitng room.
-				 // Now lets find the connected door
-				 bool doorAlive = true;
-				 for (auto& wall : *m_rooms[index]->getAllWalls())
-				 {
-					 // If the wall we are checking is a door
-					 if (wall->getIsDoor() && m_roomToRoom.size())
-					 {
-						 XMFLOAT3 maybeDoorPos = XMFLOAT3(static_cast<float>(m_roomToRoom[i].one.x), 0.0f, static_cast<float>(m_roomToRoom[i].one.y));
-						 XMFLOAT3 thisDoorPos = wall->getObject3D().getPosition();
-						 XMFLOAT2 diff = XMFLOAT2(abs(maybeDoorPos.x - thisDoorPos.x), abs(maybeDoorPos.z - thisDoorPos.z));
-						 if (diff.x == 0.5f || diff.y == 0.5f)
-						 {
-							 wall->setIsDoor(false);
-							 wall->setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
-							 // They are located beside eachother
-							 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-							 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-							 i = 0;
-							 doorAlive = false;
-						 }
-					 }
-				 }
-
-				 //As the m_Room vector's size decrease, the room indexes change. 
-				 //Here, we do the exact same change, but for the room-index arrays in our 
-				 //room connection vector. 
-				 for (int i = 0; i < m_roomToRoom.size(); i++)
-				 {
-					 int firstRoomIndex = _intersect(m_roomToRoom[i].one);
-					 int secondRoomIndex = _intersect(m_roomToRoom[i].two);
-
-					 //If the rooms were found, we can continue
-					 if (firstRoomIndex != -1 && secondRoomIndex != -1)
-					 {
-						 //If the actual room indexes does not match up with the ones stored in the 
-						 //connection array, there is an update needed. 
-						 if (m_rooms[firstRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[0] - 1 ||
-							 m_rooms[secondRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[1] - 1)
-						 {
-							 //In need to update the room indexes. 
-							 m_roomToRoom[i].roomIndexes[0] = m_rooms[firstRoomIndex]->getRoomIndex();
-							 m_roomToRoom[i].roomIndexes[1] = m_rooms[secondRoomIndex]->getRoomIndex();
-						 }
-					 }
-				 }
-
-				 if (doorAlive)
-				 {
-					 //As the m_Room vector's size decrease, the room indexes change. 
-					 //Here, we do the exact same change, but for the room-index arrays in our 
-					 //room connection vector. 
-					 for (int i = 0; i < m_roomToRoom.size(); i++)
-					 {
-						 int firstRoomIndex = _intersect(m_roomToRoom[i].one);
-						 int secondRoomIndex = _intersect(m_roomToRoom[i].two);
-
-						 //If the rooms were found, we can continue
-						 if (firstRoomIndex != -1 && secondRoomIndex != -1)
-						 {
-							 //If the actual room indexes does not match up with the ones stored in the 
-							 //connection array, there is an update needed. 
-							 if (m_rooms[firstRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[0] - 1 ||
-								 m_rooms[secondRoomIndex]->getRoomIndex() != m_roomToRoom[i].roomIndexes[1] - 1)
-							 {
-								 //In need to update the room indexes. 
-								 m_roomToRoom[i].roomIndexes[0] = m_rooms[firstRoomIndex]->getRoomIndex();
-								 m_roomToRoom[i].roomIndexes[1] = m_rooms[secondRoomIndex]->getRoomIndex();
-							 }
-						 }
-					 }
-
-					for (auto& wall : *m_rooms[m_roomToRoom[i].roomIndexes[1]]->getAllWalls())
-					 {
-						 // If the wall we are checking is a door
-						 if (wall->getIsDoor() && m_roomToRoom.size())
-						 {
-							 XMFLOAT3 maybeDoorPos = XMFLOAT3(static_cast<float>(m_roomToRoom[i].one.x), 0.0f, static_cast<float>(m_roomToRoom[i].one.y));
-							 XMFLOAT3 thisDoorPos = wall->getObject3D().getPosition();
-							 XMFLOAT2 diff = XMFLOAT2(abs(maybeDoorPos.x - thisDoorPos.x), abs(maybeDoorPos.z - thisDoorPos.z));
-							 if (diff.x == 0.5f || diff.y == 0.5f)
-							 {
-								 wall->setIsDoor(false);
-								 wall->setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
-								 // They are located beside eachother
-								 m_roomToRoom.erase(m_roomToRoom.begin() + i);
-								 m_roomToRoom.erase(m_roomToRoom.begin() + (i - 1));
-								 i = 0;
-								 doorAlive = false;
-							 }
-						 }
-					 }
-				 }
-			 }
-		 }
-		 for (int i = 0; i < m_outsideDoorPos.size(); i++)
-		 {
-			 if (m_outsideDoorPos[i].roomIndexes[0] == index)
-			 {
-				 m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
-				 i = 0;
-			 }
-		 }
-
-		 for (auto& row : m_roomConnectionMap)
-		 {
-			 row.erase(row.begin() + index);
-		 }
-		 m_roomConnectionMap.erase(m_roomConnectionMap.begin() + index);
-
-		 payBack = m_rooms[index]->getPriceOfAllObjects();
-		 backtiles = m_rooms[index]->ReturnTiles();
-		 XMFLOAT3 _pos = m_rooms[index]->getPosition();
-		 delSize = m_rooms[index]->getSize();
-		 delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
-		 delete m_rooms[index];
-		 m_rooms.erase(m_rooms.begin() + index);
-
-		 for (auto& r : m_rooms)
-		 {
-			 CreateWalls(r);
-		 }
-
-		 payBack += (delSize.x * delSize.y) * 20;
-	 } 
-	 _printRoomConnections();
-	 return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
- }
-#pragma optimize ("", on)
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
@@ -846,9 +751,19 @@ int RoomCtrl::getRoomConnections(int index) const
 	}
 	for (int i = 0; i < m_outsideDoorPos.size(); i++)
 	{
-		connections += (m_outsideDoorPos[i].roomIndexes[1] == index);
+		connections += m_outsideDoorPos[i].roomIndexes[1] == index;
 	}
 	return connections;
+}
+
+int RoomCtrl::HasEntranceDoor(int index) const
+{
+	for (auto& c : m_outsideDoorPos)
+	{
+		if (c.roomIndexes[1] == index)
+			return true;
+	}
+	return false;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -889,54 +804,66 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 				{
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
-					if (lol.x == upPos.x && lol.y == upPos.y)
+					if ((lol.x == upPos.x && lol.y == upPos.y) )
 					{
 						allowedWallsDown[i] = false;
 						wall->setIsShared(true);
 						
 					}
+
 				}
 
 				for (auto& wall : room->getWalls(Direction::down))
 				{
+					
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z + currentRoomSizeY };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
-					if (lol.x == upPos.x && lol.y == upPos.y)
+
+					if ((lol.x == upPos.x && lol.y == upPos.y))
 					{
 						allowedWallsUp[i] = false;
 						wall->setIsShared(true);
-						
+				
 					}
+
 				}
 
 			}
 
 			for (int i = 0; i < currentRoomSizeY; i++)
 			{
+
 				allowedWallsLeft.push_back(true);
 				allowedWallsRight.push_back(true);
 				for (auto& wall : room->getWalls(Direction::left))
 				{
+					
+					
 					XMFLOAT2 lol = { currentRoomPos.x + currentRoomSizeX , currentRoomPos.z + i };
 					XMFLOAT2 leftPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
-					if (lol.x == leftPos.x && lol.y == leftPos.y)
+					if ((lol.x == leftPos.x && lol.y == leftPos.y) )
 					{
 						allowedWallsRight[i] = false;
 						wall->setIsShared(true);
-						
+				
 					}
+					
+					
+					
 				}
 
 				for (auto& wall : room->getWalls(Direction::right))
 				{
 					XMFLOAT2 lol = { currentRoomPos.x, currentRoomPos.z + i };
 					XMFLOAT2 rightPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
-					if (lol.x == rightPos.x && lol.y == rightPos.y)
+					if ((lol.x == rightPos.x && lol.y == rightPos.y))
 					{
 						allowedWallsLeft[i] = false;
 						wall->setIsShared(true);
-						
+
 					}
+					
+					
 				}
 
 			}
@@ -953,6 +880,7 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 
 void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 {
+	// We need to search for the room with this wallPosition
 	for (auto& rooms : m_rooms)
 	{
 		for (int i = 0; i < 4; i++)
@@ -963,7 +891,9 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 				{
 					if (!wall->getIsDoor())
 					{
-							wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::DOOR));
+						std::cout << "Wall Position (" << wall->getObject3D().getPosition().x << "," << wall->getObject3D().getPosition().z << ")\n";
+						wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::DOOR));
+
 						if (rot != 0.0)
 						{
 							DirectX::XMFLOAT3 r = wall->getObject3D().getRotation();
@@ -993,7 +923,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 							m_roomToRoom.push_back(dp2);
 
 							_makeRoomConnection(room1Index, room2Index);
-							//_printRoomConnections();
+							_printRoomConnections();
 						}
 						else // This door leads to the outside
 						{
@@ -1038,6 +968,48 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 	}
 }
 
+bool RoomCtrl::RemoveDoor(XMFLOAT3 wallPosition)
+{
+	bool haveRemoved = false;
+	for (auto& rooms : m_rooms)
+	{
+		for (auto& wall : *rooms->getAllWalls())
+		{
+			XMFLOAT3 wallPos = wall->getObject3D().getPosition();
+				
+			if (wallPos.x == wallPosition.x && wallPos.z == wallPosition.z)
+			{
+				//// Should be a door
+				//assert(wall->getIsDoor());
+					
+				wall->getObject3D().setMesh(MLP::GetInstance().GetMesh(MESH::WALL));
+				wall->setIsDoor(false);
+
+				// Now we need to remove the door from door to door passage arrays
+
+				// Create connection between rooms
+				XMINT2 room1 = wall->getNormalPosition();
+				XMINT2 room2 = wall->getNegativeNormalPosition();
+				int room1Index = _intersect(room1);
+				int room2Index = _intersect(room2);
+				assert(room1Index != -1 || room2Index != -1);
+
+				_removeFromRoomToRoom(room1Index, room2Index);
+
+				haveRemoved = true;
+
+			}
+		}
+
+	}
+	return haveRemoved;
+}
+
+std::vector<RoomCtrl::DoorPassage>& RoomCtrl::getAllEntranceDoors()
+{
+	return m_outsideDoorPos;
+}
+
 RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
 {
 	XMVECTOR  ourPos = XMLoadSInt2(&startPosition);
@@ -1077,9 +1049,28 @@ std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 	XMINT2 room2Pos = { (int)roomTile2->getQuad().getPosition().x, (int)roomTile2->getQuad().getPosition().z };
 	indexes[0] = _intersect(room1Pos);
 	indexes[1] = _intersect(room2Pos);
+	
+	// We cant perfrom dijkstra on the same room
+	if(indexes[0] != indexes[1])
+		_dijkstra(indexes[0], indexes[1]);
+	if (m_tempPath.size())
+	{
+		if (m_tempPath.size() == 1)
+			m_tempPath.clear();
+		else
+		{
+			for (int i = 0; i < m_tempPath.size() - 1; i++)
+			{
+				if (m_roomConnectionMap[m_tempPath[i]][m_tempPath[i + 1]] == 0)
+				{
+					m_tempPath.clear();
+					break;
+				}
+			}
+		}
+	}
 
-	_dijkstra(indexes[0], indexes[1]);
-		
+	
 	return m_tempPath;
 }
 

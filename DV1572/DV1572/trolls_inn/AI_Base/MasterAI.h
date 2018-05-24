@@ -90,7 +90,9 @@ private:
 public:
 	MasterAI(RoomCtrl* roomCtrl, Grid* grid, Inn * inn);
 	~MasterAI();
-	
+
+	AISolver* getSolverPtr();
+
 	Staff* getTroll(); 
 
 	// Move the time point with a specified duration

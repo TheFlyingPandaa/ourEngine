@@ -85,9 +85,7 @@ bool Wall::setIsDoor(const bool tjue)
 
 bool Wall::operator==(const Wall & other)
 {
-	return false;
-
-	
+	return m_wall->getPosition().x == other.m_wall->getPosition().x && m_wall->getPosition().z == other.m_wall->getPosition().z;
 }
 // round float to n decimals precision
 float round2_n(float num, int dec)

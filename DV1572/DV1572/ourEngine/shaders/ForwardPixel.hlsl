@@ -42,8 +42,12 @@ struct INPUT
 	float lIndex : LIGHTINDEX;
 };
 
+
+
 float4 main(INPUT input) : SV_Target
 {
+    int ToonShadingLevels = 7;
+
 	float3 wordPos = input.worldPos.xyz;
 	float3 normal = (2.0f * tNormal.Sample(sampAni, input.tex) - 1.0f).xyz;
 	normal = normalize(mul(normal, input.TBN));
@@ -53,40 +57,37 @@ float4 main(INPUT input) : SV_Target
 	if (diffuseSample.a < 0.5f)
 		discard;
 
+    //return float4(1, 0, 0, 1);
 	
 	diffuseSample *= input.color;
 	float3 ambient = diffuseSample.xyz * 0.5f;
 	float specLevel = 1; // Vet inte om detta var rätt!
 
-
-
-
-
-	uint index = round(input.lIndex);
+	
 	
 	float3 finalColorForSun;
 	//SUN//
 
 	//Diffuse calculation////////////////////////////////////////////////////////////////////////
 	float3 sunLightToObject = normalize(sunLightPos.xyz - wordPos);
-	float3 diffuse = diffuseSample.xyz * max(dot(normal, sunLightToObject), 0.0f);
-
+    float dif = max(dot(normal, sunLightToObject), 0.0f);
+    dif = floor(dif * ToonShadingLevels);
+    dif = dif / ToonShadingLevels;
+    float3 diffuse = diffuseSample.xyz * dif;    
 	////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 	//Specular calculation//////////////////////////////////////////////////////////////////////
 	float3 viewer = normalize(camPos.xyz - wordPos);
-
-	float3 halfWayDir;
-	/*WWWHOOOOOOOOO WE'RE...*/ halfWayDir = normalize(sunLightToObject + viewer);
-
+	float3 halfWayDir = normalize(sunLightToObject + viewer);
 	//spec lowest value is 32.
 	float spec = pow(max(dot(normal, halfWayDir), 0.0f), 32.0f);
-
 	float3 finalSpec = spec * specLevel * 0.5f;
 	///////////////////////////////////////////////////////////////////////////////////////////
 
+
+    //Shadow///////////////////////////////////////////////////////////////////////////////////
 	//float4 lightPos = view[3];
 	float4 posLightH = mul(float4(wordPos, 1.0f), mul(view, projection));
 	float shadowCoeff = 1;
@@ -94,9 +95,6 @@ float4 main(INPUT input) : SV_Target
 	shadowTexCoords.x = 0.5f + (posLightH.x * 0.5f);
 	shadowTexCoords.y = 0.5f - (posLightH.y * 0.5f);
 	float pixelDepth = posLightH.z;
-
-	//float window = 1.0f;
-
 	// If we are in shadow
 	if ((saturate(shadowTexCoords.x) == shadowTexCoords.x) &&
 		(saturate(shadowTexCoords.y) == shadowTexCoords.y) &&
@@ -120,10 +118,10 @@ float4 main(INPUT input) : SV_Target
 			}
 		}
 		shadowCoeff /= 9.0f;
-		shadowCoeff = max(shadowCoeff, 0.2);
+        shadowCoeff = min(max(shadowCoeff, 0.2),1.0f);
 		
 	}
-
+    ///////////////////////////////////////////////////////////////////////////////////////////
 	finalColorForSun = ambient + (diffuse + finalSpec)* sunColor.xyz * shadowCoeff;
 
 	float3 finalColorForPointLights = float3(0, 0, 0);
@@ -135,7 +133,10 @@ float4 main(INPUT input) : SV_Target
 	float att = 0;
 	float specLevelPointLight = specLevel * 0.2f;
 
+
+    uint index = round(input.lIndex);
 	int fIndex = index;
+ 
 	for (int i = 0; i < nrOfLights.r; i++)
 	{
 		int index = pointLColor[i].a;
@@ -143,18 +144,20 @@ float4 main(INPUT input) : SV_Target
 		{
 			//Diffuse 
 			float3 pointLightToObject = normalize(pointLPos[i].xyz - wordPos);
-            diffuseForPointLight = diffuseSample.xyz * max(dot(normal, pointLightToObject), 0.0f);
+            float dif = max(dot(normal, pointLightToObject), 0.0f);
+            dif = floor(dif * ToonShadingLevels);
+            dif = dif / ToonShadingLevels;
+            diffuseForPointLight = diffuseSample.xyz * dif;
 			//Specular
 			halfWayDirPointLight = normalize(pointLightToObject + viewer);
 			specPointLight = pow(max(dot(normal, halfWayDirPointLight), 0.0f), 32.0f);
 			finalSpecPointLight = specPointLight * specLevelPointLight;
 
 			//PointLight Attenuation
-
 			float distanceFromPointLight = length(wordPos - pointLPos[i].xyz);
 			att = lightSetup[i].r / (lightSetup[i].g + lightSetup[i].b * distanceFromPointLight + lightSetup[i].a * distanceFromPointLight);
 
-			tempColor = (diffuseForPointLight + finalSpecPointLight) * att * pointLColor[i].xyz;
+			tempColor = (diffuseForPointLight /*+ finalSpecPointLight*/) * att * pointLColor[i].xyz;
 
 			finalColorForPointLights = tempColor;
 		}
