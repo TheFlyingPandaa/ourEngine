@@ -52,7 +52,7 @@ XMINT2 Customer::findNearestRoom(RoomCtrl* roomCtrl, CustomerState customerNeed)
 					furniture[k]->setOwner(this);
 					m_ownedFurniture = furniture[k];
 					m_ownedFurniture->setIsBusy(true);
-					furniture[k]->increaseDirtyLevel();
+					furniture[k]->increaseDirtyLevel(); 
 					furnitureFound = true;
 				}
 			}
