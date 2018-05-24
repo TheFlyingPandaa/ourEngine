@@ -408,10 +408,13 @@ std::chrono::duration<double> Customer::GetTimeSpan()
 std::string Customer::getInfoText() const
 {
 	std::string returnStr;
-	returnStr += "Gold " + std::to_string(m_economy.GetGold()) + "\n";
+	returnStr += "Gold " + std::to_string(int(m_economy.GetGold())) + "\n";
 	returnStr += "Type ";
 	returnStr += GetRaceStr();
 	returnStr += "\n";
+	returnStr += "Hungry: " + std::to_string(int(m_hungry)) + "\n"; 
+	returnStr += "Tired: " + std::to_string(int(m_tired)) + "\n"; 
+	returnStr += "Thirsty: " + std::to_string(int(m_thirsty)) + "\n";
 	return returnStr;
 }
 
