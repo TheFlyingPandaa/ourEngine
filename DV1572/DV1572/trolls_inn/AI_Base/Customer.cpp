@@ -431,8 +431,8 @@ std::string Customer::getInfoText() const
 	returnStr += "Type ";
 	returnStr += GetRaceStr();
 	returnStr += "\n";
-	returnStr += "Hungry: " + std::to_string(int(m_hungry)) + "\n";
-	returnStr += "Tired: " + std::to_string(int(m_tired)) + "\n";
+	returnStr += "Hungry: " + std::to_string(int(m_hungry)) + "\n"; 
+	returnStr += "Tired: " + std::to_string(int(m_tired)) + "\n"; 
 	returnStr += "Thirsty: " + std::to_string(int(m_thirsty)) + "\n";
 	return returnStr;
 }
