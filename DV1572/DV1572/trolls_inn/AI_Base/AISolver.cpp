@@ -1,5 +1,5 @@
 ﻿#include "AISolver.h"
-
+#define CAST(t,v) static_cast<t>(v)
 // round float to n decimals precision
 float round_n2(float num, int dec)
 {
@@ -73,14 +73,14 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 50 gold!" << std::endl;
 			inn->GetRefund(50);
 			customer.GetEconomy().GetCashback(50);
-			customer.GetAttributes().AddStat(-0.15);
+			customer.GetAttributes().AddStat(-0.15f);
 		}
 		else
 		{
 			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 70 gold!" << std::endl;
 			inn->GetRefund(70);
 			customer.GetEconomy().GetCashback(70);
-			customer.GetAttributes().AddStat(0.15);
+			customer.GetAttributes().AddStat(0.15f);
 		}
 		InGameConsole::pushString(ss.str());
 		customer.SetWaitingForSpot(false);
@@ -99,12 +99,8 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition)
 {
 	Tile* startTile = m_grid->getTile(startPosition.x, startPosition.y);
-	Tile* targetTile;
-	//if (m_grid->getTile(targetPosition.x, targetPosition.y))
-	//{
-	//	return std::vector<std::shared_ptr<Node>>();
-	//}
-	targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
+	Tile* targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
+
 	std::vector<std::shared_ptr<Node>> path;
 	// Outside -> OutSide
 	if (startTile && targetTile)
@@ -118,17 +114,51 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
 
-		if (0 == m_roomctrl->getRoomConnections(index))
+		// If the target room has no connecting doors
+		if (m_roomctrl->getRoomConnections(index) == false)
+		{
+			std::cout << "Has no connected rooms!\n";
 			return std::vector<std::shared_ptr<Node>>();
+		}
+	
+		auto entranceDoors = m_roomctrl->getAllEntranceDoors();
+		Room* entranceRoom = nullptr; 
+		int thisindex = -1;
+		int highestCon = 1;
+		// Test all the entrance doors if we can get to the target
+		for (int i = 0; i < entranceDoors.size(); i++)
+		{
+			int eIndex = m_roomctrl->_intersect(entranceDoors[i].two);
+			Room* eRoom = m_roomctrl->getRoomAt(eIndex);
+			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(eRoom->getTile(entranceDoors[i].two.x, entranceDoors[i].two.y), targetRoom->getTile(pos.x, pos.y));
+			if (roomIndexes.size() > highestCon)
+			{
+				entranceRoom = eRoom;
+				thisindex = i;
+				highestCon = CAST(int,roomIndexes.size());
+			}
+			else // This is probably the same room
+			{
+				// If the target room is located in the entrance room we found it!
+				if (*eRoom == *targetRoom)
+				{
+					entranceRoom = targetRoom;
+					thisindex = i;
+				}
+			}
+		}
+		if (thisindex == -1) // This means that we didnt find any entrance doors!
+		{
+			std::cout << "We didnt find any entrance doors\n";
+			return std::vector<std::shared_ptr<Node>>();
+		}
 
-		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
-		Room* entranceRoom = m_roomctrl->getRoomAt(entranceDoor.roomIndexes[1]);
 		// Now do we wanna walk to the entrance
-		path = m_grid->findPath(startTile, m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y));
+		path = m_grid->findPath(startTile, m_grid->getTile(entranceDoors[thisindex].one.x, entranceDoors[thisindex].one.y));
 
 		//Lets not talk about this one(This is so we walk straight through the door...)
 		std::vector<std::shared_ptr<Node>> lol1;
-		std::shared_ptr<Node> current(new Node(entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), nullptr, 0, 0));
+		std::shared_ptr<Node> current(new Node(entranceRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y), nullptr, 0, 0));
 		lol1.push_back(current);
 		path.insert(path.end(), lol1.begin(), lol1.end());
 
@@ -136,18 +166,18 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		// and not start the higher level room path finding
 		if (*targetRoom == *entranceRoom)
 		{
-			auto doorToEndTile = targetRoom->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), targetRoom->getTile(pos.x, pos.y));
+			auto doorToEndTile = targetRoom->findPath(targetRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y), targetRoom->getTile(pos.x, pos.y));
 			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
 		}
 		// We want to be advanced :P
 		else
 		{
 
-			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), targetRoom->getTile(pos.x, pos.y));
+			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(entranceRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y), targetRoom->getTile(pos.x, pos.y));
 
 			Room* startRoom = entranceRoom;
 			XMINT2 DoorLeavePos;
-			XMINT2 startPosition = entranceDoor.two;
+			XMINT2 startPosition = entranceDoors[thisindex].two;
 			for (int i = 0; i < roomIndexes.size() - 1; i++)
 			{
 				// Between this rooms leave door and other rooms enter door
@@ -187,7 +217,10 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		Room* startRoom = m_roomctrl->getRoomAt(indexForTarget);
 
 		if (0 == m_roomctrl->getRoomConnections(index))
+		{
+			std::cout << "Has no connected rooms\n";
 			return std::vector<std::shared_ptr<Node>>();
+		}
 
 		if (*targetRoom == *startRoom)
 		{
@@ -197,6 +230,44 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		else
 		{
 			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(startRoom->getTile(tPos.x, tPos.y), targetRoom->getTile(pos.x, pos.y));
+			// if this is equal to zero then the rooms are not connected.
+			if (roomIndexes.size() == 0)
+			{
+				auto entranceDoors = m_roomctrl->getAllEntranceDoors();
+				Room* entranceRoom = nullptr;
+				int thisindex = -1;
+				int highestCon = 1;
+				// Test all the entrance doors if we can get to the target
+				for (int i = 0; i < entranceDoors.size(); i++)
+				{
+					int eIndex = m_roomctrl->_intersect(entranceDoors[i].two);
+					Room* eRoom = m_roomctrl->getRoomAt(eIndex);
+					std::vector<int> roomIndexes = m_roomctrl->roomTraversal(startRoom->getTile(tPos.x, tPos.y), eRoom->getTile(entranceDoors[i].two.x, entranceDoors[i].two.y));
+					if (roomIndexes.size() > highestCon)
+					{
+						entranceRoom = eRoom;
+						thisindex = i;
+						highestCon = roomIndexes.size();
+					}
+					else // This is probably the same room
+					{
+						// If the target room is located in the entrance room we found it!
+						if (*eRoom == *startRoom)
+						{
+							entranceRoom = eRoom;
+							thisindex = i;
+						}
+					}
+				}
+				if (thisindex == -1) // This means that we didnt find any entrance doors!
+				{
+					std::cout << "We didnt find any entrance doors\n";
+					return std::vector<std::shared_ptr<Node>>();
+				}
+
+				
+				int i = 0;
+			}
 
 			Room* cRoom = startRoom;
 			XMINT2 DoorLeavePos;
@@ -231,11 +302,39 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 		int index = m_roomctrl->_intersect(pos);
 		Room* targetRoom = m_roomctrl->getRoomAt(index);
 
-		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
+		auto entranceDoors = m_roomctrl->getAllEntranceDoors();
+		Room* entranceRoom = nullptr;
+		int thisindex = -1;
+		// Test all the entrance doors if we can get to the target
+		for (int i = 0; i < entranceDoors.size(); i++)
+		{
+			int eIndex = m_roomctrl->_intersect(entranceDoors[i].two);
+			Room* eRoom = m_roomctrl->getRoomAt(eIndex);
+			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(eRoom->getTile(entranceDoors[i].two.x, entranceDoors[i].two.y), targetRoom->getTile(pos.x, pos.y));
+			if (roomIndexes.size())
+			{
+				entranceRoom = eRoom;
+				thisindex = i;
+			}
+			else // This is probably the same room
+			{
+				// If the target room is located in the entrance room we found it!
+				if (*eRoom == *targetRoom)
+				{
+					entranceRoom = targetRoom;
+					thisindex = i;
+				}
+			}
+		}
 
 		XMINT2 tPos = targetPosition;
-		int index2 = m_roomctrl->_intersect(entranceDoor.two);
-		Room* entranceRoom = m_roomctrl->getRoomAt(index2);
+		
+		// Somehow the entranceroom went nullptr
+		if (!entranceRoom || !targetRoom)
+		{
+			std::cout << "entranceRoom or targetRoom was nullptr\n";
+			return std::vector<std::shared_ptr<Node>>();
+		}
 
 		if (*entranceRoom == *targetRoom)
 		{
@@ -244,25 +343,21 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 			int index = m_roomctrl->_intersect(pos);
 			Room* targetRoom = m_roomctrl->getRoomAt(index);
 
-			if (0 == m_roomctrl->getRoomConnections(index))
-				return std::vector<std::shared_ptr<Node>>();
-
-
 			// Path to door
-			auto toDoor = targetRoom->findPath(targetRoom->getTile(startPosition.x, startPosition.y), targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
+			auto toDoor = targetRoom->findPath(targetRoom->getTile(startPosition.x, startPosition.y), targetRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y));
 			path.insert(path.end(), toDoor.begin(), toDoor.end());
 
 			//Lets not talk about this one(This is so we walk straight through the door...)
-			auto walkThroughDoor = m_grid->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y));
+			auto walkThroughDoor = m_grid->findPath(targetRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y), m_grid->getTile(entranceDoors[thisindex].one.x, entranceDoors[thisindex].one.y));
 			path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
 
-			auto walkToTarget = m_grid->findPath(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), targetTile);
+			auto walkToTarget = m_grid->findPath(m_grid->getTile(entranceDoors[thisindex].one.x, entranceDoors[thisindex].one.y), targetTile);
 			path.insert(path.end(), walkToTarget.begin(), walkToTarget.end());
 		}
 		else
 		{
 			// We need to find the entrace from inside then we path to the destination
-			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(targetRoom->getTile(startPosition.x, startPosition.y), entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
+			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(targetRoom->getTile(startPosition.x, startPosition.y), entranceRoom->getTile(entranceDoors[thisindex].two.x, entranceDoors[thisindex].two.y));
 
 			Room* startRoom = targetRoom;
 			XMINT2 DoorLeavePos;

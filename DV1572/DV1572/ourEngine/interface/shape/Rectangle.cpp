@@ -8,7 +8,7 @@ void RectangleShape::_buildRectangle()
 	m_index = -1;
 }
 
-RectangleShape::RectangleShape(float w, float h)
+RectangleShape::RectangleShape(float w, float h) : Shape()
 {
 	DirectX::XMINT2 s = Input::getWindowSize();
 	m_rt = RelativeTo::BL;
@@ -34,6 +34,7 @@ RectangleShape::RectangleShape(float w, float h)
 
 RectangleShape::~RectangleShape()
 {
+
 }
 
 void RectangleShape::setScreenPos(float x, float y, float depth)

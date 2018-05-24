@@ -282,7 +282,7 @@ void Shape::setUVScaleX(int x)
 
 void Shape::setUVScaleY(int y)
 {
-	m_gridscaleX = y;
+	m_gridscaleY = y;
 }
 
 int Shape::getGridScaleX() const

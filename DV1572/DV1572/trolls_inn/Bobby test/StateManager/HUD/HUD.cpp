@@ -20,8 +20,8 @@ void HUD::_cleanUp()
 
 	for (size_t i = 0; i < m_mesh.size(); i++)
 		delete m_mesh[i];
-
-	m_mesh.clear();
+	// no need to clear
+	//m_mesh.clear();
 	
 	for (size_t i = 0; i < m_texts.size(); i++)
 	{
@@ -31,7 +31,7 @@ void HUD::_cleanUp()
 			m_texts[i] = nullptr;
 		}
 	}
-	m_texts.clear();
+	//m_texts.clear();
 }
 
 void HUD::_setupAPotentialAreaCircle(int x, int y, int r, int relative)

@@ -71,7 +71,7 @@ private:
 	bool			_handleHUDPicking();
 	void			_handleInput();
 
-	std::vector<std::shared_ptr<Node>> getPathAndEatAss(XMINT2 startPosition, XMINT2 targetPosition);
+	//std::vector<std::shared_ptr<Node>> getPathAndEatAss(XMINT2 startPosition, XMINT2 targetPosition);
 
 public:
 	GameState(std::stack<Shape *>* pickingEvent, std::stack<int>* keyEvent, Camera* cam = nullptr);
