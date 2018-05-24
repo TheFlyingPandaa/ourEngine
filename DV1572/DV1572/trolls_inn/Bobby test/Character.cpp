@@ -72,15 +72,16 @@ void Character::Update()
 		if (abs(dir.stepsLeft) <= 0.01f)
 		{
 			dir.stepsLeft = 0.0f;
-
 			moving = false;
+			XMFLOAT2 p = getPosition();
+			XMINT2 ip((int)p.x, (int)p.y);
+			setPosition(ip.x + 0.5f, ip.y + 0.5f);
 		}
 		
 		if (!moving)
 			m_goQueue.pop_front();
 		else
 		{
-			
 			dir.stepsLeft -= m_speed;
 			m_goQueue[0] = dir;
 			if (dir.dir != m_currentDir)
@@ -134,10 +135,13 @@ void Character::Update()
 
 void Character::Move(WalkDirection dir)
 {
-	Go step;
-	step.stepsLeft = 1.0f;
-	step.dir = dir;
-	m_goQueue.push_back(step);
+	if (dir != NONE)
+	{
+		Go step;
+		step.stepsLeft = 1.0f;
+		step.dir = dir;
+		m_goQueue.push_back(step);
+	}
 }
 
 void Character::Turn(WalkDirection dir)
@@ -285,7 +289,7 @@ Character::WalkDirection Character::getDirectionFromPoint(XMFLOAT3 oldPos, XMFLO
 	XMVECTOR xmDeltaPos = xmNewPos - oldPosWithoutOffset;
 	XMFLOAT3 result;
 	XMStoreFloat3(&result, xmDeltaPos);
-	WalkDirection dir;
+	WalkDirection dir = NONE;
 	
 	if (result.x > 0) 
 	{
@@ -327,7 +331,6 @@ void Character::clearWalkingQueue()
 		Character::Go g = m_goQueue.front();
 		m_goQueue.clear(); 
 		m_goQueue.push_back(g);
-
 	}
 }
 
@@ -356,4 +359,52 @@ Object3D & Character::getHitBox()
 short Character::getUniqueIndex() const
 {
 	return m_uniqueIndex;
+}
+
+void Character::getStepsLeft(float & x, float & y)
+{
+	x = y = 0.0f;
+
+	if (m_goQueue.size())
+	{
+		Character::Go g = m_goQueue.front();
+
+		switch (g.dir)
+		{
+		case UP:
+			x = 0.0f;
+			y = 1.0f;
+			break;
+		case UPRIGHT:
+			x = 1.0f;
+			y = 1.0f;
+			break;
+		case UPLEFT:
+			x = -1.0f;
+			y = 1.0f;
+			break;
+		case RIGHT:
+			x = 1.0f;
+			y = 0.0f;
+			break;
+		case LEFT:
+			x = -1.0f;
+			y = 0.0f;
+			break;
+		case DOWN:
+			x = 0.0f;
+			y = -1.0f;
+			break;
+		case DOWNRIGHT:
+			x = 1.0f;
+			y = -1.0f;
+			break;
+		case DOWNLEFT:
+			x = -1.0f;
+			y = -1.0f;
+			break;
+		}
+		x *= g.stepsLeft;
+		y *= g.stepsLeft;
+	}
 }

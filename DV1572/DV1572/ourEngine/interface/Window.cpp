@@ -7,6 +7,8 @@
 #include <algorithm> // For std::find_if
 #include "../interface/shape/Billboard.h"
 #define DEBUG 1
+
+#pragma comment(lib, "winmm")
 //Devices
 ID3D11Device* DX::g_device;
 ID3D11DeviceContext* DX::g_deviceContext;
@@ -691,7 +693,6 @@ void Window::_loadShadowBuffers()
 void Window::_prepareShadow()
 {
 
-	//DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	DX::g_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DX::g_deviceContext->IASetInputLayout(DX::g_inputLayout);
 	DX::g_deviceContext->VSSetShader(m_shadowVertex, nullptr, 0);
@@ -706,6 +707,7 @@ void Window::_prepareShadow()
 	wfdesc.FillMode = D3D11_FILL_SOLID;
 	wfdesc.CullMode = D3D11_CULL_BACK;
 	wfdesc.DepthClipEnable = true;
+	DX::SafeRelease(&m_WireFrame);
 	DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 	DX::g_deviceContext->RSSetState(m_WireFrame);
 
@@ -1207,6 +1209,7 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
+		DX::SafeRelease(&m_WireFrame);
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1275,6 +1278,7 @@ void Window::_billboardPass(const Camera & cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
+		DX::SafeRelease(&m_WireFrame);
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1302,6 +1306,7 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 		wfdesc.CullMode = D3D11_CULL_NONE;
+		DX::SafeRelease(&m_WireFrame);
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1372,6 +1377,7 @@ void Window::_geometryPass(const Camera &cam)
 		ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
 		wfdesc.FillMode = D3D11_FILL_SOLID;
 		wfdesc.CullMode = D3D11_CULL_BACK;
+		DX::SafeRelease(&m_WireFrame);
 		DX::g_device->CreateRasterizerState(&wfdesc, &m_WireFrame);
 		DX::g_deviceContext->RSSetState(m_WireFrame);
 	}
@@ -1898,6 +1904,22 @@ void Window::Flush(Camera* c)
 		{
 			m_WireFrameDebug = false;
 		}
+	}
+	
+	if (Input::isKeyPressed(Input::F5))
+	{
+		if (m_volume >= 100) {
+			m_volume -= 100;
+		}
+		
+		waveOutSetVolume(NULL, m_volume);
+	}
+	if (Input::isKeyPressed(Input::F6))
+	{
+		if (m_volume <= 65435) {
+			m_volume += 100;
+		}
+		waveOutSetVolume(NULL, m_volume);
 	}
 	
 
