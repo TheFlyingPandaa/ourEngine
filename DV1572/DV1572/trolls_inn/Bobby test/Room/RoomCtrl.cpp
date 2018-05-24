@@ -1,6 +1,7 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
 #include "../../Mesh Manager/MeshLoaderPlus.h"
+#define CAST(t,v) static_cast<t>(v)
 
 int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
@@ -48,6 +49,7 @@ void RoomCtrl::_dijkstra(int src, int dst)
 		return min_index;
 	};
 
+	
 	if (m_roomConnectionMap[src].size() == 1) return;
 
 	int* dist = new int[m_roomConnectionMap[src].size()];  // The output array. dist[i] will hold
@@ -63,9 +65,10 @@ void RoomCtrl::_dijkstra(int src, int dst)
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < m_roomConnectionMap[src].size(); i++)
 	{
-		parent[src] = -1;
+		parent[i] = -1;
 		dist[i] = INT_MAX;
 		sptSet[i] = false;
+		
 	}
 
 	// Distance of source vertex from itself is always 0
@@ -98,12 +101,19 @@ void RoomCtrl::_dijkstra(int src, int dst)
 
 	}
 
-
-	// print the constructed distance array
-	_getSolution(dist, parent, src, dst);
+	int counter = 0;
+	for (int i = 0; i < m_roomConnectionMap[src].size(); i++)
+	{
+		if (parent[i] == -1)
+			counter++;
+	}
+	if(counter != m_roomConnectionMap[src].size())
+		_getSolution(dist, parent, src, dst);
+	
 	delete[] dist;
 	delete[] parent;
 	delete[] sptSet;
+	
 }
 
 void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
@@ -115,15 +125,15 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 
 void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
-	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
+	XMINT2 furPos = { CAST(int,furniture->getPosition().x), CAST(int,furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
 	if (index == -1) return;
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		int xCoord = (x - static_cast<int>(cr->getPosition().x));
-		int yCoord = (y - static_cast<int>(cr->getPosition().z));
+		int xCoord = (x - CAST(int,cr->getPosition().x));
+		int yCoord = (y - CAST(int,cr->getPosition().z));
 		int roomSizeX = cr->getSize().x;
 		int roomSizeY = cr->getSize().y;
 		if (xCoord >= roomSizeX || xCoord < 0) return -1;
@@ -191,7 +201,7 @@ void RoomCtrl::_traversalPath(int parent[], int j, int src, int dst)
 	m_tempPath.push_back(j);
 }
 
-#include <iostream>
+
 void RoomCtrl::_printRoomConnections() const
 {
 	
@@ -210,35 +220,12 @@ void RoomCtrl::_printRoomConnections() const
 		}
 		std::cout << std::endl;
 	}
-
-	/*std::cout << "Room " << m_rooms.size() - 1 << "->" << 0 << ": ";
-	for (int i = 0; i < m_tempPath.size(); i++)
-		std::cout << m_tempPath[i] << " ";
-	std::cout << std::endl;
-	for (int i = 0; i < m_roomConnectionMap.size(); i++)
-	{
-		for (int ii = 0; ii < m_roomConnectionMap[i].size(); ii++)
-		{
-			for (int j = 0; j < m_roomToRoom.size(); j++)
-			{
-				if (m_roomToRoom[j].roomIndexes[0] == i && m_roomToRoom[j].roomIndexes[1] == ii)
-				{
-					std::cout << "Room " << i << "-> " << ii << "\n";
-					std::cout << "One door Pos: (" << m_roomToRoom[j].one.x << "," << m_roomToRoom[j].one.y << ")\n";
-					std::cout << "Two door Pos: (" << m_roomToRoom[j].two.x << "," << m_roomToRoom[j].two.y << ")\n";
-				}
-			}
-
-		}
-	}*/
-
-
 }
 
 void RoomCtrl::_removeFromRoomToRoom(int room1, int room2)
 {
 	int removesCounter = 0;
-	for (std::vector<DoorPassage>::iterator it = m_roomToRoom.begin(); 
+	for (std::vector<DoorPassage>::iterator it = m_roomToRoom.begin();
 		it != m_roomToRoom.end();
 		)
 	{
@@ -246,7 +233,7 @@ void RoomCtrl::_removeFromRoomToRoom(int room1, int room2)
 		if ((room1 == c.roomIndexes[0] && room2 == c.roomIndexes[1])
 			|| (room2 == c.roomIndexes[0] && room1 == c.roomIndexes[1]))
 		{
-			it = m_roomToRoom.erase(it); 
+			it = m_roomToRoom.erase(it);
 			removesCounter++;
 		}
 		else
@@ -298,29 +285,23 @@ RoomCtrl::~RoomCtrl()
 
 void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomType, std::vector<Tile*> tiles, bool force)
 {
-	Room * currentRoom = nullptr;
+	Room * currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 
 	switch (roomType)
 	{
 	case kitchen:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::KITCHENTILE));
 		break;
 	case bedroom:
-		//Duno just copied the 
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::BEDROOMTILE));
 		break;
 	case reception:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE));
 		break;
 	case hallway:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::HALLWAYTILE));
 		break;
 	case bar:
-		currentRoom = new Room(pos.x, pos.y, size.x, size.y, tiles, roomType);
 		currentRoom->setFloorMesh(MLP::GetInstance().GetMesh(MESH::WOODTILE));
 		break;
 	}
@@ -375,28 +356,8 @@ void RoomCtrl::AddRoom(DirectX::XMINT2 pos, DirectX::XMINT2 size, RoomType roomT
 
 }
 
-// Recieves tile pos, it knows what room you picked.
-// returns the room tiles and position and size
-// sent these into grid->insertTiles();
 
- bool RoomCtrl::RemoveRoom(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2& delPos, DirectX::XMINT2& delSize)
-{
-	int index = _intersect(pos, XMINT2(1, 1));
-	
-	if (index != -1)
-	{
 
-		backtiles = m_rooms[index]->ReturnTiles();
-		XMFLOAT3 _pos = m_rooms[index]->getPosition();
-		delSize = m_rooms[index]->getSize();
-		delPos = { static_cast<int>(_pos.x), static_cast<int>(_pos.z) };
-		delete m_rooms[index];
-		m_rooms.erase(m_rooms.begin() + index);
-	}
-	
-	return index != -1;
-}
-#pragma optimize ("", off)
 
 std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector<Tile*>& backtiles, DirectX::XMINT2 & delPos, DirectX::XMINT2 & delSize)
 {
@@ -410,35 +371,32 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 
 		// Remove all this rooms doors
 		std::vector<DoorPassage> cpy(m_roomToRoom);
-		int oldSize = m_roomToRoom.size();
+		int oldSize = CAST(int,m_roomToRoom.size());
 	
 		for (auto& dp : cpy)
 		{
 			if (dp.roomIndexes[0] == index)
 			{
-				XMFLOAT3 t1(dp.one.x, 0.0f, dp.one.y);
-				XMFLOAT3 t2(dp.two.x, 0.0f, dp.two.y);
+				XMFLOAT3 t1(CAST(float,dp.one.x), 0.0f, CAST(float,dp.one.y));
+				XMFLOAT3 t2(CAST(float,dp.two.x), 0.0f, CAST(float,dp.two.y));
 
 				// t1 -> t2
 				XMFLOAT3 wallPosition(((t2.x + t1.x) * 0.5f) + 0.5f, 0.0f, ((t2.z + t1.z) * 0.5f) + 0.5f);
 				std::cout << "delete wallPos (" << wallPosition.x << "," << wallPosition.z << ")\n";
 				assert(RemoveDoor(wallPosition));
-				assert(oldSize != m_roomToRoom.size());
-				oldSize = m_roomToRoom.size();
+				//assert(oldSize != m_roomToRoom.size());
+				oldSize = static_cast<int>(m_roomToRoom.size());
 			}
 			
 		}
 
-		
 	
-		
-		
 		std::cout << "Size of m_roomToRoom= " << m_roomToRoom.size() << "\n";
 		
 		
 		for (int i = 0; i < m_outsideDoorPos.size(); i++)
 		{
-			if (m_outsideDoorPos[i].roomIndexes[0] == index)
+			if (m_outsideDoorPos[i].roomIndexes[1] == index)
 			{
 				m_outsideDoorPos.erase(m_outsideDoorPos.begin() + i);
 				i = 0;
@@ -472,6 +430,10 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 
 		for (auto& r : m_rooms)
 		{
+			r->DeleteWalls();
+		}
+		for (auto& r : m_rooms)
+		{
 			CreateWalls(r);
 		}
 
@@ -480,7 +442,7 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 	_printRoomConnections();
 	return { index != -1, payBack >> 1 }; //c++17 way of making a tuple
 }
-#pragma optimize ("", on)
+
 
  bool RoomCtrl::CheckAndMarkTilesObject(DirectX::XMINT2 start, int size, int angle)
  {
@@ -787,12 +749,21 @@ int RoomCtrl::getRoomConnections(int index) const
 	{
 		connections += m_roomConnectionMap[index][i];
 	}
+	for (int i = 0; i < m_outsideDoorPos.size(); i++)
+	{
+		connections += m_outsideDoorPos[i].roomIndexes[1] == index;
+	}
 	return connections;
 }
 
-int RoomCtrl::HasEntranceDoor() const
+int RoomCtrl::HasEntranceDoor(int index) const
 {
-	return m_outsideDoorPos.size();
+	for (auto& c : m_outsideDoorPos)
+	{
+		if (c.roomIndexes[1] == index)
+			return true;
+	}
+	return false;
 }
 
 void RoomCtrl::CreateWalls(Room* currentRoom)
@@ -831,59 +802,61 @@ void RoomCtrl::CreateWalls(Room* currentRoom)
 				allowedWallsUp.push_back(true);
 				for (auto& wall : room->getWalls(Direction::up))
 				{
-					
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
-					if (lol.x == upPos.x && lol.y == upPos.y)
+					if ((lol.x == upPos.x && lol.y == upPos.y) )
 					{
 						allowedWallsDown[i] = false;
 						wall->setIsShared(true);
-
+						
 					}
-					
-					
+
 				}
 
 				for (auto& wall : room->getWalls(Direction::down))
 				{
-				
+					
 					XMFLOAT2 lol = { i + currentRoomPos.x, currentRoomPos.z + currentRoomSizeY };
 					XMFLOAT2 upPos = { wall->getObject3D().getPosition().x, wall->getObject3D().getPosition().z + 0.5f };
-					if (lol.x == upPos.x && lol.y == upPos.y)
+
+					if ((lol.x == upPos.x && lol.y == upPos.y))
 					{
 						allowedWallsUp[i] = false;
 						wall->setIsShared(true);
-
+				
 					}
-					
+
 				}
 
 			}
 
 			for (int i = 0; i < currentRoomSizeY; i++)
 			{
+
 				allowedWallsLeft.push_back(true);
 				allowedWallsRight.push_back(true);
 				for (auto& wall : room->getWalls(Direction::left))
 				{
 					
+					
 					XMFLOAT2 lol = { currentRoomPos.x + currentRoomSizeX , currentRoomPos.z + i };
 					XMFLOAT2 leftPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
-					if (lol.x == leftPos.x && lol.y == leftPos.y)
+					if ((lol.x == leftPos.x && lol.y == leftPos.y) )
 					{
 						allowedWallsRight[i] = false;
 						wall->setIsShared(true);
-						
+				
 					}
+					
+					
 					
 				}
 
 				for (auto& wall : room->getWalls(Direction::right))
 				{
-					
 					XMFLOAT2 lol = { currentRoomPos.x, currentRoomPos.z + i };
 					XMFLOAT2 rightPos = { wall->getObject3D().getPosition().x + 0.5f, wall->getObject3D().getPosition().z };
-					if (lol.x == rightPos.x && lol.y == rightPos.y)
+					if ((lol.x == rightPos.x && lol.y == rightPos.y))
 					{
 						allowedWallsLeft[i] = false;
 						wall->setIsShared(true);
@@ -950,7 +923,7 @@ void RoomCtrl::CreateDoor(XMFLOAT3 wallPosition, float rot)
 							m_roomToRoom.push_back(dp2);
 
 							_makeRoomConnection(room1Index, room2Index);
-							//_printRoomConnections();
+							_printRoomConnections();
 						}
 						else // This door leads to the outside
 						{
@@ -1032,6 +1005,11 @@ bool RoomCtrl::RemoveDoor(XMFLOAT3 wallPosition)
 	return haveRemoved;
 }
 
+std::vector<RoomCtrl::DoorPassage>& RoomCtrl::getAllEntranceDoors()
+{
+	return m_outsideDoorPos;
+}
+
 RoomCtrl::DoorPassage RoomCtrl::getClosestEntranceDoor(XMINT2 startPosition) const
 {
 	XMVECTOR  ourPos = XMLoadSInt2(&startPosition);
@@ -1071,9 +1049,28 @@ std::vector<int> RoomCtrl::roomTraversal(Tile * roomTile1, Tile * roomTile2)
 	XMINT2 room2Pos = { (int)roomTile2->getQuad().getPosition().x, (int)roomTile2->getQuad().getPosition().z };
 	indexes[0] = _intersect(room1Pos);
 	indexes[1] = _intersect(room2Pos);
+	
+	// We cant perfrom dijkstra on the same room
+	if(indexes[0] != indexes[1])
+		_dijkstra(indexes[0], indexes[1]);
+	if (m_tempPath.size())
+	{
+		if (m_tempPath.size() == 1)
+			m_tempPath.clear();
+		else
+		{
+			for (int i = 0; i < m_tempPath.size() - 1; i++)
+			{
+				if (m_roomConnectionMap[m_tempPath[i]][m_tempPath[i + 1]] == 0)
+				{
+					m_tempPath.clear();
+					break;
+				}
+			}
+		}
+	}
 
-	_dijkstra(indexes[0], indexes[1]);
-		
+	
 	return m_tempPath;
 }
 

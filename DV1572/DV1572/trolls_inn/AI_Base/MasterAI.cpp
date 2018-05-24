@@ -298,6 +298,11 @@ void MasterAI::CharacterMenu()
 	
 }
 
+AISolver * MasterAI::getSolverPtr()
+{
+	return &m_solver;
+}
+
 void MasterAI::Update(Camera* cam)
 {
 	if (m_showMenu)

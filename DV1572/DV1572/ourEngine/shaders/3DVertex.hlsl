@@ -1,8 +1,6 @@
 cbuffer MESH_BUFFER : register(b0)
 {
 	float4x4 vp; 
-	float gridScaleX;
-	float gridScaleY;
 }
 
 struct INPUT
@@ -20,7 +18,8 @@ struct INPUT
 
 	float4 color : HIGHLIGHTCOLOR;
 	float lIndex : LIGHTINDEX;
-
+	float gridScaleX : GRIDSCALEX;
+	float gridScaleY : GRIDSCALEY;
 };
 
 struct OUTPUT
@@ -41,8 +40,8 @@ OUTPUT main(INPUT input)
 	float4x4 world = { input.w1, input.w2, input.w3, input.w4 };
 	o.world = world;
 	o.worldPos = mul(float4(input.pos,1), world);
-	o.tex.x = input.tex.x * gridScaleX;
-	o.tex.y = input.tex.y * gridScaleY;
+	o.tex.x = input.tex.x * input.gridScaleX;
+	o.tex.y = input.tex.y * input.gridScaleY;
 	o.normal = input.normal;
 	o.tangent = input.tangent;
 	o.color = input.color;

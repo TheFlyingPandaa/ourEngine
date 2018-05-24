@@ -31,7 +31,6 @@ private:
 	
 	void _checkSpotInRoom(Inn* inn, Customer& customer);
 	void _doWaiting(Customer& customer, Inn* inn);
-	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 	
 	std::deque<PathThread> futureObjects;
 
@@ -51,4 +50,7 @@ public:
 
 	int RequestPath(Character& character, XMINT2 target);
 	int RequestPath(Character& character, RoomType targetRoom);
+
+	// This went public, watch out
+	std::vector<std::shared_ptr<Node>> GetPathAndSmokeGrass(XMINT2 startPosition, XMINT2 targetPosition);
 };
