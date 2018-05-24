@@ -265,8 +265,18 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 					return std::vector<std::shared_ptr<Node>>();
 				}
 
+		
+				path = GetPathAndSmokeGrass(tPos, entranceDoors[thisindex].two);
+				Room* cRoom = m_roomctrl->getRoomAt(entranceDoors[thisindex].roomIndexes[1]);
+
+				std::vector<std::shared_ptr<Node>> lol;
 				
-				int i = 0;
+				std::shared_ptr<Node> current(new Node(m_grid->getTile(entranceDoors[thisindex].one.x, entranceDoors[thisindex].one.y), nullptr, 0, 0));
+				lol.push_back(current);
+				path.insert(path.end(), lol.begin(), lol.end());
+				auto newPath = GetPathAndSmokeGrass(entranceDoors[thisindex].one, targetPosition);
+				path.insert(path.end(), newPath.begin(), newPath.end());
+				return path;
 			}
 
 			Room* cRoom = startRoom;
