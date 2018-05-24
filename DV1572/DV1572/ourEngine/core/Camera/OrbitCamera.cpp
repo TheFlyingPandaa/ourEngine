@@ -16,8 +16,8 @@ OrbitCamera::OrbitCamera(DirectX::XMFLOAT2 windowDim, DirectX::XMFLOAT3 pos) : C
 	m_lastMouse = { 0,0 };
 	rotation.x = rotation.y = 0;
 	m_sensitivity = 0.01f;
-	m_tiltCapDown = 0.0f;
-	m_tiltCapUp = 0.25f;
+	m_tiltCapDown = 0.2f;
+	m_tiltCapUp = 0.35f;
 	m_zoomSensitivity = 0.5f;
 	m_pos = pos;
 

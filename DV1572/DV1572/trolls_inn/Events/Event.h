@@ -30,7 +30,8 @@ public:
 	}
 	void Pop()
 	{
-		queue.pop();
+		if (queue.size())
+			queue.pop();
 	}
 	size_t Size()
 	{

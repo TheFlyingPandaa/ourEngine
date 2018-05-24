@@ -73,14 +73,14 @@ void AISolver::_doWaiting(Customer& customer, Inn* inn)
 			ss << "An Elf waited for too long to\nget service and is now leaving.\nYou lost 50 gold!" << std::endl;
 			inn->GetRefund(50);
 			customer.GetEconomy().GetCashback(50);
-			customer.GetAttributes().AddStat(-0.15);
+			customer.GetAttributes().AddStat(-0.15f);
 		}
 		else
 		{
 			ss << "A Dwarf waited for too long to\nget service and is now leaving.\nYou lost 70 gold!" << std::endl;
 			inn->GetRefund(70);
 			customer.GetEconomy().GetCashback(70);
-			customer.GetAttributes().AddStat(0.15);
+			customer.GetAttributes().AddStat(0.15f);
 		}
 		InGameConsole::pushString(ss.str());
 		customer.SetWaitingForSpot(false);
