@@ -1,6 +1,7 @@
 #include "RoomCtrl.h"
 #include "../../Furniture/Table.h"
 #include "../../Mesh Manager/MeshLoaderPlus.h"
+#define CAST(t,v) static_cast<t>(v)
 
 int RoomCtrl::_intersect(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
@@ -124,15 +125,15 @@ void RoomCtrl::_getSolution(int dist[], int parent[], int src, int dst)
 
 void RoomCtrl::AddRoomObject(Furniture * furniture)
 {
-	XMINT2 furPos = { static_cast<int>(furniture->getPosition().x), static_cast<int>(furniture->getPosition().z) };
+	XMINT2 furPos = { CAST(int,furniture->getPosition().x), CAST(int,furniture->getPosition().z) };
 	int index = _intersect(furPos, XMINT2(1, 1));
 	if (index == -1) return;
 	Room* cr = m_rooms[index];
 	auto m_tiles = cr->getTiles();
 	auto _index = [&](int x, int y) ->int
 	{
-		int xCoord = (x - static_cast<int>(cr->getPosition().x));
-		int yCoord = (y - static_cast<int>(cr->getPosition().z));
+		int xCoord = (x - CAST(int,cr->getPosition().x));
+		int yCoord = (y - CAST(int,cr->getPosition().z));
 		int roomSizeX = cr->getSize().x;
 		int roomSizeY = cr->getSize().y;
 		if (xCoord >= roomSizeX || xCoord < 0) return -1;
@@ -370,21 +371,21 @@ std::tuple<bool, int> RoomCtrl::RemoveRoomTuple(DirectX::XMINT2 pos, std::vector
 
 		// Remove all this rooms doors
 		std::vector<DoorPassage> cpy(m_roomToRoom);
-		int oldSize = m_roomToRoom.size();
+		int oldSize = CAST(int,m_roomToRoom.size());
 	
 		for (auto& dp : cpy)
 		{
 			if (dp.roomIndexes[0] == index)
 			{
-				XMFLOAT3 t1(dp.one.x, 0.0f, dp.one.y);
-				XMFLOAT3 t2(dp.two.x, 0.0f, dp.two.y);
+				XMFLOAT3 t1(CAST(float,dp.one.x), 0.0f, CAST(float,dp.one.y));
+				XMFLOAT3 t2(CAST(float,dp.two.x), 0.0f, CAST(float,dp.two.y));
 
 				// t1 -> t2
 				XMFLOAT3 wallPosition(((t2.x + t1.x) * 0.5f) + 0.5f, 0.0f, ((t2.z + t1.z) * 0.5f) + 0.5f);
 				std::cout << "delete wallPos (" << wallPosition.x << "," << wallPosition.z << ")\n";
 				assert(RemoveDoor(wallPosition));
 				//assert(oldSize != m_roomToRoom.size());
-				oldSize = m_roomToRoom.size();
+				oldSize = static_cast<int>(m_roomToRoom.size());
 			}
 			
 		}

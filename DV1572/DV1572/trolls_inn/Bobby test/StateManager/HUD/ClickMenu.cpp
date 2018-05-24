@@ -67,7 +67,7 @@ void ClickMenu::PushText(const std::string & row)
 	{
 		t.setPosition(
 			(m_background.getScreenPos().x + m_background.getWidth() / 2),
-			m_background.getScreenPos().y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * counter++ * m_info.getScale()) / 2);
+			m_background.getScreenPos().y + m_background.getHeight() - DirectX::XMVectorGetY(Text::getStringSize(&m_info)) - DirectX::XMVectorGetY(Text::getStringSize(&t) * counter++ * m_info.getScale()) / 2.0f);
 	}
 
 }

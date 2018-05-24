@@ -1,5 +1,5 @@
 ﻿#include "AISolver.h"
-
+#define CAST(t,v) static_cast<t>(v)
 // round float to n decimals precision
 float round_n2(float num, int dec)
 {
@@ -135,7 +135,7 @@ std::vector<std::shared_ptr<Node>> AISolver::GetPathAndSmokeGrass(XMINT2 startPo
 			{
 				entranceRoom = eRoom;
 				thisindex = i;
-				highestCon = roomIndexes.size();
+				highestCon = CAST(int,roomIndexes.size());
 			}
 			else // This is probably the same room
 			{

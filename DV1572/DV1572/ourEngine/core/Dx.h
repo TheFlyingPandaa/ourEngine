@@ -20,6 +20,9 @@
 	The globals in this klass is not really globals, but rather semi globals.
 	This klass may be reached within the engine
 */
+
+#define CAST(t,v) static_cast<t>(v)
+
 namespace DX
 {
 	// Use when releasing
