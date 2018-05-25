@@ -502,7 +502,7 @@ void MasterAI::Update(Camera* cam)
 			if (result == 1)
 			{
 				RandomNumberGenerator gen;
-				int depth = gen.GenerateRandomNumber(1,5);
+				int depth = gen.GenerateRandomNumber(2,4);
 				for (int i = 0; i < depth; ++i)
 					leavingCustomer->Move(Character::WalkDirection::DOWN);
 				for (int i = 0; i < 16; ++i)

@@ -100,7 +100,7 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 	m_catWalkTile.setPos(static_cast<float>(posX), -0.01f, static_cast<float>(posY - 5));
 	m_catWalkTile.setRotation(90.0f, 0.0f, 0.0f);
 	m_catWalkTile.setUVScaleX(sizeX);
-	m_catWalkTile.setUVScaleY(10);
+	m_catWalkTile.setUVScaleY(3);
 
 	this->m_tiles.reserve(sizeX * sizeY);
 
@@ -118,6 +118,15 @@ Grid::Grid(int posX, int posY, int sizeX, int sizeY, Mesh * mesh)
 			this->m_tiles.push_back(t);
 		}
 	}
+	MLP::GetInstance().LoadMesh("portal", "SpritesheetSample/portal.obj");
+	m_portalEntrance.setMesh(MLP::GetInstance().GetMesh("portal"));
+	m_portalExit.setMesh(MLP::GetInstance().GetMesh("portal"));
+	m_portalEntrance.setPos(0, 1.5f, -3.5);
+	m_portalEntrance.setRotation(0, 270, 0);
+	m_portalEntrance.setScale(1, 4, 7);
+	m_portalExit.setPos(32, 1.5f, -1.5f);
+	m_portalExit.setRotation(0, -270, 0);
+	m_portalExit.setScale(1, 4, 7);
 }
 Grid::~Grid()
 {
@@ -134,48 +143,6 @@ std::vector<Tile*> Grid::getGrid() const
 {
 	return m_tiles;	
 }
-
-//bool Grid::CheckIfDoorCanBeBuilt(DirectX::XMINT2 pos, DirectX::XMINT2 pos2)
-//{
-//	// TODO
-//
-//	/*bool result = false;
-//	DirectX::XMFLOAT3 c(5.0f, 0.5f, 0.5f);
-//	Tile* t1 = m_tiles[pos.x][pos.y];
-//	Tile* t2 = m_tiles[pos2.x][pos2.y];
-//	if ((abs(pos.x - pos2.x) == 1 || abs(pos.y - pos2.y) == 1) &&
-//		(pos.x == pos2.x || pos.y == pos2.y))
-//	{
-//		if (t1->getIsInside() && t2->getIsInside())
-//		{
-//			if (t1 != t2)
-//			{
-//				Direction dir = m_roomCtrl.getDirection(t1, t2);
-//
-//				Wall* w = t1->getTileWalls(dir);
-//				if (w)
-//				{
-//					c = DirectX::XMFLOAT3(0.05f, 5.0f, 0.5f);
-//				}
-//			}
-//		}
-//	}
-//	
-//	t1->getQuad().setColor(c.x, c.y, c.z);
-//	t2->getQuad().setColor(c.x, c.y, c.z);
-//
-//	return result;*/
-//}
-
-
-//void Grid::AddRoomObject(DirectX::XMINT2 pos, Mesh * mesh)
-//{
-//	// TODO
-//	/*m_tiles[pos.x][pos.y]->setIsWalkeble(false);
-//	m_tiles[pos.x][pos.y]->setHasObject(true);
-//
-//	m_roomCtrl.addRoomObject(pos, mesh);*/
-//}
 
 std::vector<Tile*> Grid::extractTiles(DirectX::XMINT2 pos, DirectX::XMINT2 size)
 {
@@ -236,6 +203,9 @@ void Grid::Draw()
 	}
 	m_catWalkTile.Draw();
 	m_wholeGrid.Draw();
+
+	m_portalEntrance.Draw();
+	m_portalExit.Draw();
 
 }
 

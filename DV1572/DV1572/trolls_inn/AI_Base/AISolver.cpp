@@ -452,12 +452,15 @@ void AISolver::Update(Customer& customer, Inn* inn)
 		{
 			if (customer.getPosition().y < 0)
 			{
-			
+				RandomNumberGenerator gen;
+
+				int depth = gen.GenerateRandomNumber(2, 4);
+				customer.setPosition(0, -depth);
 				// Walk along the catwalk then upwards towards the gridsystem where the rooms are located
 				customer.clearWalkingQueue();
 				for (int i = 0; i < 16; ++i)
 					customer.Move(Character::WalkDirection::RIGHT);
-				for (int i = 0; i < 3; ++i)
+				for (int i = 0; i < depth + 1; ++i)
 					customer.Move(Character::WalkDirection::UP);
 
 			}

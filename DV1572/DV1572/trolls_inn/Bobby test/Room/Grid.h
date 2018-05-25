@@ -17,7 +17,8 @@ private:
 	Mesh*				m_gridMesh;
 	Mesh*				m_catWalkMesh;
 	Object3D			m_wholeGrid;
-
+	Object3D			m_portalEntrance;
+	Object3D			m_portalExit;
 	std::vector<Tile*> m_tiles;
 	Object3D			m_catWalkTile;
 
