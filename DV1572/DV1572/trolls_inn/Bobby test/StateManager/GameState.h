@@ -54,7 +54,6 @@ private:
 	std::vector<bool> m_hudButtonsPressed;
 	void _resetHudButtonPressedExcept(int index);
 	
-	bool m_move = false;
 	bool m_justMoved = false;
 
 	Inn * inn;
@@ -63,6 +62,11 @@ private:
 
 	//EventCollection testtt;
 	EventHandler * m_eventHandle;
+	
+	// Small Quality of Life additions
+	Text m_levelText;
+	RectangleShape m_levelBox;
+	
 
 	void			_init() override;
 	void			_setHud();

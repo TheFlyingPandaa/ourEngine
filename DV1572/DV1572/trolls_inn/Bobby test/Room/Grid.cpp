@@ -526,6 +526,7 @@ std::vector<std::shared_ptr<Node>> Grid::findPath(Tile* startTile, Tile* endTile
 		
 			//--Rules End Here--
 
+
 			float gCost = current->gCost + addedCost;
 			float hCost = getDistance(currentTile, endTile);
 

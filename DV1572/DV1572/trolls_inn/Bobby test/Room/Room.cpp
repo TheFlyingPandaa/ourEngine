@@ -72,7 +72,6 @@ Room::Room(int posX, int posY, int sizeX, int sizeY, std::vector<Tile*> tiles, R
 	m_wholeFloor.setScale(sizeX * 2.0f, 1, sizeY*2.0f);
 	m_wholeFloor.setRotation(90.0f, 0.0f, 0.0f);
 	
-	//TODO //Fix scale?? CHEFEN GET ON IT
 	m_wholeFloor.setUVScaleX(m_sizeX);
 	m_wholeFloor.setUVScaleY(m_sizeY);
 	
@@ -453,6 +452,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 				{
 					Wall* newWallUp = new Wall(mesh, { 0, -1 });
 					newWallUp->setPosition(static_cast<float>(m_posX) + 0.5f + i, static_cast<float>(m_posY + m_sizeY));
+					newWallUp->getObject3D().setLightIndex(m_index);
 					m_allWalls.push_back(newWallUp);
 					m_upWalls.push_back(newWallUp);
 				}
@@ -480,6 +480,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 				{
 					Wall* newWallLow = new Wall(mesh, { 0,1 });
 					newWallLow->setPosition(newPos);
+					newWallLow->getObject3D().setLightIndex(m_index);
 					m_allWalls.push_back(newWallLow);
 					m_downWalls.push_back(newWallLow);
 				}
@@ -508,6 +509,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 					Wall* newWallLeft = new Wall(mesh, { 1, 0 });
 					newWallLeft->setRotation(0, 90, 0);
 					newWallLeft->setPosition(static_cast<float>(m_posX), static_cast<float>(m_posY + i) + 0.5f);
+					newWallLeft->getObject3D().setLightIndex(m_index);
 					m_allWalls.push_back(newWallLeft);
 					m_leftWalls.push_back(newWallLeft);
 				}
@@ -536,6 +538,7 @@ void Room::CreateWallSide(Mesh* mesh, std::vector<bool> allowed, Direction side)
 					Wall* newWallRight = new Wall(mesh, { -1, 0 });
 					newWallRight->setRotation(0, 90, 0);
 					newWallRight->setPosition(static_cast<float>(m_posX + m_sizeX), static_cast<float>(m_posY + i) + 0.5f);
+					newWallRight->getObject3D().setLightIndex(m_index);
 					m_allWalls.push_back(newWallRight);
 					m_rightWalls.push_back(newWallRight);
 				}

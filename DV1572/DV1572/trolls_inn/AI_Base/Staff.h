@@ -20,6 +20,7 @@ private:
 	LevelTracker m_level;
 	Professions m_profession;
 	DirectX::XMFLOAT2 m_position; 
+	Text* m_text;
 	Mesh m_trollMesh; 
 	bool m_cancelFlag;
 	

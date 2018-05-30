@@ -34,14 +34,6 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	this->_init();
 	m_grid = new Grid(0, 0, startSize, startSize);
 	m_roomctrl = new RoomCtrl();
-	/*m_roomctrl->AddRoom(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
-		DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY), RoomType::reception,
-		m_grid->extractTiles(DirectX::XMINT2((startSize / 2) - firstRoomSizeX / 2, 4),
-			DirectX::XMINT2(firstRoomSizeX, firstRoomSizeY)));
-*/
-	/*m_receptionFur = new Table(XMFLOAT3(17, 0, 7), MESH::RECEPTION_HIGH);
-	m_receptionFur->setRotation(180);
-	m_roomctrl->AddRoomObject(m_receptionFur);*/
 	inn = new Inn();
 
 	XMINT2 targetPosition = { inn->getReceptionPos().x, inn->getReceptionPos().y };
@@ -73,6 +65,21 @@ GameState::GameState(std::stack<Shape*>* pickingEvent, std::stack<int>* keyEvent
 	m_receptionFur->setRotation(270);
 	m_roomctrl->AddRoomObject(m_receptionFur);
 	delete m_receptionFur;
+
+	MLP::GetInstance().LoadMeshRectangle("lvlBox");
+	MLP::GetInstance().GetMesh("lvlBox")->setDiffuseTexture("trolls_inn/Resources/HUD/MainHud/ButtonBackground.png");
+
+	m_levelBox.setMesh(MLP::GetInstance().GetMesh("lvlBox"));
+	m_levelBox.setScreenPos(Input::getWindowSize().x - 200, 10, 0.1f);
+	m_levelBox.setWidth(200);
+	m_levelBox.setHeight(180);
+
+	m_levelText.setAllignment(TXT::Center);
+	m_levelText.setRelative(Text::BL);
+	m_levelText.setColor(0, 0, 0);
+	m_levelText.setScale(0.5f);
+	m_levelText.setPosition(Input::getWindowSize().x - 100, 120);
+	
 }
 
 GameState::~GameState()
@@ -96,7 +103,7 @@ GameState::~GameState()
 
 void GameState::Update(double deltaTime)
 {
-
+	m_levelText.setTextString(inn->getStatus());
 	using namespace std::chrono_literals;
 	if (inn->getExitState())
 	{
@@ -106,16 +113,7 @@ void GameState::Update(double deltaTime)
 	{
 		m_exitState = true;
 	}
-	if (Input::isKeyPressed('Q'))
-	{ 
-		m_eventHandle->StartCollectEvent();
-	}
 
-	if (Input::isKeyPressed('Z'))
-	{
-		std::cout << "EventEnded" << std::endl;
-		m_eventHandle->EndEvent(); 
-	}
 	m_eventHandle->Update(deltaTime);
 
 
@@ -192,6 +190,9 @@ void GameState::Draw()
 
 	if (inn)
 		inn->Draw();
+
+	m_levelBox.DrawAsHud();
+	m_levelText.Draw();
 }
 
 void GameState::DrawHUD()
@@ -202,6 +203,8 @@ void GameState::DrawHUD()
 		m_subStates.top()->DrawHUD();
 		return;
 	}
+
+
 }
 
 void GameState::_resetHudButtonPressedExcept(int index)
@@ -270,7 +273,7 @@ void GameState::_handlePicking()
 		}
 
 	
-		if (m_stage == GameStage::Play && Input::isMouseLeftPressed(false))
+		if (m_stage == GameStage::Play && Input::isMouseLeftPressed())
 		{
 			_handlePickingAi(obj);
 		}
@@ -322,15 +325,10 @@ void GameState:: _handlePickingAi(Shape * obj)
 				troll->setCancelFlag(true);
 			m_justMoved = false;
 
-			/*if (Input::isKeyPressed('G'))
-				int lolXD420 = 0;*/
-
 			troll->Move(troll->getDirectionFromPoint(oldPos, path[0]->tile->getQuad().getPosition()));
 
 			for (int i = 0; i < path.size() - 1; i++)
 			{
-				float lol = 255 * (float(i) / float(path.size()));
-				path[i + 1]->tile->getQuad().setColor(0, 0, lol);
 				troll->Move(troll->getDirectionFromPoint(path[i]->tile->getQuad().getPosition(), path[i + 1]->tile->getQuad().getPosition()));
 			}
 		}
@@ -489,241 +487,4 @@ void GameState::_handleInput()
 
 		ss->HandleInput();
 	}
-
-		
-	if (m_stage == GameStage::Play && m_subStates.empty())
-	{
-		if (Input::isMouseLeftPressed())
-		{
-			//this->grid->PickTiles();
-			m_move = true;
-		}
-		else
-			m_move = false;
-	}
-
-	
-
-	if (Input::isKeyPressed('R') && !m_Rpressed)
-		_setHud();
-	else if (!Input::isKeyPressed('R'))
-		m_Rpressed = false;
 }
-
-//std::vector<std::shared_ptr<Node>> GameState::getPathAndEatAss(XMINT2 startPosition, XMINT2 targetPosition)
-//{
-//
-//	Tile* startTile = m_grid->getTile(startPosition.x, startPosition.y);
-//	Tile* targetTile = m_grid->getTile(targetPosition.x, targetPosition.y);
-//
-//	std::vector<std::shared_ptr<Node>> path;
-//	// Outside -> OutSide
-//	if (startTile && targetTile)
-//	{
-//		path = m_grid->findPath(startTile, targetTile);
-//	}
-//	// Outside -> inside
-//	else if (startTile && 0 == targetTile)
-//	{
-//		XMINT2 pos = targetPosition;
-//		int index = m_roomctrl->_intersect(pos);
-//		Room* targetRoom = m_roomctrl->getRoomAt(index);
-//		
-//		// If we are outside and want to get in there needs to be an entrance door
-//		if (0 == m_roomctrl->HasEntranceDoor())
-//			return std::vector<std::shared_ptr<Node>>();
-//		//if (0 == m_roomctrl->getRoomConnections(index))
-//		//	return std::vector<std::shared_ptr<Node>>();
-//
-//		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
-//		Room* entranceRoom = m_roomctrl->getRoomAt(entranceDoor.roomIndexes[1]);
-//		// Now do we wanna walk to the entrance
-//		path = m_grid->findPath(startTile, m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y));
-//
-//		//Lets not talk about this one(This is so we walk straight through the door...)
-//		std::vector<std::shared_ptr<Node>> lol1;
-//		std::shared_ptr<Node> current(new Node(entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), nullptr, 0, 0));
-//		lol1.push_back(current);
-//		path.insert(path.end(), lol1.begin(), lol1.end());
-//
-//		// Easy check, if its the main room we are wanting then we only need to perform pathfinding inside that room
-//		// and not start the higher level room path finding
-//		if (*targetRoom == *entranceRoom)
-//		{
-//			auto doorToEndTile = targetRoom->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), targetRoom->getTile(pos.x, pos.y));
-//			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
-//		}
-//		// We want to be advanced :P
-//		else
-//		{
-//			
-//			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), targetRoom->getTile(pos.x,pos.y));
-//
-//			Room* startRoom = entranceRoom;
-//			XMINT2 DoorLeavePos;
-//			XMINT2 startPosition = entranceDoor.two;
-//			for (int i = 0; i < roomIndexes.size() - 1; i++)
-//			{
-//				// Between this rooms leave door and other rooms enter door
-//				RoomCtrl::DoorPassage dp = m_roomctrl->getDoorPassage(roomIndexes[i], roomIndexes[i+1]);
-//
-//				auto toOtherRoom = startRoom->findPath(startRoom->getTile(startPosition.x,startPosition.y), startRoom->getTile(dp.one.x, dp.one.y));
-//				path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
-//
-//				// Smooth Entering
-//				DoorLeavePos = dp.two;
-//				startRoom = m_roomctrl->getRoomAt(dp.roomIndexes[1]);
-//
-//				std::vector<std::shared_ptr<Node>> lol;
-//				std::shared_ptr<Node> current(new Node(startRoom->getTile(DoorLeavePos.x, DoorLeavePos.y), nullptr, 0, 0));
-//				lol.push_back(current);
-//				path.insert(path.end(), lol.begin(), lol.end());
-//				startPosition = DoorLeavePos;
-//
-//			}
-//
-//
-//			auto toTarget = startRoom->findPath(startRoom->getTile(DoorLeavePos.x,DoorLeavePos.y), startRoom->getTile(pos.x,pos.y));
-//			path.insert(path.end(), toTarget.begin(), toTarget.end());
-//
-//		}
-//
-//	}
-//	// Inside -> Inside
-//	else if (0 == startTile && 0 ==  targetTile)
-//	{
-//		XMINT2 pos = targetPosition;
-//		int index = m_roomctrl->_intersect(pos);
-//		Room* targetRoom = m_roomctrl->getRoomAt(index);
-//		
-//		XMINT2 tPos = startPosition;
-//		int indexForTarget = m_roomctrl->_intersect(tPos);
-//		Room* startRoom = m_roomctrl->getRoomAt(indexForTarget);
-//
-//		if (0 == m_roomctrl->getRoomConnections(index))
-//			return std::vector<std::shared_ptr<Node>>();
-//
-//		if (*targetRoom == *startRoom)
-//		{
-//			auto doorToEndTile = targetRoom->findPath(targetRoom->getTile(tPos.x, tPos.y), targetRoom->getTile(pos.x, pos.y));
-//			path.insert(path.end(), doorToEndTile.begin(), doorToEndTile.end());
-//		}
-//		else
-//		{
-//			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(startRoom->getTile(tPos.x, tPos.y), targetRoom->getTile(pos.x, pos.y));
-//
-//			Room* cRoom = startRoom;
-//			XMINT2 DoorLeavePos;
-//			XMINT2 sp2 = startPosition;
-//			for (int i = 0; i < roomIndexes.size() - 1; i++)
-//			{
-//				RoomCtrl::DoorPassage dp = m_roomctrl->getDoorPassage(roomIndexes[i], roomIndexes[i + 1]);
-//
-//				auto toOtherRoom = cRoom->findPath(cRoom->getTile(sp2.x, sp2.y), cRoom->getTile(dp.one.x, dp.one.y));
-//				path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
-//
-//				// Smooth Entering
-//				DoorLeavePos = dp.two;
-//				cRoom = m_roomctrl->getRoomAt(dp.roomIndexes[1]);
-//
-//				std::vector<std::shared_ptr<Node>> lol;
-//				std::shared_ptr<Node> current(new Node(cRoom->getTile(DoorLeavePos.x, DoorLeavePos.y), nullptr, 0, 0));
-//				lol.push_back(current);
-//				path.insert(path.end(), lol.begin(), lol.end());
-//				sp2 = DoorLeavePos;
-//
-//			}
-//			auto toTarget = cRoom->findPath(cRoom->getTile(DoorLeavePos.x, DoorLeavePos.y), cRoom->getTile(pos.x, pos.y));
-//			path.insert(path.end(), toTarget.begin(), toTarget.end());
-//		}
-//
-//	}
-//	//Inside to outside
-//	else
-//	{
-//		XMINT2 pos = startPosition;
-//		int index = m_roomctrl->_intersect(pos);
-//		Room* targetRoom = m_roomctrl->getRoomAt(index);
-//		// If we are inside and want to get out there need to be an entrance door present
-//		if(0 == m_roomctrl->HasEntranceDoor())
-//			return std::vector<std::shared_ptr<Node>>();
-//		if (0 == m_roomctrl->getRoomConnections(index))
-//			return std::vector<std::shared_ptr<Node>>();
-//
-//		RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
-//
-//		XMINT2 tPos = targetPosition;
-//		int index2 = m_roomctrl->_intersect(entranceDoor.two);
-//		Room* entranceRoom = m_roomctrl->getRoomAt(index2);
-//
-//		if (*entranceRoom == *targetRoom)
-//		{
-//
-//			XMINT2 pos = startPosition;
-//			int index = m_roomctrl->_intersect(pos);
-//			Room* targetRoom = m_roomctrl->getRoomAt(index);
-//
-//			if (0 == m_roomctrl->getRoomConnections(index))
-//				return std::vector<std::shared_ptr<Node>>();
-//
-//			
-//			// Path to door
-//			auto toDoor = targetRoom->findPath(targetRoom->getTile(startPosition.x, startPosition.y), targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
-//			path.insert(path.end(), toDoor.begin(), toDoor.end());
-//
-//			//Lets not talk about this one(This is so we walk straight through the door...)
-//			auto walkThroughDoor = m_grid->findPath(targetRoom->getTile(entranceDoor.two.x, entranceDoor.two.y), m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y));
-//			path.insert(path.end(), walkThroughDoor.begin(), walkThroughDoor.end());
-//
-//			auto walkToTarget = m_grid->findPath(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), targetTile);
-//			path.insert(path.end(), walkToTarget.begin(), walkToTarget.end());
-//		}
-//		else
-//		{
-//			// We need to find the entrace from inside then we path to the destination
-//			std::vector<int> roomIndexes = m_roomctrl->roomTraversal(targetRoom->getTile(startPosition.x, startPosition.y), entranceRoom->getTile(entranceDoor.two.x, entranceDoor.two.y));
-//
-//			Room* startRoom = targetRoom;
-//			XMINT2 DoorLeavePos;
-//			XMINT2 startPosition = pos;
-//			for (int i = 0; i < roomIndexes.size() - 1; i++)
-//			{
-//				// Between this rooms leave door and other rooms enter door
-//				RoomCtrl::DoorPassage dp = m_roomctrl->getDoorPassage(roomIndexes[i], roomIndexes[i + 1]);
-//
-//				auto toOtherRoom = startRoom->findPath(startRoom->getTile(startPosition.x, startPosition.y), startRoom->getTile(dp.one.x, dp.one.y));
-//				path.insert(path.end(), toOtherRoom.begin(), toOtherRoom.end());
-//
-//				// Smooth Entering
-//				DoorLeavePos = dp.two;
-//				startRoom = m_roomctrl->getRoomAt(dp.roomIndexes[1]);
-//
-//				std::vector<std::shared_ptr<Node>> lol;
-//				std::shared_ptr<Node> current(new Node(startRoom->getTile(DoorLeavePos.x, DoorLeavePos.y), nullptr, 0, 0));
-//				lol.push_back(current);
-//				path.insert(path.end(), lol.begin(), lol.end());
-//				startPosition = DoorLeavePos;
-//
-//			}
-//
-//			RoomCtrl::DoorPassage entranceDoor = m_roomctrl->getClosestEntranceDoor(startPosition);
-//			Room* entranceRoom = m_roomctrl->getRoomAt(entranceDoor.roomIndexes[1]);
-//
-//			auto toMainLeave = startRoom->findPath(startRoom->getTile(DoorLeavePos.x,DoorLeavePos.y), entranceRoom->getTile(entranceDoor.two.x,entranceDoor.two.y));
-//			path.insert(path.end(), toMainLeave.begin(), toMainLeave.end());
-//
-//			std::vector<std::shared_ptr<Node>> lol3;
-//			std::shared_ptr<Node> current(new Node(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), nullptr, 0, 0));
-//			lol3.push_back(current);
-//			path.insert(path.end(), lol3.begin(), lol3.end());
-//
-//			auto finallyTarget = m_grid->findPath(m_grid->getTile(entranceDoor.one.x, entranceDoor.one.y), targetTile);
-//			path.insert(path.end(), finallyTarget.begin(), finallyTarget.end());
-//
-//		}
-//
-//
-//
-//	}
-//	return path;
-//}

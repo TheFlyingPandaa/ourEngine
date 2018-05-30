@@ -195,8 +195,6 @@ void MasterAI::_killCustomer(int customerIndex)
 	delete m_customers[customerIndex];
 	m_customers.erase(m_customers.begin() + customerIndex);
 
-	if(caught)
-		std::cout << "YOU GOT CAUGHT" << std::endl;
 	
 }
 

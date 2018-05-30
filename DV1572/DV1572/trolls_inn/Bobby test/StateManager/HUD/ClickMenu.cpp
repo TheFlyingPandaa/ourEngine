@@ -141,6 +141,7 @@ int ClickMenu::ButtonClicked()
 void ClickMenu::setInfo(const std::string & info)
 {
 	m_info.setTextString(info);
+	m_info.setColor(0, 0, 0);
 }
 
 void ClickMenu::Draw()

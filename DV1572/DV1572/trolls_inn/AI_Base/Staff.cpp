@@ -7,6 +7,9 @@ Staff::Staff() : Character()
 	this->setModel(&m_trollMesh);
 	m_cancelFlag = false;
 	m_isCleaning = false;
+
+	
+
 }
 
 Staff::Staff(Professions profession)
@@ -22,6 +25,7 @@ Staff::Staff(Professions profession, int level)
 
 Staff::~Staff()
 {
+
 }
 
 Professions Staff::GetProfession() const

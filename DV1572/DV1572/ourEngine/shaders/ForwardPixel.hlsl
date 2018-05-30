@@ -53,12 +53,11 @@ float4 main(INPUT input) : SV_Target
 	normal = normalize(mul(normal, input.TBN));
 	normal = normalize(input.normal + normal);
 	float4 diffuseSample = tDiffuse.Sample(sampAni, input.tex);
-
+	
 	if (diffuseSample.a < 0.5f)
 		discard;
 
-    //return float4(1, 0, 0, 1);
-	
+	//return float4(normal, 1.0f);
 	diffuseSample *= input.color;
 	float3 ambient = diffuseSample.xyz * 0.5f;
 	float specLevel = 1; // Vet inte om detta var rätt!
@@ -157,7 +156,7 @@ float4 main(INPUT input) : SV_Target
 			float distanceFromPointLight = length(wordPos - pointLPos[i].xyz);
 			att = lightSetup[i].r / (lightSetup[i].g + lightSetup[i].b * distanceFromPointLight + lightSetup[i].a * distanceFromPointLight);
 
-			tempColor = (diffuseForPointLight /*+ finalSpecPointLight*/) * att * pointLColor[i].xyz;
+			tempColor = (diffuseForPointLight ) * att * pointLColor[i].xyz;
 
 			finalColorForPointLights = tempColor;
 		}

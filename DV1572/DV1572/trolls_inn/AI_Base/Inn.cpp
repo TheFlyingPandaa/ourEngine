@@ -19,6 +19,7 @@ Inn::Inn()
 	m_text->setRotation(0.0f);
 	m_text->setTextString("");
 	m_text->setAllignment(TXT::Right);
+
 	this->m_foodPrice = 10;
 	this->m_drinkPrice = 15;
 	this->m_sleepPrice = 20;
@@ -182,8 +183,25 @@ void Inn::IncreaseXP(const int amount)
 		std::string temp;
 		temp = "Level UP: " + std::to_string(m_innLevel);
 		InGameConsole::pushString(temp);
-		std::cout << "LEVEL UP" << std::endl;
 	}
+}
+
+int Inn::GetLevel() const
+{
+	return m_innLevel;
+}
+
+int Inn::PercentageTillNextLevel() const
+{
+	return (float(m_innXPLevel) / float(m_innLevel * 50)) * 100;
+}
+
+std::string Inn::getStatus() const
+{
+	std::string returnStr = "Level: " + std::to_string(GetLevel()) + "(" + std::to_string(PercentageTillNextLevel()) + "%)\n";
+	returnStr += "Rent: " + std::to_string(m_rent) + "\n";
+	returnStr += "Angry Customers:\n" + std::to_string(m_AngryCustomers) + "/" + std::to_string(m_angryCustomerCap) + "\n";
+	return returnStr;
 }
 
 void Inn::AddAngryCustomer()
@@ -262,6 +280,8 @@ void Inn::Draw()
 		}
 		m_withdrawText.at(i).Draw();
 	}
+
+
 	if (m_removeVec.size() >0)
 	{
 		for (auto element : m_removeVec)

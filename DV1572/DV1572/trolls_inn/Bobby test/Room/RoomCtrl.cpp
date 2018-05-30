@@ -248,15 +248,15 @@ RoomCtrl::RoomCtrl()
 
 	MLP::GetInstance().LoadMeshRectangle(MESH::BEDROOMTILE);
 	MLP::GetInstance().GetMesh(MESH::BEDROOMTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/BedRoomTile.jpg");
-	MLP::GetInstance().GetMesh(MESH::BEDROOMTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+	MLP::GetInstance().GetMesh(MESH::BEDROOMTILE)->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 
 	MLP::GetInstance().LoadMeshRectangle(MESH::RECEPTIONTILE);
 	MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/ReceptionTile.jpg");
-	MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+	MLP::GetInstance().GetMesh(MESH::RECEPTIONTILE)->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 
 	MLP::GetInstance().LoadMeshRectangle(MESH::HALLWAYTILE);
 	MLP::GetInstance().GetMesh(MESH::HALLWAYTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/HallwayTile.jpg");
-	MLP::GetInstance().GetMesh(MESH::HALLWAYTILE)->setNormalTexture("trolls_inn/Resources/DefaultNormal.png");
+	MLP::GetInstance().GetMesh(MESH::HALLWAYTILE)->setNormalTexture("trolls_inn/Resources/woodenfloor/NormalMap.png");
 
 	MLP::GetInstance().LoadMeshRectangle(MESH::WOODTILE);
 	MLP::GetInstance().GetMesh(MESH::WOODTILE)->setDiffuseTexture("trolls_inn/Resources/GenericTexture/wood.png");

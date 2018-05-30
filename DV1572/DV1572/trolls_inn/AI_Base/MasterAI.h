@@ -83,7 +83,7 @@ private:
 		XMFLOAT2 customerpath;
 		int charIndex;
 		int pathReturn;
-	}*currentChase;
+	} *currentChase;
 	bool _checkValidSelectedCustomer(int index);
 	void _killCustomer(int customerIndex);
 	void _stealCustomer(int customerIndex);

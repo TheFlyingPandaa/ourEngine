@@ -37,7 +37,7 @@ private:
 	int m_innXPLevel;
 
 	int m_AngryCustomers = 0;
-	int m_angryCustomerCap = 40;
+	int m_angryCustomerCap = 15;
 
 	Economy*		m_economy;
 	int				m_staffSalary = 420;
@@ -50,6 +50,7 @@ private:
 	std::vector<Text> m_depositText;
 	std::vector<int> m_depositAmount;
 	std::vector<int> m_removeVec;
+	Text*			m_levelText;
 
 	DirectX::XMINT2 m_receptionPos;	//The way we set this will be changed
 
@@ -84,6 +85,11 @@ public:
 	void DecreaseRent(int amount);
 
 	void IncreaseXP(const int amount);
+
+	int GetLevel() const;
+	int PercentageTillNextLevel() const;
+
+	std::string getStatus() const;
 
 	void AddAngryCustomer();
 	int getAngryCustomers() const;
