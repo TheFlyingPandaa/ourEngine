@@ -62,7 +62,8 @@ namespace DX
 				float _41, _42, _43, _44;
 			};
 			float rows[4][4];
-		} u;
+		} u;//UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+		//FAK U CHEFEN
 
 
 		DirectX::XMFLOAT4A highLightColor;
